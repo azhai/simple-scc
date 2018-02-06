@@ -4,9 +4,57 @@ static char sccsid[] = "@(#) ./cc2/arch/z80/cgen.c";
 #include "../../../inc/scc.h"
 #include "../../cc2.h"
 
+static void
+swtch(Node *idx)
+{
+}
+
+static Node *
+lhs(Node *np, Node *ret)
+{
+}
+
+static Node *
+rhs(Node *np, Node *ret)
+{
+}
+
+static void
+bool(Node *np, Symbol *true, Symbol *false)
+{
+}
+
 Node *
 cgen(Node *np)
 {
+	Node aux, *p, *next;
+
+	setlabel(np->label);
+	switch (np->op) {
+	case OJMP:
+		label2node(&aux, np->u.sym);
+		code(ASJMP, NULL, &aux, NULL);
+		break;
+	case OBRANCH:
+		next = np->next;
+		if (!next->label)
+			next->label = newlabel();
+		bool(np->left, np->u.sym, next->label);
+		break;
+	case ORET:
+		p = np->left;
+		if (p)
+			p = rhs(np->left, &aux);
+		code(ASRET, NULL, p, NULL);
+		break;
+	case OBSWITCH:
+		swtch(rhs(np->left, &aux));
+		break;
+	default:
+		rhs(np, &aux);
+		break;
+	}
+	return NULL;
 }
 
 /*
