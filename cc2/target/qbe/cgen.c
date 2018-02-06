@@ -212,8 +212,6 @@ cast(Type *td, Node *ns, Node *nd)
 	return nd;
 }
 
-static Node *rhs(Node *np, Node *new);
-
 static Node *
 call(Node *np, Node *fun, Node *ret)
 {
