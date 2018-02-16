@@ -1,7 +1,8 @@
 .POSIX:
 
-LIBDIR    = ../lib/scc
-include ../config.mk
+PROJECTDIR = ..
+LIBDIR = $(PROJECTDIR)/lib/scc
+include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
 OBJ       = main.o
@@ -11,7 +12,7 @@ all: nm
 nm: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
-main.o: ../inc/scc.h ../inc/ar.h ../inc/myro.h
+main.o: $(PROJECTDIR)/inc/scc.h $(PROJECTDIR)/inc/ar.h $(PROJECTDIR)/inc/myro.h
 
 $(LIBDIR)/libscc.a: $(LIB-OBJ)
 	+cd $(LIBDIR) && $(MAKE)

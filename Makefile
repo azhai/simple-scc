@@ -1,8 +1,9 @@
 # scc - Suckless C Compiler
-
-include config.mk.def
-
 .POSIX:
+
+PROJECTDIR = .
+
+include rules.mk
 
 DIRS  = inc cc1 cc2 driver lib as ar nm objdump
 
@@ -19,12 +20,6 @@ distclean:
 	$(FORALL)
 	rm -rf rootdir
 	rm -f config.mk
-
-config.mk:
-	trap "rm -f $$.mk" 0 2 3; \
-	(cat config.mk.def ;\
-	sed -n '/^# '`uname`'/,/^$$/p' system.mk) > $$.mk && \
-	mv $$.mk config.mk
 
 dep: config.mk
 	$(FORALL)

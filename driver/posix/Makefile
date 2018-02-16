@@ -1,19 +1,20 @@
 .POSIX:
 
-LIBDIR    = ../../lib/scc
-include ../../config.mk
+PROJECTDIR = ../..
+LIBDIR = $(PROJECTDIR)/lib/scc
+include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
 OBJ = scc.o
 HDR = config.h \
-      ../../inc/scc.h \
-      ../../inc/arg.h \
-      ../../inc/syslibs.h \
-      ../../inc/ldflags.h
+      $(PROJECTDIR)/inc/scc.h \
+      $(PROJECTDIR)/inc/arg.h \
+      $(PROJECTDIR)/inc/syslibs.h \
+      $(PROJECTDIR)/inc/ldflags.h
 
 all: scc cpp
-	mkdir -p ../../rootdir/bin
-	cp scc cpp ../../rootdir/bin/
+	mkdir -p $(PROJECTDIR)/rootdir/bin
+	cp scc cpp $(PROJECTDIR)/rootdir/bin/
 
 dep:
 	PREFIX=$(PREFIX) USEQBE=$(USEQBE) ./gendep.sh $(TARGETS)

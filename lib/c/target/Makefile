@@ -1,5 +1,7 @@
 
-include ../../../config.mk
+PROJECTDIR = ../../..
+
+include $(PROJECTDIR)/rules.mk
 
 DIRS = $(TARGETS)
 
