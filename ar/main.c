@@ -51,7 +51,7 @@ openar(char *afile)
 	FILE *fp;
 	char magic[SARMAG+1];
 
-	if ((fp = fopen(afile,"rb")) == NULL) {
+	if ((fp = fopen(afile,"r+b")) == NULL) {
 		if (!cflag)
 			fprintf(stderr, "ar: creating %s\n", afile);
 		if ((fp = fopen(afile, "w+b")) == NULL) {
@@ -134,9 +134,9 @@ append(FILE *fp, char *list[])
 		perror("ar:seeking archive");
 		exit(1);
 	}
-	while ((fname = *list++) != NULL) {
+
+	while ((fname = *list++) != NULL)
 		archive(fname, fp, 'a');
-	}
 	if (fclose(fp) == EOF) {
 		perror("ar:error writing archive");
 		exit(1);
