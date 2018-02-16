@@ -14,8 +14,9 @@ inc/ldflags.h
 inc/sysincludes.h
 inc/syslibs.h
 driver/posix/config.h
-driver/posix/scpp
+driver/posix/cpp
 rootdir/
 ar/ar-*
 nm/nm
 objdump/objdump
+as/target/*/*tbl.c
