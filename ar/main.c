@@ -221,6 +221,8 @@ split(struct arop *op, char *files[])
 		copy(&op->hdr, op->size, op->src, op->dst);
 		return;
 	} else {
+		if (vflag)
+			printf("m - %s\n", op->fname);
 		copy(&op->hdr, op->size, op->src, op->tmp);
 		rmlist(l);
 	}
