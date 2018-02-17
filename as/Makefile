@@ -1,12 +1,13 @@
 .POSIX:
 
-LIBDIR  = ../lib/scc
-include ../config.mk
+PROJECTDIR = ..
+LIBDIR = $(PROJECTDIR)/lib/scc
+include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
 OBJ = main.o symbol.o ins.o parser.o expr.o myro.o
-HDR = ../inc/scc.h as.h
-MOREFLAGS = -I../inc/$(STD) $(AS_CFLAGS)
+HDR = $(PROJECTDIR)/inc/scc.h as.h
+MOREFLAGS = -I$(PROJECTDIR)/inc/$(STD) $(AS_CFLAGS)
 
 all:
 
@@ -15,10 +16,10 @@ $(OBJ): $(HDR)
 as: $(OBJ)
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
-myro.o: ../inc/myro.h
+myro.o: $(PROJECTDIR)/inc/myro.h
 
 $(LIBDIR)/libscc.a: $(LIB-OBJ)
-	cd $(LIBDIR) && $(MAKE)
+	+cd $(LIBDIR) && $(MAKE)
 
 dep:
 	./gendep.sh $(TARGETS)

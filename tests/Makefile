@@ -1,5 +1,10 @@
 .POSIX:
+include ../config.mk
 
-all clean dep distclean:
-	cd error && make -e $@
-	cd execute && make -e $@
+DIRS=scc ar
+
+all clean:
+	$(FORALL)
+
+distclean: clean
+dep:

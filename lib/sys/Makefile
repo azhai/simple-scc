@@ -1,9 +1,11 @@
 .POSIX:
 
-include ../../config.mk
+PROJECTDIR = ../..
+
+include $(PROJECTDIR)/rules.mk
 
 all clean distclean:
-	pwd=$$PWD ;\
+	+@pwd=$$PWD ;\
 	for i in $(SYSS); \
 	do \
 		cd $$i; \

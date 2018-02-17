@@ -1,19 +1,20 @@
 .POSIX:
 
-LIBDIR    = ../../lib/scc
-include ../../config.mk
+PROJECTDIR = ../..
+LIBDIR = $(PROJECTDIR)/lib/scc
+include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
 OBJ = scc.o
 HDR = config.h \
-      ../../inc/scc.h \
-      ../../inc/arg.h \
-      ../../inc/syslibs.h \
-      ../../inc/ldflags.h
+      $(PROJECTDIR)/inc/scc.h \
+      $(PROJECTDIR)/inc/arg.h \
+      $(PROJECTDIR)/inc/syslibs.h \
+      $(PROJECTDIR)/inc/ldflags.h
 
-all: scc scpp
-	mkdir -p ../../rootdir/bin
-	cp scc scpp ../../rootdir/bin/
+all: scc cpp
+	mkdir -p $(PROJECTDIR)/rootdir/bin
+	cp scc cpp $(PROJECTDIR)/rootdir/bin/
 
 dep:
 	PREFIX=$(PREFIX) USEQBE=$(USEQBE) ./gendep.sh $(TARGETS)
@@ -23,16 +24,16 @@ $(OBJ): $(HDR)
 scc: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
-scpp: cpp.sh config.h
+cpp: cpp.sh config.h
 	set -x ;\
 	trap "rm -f $$$$.sh" 0 2 3;\
 	rm -f $@ ;\
 	sed "s%@PREFIX@%$(PREFIX)%" < cpp.sh > $$$$.sh && \
 	chmod +x $$$$.sh && \
-	mv $$$$.sh scpp
+	mv $$$$.sh $@
 
 $(LIBDIR)/libscc.a:
-	cd $(LIBDIR) && $(MAKE)
+	+cd $(LIBDIR) && $(MAKE)
 
 clean:
 	rm -f $(OBJ)

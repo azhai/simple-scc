@@ -1,23 +1,26 @@
 .POSIX:
 
-LIBDIR    = ../lib/scc
-include ../config.mk
+PROJECTDIR = ..
+LIBDIR = $(PROJECTDIR)/lib/scc
+include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
 OBJ       = main.o $(DRIVER)/stat.c
 MOREFLAGS = -I$(DRIVER)
 
 all: ar-$(DRIVER)
+	mkdir -p $(PROJECTDIR)/rootdir/bin
+	cp ar-$(DRIVER) $(PROJECTDIR)/rootdir/bin/ar
 
 ar-$(DRIVER): $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
-main.o: ../inc/scc.h ../inc/ar.h
+main.o: $(PROJECTDIR)/inc/scc.h $(PROJECTDIR)/inc/ar.h
 
 $(DRIVER)/stat.o: $(DRIVER)/stat.h
 
 $(LIBDIR)/libscc.a: $(LIB-OBJ)
-	cd $(LIBDIR) && $(MAKE)
+	+cd $(LIBDIR) && $(MAKE)
 
 main.o: $(DRIVER)/stat.h
 

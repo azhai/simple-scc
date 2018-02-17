@@ -1,6 +1,8 @@
 .POSIX:
 
-include ../config.mk
+PROJECTDIR = ..
+
+include $(PROJECTDIR)/rules.mk
 
 HDR = ldflags.h sysincludes.h syslibs.h
 
