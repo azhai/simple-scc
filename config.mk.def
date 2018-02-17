@@ -30,31 +30,3 @@ MANPREFIX = $(PREFIX)/share/man
 # CC = c99
 # AR = ar
 AS = as
-
-SCC_CFLAGS = $(MOREFLAGS) \
-             $(SYSCFLAGS) \
-             -g \
-             $(CFLAGS)
-
-SCC_LDFLAGS = -L$(LIBDIR)/ -g $(LDFLAGS)
-
-.s.o:
-	$(AS) $< -o $@
-
-.c.o:
-	$(CC) $(SCC_CFLAGS) -o $@ -c $<
-
-.c:
-	$(CC) $(SCC_CFLAGS) $(SCC_LDFLAGS) -o $@ $<
-
-# helper macro to run over all the directories
-FORALL = +@set -e ;\
-	pwd=$$PWD; \
-	for i in $(DIRS); \
-	do \
-		cd $$i; \
-		$(MAKE) $@; \
-		cd $$pwd; \
-	done
-
-# system specific flags

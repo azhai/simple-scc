@@ -1,6 +1,8 @@
 .POSIX:
 
-include ../../../config.mk
+PROJECTDIR = ../../..
+
+include $(PROJECTDIR)/rules.mk
 include system.mk
 
 ASM = $(OBJ:.o=.s)
