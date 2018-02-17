@@ -8,5 +8,3 @@ tests:
 clean:
 	rm -f *.as *.o *.ir *.qbe *core test.log
 
-distclean: clean
-dep:
