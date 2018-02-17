@@ -425,7 +425,7 @@ run(FILE *fp, FILE *tmp1, FILE *tmp2,
 
 	op.src = fp;
 	op.dst = tmp1;
-	op.dst = tmp2;
+	op.tmp = tmp2;
 	while (!ferror(fp) && fread(&op.hdr, sizeof(op.hdr), 1, fp) == 1) {
 		fpos_t pos;
 
