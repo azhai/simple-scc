@@ -91,3 +91,7 @@ do
 	touch file-$i
 	ar -qv file.a file-$i
 done
+
+rm file.a
+
+ls | grep file- | xargs -n 10 ar -qv file.a
