@@ -532,10 +532,6 @@ doit(int key, char *afile, FILE *fp, char *flist[])
 		tmp1 = opentmp("ar.tmp1", &tmpafile1);
 		run(fp, tmp1, NULL, flist, update);
 
-		if (*flist == NULL) {
-			closetmp(tmp1, &tmpafile1, afile);
-			break;
-		}
 		if (!posname) {
 			append(tmp1, flist);
 			break;
@@ -569,10 +565,6 @@ doit(int key, char *afile, FILE *fp, char *flist[])
 		tmp2 = opentmp("ar.tmp2", &tmpafile2);
 		run(fp, tmp1, tmp2, flist, split);
 
-		if (*flist) {
-			fprintf(stderr, "ar: entry '%s' not found\n", *flist);
-			exit(1);
-		}
 		fp = openar(afile);
 		fseek(tmp1, SARMAG, SEEK_SET);
 		fseek(tmp2, SARMAG, SEEK_SET);
@@ -585,7 +577,12 @@ doit(int key, char *afile, FILE *fp, char *flist[])
 		closetmp(tmp2, &tmpafile2, NULL);
 		break;
 	}
+	if (*flist == NULL)
+		return;
 
+	while (*flist)
+		fprintf(stderr, "ar: No member named '%s\n", *flist++);
+	exit(1);
 }
 
 int
