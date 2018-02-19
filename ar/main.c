@@ -135,8 +135,11 @@ append(FILE *fp, char *list[])
 		exit(1);
 	}
 
-	while ((fname = *list++) != NULL)
+	for ( ; fname = *list; ++list) {
+		*list = NULL;
 		archive(fname, fp, 'a');
+	}
+
 	if (fclose(fp) == EOF) {
 		perror("ar:error writing archive");
 		exit(1);
@@ -194,37 +197,28 @@ perms(struct arop *op)
 	return buf;
 }
 
-static void
-rmlist(char *list[])
-{
-	for (; *list; ++list)
-		list[0] = list[1];
-}
-
-static char **
+static int
 inlist(char *fname, char *list[])
 {
 	while (*list && strcmp(*list, fname))
 		++list;
 	if (*list == NULL)
-		return NULL;
-	return list;
+		return 0;
+	for (; *list; ++list)
+		list[0] = list[1];
+	return 1;
 }
 
 static void
 split(struct arop *op, char *files[])
 {
-	char **l;
-
-	l = inlist(op->fname, files);
-	if (!l) {
+	if (!inlist(op->fname, files)) {
 		copy(&op->hdr, op->size, op->src, op->dst);
 		return;
 	} else {
 		if (vflag)
 			printf("m - %s\n", op->fname);
 		copy(&op->hdr, op->size, op->src, op->tmp);
-		rmlist(l);
 	}
 }
 
@@ -271,13 +265,10 @@ update(struct arop *op, char *files[])
 {
 	char **l;
 
-	l = inlist(op->fname, files);
-	if (!l) {
+	if (!inlist(op->fname, files))
 		copy(&op->hdr, op->size, op->src, op->dst);
-		return;
-	}
-	archive(op->fname, op->dst, 'r');
-	rmlist(l);
+	else
+		archive(op->fname, op->dst, 'r');
 }
 
 static void
