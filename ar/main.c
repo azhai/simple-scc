@@ -15,7 +15,7 @@ static char sccsid[] = "@(#) ./ar/main.c";
 
 char *argv0;
 
-static int bflag, iflag, vflag, cflag, lflag, uflag, aflag;
+static int bflag, iflag, vflag, cflag, lflag, uflag, aflag, haslist;
 static char *posname, *tmpafile1, *tmpafile2;
 
 struct arop {
@@ -278,7 +278,7 @@ extract(struct arop *op, char *files[])
 	long siz;
 	FILE *fp;
 
-	if (*files && !inlist(op->fname, files))
+	if (haslist && !inlist(op->fname, files))
 		return;
 	if (vflag)
 		printf("x - %s\n", op->fname);
@@ -308,7 +308,7 @@ print(struct arop *op, char *files[])
 	long siz;
 	int c;
 
-	if (*files && !inlist(op->fname, files))
+	if (haslist && !inlist(op->fname, files))
 		return;
 	if (vflag)
 		printf("\n<%s>\n\n", op->fname);
@@ -324,7 +324,7 @@ list(struct arop *op, char *files[])
 	struct ar_hdr *hdr = &op->hdr;
 	char mtime[30];
 
-	if (*files && !inlist(op->fname, files))
+	if (haslist && !inlist(op->fname, files))
 		return;
 	if (!vflag) {
 		printf("%s\n", op->fname);
@@ -517,6 +517,7 @@ doit(int key, char *afile, FILE *fp, char *flist[])
 		}
 		return;
 	}
+	haslist = *flist != NULL;
 
 	switch (key) {
 	case 'r':
