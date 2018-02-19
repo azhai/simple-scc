@@ -49,7 +49,7 @@ awk '$0 != NR-1 ".tst" {
 #empty file list
 rm -f file.a
 ar -qv file.a
-if !test -f file.a
+if ! test -f file.a
 then
 	echo "ar -q didn't generated empty archive" >&2
 	exit 1

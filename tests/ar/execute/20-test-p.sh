@@ -7,9 +7,7 @@ set -e
 
 tmp1=`mktemp`
 tmp2=`mktemp`
-trap "rm -f file.a" 0 2 3
-
-echo tmp1=$tmp1 and tmp2=$tmp2
+trap "rm -f file.a $tmp1 $tmp2" 0 2 3
 
 ############################################################################
 #print 1st member
@@ -32,6 +30,22 @@ cmp $tmp1 $tmp2
 ar -p file.a file3 > $tmp1
 
 cat <<! > $tmp2
+and at the end, this is the last file
+that should go at the end of the file,
+thus it should go in the third position.
+!
+
+cmp $tmp1 $tmp2
+
+############################################################################
+#print 2nd member with verbose
+
+ar -pv file.a file2 >$tmp1
+
+cat <<! > $tmp2
+
+<file2>
+
 But this other one is the second one,
 and it shouldn't go in the first position
 because it should go in the second position.
