@@ -44,7 +44,6 @@ cleanup(void)
 static void
 sigfun(int signum)
 {
-	cleanup();
 	exit(1);
 }
 
