@@ -13,10 +13,13 @@ static char sccsid[] = "@(#) ./ar/main.c";
 #include "../inc/arg.h"
 #include "../inc/scc.h"
 
+#define NOSAVE 0
+#define SAVE   1
+
 char *argv0;
 
 static int bflag, vflag, cflag, lflag, uflag, aflag, haslist;
-static char *posname, *tmpafile1, *tmpafile2;
+static char *posname, *tmpafile1, *tmpafile2, *arfile;
 
 struct arop {
 	FILE *src;
@@ -46,15 +49,15 @@ sigfun(int signum)
 }
 
 static FILE *
-openar(char *afile)
+openar(void)
 {
 	FILE *fp;
 	char magic[SARMAG+1];
 
-	if ((fp = fopen(afile,"r+b")) == NULL) {
+	if ((fp = fopen(arfile,"r+b")) == NULL) {
 		if (!cflag)
-			fprintf(stderr, "ar: creating %s\n", afile);
-		if ((fp = fopen(afile, "w+b")) == NULL) {
+			fprintf(stderr, "ar: creating %s\n", arfile);
+		if ((fp = fopen(arfile, "w+b")) == NULL) {
 			perror("ar:opening archive");
 			exit(1);
 		}
@@ -71,7 +74,7 @@ openar(char *afile)
 		if (strcmp(magic, ARMAG)) {
 			fprintf(stderr,
 			        "ar:%s:invalid magic number '%s'\n",
-			        afile,
+			        arfile,
 			        magic);
 			exit(1);
 		}
@@ -448,19 +451,19 @@ run(FILE *fp, FILE *tmp1, FILE *tmp2,
 }
 
 static void
-closetmp(FILE *tmp, char **name, char *afile)
+closetmp(FILE *tmp, char **name, int save)
 {
 	int c;
 	FILE *fp;
 
 	if (lflag) {
-		if (afile && rename(*name, afile) < 0) {
+		if (save && rename(*name, arfile) < 0) {
 			perror("ar:renaming temporary");
 			exit(1);
 		}
 		*name = NULL;
-	} else if (afile) {
-		if ((fp = fopen(afile, "wb")) == NULL) {
+	} else if (save) {
+		if ((fp = fopen(arfile, "wb")) == NULL) {
 			perror("ar:reopening archive file");
 			exit(1);
 		}
@@ -500,12 +503,13 @@ opentmp(char *fname, char **dst)
 static void
 usage(void)
 {
-	fputs("ar [-drqtpmx][posname] [-vuaibcl] [posname] afile name ...\n", stderr);
+	fputs("ar [-drqtpmx][posname] [-vuaibcl] [posname] arfile name ...\n",
+	      stderr);
 	exit(1);
 }
 
 static void
-doit(int key, char *afile, FILE *fp, char *flist[])
+doit(int key, FILE *fp, char *flist[])
 {
 	FILE *tmp1, *tmp2;
 
@@ -532,8 +536,8 @@ doit(int key, char *afile, FILE *fp, char *flist[])
 		fseek(tmp1, SARMAG, SEEK_SET);
 		tmp2 = opentmp("ar.tmp2", &tmpafile2);
 		run(tmp1, tmp2, NULL, flist, insert);
-		closetmp(tmp1, &tmpafile1, NULL);
-		closetmp(tmp2, &tmpafile2, afile);
+		closetmp(tmp1, &tmpafile1, NOSAVE);
+		closetmp(tmp2, &tmpafile2, SAVE);
 		break;
 	case 'q':
 		append(fp, flist);
@@ -541,7 +545,7 @@ doit(int key, char *afile, FILE *fp, char *flist[])
 	case 'd':
 		tmp1 = opentmp("ar.tmp", &tmpafile1);
 		run(fp, tmp1, NULL, flist, del);
-		closetmp(tmp1, &tmpafile1, afile);
+		closetmp(tmp1, &tmpafile1, SAVE);
 		break;
 	case 't':
 		run(fp, NULL, NULL, flist, list);
@@ -557,7 +561,7 @@ doit(int key, char *afile, FILE *fp, char *flist[])
 		tmp2 = opentmp("ar.tmp2", &tmpafile2);
 		run(fp, tmp1, tmp2, flist, split);
 
-		fp = openar(afile);
+		fp = openar();
 		fseek(tmp1, SARMAG, SEEK_SET);
 		fseek(tmp2, SARMAG, SEEK_SET);
 		if (!posname) {
@@ -565,8 +569,8 @@ doit(int key, char *afile, FILE *fp, char *flist[])
 			break;
 		}
 		run(tmp1, fp, tmp2, NULL, merge);
-		closetmp(tmp1, &tmpafile1, NULL);
-		closetmp(tmp2, &tmpafile2, NULL);
+		closetmp(tmp1, &tmpafile1, NOSAVE);
+		closetmp(tmp2, &tmpafile2, NOSAVE);
 		break;
 	}
 	if (*flist == NULL)
@@ -581,7 +585,6 @@ int
 main(int argc, char *argv[])
 {
 	int key, nkey = 0, pos = 0;
-	char *afile;
 
 	atexit(cleanup);
 	ARGBEGIN {
@@ -647,8 +650,8 @@ main(int argc, char *argv[])
 	signal(SIGQUIT, sigfun);
 	signal(SIGTERM, sigfun);
 
-	afile = *argv;
-	doit(key, afile, openar(afile), argv+1);
+	arfile = *argv;
+	doit(key, openar(), argv+1);
 
 	if (fflush(stdout) == EOF) {
 		perror("ar:error writing to stdout");
