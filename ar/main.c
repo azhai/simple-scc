@@ -92,15 +92,15 @@ archive(char *fname, FILE *to, char letter)
 		printf("%c - %s\n", letter, fname);
 	if (strlen(fname) > 16)
 		fprintf(stderr, "ar:%s: too long name\n", fname);
-	if (stat(fname, &st) < 0) {
-		fprintf(stderr, "ar:error getting '%s' attributes\n", fname);
-		exit(1);
-	}
 	if ((from = fopen(fname, "rb")) == NULL) {
 		fprintf(stderr,
 		        "ar:opening member '%s':%s\n",
 		        fname,
 		        strerror(errno));
+		exit(1);
+	}
+	if (stat(fname, &st) < 0) {
+		fprintf(stderr, "ar:error getting '%s' attributes\n", fname);
 		exit(1);
 	}
 	strftime(mtime, sizeof(mtime), "%s", gmtime(&st.st_mtime));
