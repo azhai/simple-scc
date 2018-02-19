@@ -1,7 +1,6 @@
 #!/bin/sh
 
-exec >> test.log
-exec 2>> test.log
+exec >> test.log 2>&1
 
 set -e
 
@@ -87,7 +86,8 @@ rm -f file1 file2 file3
 ############################################################################
 #stress quick append
 
-for i in `awk '{for (i=0; i <999; ++i) print $i}``
+for i in `awk 'BEGIN {for (i=0; i <999; ++i) print i}'`
 do
-	ar -qv file.a $i
+	touch file-$i
+	ar -qv file.a file-$i
 done
