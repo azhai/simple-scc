@@ -9,4 +9,6 @@ tests:
 	SCCPREFIX=$(ROOTDIR) PATH=$(ROOTDIR)/bin:$$PATH ./chktest.sh
 
 clean :
-	rm -f *.a
+	rm -f *.a test.log
+	rm -f file*
+	rm -f *.dst
