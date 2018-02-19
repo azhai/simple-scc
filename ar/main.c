@@ -15,7 +15,7 @@ static char sccsid[] = "@(#) ./ar/main.c";
 
 char *argv0;
 
-static int bflag, iflag, vflag, cflag, lflag, uflag, aflag, haslist;
+static int bflag, vflag, cflag, lflag, uflag, aflag, haslist;
 static char *posname, *tmpafile1, *tmpafile2;
 
 struct arop {
@@ -238,7 +238,7 @@ merge(struct arop *op, char *list[])
 	while ((c = getc(op->tmp)) != EOF)
 		putc(c, op->dst);
 
-	if (bflag || iflag)
+	if (bflag)
 		copy(&op->hdr, op->size, op->src, op->dst);
 }
 
@@ -256,7 +256,7 @@ insert(struct arop *op, char *list[])
 	for ( ; *list; ++list)
 		archive(*list, op->dst, 'a');
 
-	if (bflag || iflag)
+	if (bflag)
 		copy(&op->hdr, op->size, op->src, op->dst);
 }
 
@@ -618,13 +618,9 @@ main(int argc, char *argv[])
 		pos++;
 		posname = EARGF(usage());
 		break;
+	case 'i':
 	case 'b':
 		bflag = 1;
-		pos++;
-		posname = EARGF(usage());
-		break;
-	case 'i':
-		iflag = 1;
 		pos++;
 		posname = EARGF(usage());
 		break;
