@@ -4,12 +4,7 @@ exec >> test.log 2>&1
 
 set -e
 
-TZ=UTC
-tmp1=`mktemp`
-tmp2=`mktemp`
-pwd=$PWD
-
-trap "rm -f $tmp1 $tmp2 file.a;\
+trap "rm -f file.a;\
       rm -f *.tst" 0 2 3
 
 ###########################################################################

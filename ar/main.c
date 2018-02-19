@@ -518,7 +518,8 @@ doit(int key, char *afile, FILE *fp, char *flist[])
 {
 	FILE *tmp1, *tmp2;
 
-	if (*flist == NULL && (key == 'r' || key == 'd' || key == 'm')) {
+	if (*flist == NULL &&
+	    (key == 'r' || key == 'd' || key == 'm' || key == 'q')) {
 		if (fclose(fp) == EOF) {
 			perror("ar:early close of archive file");
 			exit(-1);
