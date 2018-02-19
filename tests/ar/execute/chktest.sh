@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ttyflags=`stty -g`
-trap "stty $ttyflags;tabs -8;rm -f a.out; exit 1" 0 2 3 15
+trap "stty $ttyflags;tabs -8" 0 2 3 15
 stty tabs
 tabs 40
 ulimit -c 40
