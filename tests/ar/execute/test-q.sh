@@ -67,9 +67,9 @@ cmp $tmp1 $tmp2
 
 ar -tv file.a >$tmp1
 cat <<! >$tmp2
-rw-r--r-- 1000/100	Tue Jan  1 00:00:00 1980 file1
-rw-r--r-- 1000/100	Tue Jan  1 00:00:00 1980 file2
-rw-r--r-- 1000/100	Tue Jan  1 00:00:00 1980 file3
+rw-r--r-- `id -u`/`id -g`	Tue Jan  1 00:00:00 1980 file1
+rw-r--r-- `id -u`/`id -g`	Tue Jan  1 00:00:00 1980 file2
+rw-r--r-- `id -u`/`id -g`	Tue Jan  1 00:00:00 1980 file3
 !
 
 cmp $tmp1 $tmp2
