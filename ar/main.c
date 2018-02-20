@@ -508,10 +508,11 @@ usage(void)
 }
 
 static void
-doit(int key, FILE *fp, char *flist[])
+doit(int key, char *flist[])
 {
-	FILE *tmp1, *tmp2;
+	FILE *tmp1, *tmp2, *fp;
 
+	fp = openar();
 	if (*flist == NULL &&
 	    (key == 'r' || key == 'd' || key == 'm' || key == 'q')) {
 		if (fclose(fp) == EOF) {
@@ -650,7 +651,7 @@ main(int argc, char *argv[])
 	signal(SIGTERM, sigfun);
 
 	arfile = *argv;
-	doit(key, openar(), argv+1);
+	doit(key, argv+1);
 
 	if (fflush(stdout) == EOF) {
 		perror("ar:error writing to stdout");
