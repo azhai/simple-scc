@@ -1,5 +1,7 @@
 static char sccsid[] = "@(#) ./cc2/arch/z80/cgen.c";
 
+#include <stdlib.h>
+
 #include "arch.h"
 #include "../../../inc/scc.h"
 #include "../../cc2.h"
@@ -10,13 +12,30 @@ swtch(Node *idx)
 }
 
 static Node *
-lhs(Node *np, Node *ret)
+rhs(Node *np, Node *ret)
 {
 }
 
 static Node *
-rhs(Node *np, Node *ret)
+field(Node *np, Node *ret, int islhs)
 {
+}
+
+static Node *
+lhs(Node *np, Node *new)
+{
+	switch (np->op) {
+	case OMEM:
+	case OAUTO:
+		*new = *np;
+		return new;
+	case OPTR:
+		return rhs(np->left, new);
+	case OFIELD:
+		return field(np, new, 1);
+	default:
+		abort();
+	}
 }
 
 static void
