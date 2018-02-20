@@ -22,6 +22,32 @@ rhs(Node *np, Node *ret)
 static void
 bool(Node *np, Symbol *true, Symbol *false)
 {
+	Node *l = np->left, *r = np->right;
+	Node ret, ifyes, ifno;
+	Symbol *label;
+
+	switch (np->op) {
+	case ONEG:
+		bool(l, false, true);
+		break;
+	case OAND:
+		label = newlabel();
+		bool(l, label, false);
+		setlabel(label);
+		bool(r, true, false);
+		break;
+	case OOR:
+		label = newlabel();
+		bool(l, true, label);
+		setlabel(label);
+		bool(r, true, false);
+		break;
+	default:
+		label2node(&ifyes, true);
+		label2node(&ifno, false);
+		code(ASBRANCH, rhs(np, &ret), &ifyes, &ifno);
+		break;
+	}
 }
 
 Node *
