@@ -399,6 +399,9 @@ run(FILE *fp, int argc, char *argv[],
 {
 	struct member op;
 
+	op.src = fp;
+	op.cur = BEFORE;
+
 	while (fread(&op.hdr, sizeof(op.hdr), 1, fp) == 1) {
 		fpos_t pos;
 
