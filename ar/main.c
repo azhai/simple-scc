@@ -538,7 +538,7 @@ doit(int key, char *argv[], int argc)
 
 	for ( ; argc-- > 0; ++argv) {
 		if (*argv) {
-			fprintf(stderr, "ar: No member named '%s\n", *argv);
+			fprintf(stderr, "ar: No member named '%s'\n", *argv);
 			exit(1);
 		}
 	}
