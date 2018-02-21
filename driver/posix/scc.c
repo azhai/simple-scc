@@ -16,6 +16,7 @@ static char sccsid[] = "@(#) ./driver/posix/scc.c";
 #include "config.h"
 #include "../../inc/arg.h"
 #include "../../inc/scc.h"
+#include "../../inc/syscrts.h"
 #include "../../inc/sysincludes.h"
 #include "../../inc/syslibs.h"
 #include "../../inc/ldflags.h"
@@ -143,6 +144,11 @@ inittool(int tool)
 		for (n = 0; syslibs[n]; ++n) {
 			addarg(tool, "-L");
 			addarg(tool, syslibs[n]);
+		}
+		if (syscrts[0]) {
+			for (n = 0; syscrts[n]; ++n)
+				addarg(tool, syscrts[n]);
+			break;
 		}
 		n = snprintf(NULL, 0,
 		             "%s/lib/scc/crt/%s-%s-%s/crt.o",
