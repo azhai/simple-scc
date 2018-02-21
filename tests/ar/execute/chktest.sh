@@ -29,7 +29,7 @@ that should go at the end of the file,
 thus it should go in the third position.
 EOF
 
-for i in *-test*.sh
+for i in *-*.sh
 do
 	printf "Test: %s\n\n" $i >> test.log
 	printf "%s\t" $i
