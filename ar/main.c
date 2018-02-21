@@ -161,17 +161,17 @@ append(FILE *fp, char *argv[])
 }
 
 static void
-copy(struct member *op, struct tmp *tmp)
+copy(struct member *m, struct tmp *tmp)
 {
 	int c;
-	size_t siz = op->size;
-	struct ar_hdr *hdr = &op->hdr;
+	size_t siz = m->size;
+	struct ar_hdr *hdr = &m->hdr;
 
 	fwrite(hdr, sizeof(*hdr), 1, tmp->fp);
 	if ((siz & 1) == 1)
 		siz++;
 	while (siz--) {
-		if ((c = getc(op->src)) == EOF)
+		if ((c = getc(m->src)) == EOF)
 			break;
 		fputc(c, tmp->fp);
 	}
@@ -186,13 +186,13 @@ letters(unsigned long val, char *s)
 }
 
 static char *
-perms(struct member *op)
+perms(struct member *m)
 {
 	static char buf[10];
 
-	letters(op->mode >> 6, buf);
-	letters(op->mode >> 3, buf+3);
-	letters(op->mode, buf +6);
+	letters(m->mode >> 6, buf);
+	letters(m->mode >> 3, buf+3);
+	letters(m->mode, buf +6);
 	buf[9] = '\0';
 
 	return buf;
@@ -211,21 +211,21 @@ inlist(char *fname, int argc, char *argv[])
 }
 
 static void
-move(struct member *op, int argc, char *argv[])
+move(struct member *m, int argc, char *argv[])
 {
 	int where;
 
-	if (inlist(op->fname, argc, argv)) {
+	if (inlist(m->fname, argc, argv)) {
 		if (vflag)
-			printf("m - %s\n", op->fname);
+			printf("m - %s\n", m->fname);
 		where = INDOT;
-	} else if (posname && !strcmp(posname, op->fname)) {
+	} else if (posname && !strcmp(posname, m->fname)) {
 		where = (bflag) ? AFTER : BEFORE;
-		op->cur = AFTER;
+		m->cur = AFTER;
 	} else {
-		where = op->cur;
+		where = m->cur;
 	}
-	copy(op, &tmps[where]);
+	copy(m, &tmps[where]);
 }
 
 static void
@@ -238,44 +238,44 @@ insert(int argc, char *argv[])
 }
 
 static void
-update(struct member *op, int argc, char *argv[])
+update(struct member *m, int argc, char *argv[])
 {
 	int where;
 	FILE *fp = tmps[BEFORE].fp;
 
-	if (inlist(op->fname, argc, argv)) {
+	if (inlist(m->fname, argc, argv)) {
 		if (vflag)
-			printf("r - %s\n", op->fname);
-		archive(op->fname, tmps[op->cur].fp, 'r');
+			printf("r - %s\n", m->fname);
+		archive(m->fname, tmps[m->cur].fp, 'r');
 		return;
-	} else if (posname && !strcmp(posname, op->fname)) {
+	} else if (posname && !strcmp(posname, m->fname)) {
 		where = (bflag) ? AFTER : BEFORE;
-		op->cur = AFTER;
+		m->cur = AFTER;
 	} else {
-		where = op->cur;
+		where = m->cur;
 	}
-	copy(op, &tmps[where]);
+	copy(m, &tmps[where]);
 }
 
 static void
-extract(struct member *op, int argc, char *argv[])
+extract(struct member *m, int argc, char *argv[])
 {
 	int c;
 	long siz;
 	FILE *fp;
 
-	if (argc > 0 && !inlist(op->fname, argc, argv))
+	if (argc > 0 && !inlist(m->fname, argc, argv))
 		return;
 	if (vflag)
-		printf("x - %s\n", op->fname);
-	siz = op->size;
+		printf("x - %s\n", m->fname);
+	siz = m->size;
 
-	if ((fp = fopen(op->fname, "wb")) == NULL)
+	if ((fp = fopen(m->fname, "wb")) == NULL)
 		goto error_file;
-	while (siz-- > 0 && (c = getc(op->src)) != EOF)
+	while (siz-- > 0 && (c = getc(m->src)) != EOF)
 		putc(c, fp);
 	fflush(fp);
-	if (fclose(op->src) == EOF || ferror(fp))
+	if (fclose(m->src) == EOF || ferror(fp))
 		goto error_file;
 
 	/* TODO: set attributes */
@@ -288,52 +288,52 @@ error_file:
 }
 
 static void
-print(struct member *op, int argc, char *argv[])
+print(struct member *m, int argc, char *argv[])
 {
 	long siz;
 	int c;
 
-	if (argc > 0 && !inlist(op->fname, argc, argv))
+	if (argc > 0 && !inlist(m->fname, argc, argv))
 		return;
 	if (vflag)
-		printf("\n<%s>\n\n", op->fname);
-	siz = op->size;
-	while (siz-- > 0 && (c = getc(op->src)) != EOF)
+		printf("\n<%s>\n\n", m->fname);
+	siz = m->size;
+	while (siz-- > 0 && (c = getc(m->src)) != EOF)
 		putchar(c);
 }
 
 static void
-list(struct member *op, int argc, char *argv[])
+list(struct member *m, int argc, char *argv[])
 {
 	time_t t;
-	struct ar_hdr *hdr = &op->hdr;
+	struct ar_hdr *hdr = &m->hdr;
 	char mtime[30];
 
-	if (argc > 0  && !inlist(op->fname, argc, argv))
+	if (argc > 0  && !inlist(m->fname, argc, argv))
 		return;
 	if (!vflag) {
-		printf("%s\n", op->fname);
+		printf("%s\n", m->fname);
 	} else {
-		t = totime(op->date);
+		t = totime(m->date);
 		strftime(mtime, sizeof(mtime), "%c", localtime(&t));
 		printf("%s %ld/%ld\t%s %s\n",
-		       perms(op),
+		       perms(m),
 		       atol(hdr->ar_uid),
 		       atol(hdr->ar_gid),
 		       mtime,
-		       op->fname);
+		       m->fname);
 	}
 }
 
 static void
-del(struct member *op, int argc, char *argv[])
+del(struct member *m, int argc, char *argv[])
 {
-	if (inlist(op->fname, argc, argv)) {
+	if (inlist(m->fname, argc, argv)) {
 		if (vflag)
-			printf("d - %s\n", op->fname);
+			printf("d - %s\n", m->fname);
 		return;
 	}
-	copy(op, &tmps[BEFORE]);
+	copy(m, &tmps[BEFORE]);
 }
 
 static char *
@@ -377,17 +377,17 @@ getnum(char *s, int size, int base)
 }
 
 static int
-valid(struct member *op)
+valid(struct member *m)
 {
-	struct ar_hdr *hdr = &op->hdr;
+	struct ar_hdr *hdr = &m->hdr;
 
-	op->fname = getfname(&op->hdr);
-	op->size = getnum(hdr->ar_size, sizeof(hdr->ar_size), 10);
-	op->mode = getnum(hdr->ar_mode, sizeof(hdr->ar_mode), 8);
-	op->date = getnum(hdr->ar_date, sizeof(hdr->ar_date), 10);
+	m->fname = getfname(&m->hdr);
+	m->size = getnum(hdr->ar_size, sizeof(hdr->ar_size), 10);
+	m->mode = getnum(hdr->ar_mode, sizeof(hdr->ar_mode), 8);
+	m->date = getnum(hdr->ar_date, sizeof(hdr->ar_date), 10);
 
 	if (strncmp(hdr->ar_fmag, ARFMAG, sizeof(hdr->ar_fmag)) ||
-	    op->size < 0 || op->mode < 0 || op->date < 0) {
+	    m->size < 0 || m->mode < 0 || m->date < 0) {
 		return 0;
 	}
 	return 1;
@@ -397,25 +397,25 @@ static void
 run(FILE *fp, int argc, char *argv[],
     void (*fun)(struct member *, int argc, char *files[]))
 {
-	struct member op;
+	struct member m;
 
-	op.src = fp;
-	op.cur = BEFORE;
+	m.src = fp;
+	m.cur = BEFORE;
 
-	while (fread(&op.hdr, sizeof(op.hdr), 1, fp) == 1) {
+	while (fread(&m.hdr, sizeof(m.hdr), 1, fp) == 1) {
 		fpos_t pos;
 
-		if (!valid(&op)) {
+		if (!valid(&m)) {
 			fprintf(stderr,
 			        "ar:corrupted member '%s'\n",
-			        op.fname);
+			        m.fname);
 			exit(1);
 		}
 		/* TODO: Implement early break */
 		fgetpos(fp, &pos);
-		(*fun)(&op, argc, argv);
+		(*fun)(&m, argc, argv);
 		fsetpos(fp, &pos);
-		fseek(fp, op.size+1 & ~1, SEEK_CUR);
+		fseek(fp, m.size+1 & ~1, SEEK_CUR);
 	}
 	if (ferror(fp) || fclose(fp) == EOF) {
 		perror("ar:reading members");
