@@ -22,17 +22,49 @@ file1
 EOF
 
 cmp $tmp1 $tmp2
+
 ############################################################################
 #move 1st at the end
 
 cp master.a file.a
 ar -mv -a file3 file.a file1
-at -t file.a > $tmp1
+ar -t file.a > $tmp1
 
 cat <<EOF > $tmp2
 file2
 file3
 file1
+EOF
+
+cmp $tmp1 $tmp2
+
+
+############################################################################
+#move 3rd at the beginning
+
+cp master.a file.a
+ar -mv -i file1 file.a file3
+ar -t file.a > $tmp1
+
+cat <<EOF > $tmp2
+file3
+file1
+file2
+EOF
+
+cmp $tmp1 $tmp2
+
+############################################################################
+#and now, test without parameters
+
+cp master.a file.a
+ar -mv file.a
+ar -t file.a > $tmp1
+
+cat <<EOF > $tmp2
+file1
+file2
+file3
 EOF
 
 cmp $tmp1 $tmp2
