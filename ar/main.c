@@ -438,7 +438,7 @@ merge(void)
 		exit(1);
 	}
 
-	fwrite(ARMAG, sizeof(ARMAG), 1, fp);
+	fputs(ARMAG, fp);
 
 	for (i = 0; i < 3; i++) {
 		fi = tmps[i].fp;
