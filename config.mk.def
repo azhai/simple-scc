@@ -22,7 +22,7 @@ DRIVER = posix
 STD = c99
 
 # paths
-PREFIX    = $(HOME)
+PREFIX    = $(PWD)/$(PROJECTDIR)/rootdir
 MANPREFIX = $(PREFIX)/share/man
 
 # scc expects to be built by a C99 compiler
