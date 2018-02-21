@@ -9,6 +9,7 @@ OBJ = scc.o
 HDR = config.h \
       $(PROJECTDIR)/inc/scc.h \
       $(PROJECTDIR)/inc/arg.h \
+      $(PROJECTDIR)/inc/sysincludes.h \
       $(PROJECTDIR)/inc/syslibs.h \
       $(PROJECTDIR)/inc/ldflags.h
 

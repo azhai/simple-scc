@@ -16,6 +16,7 @@ static char sccsid[] = "@(#) ./driver/posix/scc.c";
 #include "config.h"
 #include "../../inc/arg.h"
 #include "../../inc/scc.h"
+#include "../../inc/sysincludes.h"
 #include "../../inc/syslibs.h"
 #include "../../inc/ldflags.h"
 
@@ -118,6 +119,10 @@ inittool(int tool)
 
 	switch (tool) {
 	case CC1:
+		for (n = 0; sysincludes[n]; ++n) {
+			addarg(tool, "-I");
+			addarg(tool, sysincludes[n]);
+		}
 	case CC2:
 		fmt = (qbe(tool)) ? "%s-qbe_%s-%s" : "%s-%s-%s";
 		n = snprintf(t->bin, sizeof(t->bin), fmt, t->cmd, arch, abi);
