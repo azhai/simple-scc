@@ -216,6 +216,8 @@ move(struct member *op, int argc, char *argv[])
 	int where;
 
 	if (inlist(op->fname, argc, argv)) {
+		if (vflag)
+			printf("m - %s\n", op->fname);
 		where = INDOT;
 	} else if (posname && !strcmp(posname, op->fname)) {
 		where = (bflag) ? AFTER : BEFORE;
@@ -227,12 +229,23 @@ move(struct member *op, int argc, char *argv[])
 }
 
 static void
+insert(int argc, char *argv[])
+{
+	for (; argc-- > 0; ++argv) {
+		archive(*argv, tmps[INDOT].fp, 'r');
+		*argv = NULL;
+	}
+}
+
+static void
 update(struct member *op, int argc, char *argv[])
 {
 	int where;
 	FILE *fp = tmps[BEFORE].fp;
 
 	if (inlist(op->fname, argc, argv)) {
+		if (vflag)
+			printf("r - %s\n", op->fname);
 		archive(op->fname, tmps[op->cur].fp, 'r');
 		return;
 	} else if (posname && !strcmp(posname, op->fname)) {
@@ -491,6 +504,7 @@ doit(int key, char *argv[], int argc)
 	switch (key) {
 	case 'r':
 		run(fp, argc, argv, update);
+		insert(argc, argv);
 		merge();
 		break;
 	case 'm':
