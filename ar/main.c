@@ -435,7 +435,7 @@ merge(void)
 		exit(1);
 	}
 
-	fwrite(ARFMAG, sizeof(ARFMAG), 1, fp);
+	fwrite(ARMAG, sizeof(ARFMAG), 1, fp);
 
 	for (i = 0; i < 3; i++) {
 		fi = tmps[i].fp;
