@@ -8,10 +8,10 @@ tmp1=`mktemp`
 tmp2=`mktemp`
 trap "rm -f file* $tmp1 $tmp2" 0 2 3
 
-cp master.a file.a
 ############################################################################
 #move 1st without specifier
 
+cp master.a file.a
 ar -mv file.a file1
 ar -t file.a > $tmp1
 
