@@ -16,16 +16,26 @@ static char sccsid[] = "@(#) ./ar/main.c";
 #define NOSAVE 0
 #define SAVE   1
 
+enum {
+	BEFORE,
+	INDOT,
+	AFTER,
+};
+
+struct tmp {
+	char *name;
+	FILE *fp;
+} tmps[3];
+
 char *argv0;
 
-static int bflag, vflag, cflag, lflag, uflag, aflag, haslist;
-static char *posname, *tmpafile1, *tmpafile2, *arfile;
+static int bflag, vflag, cflag, lflag, uflag, aflag;
+static char *arfile, *posname;
 
-struct arop {
+struct member {
 	FILE *src;
-	FILE *dst;
-	FILE *tmp;
 	struct ar_hdr hdr;
+	int cur;
 	char *fname;
 	long size;
 	long mode;
@@ -35,10 +45,12 @@ struct arop {
 static void
 cleanup(void)
 {
-	if (tmpafile1)
-		remove(tmpafile1);
-	if (tmpafile2)
-		remove(tmpafile2);
+	int i;
+
+	for (i = 0; i < 3; i++) {
+		if (tmps[i].name)
+			remove(tmps[i].name);
+	}
 }
 
 static void
@@ -128,7 +140,7 @@ archive(char *fname, FILE *to, char letter)
 }
 
 static void
-append(FILE *fp, char *list[])
+append(FILE *fp, char *argv[])
 {
 	char *fname;
 
@@ -137,8 +149,8 @@ append(FILE *fp, char *list[])
 		exit(1);
 	}
 
-	for ( ; fname = *list; ++list) {
-		*list = NULL;
+	for ( ; fname = *argv; ++argv) {
+		*argv = NULL;
 		archive(fname, fp, 'a');
 	}
 
@@ -149,32 +161,19 @@ append(FILE *fp, char *list[])
 }
 
 static void
-cat(FILE *src1, FILE *src2, FILE *dst)
+copy(struct member *op, struct tmp *tmp)
 {
 	int c;
+	size_t siz = op->size;
+	struct ar_hdr *hdr = &op->hdr;
 
-	while ((c = getc(src1)) != EOF)
-		fputc(c, dst);
-	while ((c = getc(src2)) != EOF)
-		fputc(c, dst);
-	if (ferror(src1) || ferror(src2) || fclose(dst) == EOF) {
-		perror("ar:moving files in archive");
-		exit(1);
-	}
-}
-
-static void
-copy(struct ar_hdr *hdr, long siz, FILE *src, FILE *dst)
-{
-	int c;
-
-	fwrite(hdr, sizeof(*hdr), 1, dst);
+	fwrite(hdr, sizeof(*hdr), 1, tmp->fp);
 	if ((siz & 1) == 1)
 		siz++;
 	while (siz--) {
-		if ((c = getc(src)) == EOF)
+		if ((c = getc(op->src)) == EOF)
 			break;
-		fputc(c, dst);
+		fputc(c, tmp->fp);
 	}
 }
 
@@ -187,7 +186,7 @@ letters(unsigned long val, char *s)
 }
 
 static char *
-perms(struct arop *op)
+perms(struct member *op)
 {
 	static char buf[10];
 
@@ -200,87 +199,59 @@ perms(struct arop *op)
 }
 
 static int
-inlist(char *fname, char *list[])
+inlist(char *fname, int argc, char *argv[])
 {
-	while (*list && strcmp(*list, fname))
-		++list;
-	if (*list == NULL)
-		return 0;
-	for (; *list; ++list)
-		list[0] = list[1];
-	return 1;
+	for (; argc-- > 0; ++argv) {
+		if (!strcmp(*argv, fname)) {
+			*argv = NULL;
+			return 1;
+		}
+	}
+	return 0;
 }
 
 static void
-split(struct arop *op, char *files[])
+move(struct member *op, int argc, char *argv[])
 {
-	if (!inlist(op->fname, files)) {
-		copy(&op->hdr, op->size, op->src, op->dst);
-		return;
+	int where;
+
+	if (inlist(op->fname, argc, argv)) {
+		where = INDOT;
+	} else if (posname && !strcmp(posname, op->fname)) {
+		where = (bflag) ? AFTER : BEFORE;
+		op->cur = AFTER;
 	} else {
-		if (vflag)
-			printf("m - %s\n", op->fname);
-		copy(&op->hdr, op->size, op->src, op->tmp);
+		where = op->cur;
 	}
+	copy(op, &tmps[where]);
 }
 
 static void
-merge(struct arop *op, char *list[])
+update(struct member *op, int argc, char *argv[])
 {
-	int c;
+	int where;
+	FILE *fp = tmps[BEFORE].fp;
 
-	if (strcmp(op->fname, posname)) {
-		copy(&op->hdr, op->size, op->src, op->dst);
+	if (inlist(op->fname, argc, argv)) {
+		archive(op->fname, tmps[op->cur].fp, 'r');
 		return;
+	} else if (posname && !strcmp(posname, op->fname)) {
+		where = (bflag) ? AFTER : BEFORE;
+		op->cur = AFTER;
+	} else {
+		where = op->cur;
 	}
-
-	if (aflag)
-		copy(&op->hdr, op->size, op->src, op->dst);
-
-	while ((c = getc(op->tmp)) != EOF)
-		putc(c, op->dst);
-
-	if (bflag)
-		copy(&op->hdr, op->size, op->src, op->dst);
+	copy(op, &tmps[where]);
 }
 
 static void
-insert(struct arop *op, char *list[])
-{
-	if (!posname || strcmp(op->fname, posname)) {
-		copy(&op->hdr, op->size, op->src, op->dst);
-		return;
-	}
-
-	if (aflag)
-		copy(&op->hdr, op->size, op->src, op->dst);
-
-	for ( ; *list; ++list)
-		archive(*list, op->dst, 'a');
-
-	if (bflag)
-		copy(&op->hdr, op->size, op->src, op->dst);
-}
-
-static void
-update(struct arop *op, char *files[])
-{
-	char **l;
-
-	if (!inlist(op->fname, files))
-		copy(&op->hdr, op->size, op->src, op->dst);
-	else
-		archive(op->fname, op->dst, 'r');
-}
-
-static void
-extract(struct arop *op, char *files[])
+extract(struct member *op, int argc, char *argv[])
 {
 	int c;
 	long siz;
 	FILE *fp;
 
-	if (haslist && !inlist(op->fname, files))
+	if (argc > 0 && !inlist(op->fname, argc, argv))
 		return;
 	if (vflag)
 		printf("x - %s\n", op->fname);
@@ -291,9 +262,8 @@ extract(struct arop *op, char *files[])
 	while (siz-- > 0 && (c = getc(op->src)) != EOF)
 		putc(c, fp);
 	fflush(fp);
-	if (ferror(op->src) || ferror(fp))
+	if (fclose(op->src) == EOF || ferror(fp))
 		goto error_file;
-	fclose(fp);
 
 	/* TODO: set attributes */
 	return;
@@ -305,12 +275,12 @@ error_file:
 }
 
 static void
-print(struct arop *op, char *files[])
+print(struct member *op, int argc, char *argv[])
 {
 	long siz;
 	int c;
 
-	if (haslist && !inlist(op->fname, files))
+	if (argc > 0 && !inlist(op->fname, argc, argv))
 		return;
 	if (vflag)
 		printf("\n<%s>\n\n", op->fname);
@@ -320,13 +290,13 @@ print(struct arop *op, char *files[])
 }
 
 static void
-list(struct arop *op, char *files[])
+list(struct member *op, int argc, char *argv[])
 {
 	time_t t;
 	struct ar_hdr *hdr = &op->hdr;
 	char mtime[30];
 
-	if (haslist && !inlist(op->fname, files))
+	if (argc > 0  && !inlist(op->fname, argc, argv))
 		return;
 	if (!vflag) {
 		printf("%s\n", op->fname);
@@ -343,14 +313,14 @@ list(struct arop *op, char *files[])
 }
 
 static void
-del(struct arop *op, char *files[])
+del(struct member *op, int argc, char *argv[])
 {
-	if (inlist(op->fname, files)) {
+	if (inlist(op->fname, argc, argv)) {
 		if (vflag)
 			printf("d - %s\n", op->fname);
 		return;
 	}
-	copy(&op->hdr, op->size, op->src, op->dst);
+	copy(op, &tmps[BEFORE]);
 }
 
 static char *
@@ -394,7 +364,7 @@ getnum(char *s, int size, int base)
 }
 
 static int
-valid(struct arop *op)
+valid(struct member *op)
 {
 	struct ar_hdr *hdr = &op->hdr;
 
@@ -411,15 +381,12 @@ valid(struct arop *op)
 }
 
 static void
-run(FILE *fp, FILE *tmp1, FILE *tmp2,
-    char *files[], void (*fun)(struct arop *, char *files[]))
+run(FILE *fp, int argc, char *argv[],
+    void (*fun)(struct member *, int argc, char *files[]))
 {
-	struct arop op;
+	struct member op;
 
-	op.src = fp;
-	op.dst = tmp1;
-	op.tmp = tmp2;
-	while (!ferror(fp) && fread(&op.hdr, sizeof(op.hdr), 1, fp) == 1) {
+	while (fread(&op.hdr, sizeof(op.hdr), 1, fp) == 1) {
 		fpos_t pos;
 
 		if (!valid(&op)) {
@@ -430,90 +397,85 @@ run(FILE *fp, FILE *tmp1, FILE *tmp2,
 		}
 		/* TODO: Implement early break */
 		fgetpos(fp, &pos);
-		(*fun)(&op, files);
+		(*fun)(&op, argc, argv);
 		fsetpos(fp, &pos);
 		fseek(fp, op.size+1 & ~1, SEEK_CUR);
 	}
-	if (ferror(fp)) {
+	if (ferror(fp) || fclose(fp) == EOF) {
 		perror("ar:reading members");
 		exit(1);
 	}
-	fclose(fp);
-	if (tmp1 && fflush(tmp1) == EOF) {
-		perror("ar:writing in temporary file");
+}
+
+static void
+merge(void)
+{
+	FILE *fp, *fi;
+	int c, i;
+
+	fseek(tmps[0].fp, 0, SEEK_SET);
+	fseek(tmps[1].fp, 0, SEEK_SET);
+	fseek(tmps[2].fp, 0, SEEK_SET);
+
+	if ((fp = fopen(arfile, "wb")) == NULL) {
+		perror("ar:reopening archive");
 		exit(1);
 	}
-	if (tmp2 && fflush(tmp2) == EOF) {
-		perror("ar:writing in temporary file");
+
+	fwrite(ARFMAG, sizeof(ARFMAG), 1, fp);
+
+	for (i = 0; i < 3; i++) {
+		fi = tmps[i].fp;
+		while ((c = getc(fi)) != EOF)
+			putc(c, fp);
+		if (ferror(fi)) {
+			perror("ar:error in temporary");
+			exit(1);
+		}
+	}
+
+	if (fclose(fp) == EOF) {
+		perror("ar:writing archive file");
 		exit(1);
 	}
 }
 
 static void
-closetmp(FILE *tmp, char **name, int save)
+closetmp(int which)
 {
-	int c;
-	FILE *fp;
+	struct tmp *tmp = &tmps[which];
 
-	if (lflag) {
-		if (save && rename(*name, arfile) < 0) {
-			perror("ar:renaming temporary");
-			exit(1);
-		}
-		*name = NULL;
-	} else if (save) {
-		if ((fp = fopen(arfile, "wb")) == NULL) {
-			perror("ar:reopening archive file");
-			exit(1);
-		}
-		rewind(tmp);
-		while ((c = getc(tmp)) != EOF)
-			fputc(c, fp);
-		fflush(fp);
-		if (ferror(fp) || ferror(tmp)) {
-			perror("ar:copying from temporary");
-			exit(1);
-		}
-		fclose(fp);
+	if (fclose(tmp->fp) == EOF) {
+		perror("ar:closing temporaries");
+		exit(1);
 	}
-	fclose(tmp);
 }
 
-static FILE *
-opentmp(char *fname, char **dst)
+static void
+opentmp(char *fname, int which)
 {
-	FILE *tmp;
+	struct tmp *tmp = &tmps[which];
 
 	if (lflag) {
-		*dst = fname;
-		tmp = fopen(fname, "w+b");
+		tmp->name = fname;
+		tmp->fp = fopen(fname, "w+b");
 	} else {
-		tmp = tmpfile();
+		tmp->fp = tmpfile();
 	}
-	if (tmp == NULL) {
+
+	if (tmp->fp == NULL) {
 		perror("ar:creating temporary");
 		exit(1);
 	}
-	fputs(ARMAG, tmp);
-
-	return tmp;
 }
 
 static void
-usage(void)
+doit(int key, char *argv[], int argc)
 {
-	fputs("ar [-drqtpmx][posname] [-vuaibcl] [posname] arfile name ...\n",
-	      stderr);
-	exit(1);
-}
-
-static void
-doit(int key, char *flist[])
-{
-	FILE *tmp1, *tmp2, *fp;
+	FILE *fp;
 
 	fp = openar();
-	if (*flist == NULL &&
+	if (argc == 0 &&
 	    (key == 'r' || key == 'd' || key == 'm' || key == 'q')) {
 		if (fclose(fp) == EOF) {
 			perror("ar:early close of archive file");
@@ -521,63 +483,55 @@ doit(int key, char *flist[])
 		}
 		return;
 	}
-	haslist = *flist != NULL;
+
+	opentmp("ar.tmp1", BEFORE);
+	opentmp("ar.tmp2", INDOT);
+	opentmp("ar.tmp3", AFTER);
 
 	switch (key) {
 	case 'r':
-		tmp1 = opentmp("ar.tmp1", &tmpafile1);
-		run(fp, tmp1, NULL, flist, update);
-
-		if (!posname) {
-			append(tmp1, flist);
-			break;
-		}
-
-		fseek(tmp1, SARMAG, SEEK_SET);
-		tmp2 = opentmp("ar.tmp2", &tmpafile2);
-		run(tmp1, tmp2, NULL, flist, insert);
-		closetmp(tmp1, &tmpafile1, NOSAVE);
-		closetmp(tmp2, &tmpafile2, SAVE);
-		break;
-	case 'q':
-		append(fp, flist);
-		break;
-	case 'd':
-		tmp1 = opentmp("ar.tmp", &tmpafile1);
-		run(fp, tmp1, NULL, flist, del);
-		closetmp(tmp1, &tmpafile1, SAVE);
-		break;
-	case 't':
-		run(fp, NULL, NULL, flist, list);
-		break;
-	case 'p':
-		run(fp, NULL, NULL, flist, print);
-		break;
-	case 'x':
-		run(fp, NULL, NULL, flist, extract);
+		run(fp, argc, argv, update);
+		merge();
 		break;
 	case 'm':
-		tmp1 = opentmp("ar.tmp1", &tmpafile1);
-		tmp2 = opentmp("ar.tmp2", &tmpafile2);
-		run(fp, tmp1, tmp2, flist, split);
-
-		fp = openar();
-		fseek(tmp1, SARMAG, SEEK_SET);
-		fseek(tmp2, SARMAG, SEEK_SET);
-		if (!posname) {
-			cat(tmp1, tmp2, fp);
-			break;
-		}
-		run(tmp1, fp, tmp2, NULL, merge);
-		closetmp(tmp1, &tmpafile1, NOSAVE);
-		closetmp(tmp2, &tmpafile2, NOSAVE);
+		run(fp, argc, argv, move);
+		merge();
+		break;
+	case 'd':
+		run(fp, argc, argv, del);
+		merge();
+		break;
+	case 't':
+		run(fp, argc, argv, list);
+		break;
+	case 'p':
+		run(fp, argc, argv, print);
+		break;
+	case 'x':
+		run(fp, argc, argv, extract);
+		break;
+	case 'q':
+		append(fp, argv);
 		break;
 	}
-	if (*flist == NULL)
-		return;
 
-	while (*flist)
-		fprintf(stderr, "ar: No member named '%s\n", *flist++);
+	closetmp(BEFORE);
+	closetmp(INDOT);
+	closetmp(AFTER);
+
+	for ( ; argc-- > 0; ++argv) {
+		if (*argv) {
+			fprintf(stderr, "ar: No member named '%s\n", *argv);
+			exit(1);
+		}
+	}
+}
+
+static void
+usage(void)
+{
+	fputs("ar [-drqtpmx][posname] [-vuaibcl] [posname] arfile name ...\n",
+	      stderr);
 	exit(1);
 }
 
@@ -651,7 +605,7 @@ main(int argc, char *argv[])
 	signal(SIGTERM, sigfun);
 
 	arfile = *argv;
-	doit(key, argv+1);
+	doit(key, ++argv, --argc);
 
 	if (fflush(stdout) == EOF) {
 		perror("ar:error writing to stdout");
