@@ -202,7 +202,7 @@ static int
 inlist(char *fname, int argc, char *argv[])
 {
 	for (; argc-- > 0; ++argv) {
-		if (!strcmp(*argv, fname)) {
+		if (*argv && !strcmp(*argv, fname)) {
 			*argv = NULL;
 			return 1;
 		}
