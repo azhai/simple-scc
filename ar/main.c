@@ -275,7 +275,7 @@ extract(struct member *m, int argc, char *argv[])
 	while (siz-- > 0 && (c = getc(m->src)) != EOF)
 		putc(c, fp);
 	fflush(fp);
-	if (fclose(m->src) == EOF || ferror(fp))
+	if (fclose(fp) == EOF)
 		goto error_file;
 
 	/* TODO: set attributes */
