@@ -5,8 +5,11 @@ ROOTDIR=$(PROJECTDIR)/rootdir
 
 all: tests
 
-tests:
+tests: master.a
 	PATH=$(ROOTDIR)/bin:$$PATH ./chktest.sh
+
+master.a:
+	./mkmaster.sh
 
 clean:
 	rm -f *.a test.log
