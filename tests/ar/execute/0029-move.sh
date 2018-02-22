@@ -1,7 +1,6 @@
 #!/bin/sh
 
 
-exec >> test.log 2>&1
 
 set -e
 

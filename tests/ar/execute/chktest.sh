@@ -33,5 +33,5 @@ for i in *-*.sh
 do
 	printf "Test: %s\n\n" $i >> test.log
 	printf "%s\t" $i
-	./$i && echo [OK] || echo [FAIL]
+	./$i >> test.log 2>&1 && echo [OK] || echo [FAIL]
 done
