@@ -232,8 +232,10 @@ static void
 insert(int argc, char *argv[])
 {
 	for (; argc-- > 0; ++argv) {
-		archive(*argv, tmps[INDOT].fp, 'r');
-		*argv = NULL;
+		if (*argv) {
+			archive(*argv, tmps[INDOT].fp, 'a');
+			*argv = NULL;
+		}
 	}
 }
 
@@ -244,8 +246,6 @@ update(struct member *m, int argc, char *argv[])
 	FILE *fp = tmps[BEFORE].fp;
 
 	if (inlist(m->fname, argc, argv)) {
-		if (vflag)
-			printf("r - %s\n", m->fname);
 		archive(m->fname, tmps[m->cur].fp, 'r');
 		return;
 	} else if (posname && !strcmp(posname, m->fname)) {
