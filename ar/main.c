@@ -429,9 +429,6 @@ merge(void)
 	FILE *fp, *fi;
 	int c, i;
 
-	fseek(tmps[0].fp, 0, SEEK_SET);
-	fseek(tmps[1].fp, 0, SEEK_SET);
-	fseek(tmps[2].fp, 0, SEEK_SET);
 
 	if ((fp = fopen(arfile, "wb")) == NULL) {
 		perror("ar:reopening archive");
@@ -441,7 +438,9 @@ merge(void)
 	fputs(ARMAG, fp);
 
 	for (i = 0; i < 3; i++) {
-		fi = tmps[i].fp;
+		if ((fi = tmps[i].fp) == NULL)
+			continue;
+		fseek(fi , 0, SEEK_SET);
 		while ((c = getc(fi)) != EOF)
 			putc(c, fp);
 		if (ferror(fi)) {
@@ -461,6 +460,8 @@ closetmp(int which)
 {
 	struct tmp *tmp = &tmps[which];
 
+	if (!tmp->fp)
+		return;
 	if (fclose(tmp->fp) == EOF) {
 		perror("ar:closing temporaries");
 		exit(1);
@@ -500,9 +501,12 @@ doit(int key, char *argv[], int argc)
 		return;
 	}
 
-	opentmp("ar.tmp1", BEFORE);
-	opentmp("ar.tmp2", INDOT);
-	opentmp("ar.tmp3", AFTER);
+	if (key == 'r' || key == 'm' || key == 'd')
+		opentmp("ar.tmp1", BEFORE);
+	if (key == 'r' || key == 'm') {
+		opentmp("ar.tmp2", INDOT);
+		opentmp("ar.tmp3", AFTER);
+	}
 
 	switch (key) {
 	case 'r':
