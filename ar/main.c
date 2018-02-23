@@ -411,7 +411,6 @@ run(FILE *fp, int argc, char *argv[],
 			        m.fname);
 			exit(1);
 		}
-		/* TODO: Implement early break */
 		fgetpos(fp, &pos);
 		(*fun)(&m, argc, argv);
 		fsetpos(fp, &pos);
@@ -440,7 +439,7 @@ merge(void)
 	for (i = 0; i < 3; i++) {
 		if ((fi = tmps[i].fp) == NULL)
 			continue;
-		fseek(fi , 0, SEEK_SET);
+		fseek(fi, 0, SEEK_SET);
 		while ((c = getc(fi)) != EOF)
 			putc(c, fp);
 		if (ferror(fi)) {
