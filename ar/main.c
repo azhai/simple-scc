@@ -13,9 +13,6 @@ static char sccsid[] = "@(#) ./ar/main.c";
 #include "../inc/arg.h"
 #include "../inc/scc.h"
 
-#define NOSAVE 0
-#define SAVE   1
-
 enum {
 	BEFORE,
 	INDOT,
