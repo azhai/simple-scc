@@ -5,7 +5,7 @@ LIBDIR = $(PROJECTDIR)/lib/scc
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
-OBJ       = main.o $(DRIVER)/stat.c
+OBJ       = main.o $(DRIVER)/driver.o
 MOREFLAGS = -I$(DRIVER)
 
 all: ar-$(DRIVER)
@@ -17,12 +17,12 @@ ar-$(DRIVER): $(OBJ) $(LIBDIR)/libscc.a
 
 main.o: $(PROJECTDIR)/inc/scc.h $(PROJECTDIR)/inc/ar.h
 
-$(DRIVER)/stat.o: $(DRIVER)/stat.h
+$(DRIVER)/driver.o: $(DRIVER)/driver.h
 
 $(LIBDIR)/libscc.a: $(LIB-OBJ)
 	+cd $(LIBDIR) && $(MAKE)
 
-main.o: $(DRIVER)/stat.h
+main.o: $(DRIVER)/driver.h
 
 dep:
 clean:

@@ -7,7 +7,7 @@ static char sccsid[] = "@(#) ./ar/main.c";
 #include <string.h>
 #include <time.h>
 
-#include <stat.h>
+#include <driver.h>
 
 #include "../inc/ar.h"
 #include "../inc/arg.h"
