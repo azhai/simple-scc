@@ -24,4 +24,3 @@ atol(const char *s)
 
 	return sign * n;
 }
-
