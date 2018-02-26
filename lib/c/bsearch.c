@@ -15,7 +15,7 @@ bsearch(const void *key, const void *ary, size_t n, size_t size,
 		mid = low + (high - low) / 2;
 		cur = base + mid*size;
 
-		if ((t == (*cmp)(key, cur)) == 0)
+		if ((t = (*cmp)(key, cur)) == 0)
 			return (void *) cur;
 		else if (t > 0)
 			low = mid + 1;
