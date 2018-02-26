@@ -14,14 +14,25 @@ _fpopen(const char * restrict fname,
 
 	flags = rw = bin = 0;
 
-	if (mode[0] == '\0)
+	if (mode[0] == '\0')
 		goto einval;
-	if (mode[i = 1] == '+')
-		i++, rw = 1;
-	if (mode[i] == 'b')
-		i++, bin = 1;
-	if (mode[i] != '\0')
-		goto einval;
+
+	for (i = 1; mode[i]; ++i) {
+		switch (mode[i]) {
+		case '+':
+			if (rw)
+				goto einval;
+			rw = 1;
+			break;
+		case 'b':
+			if (bin)
+				goto einval;
+			bin = 1;
+			break;
+		default:
+			goto einval;
+		}
+	}
 
 	switch (mode[0]) {
 	case 'a':
