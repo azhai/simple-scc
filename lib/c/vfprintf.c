@@ -53,8 +53,8 @@ getnum(va_list va, int flags, int *sign)
 		val = va_arg(va, long);
 		uval = (unsigned long) val;
 	} else if (flags & LLONG) {
-		val = uval = va_arg(va, long long);
-		uval = (unsigned long long) uval;
+		val = va_arg(va, long long);
+		uval = (unsigned long long) val;
 	} else if (flags & SIZET) {
 		uval = va_arg(va, size_t);
 	} else if (flags & INTMAX) {
