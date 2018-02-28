@@ -203,6 +203,8 @@ redcl(Symbol *sym, Type *tp, int sclass)
 		       name);
 		break;
 	case TYPEDEF:
+		/* Only C11 allows multiple definitions of a typedef. */
+		goto redeclaration;
 	case EXTERN:
 		break;
 	case STATIC:
