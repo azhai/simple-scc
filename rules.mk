@@ -1,5 +1,7 @@
 include $(PROJECTDIR)/config.mk
 
+INCDIR  = $(PROJECTDIR)/inc/
+
 SCC_CFLAGS = $(MOREFLAGS) \
              $(SYSCFLAGS) \
              -g \

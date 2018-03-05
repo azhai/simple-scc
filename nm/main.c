@@ -10,33 +10,17 @@ static char sccsid[] = "@(#) ./nm/main.c";
 
 #include "../inc/arg.h"
 #include "../inc/scc.h"
-#include "../inc/myro.h"
 #include "../inc/ar.h"
+#include "nm.h"
 
 char *argv0;
-char *strings;
-static int radix = 16;
-static int Pflag;
-static int Aflag;
-static int vflag;
-static int gflag;
-static int uflag;
-static int arflag;
-
-static int
-object(char *fname, FILE *fp)
-{
-	char magic[MYROMAGIC_SIZ];
-	fpos_t pos;
-
-	fgetpos(fp, &pos);
-	fread(magic, sizeof(magic), 1, fp);
-	fsetpos(fp, &pos);
-
-	if (!ferror(fp) && !strncmp(magic, MYROMAGIC, MYROMAGIC_SIZ))
-		return 1;
-	return 0;
-}
+int radix = 16;
+int Pflag;
+int Aflag;
+int vflag;
+int gflag;
+int uflag;
+int arflag;
 
 static int
 archive(char *fname, FILE *fp)
@@ -51,150 +35,6 @@ archive(char *fname, FILE *fp)
 	if (!ferror(fp) && !strncmp(magic, ARMAG, SARMAG))
 		return 1;
 	return 0;
-}
-
-static int
-cmp(const void *p1, const void *p2)
-{
-	const struct myrosym *s1 = p1, *s2 = p2;
-
-	if (vflag)
-		return s1->offset - s2->offset;
-	else
-		return strcmp(strings + s1->name, strings + s2->name);
-}
-
-static int
-typeof(struct myrosym *sym)
-{
-	int t, flags = sym->flags;
-
-	switch (sym->section) {
-	case MYRO_TEXT:
-		t = 't';
-		break;
-	case MYRO_DATA:
-		t = 'd';
-		break;
-	case MYRO_BSS:
-		t = (flags & MYROSYM_COMMON) ? 'c' : 'b';
-		break;
-	case MYRO_ABS:
-		t = 'a';
-		break;
-	default:
-		t = (flags & MYROSYM_UNDEF) ? 'u' : '?';
-		break;
-	}
-	if (flags & MYROSYM_ABS)
-		t = 'a';
-	if (flags & MYROSYM_EXTERN)
-		t = tolower(t);
-	return t;
-}
-
-static void
-print(char *file, char *member, struct myrosym *sym)
-{
-	char *fmt, *name = strings + sym->name;
-	int type = typeof(sym);
-
-	if (uflag && type != 'U')
-		return;
-	if (gflag && type != 'A' && type != 'B' && type != 'D')
-		return;
-
-	if (Aflag)
-		printf((arflag) ? "%s[%s]: " : "%s: ", file, member);
-	if (Pflag) {
-		printf("%s %c", name, type);
-		if (type != 'U') {
-			if (radix == 8)
-				fmt = "%llo %llo";
-			else if (radix == 10)
-				fmt = "%llu %llu";
-			else
-				fmt = "%llx %llx";
-			printf(fmt, sym->offset, sym->len);
-		}
-	} else {
-		if (type == 'U')
-			fmt = "                ";
-		else if (radix == 8)
-			fmt = "%016.16llo";
-		else if (radix == 8)
-			fmt = "%016.16lld";
-		else
-			fmt = "%016.16llx";
-		printf(fmt, sym->offset);
-		printf(" %c %s", type, name);
-	}
-	putchar('\n');
-}
-
-static void
-nm(char *fname, char *member, FILE *fp)
-{
-	struct myrohdr hdr;
-	struct myrosym *syms = NULL;
-	size_t n, i;
-	long off;
-
-	strings = NULL;
-	if (rdmyrohdr(fp, &hdr) < 0) {
-		fprintf(stderr, "nm: %s: incorrect header\n", member);
-		return;
-	}
-
-	n = hdr.symsize / MYROSYM_SIZ;
-	if (n == 0) {
-		fprintf(stderr, "nm: %s: no name list\n", member);
-		return;
-	}
-	if (n > SIZE_MAX / sizeof(struct myrosym) ||
-	    hdr.symsize / MYROSYM_SIZ > SIZE_MAX ||
-	    hdr.strsize > SIZE_MAX) {
-		goto offset_overflow;
-	}
-
-	syms = xmalloc(n * sizeof(struct myrosym));
-	strings = xmalloc(hdr.strsize);
-	fread(strings, hdr.strsize, 1, fp);
-	if (feof(fp))
-		goto free_arrays;
-	if ((off = ftell(fp)) < 0)
-		return;
-	if (off > LONG_MAX - hdr.secsize)
-		goto offset_overflow;
-	off += hdr.secsize;
-
-	if (fseek(fp, off, SEEK_SET) < 0)
-		goto free_arrays;
-
-	for (i = 0; i < n; ++i) {
-		if (rdmyrosym(fp, &syms[i]) < 0)
-			goto symbol_error;
-		if (syms[i].name >= hdr.strsize)
-			goto offset_overflow;
-	}
-	qsort(syms, n, sizeof(*syms), cmp);
-	for (i = 0; i < n; ++i)
-		print(fname, member, &syms[i]);
-
-
-free_arrays:
-	free(syms);
-	free(strings);
-	return;
-
-symbol_error:
-	fprintf(stderr, "nm: %s: error reading symbols\n", fname);
-	goto free_arrays;
-
-offset_overflow:
-	fprintf(stderr, "nm: %s: overflow in headers of archive\n",
-		fname);
-	goto free_arrays;
 }
 
 static void
@@ -229,6 +69,45 @@ ar(char *fname, FILE *fp)
 		fseek(fp, pos, SEEK_SET);
 	}
 }
+
+void
+print(char *file, char *member, char *name, int type, unsigned long long off, long siz)
+{
+	char *fmt;
+
+	if (uflag && type != 'U')
+		return;
+	if (gflag && type != 'A' && type != 'B' && type != 'D')
+		return;
+
+	if (Aflag)
+		printf((arflag) ? "%s[%s]: " : "%s: ", file, member);
+	if (Pflag) {
+		printf("%s %c", name, type);
+		if (type != 'U') {
+			if (radix == 8)
+				fmt = "%llo %llo";
+			else if (radix == 10)
+				fmt = "%llu %llu";
+			else
+				fmt = "%llx %llx";
+			printf(fmt, off, siz);
+		}
+	} else {
+		if (type == 'U')
+			fmt = "                ";
+		else if (radix == 8)
+			fmt = "%016.16llo";
+		else if (radix == 8)
+			fmt = "%016.16lld";
+		else
+			fmt = "%016.16llx";
+		printf(fmt, off);
+		printf(" %c %s", type, name);
+	}
+	putchar('\n');
+}
+
 
 void
 doit(char *fname)
