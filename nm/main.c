@@ -39,11 +39,26 @@ archive(char *fname, FILE *fp)
 	return strncmp(magic, ARMAG, SARMAG) == 0;
 }
 
+static char *
+getfname(struct ar_hdr *hdr, char *dst)
+{
+	char *p;
+
+	memcpy(dst, hdr->ar_name, SARNAM);
+	dst[SARNAM] = '\0';
+	if ((p = strchr(dst, ' ')) != NULL)
+		*p = '\0';
+	if ((p =  strchr(dst, '/')) != NULL)
+		*p = '\0';
+	return (*p == '\0') ? NULL : dst;
+}
+
 static void
 ar(char *fname, FILE *fp)
 {
 	struct ar_hdr hdr;
 	long pos, siz;
+	char member[SARNAM+1];
 
 	arflag = 1;
 	fseek(fp, sizeof(struct ar_hdr), SEEK_CUR);
@@ -51,6 +66,9 @@ ar(char *fname, FILE *fp)
 	while (fread(&hdr, sizeof(hdr), 1, fp) == 1) {
 		pos = ftell(fp);
 		if (strncmp(hdr.ar_fmag, ARFMAG, strlen(ARFMAG)))
+			goto corrupted;
+
+		if (!getfname(&hdr, member))
 			goto corrupted;
 
 		siz = 0;
