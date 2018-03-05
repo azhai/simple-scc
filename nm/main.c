@@ -32,9 +32,11 @@ archive(char *fname, FILE *fp)
 	fread(magic, SARMAG, 1, fp);
 	fsetpos(fp, &pos);
 
-	if (!ferror(fp) && !strncmp(magic, ARMAG, SARMAG))
-		return 1;
-	return 0;
+	if (ferror(fp)) {
+		perror("nm");
+		exit(1);
+	}
+	return strncmp(magic, ARMAG, SARMAG) == 0;
 }
 
 static void
@@ -48,16 +50,23 @@ ar(char *fname, FILE *fp)
 
 	while (fread(&hdr, sizeof(hdr), 1, fp) == 1) {
 		pos = ftell(fp);
+		if (strncmp(hdr.ar_fmag, ARFMAG, strlen(ARFMAG)))
+			goto corrupted;
+
+		siz = 0;
 		sscanf(hdr.ar_size, "%10ld", &siz);
+		if (siz == 0)
+			goto corrupted;
+
+		if (siz & 1)
+			siz++;
 		if (pos == -1 || pos > LONG_MAX - siz) {
 			fprintf(stderr,
 			        "nm: %s: overflow in size of archive\n",
 			        fname);
-			return;
+			exit(1);
 		}
 		pos += siz;
-		if (siz & 1)
-			++pos;
 
 		if (object(fname, fp)) {
 			nm(fname, hdr.ar_name, fp);
@@ -68,6 +77,11 @@ ar(char *fname, FILE *fp)
 		}
 		fseek(fp, pos, SEEK_SET);
 	}
+	return;
+
+corrupted:
+	fprintf(stderr, "nm: %s: corrupted archive\n", fname);
+	exit(1);
 }
 
 void
@@ -116,8 +130,10 @@ doit(char *fname)
 	FILE *fp;
 
 	arflag = 0;
-	if ((fp = fopen(fname, "rb")) == NULL)
-		goto file_error;
+	if ((fp = fopen(fname, "rb")) == NULL) {
+		perror("nm");
+		exit(1);
+	}
 
 	if (object(fname, fp))
 		nm(fname, fname, fp);
@@ -126,11 +142,10 @@ doit(char *fname)
 	else
 		fprintf(stderr, "nm: %s: File format not recognized\n", fname);
 
-	if (fclose(fp) != EOF)
-		return;
-
-file_error:
-	die("nm: %s: %s", fname, strerror(errno));
+	if (ferror(fp) || fclose(fp) == EOF) {
+		perror("nm");
+		exit(1);
+	}
 }
 
 void
