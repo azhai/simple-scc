@@ -21,7 +21,7 @@ static int Aflag;
 static int vflag;
 static int gflag;
 static int uflag;
-static int archflag;
+static int arflag;
 
 static int
 object(char *fname, FILE *fp)
@@ -38,22 +38,20 @@ object(char *fname, FILE *fp)
 	return 0;
 }
 
-#if 0
 static int
 archive(char *fname, FILE *fp)
 {
-	char magic[ARMAGIC_SIZ];
+	char magic[SARMAG];
 	fpos_t pos;
 
 	fgetpos(fp, &pos);
-	fread(magic, sizeof(magic), 1, fp);
+	fread(magic, SARMAG, 1, fp);
 	fsetpos(fp, &pos);
 
-	if (!ferror(fp) && !strncmp(magic, ARMAGIC, ARMAGIC_SIZ))
+	if (!ferror(fp) && !strncmp(magic, ARMAG, SARMAG))
 		return 1;
 	return 0;
 }
-#endif
 
 static int
 cmp(const void *p1, const void *p2)
@@ -107,7 +105,7 @@ print(char *file, char *member, struct myrosym *sym)
 		return;
 
 	if (Aflag)
-		printf((archflag) ? "%s[%s]: " : "%s: ", file, member);
+		printf((arflag) ? "%s[%s]: " : "%s: ", file, member);
 	if (Pflag) {
 		printf("%s %c", name, type);
 		if (type != 'U') {
@@ -199,51 +197,52 @@ offset_overflow:
 	goto free_arrays;
 }
 
-#if 0
 static void
 ar(char *fname, FILE *fp)
 {
-	struct arhdr hdr;
-	long pos;
+	struct ar_hdr hdr;
+	long pos, siz;
 
-	archflag = 1;
-	while (rdarhdr(fp, &hdr) != EOF) {
+	arflag = 1;
+	fseek(fp, sizeof(struct ar_hdr), SEEK_CUR);
+
+	while (fread(&hdr, sizeof(hdr), 1, fp) == 1) {
 		pos = ftell(fp);
-		if (pos == -1 || pos > LONG_MAX - hdr.size) {
+		sscanf(hdr.ar_size, "%10ld", &siz);
+		if (pos == -1 || pos > LONG_MAX - siz) {
 			fprintf(stderr,
 			        "nm: %s: overflow in size of archive\n",
 			        fname);
 			return;
 		}
-		pos += hdr.size;
-		if (hdr.size & 1)
+		pos += siz;
+		if (siz & 1)
 			++pos;
 
 		if (object(fname, fp)) {
-			nm(fname, hdr.name, fp);
+			nm(fname, hdr.ar_name, fp);
 		} else {
 			fprintf(stderr,
 			        "nm: skipping member %s in archive %s\n",
-			        hdr.name, fname);
+			        hdr.ar_name, fname);
 		}
 		fseek(fp, pos, SEEK_SET);
 	}
 }
-#endif
 
 void
 doit(char *fname)
 {
 	FILE *fp;
 
-	archflag = 0;
+	arflag = 0;
 	if ((fp = fopen(fname, "rb")) == NULL)
 		goto file_error;
 
 	if (object(fname, fp))
 		nm(fname, fname, fp);
-//	else if (archive(fname, fp))
-//		ar(fname, fp);
+	else if (archive(fname, fp))
+		ar(fname, fp);
 	else
 		fprintf(stderr, "nm: %s: File format not recognized\n", fname);
 
