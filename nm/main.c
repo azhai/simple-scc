@@ -71,9 +71,10 @@ ar(char *fname, FILE *fp)
 }
 
 void
-print(char *file, char *member, char *name, int type, unsigned long long off, long siz)
+print(char *file, char *member, struct symbol *sym)
 {
 	char *fmt;
+	int type = sym->type;
 
 	if (uflag && type != 'U')
 		return;
@@ -83,7 +84,7 @@ print(char *file, char *member, char *name, int type, unsigned long long off, lo
 	if (Aflag)
 		printf((arflag) ? "%s[%s]: " : "%s: ", file, member);
 	if (Pflag) {
-		printf("%s %c", name, type);
+		printf("%s %c", sym->name, sym->type);
 		if (type != 'U') {
 			if (radix == 8)
 				fmt = "%llo %llo";
@@ -91,7 +92,7 @@ print(char *file, char *member, char *name, int type, unsigned long long off, lo
 				fmt = "%llu %llu";
 			else
 				fmt = "%llx %llx";
-			printf(fmt, off, siz);
+			printf(fmt, sym->off, sym->size);
 		}
 	} else {
 		if (type == 'U')
@@ -102,8 +103,8 @@ print(char *file, char *member, char *name, int type, unsigned long long off, lo
 			fmt = "%016.16lld";
 		else
 			fmt = "%016.16llx";
-		printf(fmt, off);
-		printf(" %c %s", type, name);
+		printf(fmt, sym->off);
+		printf(" %c %s", sym->type, sym->name);
 	}
 	putchar('\n');
 }

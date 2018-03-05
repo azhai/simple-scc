@@ -1,6 +1,13 @@
 
+struct symbol {
+	char *name;
+	int type;
+	unsigned long long off;
+	unsigned long size;
+};
+
 /* main.c */
-extern void print(char *file, char *member, char *name, int type, unsigned long long off, long siz);
+extern void print(char *file, char *member, struct symbol *sym);
 
 /* object format file */
 extern void nm(char *fname, char *member, FILE *fp);

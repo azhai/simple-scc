@@ -58,6 +58,7 @@ nm(char *fname, char *member, FILE *fp)
 {
 	struct myrohdr hdr;
 	struct myrosym *syms = NULL, *sym;
+	struct symbol symbol;
 	size_t n, i;
 	long off;
 
@@ -100,13 +101,12 @@ nm(char *fname, char *member, FILE *fp)
 	}
 	qsort(syms, n, sizeof(*syms), cmp);
 	for (i = 0; i < n; ++i) {
-		sym = &sym[i];
-		print(fname,
-		      member,
-		      strings + sym->name,
-		      typeof(sym),
-		      sym->offset,
-		      sym->len);
+		sym = &syms[i];
+		symbol.name = strings + sym->name;
+		symbol.type = typeof(sym);
+		symbol.off = sym->offset;
+		symbol.size = sym->len;
+		print(fname, member, &symbol);
 	}
 
 free_arrays:
