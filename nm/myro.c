@@ -125,7 +125,7 @@ offset_overflow:
 }
 
 int
-object(char *fname, FILE *fp)
+object(FILE *fp)
 {
 	char magic[MYROMAGIC_SIZ];
 	fpos_t pos;

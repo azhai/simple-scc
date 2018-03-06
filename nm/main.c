@@ -87,7 +87,7 @@ ar(char *fname, FILE *fp)
 		pos += siz;
 
 		getfname(&hdr, member);
-		if (object(fname, fp)) {
+		if (object(fp)) {
 			nm(fname, hdr.ar_name, fp);
 		} else {
 			fprintf(stderr,
@@ -154,7 +154,7 @@ doit(char *fname)
 		exit(1);
 	}
 
-	if (object(fname, fp))
+	if (object(fp))
 		nm(fname, fname, fp);
 	else if (archive(fname, fp))
 		ar(fname, fp);

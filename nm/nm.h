@@ -11,7 +11,7 @@ extern void print(char *file, char *member, struct symbol *sym);
 
 /* object format file */
 extern void nm(char *fname, char *member, FILE *fp);
-extern int object(char *fname, FILE *fp);
+extern int object(FILE *fp);
 
 extern int radix;
 extern int Pflag;
