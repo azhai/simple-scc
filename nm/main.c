@@ -43,14 +43,17 @@ static char *
 getfname(struct ar_hdr *hdr, char *dst)
 {
 	char *p;
+	int i;
 
 	memcpy(dst, hdr->ar_name, SARNAM);
 	dst[SARNAM] = '\0';
-	if ((p = strchr(dst, ' ')) != NULL)
-		*p = '\0';
-	if ((p =  strchr(dst, '/')) != NULL)
-		*p = '\0';
-	return (*p == '\0') ? NULL : dst;
+
+	for (i = SARNAM-1; i >= 0; i--) {
+		if (dst[i] != ' ' && dst[i] != '/')
+			break;
+		dst[i] = '\0';
+	}
+	return dst;
 }
 
 static void
@@ -68,9 +71,6 @@ ar(char *fname, FILE *fp)
 		if (strncmp(hdr.ar_fmag, ARFMAG, strlen(ARFMAG)))
 			goto corrupted;
 
-		if (!getfname(&hdr, member))
-			goto corrupted;
-
 		siz = 0;
 		sscanf(hdr.ar_size, "%10ld", &siz);
 		if (siz == 0)
@@ -86,12 +86,13 @@ ar(char *fname, FILE *fp)
 		}
 		pos += siz;
 
+		getfname(&hdr, member);
 		if (object(fname, fp)) {
 			nm(fname, hdr.ar_name, fp);
 		} else {
 			fprintf(stderr,
 			        "nm: skipping member %s in archive %s\n",
-			        hdr.ar_name, fname);
+			        member, fname);
 		}
 		fseek(fp, pos, SEEK_SET);
 	}

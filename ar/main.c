@@ -336,16 +336,17 @@ del(struct member *m, int argc, char *argv[])
 static char *
 getfname(struct ar_hdr *hdr)
 {
-	static char fname[FILENAME_MAX];
+	static char fname[SARNAM+1];
 	size_t i;
-	char *bp = fname;
 
-	for (i = 0; i < sizeof(hdr->ar_name); i++) {
-		if ((*bp = hdr->ar_name[i]) == ' ')
+	memcpy(fname, hdr->ar_name, SARNAM);
+	fname[SARNAM] = '\0';
+
+	for (i = SARNAM-1; i >= 0; --i) {
+		if (fname[i] != ' ' && fname[i] != '/')
 			break;
-		++bp;
+		fname[i] = '\0';
 	}
-	*bp = '\0';
 	return fname;
 }
 
