@@ -5,13 +5,13 @@ LIBDIR = $(PROJECTDIR)/lib/scc
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
-OBJ       = main.o myro.o
+OBJ       = main.o coff.o formats.o
 
 all: nm
 
-main.o: $(INCDIR)/scc.h $(INCDIR)/ar.h $(INCDIR)/arg.h
-main.o: nm.h
-myro.o: $(INCDIR)/scc.h $(INCDIR)/myro.h nm.h
+main.o: $(INCDIR)/scc.h $(INCDIR)/ar.h $(INCDIR)/arg.h nm.h
+coff.o: nm.h
+formats.o: nm.h
 
 nm: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@

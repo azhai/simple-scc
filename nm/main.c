@@ -14,29 +14,26 @@ static char sccsid[] = "@(#) ./nm/main.c";
 #include "nm.h"
 
 char *argv0;
-int radix = 16;
-int Pflag;
-int Aflag;
-int vflag;
-int gflag;
-int uflag;
-int arflag;
+static int radix = 16;
+static int Pflag;
+static int Aflag;
+static int vflag;
+static int gflag;
+static int uflag;
+static int arflag;
 
-static int
-archive(char *fname, FILE *fp)
+int
+object(char *fname, FILE *fp)
 {
-	char magic[SARMAG];
-	fpos_t pos;
+	extern struct objfile formats[];
+	struct objfile *p;
 
-	fgetpos(fp, &pos);
-	fread(magic, SARMAG, 1, fp);
-	fsetpos(fp, &pos);
-
-	if (ferror(fp)) {
-		perror("nm");
-		exit(1);
-	}
-	return strncmp(magic, ARMAG, SARMAG) == 0;
+	for (p = formats; p->probe && (*p->probe)(fp); ++p)
+		;
+	if (!p->probe)
+		return 0;
+	(*p->nm)(fname, fp);
+	return 1;
 }
 
 static char *
@@ -87,9 +84,7 @@ ar(char *fname, FILE *fp)
 		pos += siz;
 
 		getfname(&hdr, member);
-		if (object(fp)) {
-			nm(fname, hdr.ar_name, fp);
-		} else {
+		if (!object(member, fp)) {
 			fprintf(stderr,
 			        "nm: skipping member %s in archive %s\n",
 			        member, fname);
@@ -101,6 +96,26 @@ ar(char *fname, FILE *fp)
 corrupted:
 	fprintf(stderr, "nm: %s: corrupted archive\n", fname);
 	exit(1);
+}
+
+static int
+archive(char *fname, FILE *fp)
+{
+	char magic[SARMAG];
+	fpos_t pos;
+
+	fgetpos(fp, &pos);
+	fread(magic, SARMAG, 1, fp);
+	fsetpos(fp, &pos);
+
+	if (ferror(fp)) {
+		perror("nm");
+		exit(1);
+	}
+	if (strncmp(magic, ARMAG, SARMAG) != 0)
+		return 0;
+	ar(fname, fp);
+	return 1;
 }
 
 void
@@ -142,6 +157,25 @@ print(char *file, char *member, struct symbol *sym)
 	putchar('\n');
 }
 
+static int
+cmp(const void *p1, const void *p2)
+{
+	const struct symbol *s1 = p1, *s2 = p2;
+
+	if (vflag)
+		return s1->off - s2->off;
+	else
+		return strcmp(s1->name, s2->name);
+}
+
+void
+printsyms(char *file, char *member, struct symbol *syms, size_t nsyms)
+{
+	qsort(syms, nsyms, sizeof(*syms), cmp);
+
+	while (nsyms--)
+		print(file, member, syms++);
+}
 
 void
 doit(char *fname)
@@ -154,11 +188,7 @@ doit(char *fname)
 		exit(1);
 	}
 
-	if (object(fp))
-		nm(fname, fname, fp);
-	else if (archive(fname, fp))
-		ar(fname, fp);
-	else
+	if (!object(fname, fp) && !archive(fname, fp))
 		fprintf(stderr, "nm: %s: File format not recognized\n", fname);
 
 	if (ferror(fp) || fclose(fp) == EOF) {
