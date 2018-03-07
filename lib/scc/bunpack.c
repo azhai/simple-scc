@@ -36,28 +36,28 @@ lunpack(unsigned char *src, char *fmt, ...)
 			break;
 		case 's':
 			sp = va_arg(va, unsigned short *);
-			s =  (unsigned) *bp++;
-			s |= (unsigned) *bp++ << 8;
+			s =  (unsigned) *bp++ << 8;
+			s |= (unsigned) *bp++;
 			*sp = s;
 			break;
 		case 'l':
 			lp = va_arg(va, unsigned long *);
-			l = (unsigned long) *bp++;
-			l |= (unsigned long) *bp++ << 8;
+			l =  (unsigned long) *bp++ << 24;
 			l |= (unsigned long) *bp++ << 16;
-			l |= (unsigned long) *bp++ << 24;
+			l |= (unsigned long) *bp++ << 8;
+			l |= (unsigned long) *bp++;
 			*lp = l;
 			break;
 		case 'q':
 			qp = va_arg(va, unsigned long long *);
-			q = (unsigned long long) *bp++;
-			q |= (unsigned long long) *bp++ << 8;
-			q |= (unsigned long long) *bp++ << 16;
-			q |= (unsigned long long) *bp++ << 24;
-			q |= (unsigned long long) *bp++ << 32;
-			q |= (unsigned long long) *bp++ << 40;
+			q =  (unsigned long long) *bp++ << 56;
 			q |= (unsigned long long) *bp++ << 48;
-			q |= (unsigned long long) *bp++ << 56;
+			q |= (unsigned long long) *bp++ << 40;
+			q |= (unsigned long long) *bp++ << 32;
+			q |= (unsigned long long) *bp++ << 24;
+			q |= (unsigned long long) *bp++ << 16;
+			q |= (unsigned long long) *bp++ << 8;
+			q |= (unsigned long long) *bp++;
 			*qp = q;
 			break;
 		default:

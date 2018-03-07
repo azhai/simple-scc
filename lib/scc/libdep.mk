@@ -9,5 +9,7 @@ LIB-OBJ = $(LIBDIR)/debug.o \
           $(LIBDIR)/casecmp.o \
           $(LIBDIR)/lunpack.o \
           $(LIBDIR)/lpack.o \
+          $(LIBDIR)/bunpack.o \
+          $(LIBDIR)/bpack.o \
           $(LIBDIR)/wmyro.o \
           $(LIBDIR)/rmyro.o \
