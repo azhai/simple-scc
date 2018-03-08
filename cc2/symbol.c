@@ -64,27 +64,29 @@ getsym(unsigned id)
 	if (id >= USHRT_MAX)
 		error(EBADID);
 
-	htab = &symtab[id & NR_SYMHASH-1];
-	for (sym = *htab; sym; sym = sym->h_next) {
-		if (sym->id > 0 && sym->id == id)
-			break;
-	}
-	if (!sym) {
-		sym = xcalloc(1, sizeof(*sym));
-		sym->id = id;
-		if ((sym->numid = ++num) == 0)
-			error(EIDOVER);
-		if (infunction) {
-			if (!locals)
-				locals = sym;
-			if (curlocal)
-				curlocal->next = sym;
-			curlocal = sym;
-		}
-		if (id != TMPSYM) {
-			sym->h_next = *htab;
-			*htab = sym;
+	if (id != TMPSYM) {
+		htab = &symtab[id & NR_SYMHASH-1];
+		for (sym = *htab; sym; sym = sym->h_next) {
+			if (sym->id == id)
+				return sym;
 		}
 	}
+
+	sym = xcalloc(1, sizeof(*sym));
+	sym->id = id;
+	if (infunction) {
+		if (!locals)
+			locals = sym;
+		if (curlocal)
+			curlocal->next = sym;
+		curlocal = sym;
+	}
+	if (id != TMPSYM) {
+		sym->h_next = *htab;
+		*htab = sym;
+	}
+	if ((sym->numid = ++num) == 0)
+		error(EIDOVER);
+
 	return sym;
 }
