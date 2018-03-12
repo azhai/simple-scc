@@ -37,7 +37,7 @@ typeof(SYMENT *ent)
 		c = 'a';
 		break;
 	case N_UNDEF:
-		c = 'U';
+		c = (ent->n_value != 0) ? 'C' : 'U';
 		break;
 	default:
 		if (ent->n_scnum > nsect)
@@ -136,6 +136,7 @@ getsymbol(char *fname, FILE *fp,
 	sym->name = getsname(fname, fp, ent);
 	sym->type = typeof(ent);
 	sym->value = ent->n_value;
+	sym->size = (sym->type == 'C') ? ent->n_value : 0;
 }
 
 static void
