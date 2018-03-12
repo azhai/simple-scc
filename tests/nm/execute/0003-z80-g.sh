@@ -4,10 +4,9 @@ set -e
 
 tmp1=`mktemp`
 tmp2=`mktemp`
-trap "rm -f a.out $tmp1 $tmp2" 0 2 3
+trap "rm -f $tmp1 $tmp2" 0 2 3
 
-z80-unknown-coff-as master.s
-nm -g > $tmp1
+nm -g z80.out > $tmp1
 
 cat <<! > $tmp2
 0000000000000001 B averylongbss
