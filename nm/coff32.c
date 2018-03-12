@@ -85,14 +85,14 @@ getsname(char *fname, FILE *fp, SYMENT *ent)
 	if (ferror(fp))
 		goto error;
 
-	s = xmalloc(1);
-	for (len = 0; (c = getc(fp)) != '\0'; len++) {
-		if (c == EOF)
-			goto error;
-		s = xrealloc(s, len+1);
-		s[len] = c;
+	s = NULL;
+	for (len = 1; (c = getc(fp)) != EOF; len++) {
+		s = xrealloc(s, len);
+		if ((s[len-1] = c) == '\0')
+			break;
 	}
-	s[len] = '\0';
+	if (c == EOF)
+		goto error;
 	fsetpos(fp, &pos);
 	return s;
 
