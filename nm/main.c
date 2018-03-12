@@ -142,11 +142,11 @@ printsym(char *file, char *member, struct symbol *sym)
 		printf("%s %c", sym->name, sym->type);
 		if (type != 'U') {
 			if (radix == 8)
-				fmt = "%llo %llo";
+				fmt = " %16.6llo %lo";
 			else if (radix == 10)
-				fmt = "%llu %llu";
+				fmt = " %016.16llu %lu";
 			else
-				fmt = "%llx %llx";
+				fmt = " %016.16llx %lx";
 			printf(fmt, sym->value, sym->size);
 		}
 	} else {
