@@ -16,7 +16,7 @@ static char sccsid[] = "@(#) ./nm/coff.c";
 #include "nm.h"
 
 static int (*unpack)(unsigned char *, char *, ...);
-static long stringtbl;
+static long stringtbl, symtbl, sectbl;
 static SCNHDR *sections;
 static struct symbol *syms;
 static size_t nsect, nsyms;
@@ -151,7 +151,7 @@ getsyms(char *fname, char *member, FILE *fp, FILHDR *hdr)
 	n = hdr->f_nsyms;
 	syms = xcalloc(sizeof(*syms), n);
 
-	if (fseek(fp, hdr->f_symptr, SEEK_SET) == EOF)
+	if (fseek(fp, symtbl, SEEK_SET) == EOF)
 		die("nm:%s:%s", fname, strerror(errno));
 
 	aux = nsyms = 0;
@@ -207,7 +207,7 @@ getsects(char *fname, char *member, FILE *fp, FILHDR *hdr)
 	if (nsect > SIZE_MAX)
 		die("nm:%s:Too many sections\n", member);
 
-	if (fseek(fp, FILHSZ + hdr->f_opthdr, SEEK_SET) == EOF)
+	if (fseek(fp, sectbl, SEEK_SET) == EOF)
 		die("nm:%s:%s", member, strerror(errno));
 
 	sections = xcalloc(sizeof(*sections), nsect);
@@ -248,6 +248,7 @@ nm(char *fname, char *member, FILE *fp)
 	unsigned char buff[FILHSZ];
 	FILHDR hdr;
 	unsigned magic;
+	long pos = ftell(fp);
 
 	if (fread(buff, FILHSZ, 1, fp) != 1) {
 		if (!ferror(fp))
@@ -272,7 +273,9 @@ nm(char *fname, char *member, FILE *fp)
 	}
 
 	/* TODO: Check overflow */
-	stringtbl = hdr.f_symptr + hdr.f_nsyms* SYMESZ;
+	stringtbl = pos + hdr.f_symptr + hdr.f_nsyms* SYMESZ;
+	symtbl = pos + hdr.f_symptr;
+	sectbl = pos + FILHSZ + hdr.f_opthdr;
 
 	getsects(fname, member, fp, &hdr);
 	getsyms(fname, member, fp, &hdr);
