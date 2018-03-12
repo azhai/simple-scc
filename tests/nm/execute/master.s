@@ -1,4 +1,5 @@
 	.globl	text1,averylongtext,text5
+	.extern	text6
 	.text
 	.equ	text2,4
 text1:	.byte	0
@@ -7,6 +8,7 @@ averylongtext:
 text3:	.byte	0
 	.comm	text4,10
 	.comm	text5,18
+	.short	text6
 
 	.globl	data1,averylongdata,data5
 	.data
