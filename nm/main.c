@@ -69,7 +69,7 @@ ar(char *fname, FILE *fp)
 
 	while (fread(&hdr, sizeof(hdr), 1, fp) == 1) {
 		pos = ftell(fp);
-		if (strncmp(hdr.ar_fmag, ARFMAG, SARMAG))
+		if (strncmp(hdr.ar_fmag, ARFMAG, sizeof(hdr.ar_fmag)))
 			goto corrupted;
 
 		siz = 0;
