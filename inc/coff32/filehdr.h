@@ -18,5 +18,8 @@ struct filehdr {
 #define F_EXEC   (1 << 1)
 #define F_LMNO   (1 << 2)
 #define F_SYMS   (1 << 3)
+#define F_AR16WR (1 << 4)
+#define F_AR32WR (1 << 5)
+#define F_A32WR  (1 << 6)
 
 #define COFF_Z80MAGIC     0x805a

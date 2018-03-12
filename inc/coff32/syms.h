@@ -1,6 +1,8 @@
 
 /* This file is inspired in the book "Understanding and using COFF" */
 
+#define E_SYMNMLEN   8
+
 struct syment {
 	union {
 		char _n_name[8];          /* symbol name */
@@ -8,7 +10,6 @@ struct syment {
 			long _n_zeroes;  /* if _n_name[0-3] == 0 */
 			long _n_offset;  /* offset into string table */
 		} _n_n;
-		char _n_ptr[2];          /* allows for overlaying */
 	} _n;
 	long n_value;                    /* value of symbol */
 	short n_scnum;                   /* section number */
@@ -17,8 +18,10 @@ struct syment {
 	char n_numaux;                   /* number of aux. entries */
 };
 
+#define SYMENT  struct syment
+#define SYMESZ  18
+
 #define n_name       _n._n_name
-#define n_nptr       _n._n_nptr[1]
 #define n_zeroes     _n._n_n._n_zeroes
 #define n_offset     _n._n_n._n_offset
 
@@ -26,6 +29,7 @@ struct syment {
 #define N_DEBUG      -2
 #define N_ABS        -1
 #define N_UNDEF       0
+#define N_SCNUM(x)   ((x) > 0)
 
 /* basic types */
 #define T_NULL        0

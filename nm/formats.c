@@ -5,11 +5,10 @@ static char sccsid[] = "@(#) ./nm/probe.c";
 
 #include "nm.h"
 
-struct objfile coff;
-
 /* TODO: Autogenerate this file */
+struct objfile coff32;
 
 struct objfile *formats[] = {
-	&coff,
+	&coff32,
 	NULL,
 };

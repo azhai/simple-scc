@@ -2,14 +2,14 @@
 struct symbol {
 	char *name;
 	int type;
-	unsigned long long off;
+	unsigned long long value;
 	unsigned long size;
 };
 
 struct objfile {
 	int (*probe)(FILE *fp);
-	void (*nm)(char *fname, FILE *fp);
+	void (*nm)(char *fname, char *member, FILE *fp);
 };
 
 /* main.c */
-extern void print(char *file, char *member, struct symbol *sym);
+extern void printsyms(char *, char *, struct symbol *, size_t );

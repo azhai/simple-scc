@@ -23,16 +23,20 @@ static int uflag;
 static int arflag;
 
 int
-object(char *fname, FILE *fp)
+object(char *fname, char *member, FILE *fp)
 {
-	extern struct objfile formats[];
-	struct objfile *p;
+	extern struct objfile *formats[];
+	struct objfile **p, *obj;
+	void *data;
 
-	for (p = formats; p->probe && (*p->probe)(fp); ++p)
-		;
-	if (!p->probe)
+	for (p = formats; *p; ++p) {
+		obj = *p;
+		if ((*obj->probe)(fp))
+			break;
+	}
+	if (*p == NULL)
 		return 0;
-	(*p->nm)(fname, fp);
+	(*obj->nm)(fname, member, fp);
 	return 1;
 }
 
@@ -65,7 +69,7 @@ ar(char *fname, FILE *fp)
 
 	while (fread(&hdr, sizeof(hdr), 1, fp) == 1) {
 		pos = ftell(fp);
-		if (strncmp(hdr.ar_fmag, ARFMAG, strlen(ARFMAG)))
+		if (strncmp(hdr.ar_fmag, ARFMAG, SARMAG))
 			goto corrupted;
 
 		siz = 0;
@@ -84,7 +88,7 @@ ar(char *fname, FILE *fp)
 		pos += siz;
 
 		getfname(&hdr, member);
-		if (!object(member, fp)) {
+		if (!object(member, member, fp)) {
 			fprintf(stderr,
 			        "nm: skipping member %s in archive %s\n",
 			        member, fname);
@@ -108,22 +112,23 @@ archive(char *fname, FILE *fp)
 	fread(magic, SARMAG, 1, fp);
 	fsetpos(fp, &pos);
 
-	if (ferror(fp)) {
-		perror("nm");
-		exit(1);
-	}
+	if (ferror(fp))
+		return 0;
 	if (strncmp(magic, ARMAG, SARMAG) != 0)
 		return 0;
+
 	ar(fname, fp);
 	return 1;
 }
 
-void
+static void
 print(char *file, char *member, struct symbol *sym)
 {
 	char *fmt;
 	int type = sym->type;
 
+	if (type == '?')
+		return;
 	if (uflag && type != 'U')
 		return;
 	if (gflag && type != 'A' && type != 'B' && type != 'D')
@@ -140,7 +145,7 @@ print(char *file, char *member, struct symbol *sym)
 				fmt = "%llu %llu";
 			else
 				fmt = "%llx %llx";
-			printf(fmt, sym->off, sym->size);
+			printf(fmt, sym->value, sym->size);
 		}
 	} else {
 		if (type == 'U')
@@ -151,7 +156,7 @@ print(char *file, char *member, struct symbol *sym)
 			fmt = "%016.16lld";
 		else
 			fmt = "%016.16llx";
-		printf(fmt, sym->off);
+		printf(fmt, sym->value);
 		printf(" %c %s", sym->type, sym->name);
 	}
 	putchar('\n');
@@ -163,7 +168,7 @@ cmp(const void *p1, const void *p2)
 	const struct symbol *s1 = p1, *s2 = p2;
 
 	if (vflag)
-		return s1->off - s2->off;
+		return s1->value - s2->value;
 	else
 		return strcmp(s1->name, s2->name);
 }
@@ -188,7 +193,7 @@ doit(char *fname)
 		exit(1);
 	}
 
-	if (!object(fname, fp) && !archive(fname, fp))
+	if (!object(fname, fname, fp) && !archive(fname, fp))
 		fprintf(stderr, "nm: %s: File format not recognized\n", fname);
 
 	if (ferror(fp) || fclose(fp) == EOF) {
