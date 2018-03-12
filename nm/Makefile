@@ -8,14 +8,8 @@ include $(LIBDIR)/libdep.mk
 OBJ       = main.o coff32.o formats.o
 
 all: nm
-
-main.o: $(INCDIR)/scc.h $(INCDIR)/ar.h $(INCDIR)/arg.h nm.h
-coff32.o: nm.h
-coff32.o: ../inc/coff32/filehdr.h
-coff32.o: ../inc/coff32/scnhdr.h
-coff32.o: ../inc/coff32/syms.h
-coff32.o: ../inc/scc.h
-formats.o: nm.h
+	mkdir -p $(PROJECTDIR)/rootdir/bin
+	cp nm $(PROJECTDIR)/rootdir/bin/nm
 
 nm: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
@@ -24,7 +18,21 @@ $(LIBDIR)/libscc.a: $(LIB-OBJ)
 	+cd $(LIBDIR) && $(MAKE)
 
 dep:
+	$(PROJECTDIR)/mkdep.sh
+
 clean:
 	rm -f nm *.o
 
 distclean: clean
+
+#deps
+coff32.c: ../inc/coff32/filehdr.h
+coff32.c: ../inc/coff32/scnhdr.h
+coff32.c: ../inc/coff32/syms.h
+coff32.c: ../inc/scc.h
+coff32.c: nm.h
+formats.c: nm.h
+main.c: ../inc/arg.h
+main.c: ../inc/ar.h
+main.c: ../inc/scc.h
+main.c: nm.h
