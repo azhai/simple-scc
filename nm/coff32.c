@@ -27,7 +27,6 @@ typeof(SYMENT *ent)
 	SCNHDR *sec;
 	int c;
 	long flags;
-	char **bp;
 
 	switch (ent->n_scnum) {
 	case N_DEBUG:
@@ -52,7 +51,6 @@ typeof(SYMENT *ent)
 			c = 'b';
 		else
 			c = '?';
-
 		break;
 	}
 
