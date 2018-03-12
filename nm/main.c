@@ -169,10 +169,21 @@ cmp(const void *p1, const void *p2)
 {
 	const struct symbol *s1 = p1, *s2 = p2;
 
-	if (vflag)
-		return s1->value - s2->value;
-	else
+	if (vflag) {
+		if (s1->value > s2->value)
+			return 1;
+		if (s1->value < s2->value)
+			return -1;
+		if (s1->type == 'U' && s2->type == 'U')
+			return 0;
+		if (s1->type == 'U')
+			return -1;
+		if (s2->type == 'U')
+			return 1;
+		return 0;
+	} else {
 		return strcmp(s1->name, s2->name);
+	}
 }
 
 void
