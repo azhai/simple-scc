@@ -154,7 +154,7 @@ printsym(char *file, char *member, struct symbol *sym)
 			fmt = "                ";
 		else if (radix == 8)
 			fmt = "%016.16llo";
-		else if (radix == 8)
+		else if (radix == 10)
 			fmt = "%016.16lld";
 		else
 			fmt = "%016.16llx";
