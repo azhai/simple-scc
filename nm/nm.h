@@ -7,8 +7,8 @@ struct symbol {
 };
 
 struct objfile {
-	int (*probe)(FILE *fp);
-	void (*nm)(char *fname, char *member, FILE *fp);
+	int (*probe)(char *fname, char *member, FILE *fp);
+	int (*nm)(char *fname, char *member, FILE *fp);
 };
 
 /* main.c */

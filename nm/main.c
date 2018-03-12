@@ -31,13 +31,12 @@ object(char *fname, char *member, FILE *fp)
 
 	for (p = formats; *p; ++p) {
 		obj = *p;
-		if ((*obj->probe)(fp))
+		if ((*obj->probe)(fname, member, fp))
 			break;
 	}
 	if (*p == NULL)
 		return 0;
-	(*obj->nm)(fname, member, fp);
-	return 1;
+	return (*obj->nm)(fname, member, fp);
 }
 
 static char *
@@ -65,7 +64,8 @@ ar(char *fname, FILE *fp)
 	char member[SARNAM+1];
 
 	arflag = 1;
-	fseek(fp, sizeof(struct ar_hdr), SEEK_CUR);
+	if (fseek(fp, SARMAG, SEEK_SET) == EOF)
+		goto file_error;
 
 	while (fread(&hdr, sizeof(hdr), 1, fp) == 1) {
 		pos = ftell(fp);
@@ -79,27 +79,27 @@ ar(char *fname, FILE *fp)
 
 		if (siz & 1)
 			siz++;
-		if (pos == -1 || pos > LONG_MAX - siz) {
-			fprintf(stderr,
-			        "nm: %s: overflow in size of archive\n",
-			        fname);
-			exit(1);
-		}
+		if (pos == -1 || pos > LONG_MAX - siz)
+			die("nm: %s: overflow in size of archive", fname);
 		pos += siz;
 
 		getfname(&hdr, member);
-		if (!object(member, member, fp)) {
+		if (!object(fname, member, fp)) {
 			fprintf(stderr,
 			        "nm: skipping member %s in archive %s\n",
 			        member, fname);
 		}
-		fseek(fp, pos, SEEK_SET);
+		if (fseek(fp, pos, SEEK_SET) == EOF)
+			goto file_error;
 	}
+	if (ferror(fp))
+		goto file_error;
 	return;
 
 corrupted:
-	fprintf(stderr, "nm: %s: corrupted archive\n", fname);
-	exit(1);
+	die("nm: %s: corrupted archive", fname);
+file_error:
+	die("nm: %s: %s", fname, strerror(errno));
 }
 
 static int
@@ -113,7 +113,7 @@ archive(char *fname, FILE *fp)
 	fsetpos(fp, &pos);
 
 	if (ferror(fp))
-		return 0;
+		die("nm: %s: %s", fname, strerror(errno));
 	if (strncmp(magic, ARMAG, SARMAG) != 0)
 		return 0;
 
@@ -122,16 +122,18 @@ archive(char *fname, FILE *fp)
 }
 
 static void
-print(char *file, char *member, struct symbol *sym)
+printsym(char *file, char *member, struct symbol *sym)
 {
 	char *fmt;
 	int type = sym->type;
 
 	if (type == '?')
 		return;
+
 	if (uflag && type != 'U')
 		return;
-	if (gflag && type != 'A' && type != 'B' && type != 'D')
+
+	if (gflag && !isupper(type))
 		return;
 
 	if (Aflag)
@@ -179,30 +181,29 @@ printsyms(char *file, char *member, struct symbol *syms, size_t nsyms)
 	qsort(syms, nsyms, sizeof(*syms), cmp);
 
 	while (nsyms--)
-		print(file, member, syms++);
+		printsym(file, member, syms++);
 }
 
-void
+static void
 doit(char *fname)
 {
 	FILE *fp;
 
 	arflag = 0;
-	if ((fp = fopen(fname, "rb")) == NULL) {
-		perror("nm");
-		exit(1);
-	}
+
+	if ((fp = fopen(fname, "rb")) == NULL)
+		die("nm: %s: %s", fname, strerror(errno));
 
 	if (!object(fname, fname, fp) && !archive(fname, fp))
-		fprintf(stderr, "nm: %s: File format not recognized\n", fname);
+		die("nm: %s: File format not recognized", fname);
 
-	if (ferror(fp) || fclose(fp) == EOF) {
-		perror("nm");
-		exit(1);
-	}
+	if (ferror(fp))
+		die("nm: %s: %s", fname, strerror(errno));
+
+	fclose(fp);
 }
 
-void
+static void
 usage(void)
 {
 	fputs("nm [-APv][ -g| -u][-t format] [file...]\n", stderr);
@@ -251,6 +252,10 @@ main(int argc, char *argv[])
 		for ( ; *argv; ++argv)
 			doit(*argv);
 	}
+
+	fflush(stdout);
+	if (ferror(stdout))
+		die("nm: error writing in output");
 
 	return 0;
 }

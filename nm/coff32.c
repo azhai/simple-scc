@@ -34,7 +34,7 @@ typeof(SYMENT *ent)
 		c = '?';
 		break;
 	case N_ABS:
-		c = 'A';
+		c = 'a';
 		break;
 	case N_UNDEF:
 		c = 'U';
@@ -53,20 +53,21 @@ typeof(SYMENT *ent)
 		else
 			c = '?';
 
-		if (ent->n_sclass == C_EXT)
-			c = toupper(c);
-
 		break;
 	}
+
+	if (ent->n_sclass == C_EXT)
+		c = toupper(c);
+
 	return c;
 }
 
 static char *
-getsname(FILE *fp, SYMENT *ent)
+getsname(char *fname, FILE *fp, SYMENT *ent)
 {
 	int c;
 	size_t len;
-	char *s;
+	char *s, *err;
 	fpos_t pos;
 
 	if (ent->n_zeroes != 0) {
@@ -76,7 +77,6 @@ getsname(FILE *fp, SYMENT *ent)
 		s[len] = '\0';
 		return memcpy(s, ent->n_name, len);
 	}
-
 	
 	fgetpos(fp, &pos);
 	fseek(fp, stringtbl, SEEK_SET);
@@ -97,10 +97,9 @@ getsname(FILE *fp, SYMENT *ent)
 	return s;
 
 error:
-	fprintf(stderr,
-	        "nm::%s\n",
-	        (ferror(fp)) ? strerror(errno) : "broken string table");
-	exit(1);
+	err = (!ferror(fp)) ?
+		"EOF before reading strings" : strerror(errno);
+	die("nm: %s: %s", fname, err);
 }
 
 static void
@@ -120,7 +119,8 @@ getfsym(unsigned char *buff, SYMENT *ent)
 }
 
 static void
-getsymbol(FILE *fp, unsigned char *buff, SYMENT *ent, struct symbol *sym)
+getsymbol(char *fname, FILE *fp,
+          unsigned char *buff, SYMENT *ent, struct symbol *sym)
 {
 	char *nam;
 
@@ -133,7 +133,7 @@ getsymbol(FILE *fp, unsigned char *buff, SYMENT *ent, struct symbol *sym)
 		ent->n_zeroes = zero;
 		ent->n_offset = offset;
 	}
-	sym->name = getsname(fp, ent);
+	sym->name = getsname(fname, fp, ent);
 	sym->type = typeof(ent);
 	sym->value = ent->n_value;
 }
@@ -153,7 +153,7 @@ getsyms(char *fname, char *member, FILE *fp, FILHDR *hdr)
 	syms = xcalloc(sizeof(*syms), n);
 
 	if (fseek(fp, hdr->f_symptr, SEEK_SET) == EOF)
-		die("nm:%s:%s", member, strerror(errno));
+		die("nm:%s:%s", fname, strerror(errno));
 
 	aux = nsyms = 0;
 	for (i = 0; i < n; i++) {
@@ -163,13 +163,15 @@ getsyms(char *fname, char *member, FILE *fp, FILHDR *hdr)
 			aux--;
 			continue;
 		}
-		getsymbol(fp, buff, &ent, &syms[nsyms++]);
+		getsymbol(member, fp, buff, &ent, &syms[nsyms++]);
 		aux = ent.n_numaux;
 	}
 	if (n != i) {
-		die("nm:%s:%s",
-		    member,
-		    (ferror(fp)) ? strerror(errno) : "EOF before reading symbols");
+		char *err;
+
+		err = (!ferror(fp)) ?
+			"EOF before reading symbols" : strerror(errno);
+		die("nm: %s: %s", fname, err);
 	}
 }
 
@@ -216,11 +218,11 @@ getsects(char *fname, char *member, FILE *fp, FILHDR *hdr)
 		getfsec(buff, &sections[i]);
 	}
 	if (i != nsect) {
-		fprintf(stderr,
-			"nm:%s:%s\n",
-		        member,
-			(ferror(fp)) ? strerror(errno) : "EOF before reading sections");
-		exit(1);
+		char *err;
+
+		err = (!ferror(fp)) ?
+			"EOF before reading sections" : strerror(errno);
+		die("nm: %s: %s", fname, err);
 	}
 }
 
@@ -241,15 +243,18 @@ getfhdr(unsigned char *buff, FILHDR *hdr)
 	assert(n == FILHSZ);
 }
 
-static void
+static int
 nm(char *fname, char *member, FILE *fp)
 {
 	unsigned char buff[FILHSZ];
 	FILHDR hdr;
 	unsigned magic;
 
-	if (fread(buff, FILHSZ, 1, fp) != 1)
-		return;
+	if (fread(buff, FILHSZ, 1, fp) != 1) {
+		if (!ferror(fp))
+			return 0;
+		die("nm: %s: %s", fname, strerror(errno));
+	}
 
 	magic = buff[0] | buff[1] << 8;
 
@@ -264,9 +269,10 @@ nm(char *fname, char *member, FILE *fp)
 	getfhdr(buff, &hdr);
 	if ((hdr.f_flags & F_SYMS) != 0 || hdr.f_nsyms == 0) {
 		fprintf(stderr, "nm: %s: no symbols\n", member);
-		return;
+		return 1;
 	}
 
+	/* TODO: Check overflow */
 	stringtbl = hdr.f_symptr + hdr.f_nsyms* SYMESZ;
 
 	getsects(fname, member, fp, &hdr);
@@ -275,20 +281,24 @@ nm(char *fname, char *member, FILE *fp)
 
 	free(sections);
 	free(syms);
+	return 1;
 }
 
 static int
-probe(FILE *fp)
+probe(char *fname, char *member, FILE *fp)
 {
 	int c;
 	int c1, c2;
 	fpos_t pos;
-	static unsigned short magic;
+	unsigned short magic;
 
 	fgetpos(fp, &pos);
 	c1 = getc(fp);
 	c2 = getc(fp);
 	fsetpos(fp, &pos);
+
+	if (ferror(fp))
+		die("nm: %s: %s", fname, strerror(errno));
 
 	if (c1 == EOF || c2 == EOF)
 		return 0;
