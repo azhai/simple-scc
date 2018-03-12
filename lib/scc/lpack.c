@@ -3,7 +3,7 @@
 #include "../../inc/scc.h"
 
 int
-bpack(unsigned char *dst, char *fmt, ...)
+lpack(unsigned char *dst, char *fmt, ...)
 {
 	unsigned char *bp;
 	unsigned s;
