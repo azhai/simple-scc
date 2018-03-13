@@ -5,7 +5,7 @@ LIBDIR = $(PROJECTDIR)/lib/scc
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
-OBJ = main.o
+OBJ = main.o formats.o coff32.o
 
 all: ld
 	mkdir -p $(PROJECTDIR)
@@ -26,3 +26,9 @@ clean:
 distclean: clean
 
 #deps
+coff32.c: ld.h
+formats.c: ld.h
+main.c: ../inc/arg.h
+main.c: ../inc/ar.h
+main.c: ../inc/scc.h
+main.c: ld.h
