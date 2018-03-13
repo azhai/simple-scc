@@ -22,7 +22,7 @@ static int gflag;
 static int uflag;
 static int arflag;
 
-int
+static int
 object(char *fname, char *member, FILE *fp)
 {
 	extern struct objfile *formats[];
