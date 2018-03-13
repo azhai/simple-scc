@@ -5,7 +5,7 @@ PROJECTDIR = .
 
 include rules.mk
 
-DIRS  = inc cc1 cc2 driver lib as ar nm objdump
+DIRS  = inc cc1 cc2 driver lib as ar nm objdump ld
 
 all:
 	$(FORALL)
