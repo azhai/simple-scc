@@ -1,0 +1,16 @@
+
+LIB-OBJ = $(LIBDIR)/debug.o \
+          $(LIBDIR)/die.o \
+          $(LIBDIR)/newitem.o \
+          $(LIBDIR)/xcalloc.o \
+          $(LIBDIR)/xmalloc.o \
+          $(LIBDIR)/xrealloc.o \
+          $(LIBDIR)/xstrdup.o \
+          $(LIBDIR)/alloc.o \
+          $(LIBDIR)/casecmp.o \
+          $(LIBDIR)/lunpack.o \
+          $(LIBDIR)/lpack.o \
+          $(LIBDIR)/bunpack.o \
+          $(LIBDIR)/bpack.o \
+          $(LIBDIR)/wmyro.o \
+          $(LIBDIR)/rmyro.o \

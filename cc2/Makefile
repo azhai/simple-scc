@@ -4,7 +4,6 @@
 # If you modify Makefile remember to run make dep
 
 PROJECTDIR = ..
-LIBDIR = $(PROJECTDIR)/lib/scc
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
@@ -19,9 +18,6 @@ all:
 
 dep:
 	MKQBE=${MKQBE} ./gendep.sh $(TARGETS)
-
-$(LIBDIR)/libscc.a: $(LIB-OBJ)
-	+cd $(LIBDIR) && $(MAKE)
 
 main.o: error.h
 

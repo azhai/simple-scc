@@ -1,7 +1,6 @@
 .POSIX:
 
 PROJECTDIR = ..
-LIBDIR = $(PROJECTDIR)/lib/scc
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
@@ -13,9 +12,6 @@ all: nm
 
 nm: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
-
-$(LIBDIR)/libscc.a: $(LIB-OBJ)
-	+cd $(LIBDIR) && $(MAKE)
 
 dep:
 	$(PROJECTDIR)/mkdep.sh

@@ -1,7 +1,6 @@
 .POSIX:
 
 PROJECTDIR = ..
-LIBDIR = $(PROJECTDIR)/lib/scc
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
@@ -13,9 +12,6 @@ objdump: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
 main.o: $(PROJECTDIR)/inc/scc.h $(PROJECTDIR)/inc/myro.h $(PROJECTDIR)/inc/arg.h
-
-$(LIBDIR)/libscc.a: $(LIB-OBJ)
-	+cd $(LIBDIR) && $(MAKE)
 
 dep:
 clean:

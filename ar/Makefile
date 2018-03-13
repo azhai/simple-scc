@@ -1,7 +1,6 @@
 .POSIX:
 
 PROJECTDIR = ..
-LIBDIR = $(PROJECTDIR)/lib/scc
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
@@ -18,9 +17,6 @@ ar-$(DRIVER): $(OBJ) $(LIBDIR)/libscc.a
 main.o: $(PROJECTDIR)/inc/scc.h $(PROJECTDIR)/inc/ar.h
 
 $(DRIVER)/driver.o: $(DRIVER)/driver.h
-
-$(LIBDIR)/libscc.a: $(LIB-OBJ)
-	+cd $(LIBDIR) && $(MAKE)
 
 main.o: $(DRIVER)/driver.h
 
