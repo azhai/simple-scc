@@ -7,7 +7,6 @@ include $(LIBDIR)/libdep.mk
 OBJ = main.o formats.o coff32.o
 
 all: ld
-	mkdir -p $(PROJECTDIR)/rootdir/bin
 	cp ld $(PROJECTDIR)/rootdir/bin
 
 ld: $(OBJ) $(LIBDIR)/libscc.a

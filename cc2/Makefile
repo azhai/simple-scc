@@ -13,7 +13,6 @@ OBJ = main.o parser.o peep.o symbol.o node.o code.o optm.o
 HDR = cc2.h $(PROJECTDIR)/inc/$(STD)/cstd.h $(PROJECTDIR)/inc/scc.h
 
 all:
-	mkdir -p $(PROJECTDIR)/rootdir/libexec/scc/
 	cp cc2-* $(PROJECTDIR)/rootdir/libexec/scc/
 
 dep:

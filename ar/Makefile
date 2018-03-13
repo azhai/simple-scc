@@ -8,7 +8,6 @@ OBJ       = main.o $(DRIVER)/driver.o
 MOREFLAGS = -I$(DRIVER)
 
 all: ar-$(DRIVER)
-	mkdir -p $(PROJECTDIR)/rootdir/bin
 	cp ar-$(DRIVER) $(PROJECTDIR)/rootdir/bin/ar
 
 ar-$(DRIVER): $(OBJ) $(LIBDIR)/libscc.a

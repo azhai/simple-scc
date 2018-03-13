@@ -19,7 +19,6 @@ HDR = cc1.h \
       $(PROJECTDIR)/inc/sysincludes.h
 
 all:
-	mkdir -p $(PROJECTDIR)/rootdir/libexec/scc/
 	cp cc1-* $(PROJECTDIR)/rootdir/libexec/scc/
 
 dep:

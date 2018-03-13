@@ -30,4 +30,10 @@ FORALL = +@set -e ;\
 	$(CC) $(SCC_CFLAGS) $(SCC_LDFLAGS) -o $@ $<
 
 
-all:
+all: $(PROJECTDIR)/rootdir/bin $(PROJECTDIR)/rootdir/libexec/scc
+
+$(PROJECTDIR)/rootdir/bin:
+	mkdir -p $(PROJECTDIR)/rootdir/bin
+
+$(PROJECTDIR)/rootdir/libexec/scc:
+	mkdir -p $(PROJECTDIR)/rootdir/libexec/scc
