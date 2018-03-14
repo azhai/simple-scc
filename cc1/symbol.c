@@ -198,7 +198,7 @@ newid(void)
 		return 0;
 	id = ++counterid;
 	if (id == 0) {
-		die("Overflow in %s identifiers",
+		die("cc1: overflow in %s identifiers",
 		    (curctx) ? "internal" : "external");
 	}
 	return id;

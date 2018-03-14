@@ -1,6 +1,7 @@
 static char sccsid[] = "@(#) ./as/parser.c";
 #include <assert.h>
 #include <ctype.h>
+#include <errno.h>
 #include <limits.h>
 #include <setjmp.h>
 #include <stdarg.h>
@@ -455,7 +456,7 @@ repeat:
 	}
 	n = getline(ip->fp, buff);
 	if (++ip->lineno == 0)
-		die("as: file too long");
+		die("as: %s: file too long", infile);
 	if (n == 0)
 		goto repeat;
 	if (extract(buff, n, lp) == 0)
@@ -469,9 +470,9 @@ addinput(char *fname)
 	FILE *fp;
 
 	if (isp == &inputs[NR_INPUTS])
-		die("too many included files");
+		die("as: too many included files");
 	if ((fp = fopen(fname, "r")) == NULL)
-		die("error opening input file '%s'", fname);
+		die("as: %s: %s", fname, strerror(errno));
 	isp->fname = xstrdup(fname);
 	isp->fp = fp;
 	isp->lineno = 0;
@@ -485,7 +486,7 @@ delinput(void)
 		return EOF;
 	--isp;
 	if (fclose(isp->fp) == EOF)
-		die("error closing file '%s'", isp->fname);
+		die("as: %s: %s", isp->fname, strerror(errno));
 	free(isp->fname);
 	return 0;
 }

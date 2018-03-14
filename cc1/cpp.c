@@ -416,7 +416,7 @@ void
 incdir(char *dir)
 {
 	if (!dir || *dir == '\0')
-		die("incorrect -I flag");
+		die("cc1: incorrect -I flag");
 	newitem(&dirinclude, dir);
 }
 
@@ -454,7 +454,7 @@ cwd(char *buf)
 	if ((p = strrchr(s, '/')) == NULL)
 		return NULL;
 	if ((len = p - s) >= FILENAME_MAX)
-		die("current work directory too long");
+		die("cc1: current work directory too long");
 	memcpy(buf, s, len);
 	buf[len] = '\0';
 	return buf;

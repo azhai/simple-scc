@@ -147,7 +147,7 @@ incpc(int siz)
 	    curpc > cursec->curpc ||
 	    cursec->curpc > maxaddr ||
 	    cursec->pc > maxaddr) {
-		die("address overflow");
+		die("as: address overflow in section '%s'");
 	}
 }
 
@@ -238,7 +238,7 @@ cleansecs(void)
 
 		siz = sec->max - sec->base;
 		if (siz > SIZE_MAX)
-			die("out of memory");
+			die("as: out of memory");
 		sec->mem = xmalloc(sec->max - sec->base);
 	}
 	cursec = stext;

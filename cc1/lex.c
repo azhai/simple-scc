@@ -75,7 +75,7 @@ setloc(char *fname, unsigned line)
 	size_t len;
 
 	if ((len = strlen(fname)) >= FILENAME_MAX)
-		die("file name too long: '%s'", fname);
+		die("cc1: %s: file name too long", fname);
 	memmove(filenam, fname, len);
 	filenam[len] = '\0';
 
@@ -97,7 +97,7 @@ addinput(char *fname, Symbol *hide, char *buffer)
 		/* this is a macro expansion */
 		fp = NULL;
 		if (hide->hide == UCHAR_MAX)
-			die("Too many macro expansions");
+			die("cc1: too many macro expansions");
 		++hide->hide;
 		flags = IMACRO;
 	} else  if (fname) {
@@ -150,8 +150,7 @@ delinput(void)
 	switch (ip->flags & ITYPE) {
 	case IFILE:
 		if (fclose(ip->fp))
-			die("error: failed to read from input file '%s'",
-			    ip->filenam);
+			die("cc1: %s: %s", ip->filenam, strerror(errno));
 		break;
 	case IMACRO:
 		assert(hide->hide == 1);
@@ -171,7 +170,7 @@ static void
 newline(void)
 {
 	if (++lineno == 0)
-		die("error: input file '%s' too long", filenam);
+		die("cc1: %s: file too long", filenam);
 }
 
 /*

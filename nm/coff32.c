@@ -40,7 +40,7 @@ typeof(SYMENT *ent)
 		break;
 	default:
 		if (ent->n_scnum > nsect)
-			die("nm:incorrect section index");
+			die("nm: incorrect section index");
 		sec = &sections[ent->n_scnum-1];
 		flags = sec->s_flags;
 		if (flags & STYP_TEXT)
@@ -146,13 +146,13 @@ getsyms(char *fname, char *member, FILE *fp, FILHDR *hdr)
 	SYMENT ent;
 
 	if (hdr->f_nsyms > SIZE_MAX)
-		die("nm:%s:Too many symbols\n", member);
+		die("nm: %s:Too many symbols\n", member);
 
 	n = hdr->f_nsyms;
 	syms = xcalloc(sizeof(*syms), n);
 
 	if (fseek(fp, symtbl, SEEK_SET) == EOF)
-		die("nm:%s:%s", fname, strerror(errno));
+		die("nm: %s:%s", fname, strerror(errno));
 
 	aux = nsyms = 0;
 	for (i = 0; i < n; i++) {
@@ -205,10 +205,10 @@ getsects(char *fname, char *member, FILE *fp, FILHDR *hdr)
 		return;
 
 	if (nsect > SIZE_MAX)
-		die("nm:%s:Too many sections\n", member);
+		die("nm: %s:Too many sections\n", member);
 
 	if (fseek(fp, sectbl, SEEK_SET) == EOF)
-		die("nm:%s:%s", member, strerror(errno));
+		die("nm: %s:%s", member, strerror(errno));
 
 	sections = xcalloc(sizeof(*sections), nsect);
 	for (i = 0; i < nsect; i++) {

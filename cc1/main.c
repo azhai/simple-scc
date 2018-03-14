@@ -1,5 +1,6 @@
 static char sccsid[] = "@(#) ./cc1/main.c";
 #include <setjmp.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -35,8 +36,9 @@ defmacro(char *macro)
 static void
 usage(void)
 {
-	die("usage: cc1 [-Ewd] [-D def[=val]]... [-U def]... "
-	    "[-I dir]... [-o output] [input]");
+	fputs("usage: cc1 [-Ewd] [-D def[=val]]... [-U def]... "
+	      "[-I dir]... [-o output] [input]\n", stderr);
+	exit(1);
 }
 
 int

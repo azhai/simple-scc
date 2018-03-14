@@ -1,11 +1,17 @@
 static char sccsid[] = "@(#) ./cc2/main.c";
+
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+#include "../inc/arg.h"
 #include "../inc/scc.h"
 #include "cc2.h"
 #include "error.h"
+
+char *argv0;
 
 void
 error(unsigned nerror, ...)
@@ -32,14 +38,23 @@ repeat:
 	return 1;
 }
 
+static void
+usage(void)
+{
+	fputs("usage: cc2 [irfile]\n", stderr);
+	exit(1);
+}
+
 int
 main(int argc, char *argv[])
 {
-	if (argc > 2)
-		die("usage: cc2 [irfile]");
+	ARGBEGIN {
+	default:
+		usage();
+	} ARGEND
 
-	if (argv[1] && !freopen(argv[1], "r", stdin))
-		die("cc2: cannot open %s", argv[1]);
+	if (argv[0] && !freopen(argv[0], "r", stdin))
+		die("cc2: %s: %s", argv[0], strerror(errno));
 
 	while (moreinput()) {
 		parse();

@@ -35,7 +35,7 @@ probe(char *fname, char *member, FILE *fp)
 	fsetpos(fp, &pos);
 
 	if (ferror(fp))
-		die("nm: %s: %s", fname, strerror(errno));
+		die("ld: %s: %s", fname, strerror(errno));
 
 	if (c1 == EOF || c2 == EOF)
 		return 0;
