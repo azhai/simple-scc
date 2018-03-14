@@ -82,10 +82,7 @@ main(int argc, char *argv[])
 		undefmacro(uflags.s[i]);
 
 	infile = (*argv) ? *argv : "<stdin>";
-	if (!addinput(*argv, NULL, NULL)) {
-		die("error: failed to open input file '%s': %s",
-		    *argv, strerror(errno));
-	}
+	addinput(*argv, NULL, NULL);
 
 	/*
 	 * we cannot initialize arch until we have an

@@ -416,11 +416,11 @@ extern int ahead(void);
 extern int next(void);
 extern void expect(int tok);
 extern void discard(void);
-extern int addinput(char *fname, Symbol *hide, char *buffer);
+extern void addinput(char *fname, Symbol *hide, char *buffer);
 extern void delinput(void);
 extern void setsafe(int type);
 extern void ilex(void);
-extern int setloc(char *fname, unsigned line);
+extern void setloc(char *fname, unsigned line);
 #define accept(t) ((yytoken == (t)) ? next() : 0)
 
 /* code.c */

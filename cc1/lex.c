@@ -69,7 +69,7 @@ ilex(void)
 	keywords(keys, NS_KEYWORD);
 }
 
-int
+void
 setloc(char *fname, unsigned line)
 {
 	size_t len;
@@ -82,10 +82,9 @@ setloc(char *fname, unsigned line)
 	free(input->filenam);
 	input->filenam = xstrdup(fname);
 	lineno = input->lineno = line;
-	return 1;
 }
 
-int
+void
 addinput(char *fname, Symbol *hide, char *buffer)
 {
 	FILE *fp;
@@ -104,7 +103,7 @@ addinput(char *fname, Symbol *hide, char *buffer)
 	} else  if (fname) {
 		/* a new file */
 		if ((fp = fopen(fname, "r")) == NULL)
-			return 0;
+			die("cc1: %s: %s", fname, strerror(errno));
 		flags = IFILE;
 		if (curip && onlyheader) {
 			infileln = strlen(infile);
@@ -139,7 +138,7 @@ addinput(char *fname, Symbol *hide, char *buffer)
 	newip->flags = flags;
 	input = newip;
 
-	return setloc(fname, (curip) ? curip->lineno : newip->lineno);
+	setloc(fname, (curip) ? curip->lineno : newip->lineno);
 }
 
 void

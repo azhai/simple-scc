@@ -441,7 +441,8 @@ includefile(char *dir, char *file, size_t filelen)
 	memcpy(path+dirlen, file, filelen);
 	path[dirlen + filelen] = '\0';
 
-	return addinput(path, NULL, NULL);
+	addinput(path, NULL, NULL);
+	return 1;
 }
 
 static char *
