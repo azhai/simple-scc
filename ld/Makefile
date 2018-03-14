@@ -26,6 +26,10 @@ clean:
 distclean: clean
 
 #deps
+coff32.c: ../inc/coff32/filehdr.h
+coff32.c: ../inc/coff32/scnhdr.h
+coff32.c: ../inc/coff32/syms.h
+coff32.c: ../inc/scc.h
 coff32.c: ld.h
 formats.c: ld.h
 main.c: ../inc/arg.h
