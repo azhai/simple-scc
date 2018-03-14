@@ -4,7 +4,6 @@
 # If you modify Makefile remember to run make dep
 
 PROJECTDIR = ..
-LIBDIR = $(PROJECTDIR)/lib/scc
 
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
@@ -20,11 +19,7 @@ HDR = cc1.h \
       $(PROJECTDIR)/inc/sysincludes.h
 
 all:
-	mkdir -p $(PROJECTDIR)/rootdir/libexec/scc/
 	cp cc1-* $(PROJECTDIR)/rootdir/libexec/scc/
-
-$(LIBDIR)/libscc.a: $(LIB-OBJ)
-	+cd $(LIBDIR) && $(MAKE)
 
 dep:
 	./gendep.sh $(TARGETS)

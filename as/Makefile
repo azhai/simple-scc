@@ -1,7 +1,6 @@
 .POSIX:
 
 PROJECTDIR = ..
-LIBDIR = $(PROJECTDIR)/lib/scc
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
@@ -17,9 +16,6 @@ as: $(OBJ)
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
 myro.o: $(PROJECTDIR)/inc/myro.h
-
-$(LIBDIR)/libscc.a: $(LIB-OBJ)
-	+cd $(LIBDIR) && $(MAKE)
 
 dep:
 	./gendep.sh $(TARGETS)

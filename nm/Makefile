@@ -1,21 +1,16 @@
 .POSIX:
 
 PROJECTDIR = ..
-LIBDIR = $(PROJECTDIR)/lib/scc
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
 OBJ       = main.o coff32.o formats.o
 
 all: nm
-	mkdir -p $(PROJECTDIR)/rootdir/bin
 	cp nm $(PROJECTDIR)/rootdir/bin/nm
 
 nm: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
-
-$(LIBDIR)/libscc.a: $(LIB-OBJ)
-	+cd $(LIBDIR) && $(MAKE)
 
 dep:
 	$(PROJECTDIR)/mkdep.sh

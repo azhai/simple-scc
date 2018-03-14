@@ -3,7 +3,7 @@
 PROJECTDIR = ../..
 LIBDIR = .
 include $(PROJECTDIR)/rules.mk
-include libdep.mk
+include objlst.mk
 
 all: libscc.a
 

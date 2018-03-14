@@ -32,9 +32,6 @@ cpp: cpp.sh config.h
 	chmod +x $$$$.sh && \
 	mv $$$$.sh $@
 
-$(LIBDIR)/libscc.a:
-	+cd $(LIBDIR) && $(MAKE)
-
 clean:
 	rm -f $(OBJ)
 	rm -f scc
