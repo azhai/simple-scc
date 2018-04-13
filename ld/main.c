@@ -131,52 +131,17 @@ process(char *fname)
 }
 
 static void
-pass1(struct items *list)
+pass1(int argc, char *argv[])
 {
-	unsigned i;
-
-	pass = 1;
-	for (i = 0; i < list->n; ++i)
-		process(list->s[i]);
+	while (*argv)
+		process(*argv++);
 }
 
 static void
-pass2(struct items *list)
+pass2(int argc, char *argv[])
 {
-	unsigned i;
-
-	pass = 2;
-	for (i = 0; i < list->n; ++i)
-		process(list->s[i]);
-}
-
-static void
-readflist(struct items *list, char *fname)
-{
-	FILE *fp;
-	char line[FILENAME_MAX];
-	unsigned char *s, *t;
-
-	if ((fp = fopen(fname, "rb")) == NULL)
-		die("ld: %s: %s", fname, strerror(errno));
-
-	while (fgets(line, sizeof(line), fp)) {
-		size_t n = strlen(line);
-		if (n == 0)
-			continue;
-		if (line[n-1] != '\n')
-			die("ld: %s: line too long", fname);
-		for (s = line; isspace(*s); ++s)
-			*s = '\0';
-		for (t = &line[n-1]; isspace(*t); --t)
-			*t = '\0';
-		newitem(list, xstrdup(s));
-	}
-
-	if (ferror(fp))
-		die("ld: %s: %s", fname, strerror(errno));
-
-	fclose(fp);
+	while (*argv)
+		process(*argv++);
 }
 
 static void
@@ -190,7 +155,6 @@ int
 main(int argc, char *argv[])
 {
 	unsigned i;
-	struct items flist = {.n = 0};
 
 	ARGBEGIN {
 	case 's':
@@ -215,16 +179,8 @@ main(int argc, char *argv[])
 	if (argc == 0)
 		usage();
 
-	if (*argv[0] == '@') {
-		readflist(&flist, *argv + 1);
-		++argv;
-	}
-
-	for (; *argv; ++argv)
-		newitem(&flist, *argv);
-
-	pass1(&flist);
-	pass2(&flist);
+	pass1(argc, argv);
+	pass2(argc, argv);
 
 	return 0;
 }
