@@ -16,7 +16,7 @@ static char sccsid[] = "@(#) ./nm/coff.c";
 #include "nm.h"
 
 static int (*unpack)(unsigned char *, char *, ...);
-static long stringtbl, symtbl, sectbl;
+static long strtbl, symtbl, sectbl;
 static SCNHDR *sections;
 static struct symbol *syms;
 static size_t nsect, nsyms;
@@ -75,9 +75,10 @@ getsname(char *fname, FILE *fp, SYMENT *ent)
 		s[len] = '\0';
 		return memcpy(s, ent->n_name, len);
 	}
-	
+
+	/* TODO: read the string table in memory before reading symbols */
 	fgetpos(fp, &pos);
-	fseek(fp, stringtbl, SEEK_SET);
+	fseek(fp, strtbl, SEEK_SET);
 	fseek(fp, ent->n_offset, SEEK_CUR);
 
 	if (ferror(fp))
@@ -247,23 +248,12 @@ nm(char *fname, char *member, FILE *fp)
 {
 	unsigned char buff[FILHSZ];
 	FILHDR hdr;
-	unsigned magic;
 	long pos = ftell(fp);
 
 	if (fread(buff, FILHSZ, 1, fp) != 1) {
-		if (!ferror(fp))
-			return 0;
-		die("nm: %s: %s", fname, strerror(errno));
-	}
-
-	magic = buff[0] | buff[1] << 8;
-
-	switch (magic) {
-	case COFF_Z80MAGIC:
-		unpack = lunpack;
-		break;
-	default:
-		abort();
+		if (ferror(fp))
+			die("nm: %s: %s", fname, strerror(errno));
+		die("nm: %s: corrupted file", fname);
 	}
 
 	getfhdr(buff, &hdr);
@@ -273,7 +263,7 @@ nm(char *fname, char *member, FILE *fp)
 	}
 
 	/* TODO: Check overflow */
-	stringtbl = pos + hdr.f_symptr + hdr.f_nsyms* SYMESZ;
+	strtbl = pos + hdr.f_symptr + hdr.f_nsyms* SYMESZ;
 	symtbl = pos + hdr.f_symptr;
 	sectbl = pos + FILHSZ + hdr.f_opthdr;
 
@@ -308,8 +298,10 @@ probe(char *fname, char *member, FILE *fp)
 
 	switch (magic) {
 	case COFF_Z80MAGIC:
+		unpack = lunpack;
 		return 1;
 	default:
+		unpack = NULL;
 		return 0;
 	}
 }
