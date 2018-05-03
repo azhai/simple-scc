@@ -21,7 +21,7 @@ object(char *fname, char *member, FILE *fp)
 	extern struct objfile *formats[];
 	struct objfile **p, *obj;
 	void *data;
-	int (*fun)(char *, char *, FILE *);
+	void (*fun)(char *, char *, FILE *);
 
 	for (p = formats; *p; ++p) {
 		obj = *p;
@@ -32,7 +32,8 @@ object(char *fname, char *member, FILE *fp)
 		return 0;
 
 	fun = (pass == 1) ? obj->pass1 : obj->pass2;
-	return (*fun)(fname, member, fp);
+	(*fun)(fname, member, fp);
+	return 1;
 }
 
 static char *

@@ -4,7 +4,7 @@ PROJECTDIR = ..
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
 
-OBJ = main.o formats.o coff32.o
+OBJ = main.o formats.o coff32.o obj.o
 
 all: ld
 	cp ld $(PROJECTDIR)/rootdir/bin
