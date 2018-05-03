@@ -609,6 +609,8 @@ main(int argc, char *argv[])
 		lflag = 1;
 		break;
 	case 'u':
+		/* TODO */
+		abort();
 		uflag = 1;
 		break;
 	default:
