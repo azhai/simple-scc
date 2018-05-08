@@ -13,6 +13,7 @@ config.mk
 inc/ldflags.h
 inc/sysincludes.h
 inc/syslibs.h
+inc/syscrts.h
 driver/posix/config.h
 driver/posix/cpp
 rootdir/
@@ -21,3 +22,4 @@ nm/nm
 objdump/objdump
 as/target/*/*tbl.c
 *.out
+ld/ld
