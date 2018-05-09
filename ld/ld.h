@@ -1,11 +1,16 @@
 
 typedef struct obj Obj;
+typedef struct symbol Symbol;
 
 struct obj {
 	char *fname;
 	void *hdr;
 	char *strtbl;
 	struct obj *next;
+};
+
+struct symbol {
+	char *name;
 };
 
 #ifdef stdin
@@ -18,3 +23,4 @@ struct objfile {
 
 /* obj.c */
 extern Obj *newobj(char *fname);
+extern Symbol *lookup(char *name);

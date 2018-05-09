@@ -28,8 +28,8 @@ coff32.c: ../inc/scc.h
 coff32.c: ld.h
 formats.c: ld.h
 main.c: ../inc/ar.h
-main.c: ../inc/arg.h
 main.c: ../inc/scc.h
+main.c: ../inc/syslibs.h
 main.c: ld.h
 obj.c: ../inc/scc.h
 obj.c: ld.h

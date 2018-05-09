@@ -31,3 +31,9 @@ newobj(char *fname)
 
 	return obj;
 }
+
+Symbol *
+lookup(char *name)
+{
+	return NULL;
+}

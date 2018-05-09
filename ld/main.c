@@ -7,13 +7,15 @@ static char sccsid[] = "@(#) ./ld/main.c";
 #include <stdlib.h>
 #include <string.h>
 
-#include "../inc/arg.h"
 #include "../inc/scc.h"
 #include "../inc/ar.h"
+#include "../inc/syslibs.h"
 #include "ld.h"
 
 char *argv0;
+char *output = "a.out", *entry, *datasiz;
 int pass;
+int sflag, xflag, Xflag, rflag, dflag;
 
 static int
 object(char *fname, char *member, FILE *fp)
@@ -148,36 +150,95 @@ pass2(int argc, char *argv[])
 static void
 usage(void)
 {
-	fputs("usage: ld [options] [@file] file ...\n", stderr);
+	fputs("usage: ld [options] file ...\n", stderr);
 	exit(1);
+}
+
+static void
+Lpath(char *path)
+{
+	char **bp;
+
+	for (bp = syslibs; bp < &syslibs[MAX_LIB_PATHS] && *bp; ++bp)
+		;
+	if (bp == &syslibs[MAX_LIB_PATHS]) {
+		fputs("ld: too many -L options\n", stderr);
+		exit(1);
+	}
+	*bp = path;
 }
 
 int
 main(int argc, char *argv[])
 {
-	unsigned i;
+	char *cp, **p;
 
-	ARGBEGIN {
-	case 's':
-	case 'u':
-	case 'l':
-	case 'x':
-	case 'X':
-	case 'r':
-	case 'd':
-	case 'n':
-	case 'i':
-	case 'o':
-	case 'e':
-	case 'O':
-	case 'D':
-		break;
-	default:
-		usage();
-	} ARGEND
+	for (--argc; *++argv; --argc) {
+		if (argv[0][0] != '-' || argv[0][1] == 'l')
+			break;
+		if (argv[0][1] == '-') {
+			--argc, ++argv;
+			break;
+		|
+		for (cp = &argv[0][1]; *cp; ++cp) {
+			switch (*cp) {
+			case 's':
+				sflag = 1;
+				break;
+			case 'x':
+				xflag = 1;
+				break;
+			case 'X':
+				Xflag = 1;
+				break;
+			case 'r':
+				rflag = 1;
+				break;
+			case 'd':
+				dflag = 1;
+				break;
+			case 'i':
+			case 'n':
+				/* TODO */
+				break;
+			case 'L':
+				if (argc == 0)
+					goto usage;
+				++argv, --argc;
+				Lpath(*argv);
+				break;
+			case 'u':
+				if (argc == 0)
+					goto usage;
+				++argv, --argc;
+				lookup(*argv);
+				break;
+			case 'o':
+				if (argc == 0)
+					goto usage;
+				++argv, --argc;
+				output = *argv;
+				break;
+			case 'e':
+				if (argc == 0)
+					goto usage;
+				++argv, --argc;
+				entry = *argv;
+				break;
+			case 'D':
+				if (argc == 0)
+					goto usage;
+				++argv, --argc;
+				datasiz = *argv;
+				break;
+			default:
+			usage:
+				usage();
+			}
+		}
+	}
 
-
-	if (argc == 0)
+	if (argc < 0)
 		usage();
 
 	pass1(argc, argv);
