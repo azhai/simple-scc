@@ -136,6 +136,7 @@ process(char *fname)
 static void
 pass1(int argc, char *argv[])
 {
+	pass = 1;
 	while (*argv)
 		process(*argv++);
 }
@@ -143,6 +144,7 @@ pass1(int argc, char *argv[])
 static void
 pass2(int argc, char *argv[])
 {
+	pass = 2;
 	while (*argv)
 		process(*argv++);
 }
@@ -179,7 +181,7 @@ main(int argc, char *argv[])
 		if (argv[0][1] == '-') {
 			--argc, ++argv;
 			break;
-		|
+		}
 		for (cp = &argv[0][1]; *cp; ++cp) {
 			switch (*cp) {
 			case 's':
