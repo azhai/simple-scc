@@ -12,7 +12,7 @@ $(LIBDIR)/wmyro.o: $(PROJECTDIR)/inc/myro.h
 $(LIBDIR)/rmyro.o: $(PROJECTDIR)/inc/myro.h
 
 libscc.a: $(LIB-OBJ)
-	ar $(ARFLAGS) $@ $?
+	$(AR) $(ARFLAGS) $@ $?
 	ranlib $@
 
 dep:
