@@ -12,10 +12,16 @@ static char sccsid[] = "@(#) ./ld/main.c";
 #include "../inc/syslibs.h"
 #include "ld.h"
 
-char *argv0;
 char *output = "a.out", *entry, *datasiz;
 int pass;
 int sflag, xflag, Xflag, rflag, dflag;
+
+void
+outmem(void)
+{
+	fputs("ld: out of memory\n", stderr);
+	exit(EXIT_FAILURE);
+}
 
 static int
 object(char *fname, char *member, FILE *fp)
