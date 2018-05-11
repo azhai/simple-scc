@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ ! -e config.mk ]
+if test ! -e config.mk
 then
 	printf '%s\n' 'Generating config.mk from defaults...' \
 	              '(edit it for customization and then re-run this script)'
