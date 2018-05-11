@@ -7,7 +7,8 @@ struct obj {
 	char *member;
 	FILE *fp;
 	void *filhdr;
-	void *sechdr;
+	void *scnhdr;
+	void *enthdr;
 	char *strtbl;
 	struct obj *next;
 };

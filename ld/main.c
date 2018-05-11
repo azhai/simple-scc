@@ -130,7 +130,7 @@ process(char *fname)
 	if ((fp = fopen(fname, "rb")) == NULL)
 		die("ld: %s: %s", fname, strerror(errno));
 
-	if (!object(fname, fname, fp) && !archive(fname, fp))
+	if (!object(fname, NULL, fp) && !archive(fname, fp))
 		die("ld: %s: File format not recognized", fname);
 
 	if (ferror(fp))

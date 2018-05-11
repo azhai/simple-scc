@@ -15,16 +15,23 @@ newobj(char *fname, char *member)
 {
 	Obj *obj;
 	char *s, *t;
-	size_t l1 = strlen(member), l2 = strlen(fname);
+	size_t len;
 
+	len = strlen(fname);
 	obj = malloc(sizeof(*obj));
-	s = malloc(l1+1);
-	t = malloc(l2+1);
-	if (!obj || !s || !t)
+	s = malloc(len+1);
+	if (!obj || !s)
 		outmem();
+	obj->fname = memcpy(s, fname, len+1);
 
-	obj->fname = memcpy(s, fname, l1);
-	obj->member = memcpy(t, member, l2);
+	if (!member) {
+		obj->member = NULL;
+	} else {
+		len = strlen(member);
+		if ((s = malloc(len+1)) == NULL)
+			outmem();
+		obj->member = memcpy(s, member, len+1);
+	}
 	obj->next = NULL;
 
 	if (!objlst)

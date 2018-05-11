@@ -103,6 +103,9 @@ readsects(Obj *obj, long off)
 			return -1;
 		getscn(buff, &scn[i]);
 	}
+	obj->scnhdr = scn;
+
+	return 0;
 }
 
 static void
@@ -151,23 +154,21 @@ readsyms(Obj *obj, long off)
 			return -1;
 		getsym(buff, &ent[i]);
 	}
+	obj->enthdr = ent;
+
 	return 0;
 }
 
 static void
-pass1(char *fname, char *member, FILE *fp)
+readobj(Obj *obj)
 {
 	unsigned char buff[FILHSZ];
 	FILHDR *hdr;
-	Obj *obj;
 	char *strtbl;
 	long symoff, secoff, stroff, pos;
 
-	obj = newobj(fname, member);
-	obj->fp = fp;
-
-	pos = ftell(fp);
-	if (fread(buff, FILHSZ, 1, fp) != 1)
+	pos = ftell(obj->fp);
+	if (fread(buff, FILHSZ, 1, obj->fp) != 1)
 		goto bad_file;
 
 	if ((hdr = malloc(sizeof(*hdr))) == NULL)
@@ -186,11 +187,22 @@ pass1(char *fname, char *member, FILE *fp)
 		goto bad_file;
 	if (readsects(obj, secoff) < 0)
 		goto bad_file;
+	return;
 
 bad_file:
-	if (ferror(fp))
-		die("ld: %s: %s", fname, strerror(errno));
-	die("ld: %s: corrupted file", fname);
+	if (ferror(obj->fp))
+		die("ld: %s: %s", obj->fname, strerror(errno));
+	die("ld: %s: corrupted file", obj->fname);
+}
+
+static void
+pass1(char *fname, char *member, FILE *fp)
+{
+	Obj *obj;
+
+	obj = newobj(fname, member);
+	obj->fp = fp;
+	readobj(obj);
 }
 
 static void
