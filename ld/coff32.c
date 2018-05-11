@@ -82,19 +82,26 @@ getscn(unsigned char *buff, SCNHDR *scn)
 static int
 readsects(Obj *obj, long off)
 {
-	unsigned i;
+	unsigned nsec, i;
 	unsigned char buff[SCNHSZ];
-	SCNHDR scn;
+	SCNHDR *scn;
 	FILHDR *hdr;
+
+	hdr = obj->filhdr;
+	nsec = hdr->f_nscns;
+	if (nsec > SIZE_MAX / sizeof(*scn))
+		return -1;
+
+	if ((scn = malloc(nsec * sizeof(*scn))) == NULL)
+		return -1;
 
 	if (fseek(obj->fp, off, SEEK_SET) == EOF)
 		return -1;
 
-	hdr = obj->filhdr;
-	for (i = 0; i < hdr->f_nscns; i++) {
+	for (i = 0; i < nsec; i++) {
 		if (fread(buff, SCNHSZ, 1, obj->fp) != 1)
 			return -1;
-		getscn(buff, &scn);
+		getscn(buff, &scn[i]);
 	}
 }
 
@@ -121,18 +128,30 @@ getsym(unsigned char *buff, SYMENT *ent)
 }
 
 static int
-loadobj(Obj *obj, long off)
+readsyms(Obj *obj, long off)
 {
-	unsigned i;
+	unsigned i, nsym;
 	unsigned char buff[SYMESZ];
-	SYMENT sym;
+	SYMENT *ent;
 	FILHDR *hdr;
 
-	for (i = 0; i < hdr->f_nsyms; i++) {
+	hdr = obj->filhdr;
+	nsym = hdr->f_nsyms;
+	if (nsym > SIZE_MAX / sizeof(*ent))
+		return -1;
+
+	if ((ent = malloc(nsym * sizeof(*ent))) == NULL)
+		outmem();
+
+	if (fseek(obj->fp, off, SEEK_SET) == EOF)
+		return -1;
+
+	for (i = 0; i < nsym; i++) {
 		if (fread(buff, SYMESZ, 1, obj->fp) != 1)
 			return -1;
-		getsym(buff, &sym);
+		getsym(buff, &ent[i]);
 	}
+	return 0;
 }
 
 static void
@@ -163,7 +182,7 @@ pass1(char *fname, char *member, FILE *fp)
 
 	if (readstr(obj, stroff) < 0)
 		goto bad_file;
-	if (loadobj(obj, symoff) < 0)
+	if (readsyms(obj, symoff) < 0)
 		goto bad_file;
 	if (readsects(obj, secoff) < 0)
 		goto bad_file;
