@@ -102,6 +102,8 @@ static void
 getsym(unsigned char *buff, SYMENT *ent)
 {
 	int n;
+	long off, zero;
+	char *name;
 
 	n = (*unpack)(buff,
 		      "'8lsscc",
@@ -112,6 +114,10 @@ getsym(unsigned char *buff, SYMENT *ent)
 		      &ent->n_sclass,
 		      &ent->n_numaux);
 	assert(n == SYMESZ);
+
+	name = ent->n_name;
+	if (!name[0] && !name[1] && !name[2] && !name[3])
+		(*unpack)(buff, "ll", &ent->n_zeroes, &ent->n_offset);
 }
 
 static int
