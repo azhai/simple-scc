@@ -14,7 +14,11 @@ static char sccsid[] = "@(#) ./ld/main.c";
 
 char *output = "a.out", *entry, *datasiz;
 int pass;
-int sflag, xflag, Xflag, rflag, dflag;
+int sflag;		/* discard all the symbols */
+int xflag;		/* discard local symbols */
+int Xflag;		/* discard locals starting with 'L' */
+int rflag;		/* preserve relocation bits */
+int dflag;		/* define common even with rflag */
 
 void
 outmem(void)
