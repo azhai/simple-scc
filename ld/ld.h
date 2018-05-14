@@ -15,6 +15,7 @@ struct obj {
 
 struct symbol {
 	char *name;
+	struct symbol *hash;
 };
 
 struct objfile {

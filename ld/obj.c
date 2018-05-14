@@ -7,8 +7,12 @@ static char sccsid[] = "@(#) ./ld/obj.c";
 #include "../inc/scc.h"
 #include "ld.h"
 
+#define NR_SYM_HASH 64
+
 Obj *objlst;
 static Obj *tail;
+
+static Symbol *symtbl[NR_SYM_HASH];
 
 Obj *
 newobj(char *fname, char *member)
@@ -45,5 +49,31 @@ newobj(char *fname, char *member)
 Symbol *
 lookup(char *name)
 {
-	return NULL;
+	unsigned h, c;
+	char *s;
+	size_t len;
+	Symbol *sym;
+
+	for (h = 0; c = *name; ++s)
+		h = h*33 ^ c;
+	h &= NR_SYM_HASH-1;
+
+	for (sym = symtbl[h]; sym; sym = sym->hash) {
+		s = sym->name;
+		if (*name == *s && !strcmp(name, s))
+			return sym;
+	}
+
+	len = strlen(name) + 1;
+	sym = malloc(sizeof(*sym));
+	s = malloc(len);
+	if (!sym || !s)
+		outmem();
+	sym->hash = symtbl[h];
+	symtbl[h] = sym;
+	sym->name = s;
+	memset(sym, 0, sizeof(*sym));
+	memcpy(sym->name, name, len);
+
+	return sym;
 }
