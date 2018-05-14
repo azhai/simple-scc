@@ -23,18 +23,18 @@ newobj(char *fname, char *member)
 
 	len = strlen(fname);
 	obj = malloc(sizeof(*obj));
-	s = malloc(len+1);
+	s = malloc(len) + 1;
 	if (!obj || !s)
 		outmem();
-	obj->fname = memcpy(s, fname, len+1);
+	obj->fname = memcpy(s, fname, len);
 
 	if (!member) {
 		obj->member = NULL;
 	} else {
-		len = strlen(member);
-		if ((s = malloc(len+1)) == NULL)
+		len = strlen(member) + 1;
+		if ((s = malloc(len)) == NULL)
 			outmem();
-		obj->member = memcpy(s, member, len+1);
+		obj->member = memcpy(s, member, len);
 	}
 	obj->next = NULL;
 
