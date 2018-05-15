@@ -147,3 +147,8 @@ enum args {
 
 	AREG_MXCSR,
 };
+
+enum {
+	AREG8,
+	AREG16,
+};
