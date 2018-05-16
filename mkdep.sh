@@ -10,4 +10,4 @@ do
 	dir=`dirname $i | sed 's,/*$,,'`
 	sed -n '/#include "/ s,#include "\(.*\)",'"$file: $dir"'/\1,p' $i
 done |
-sort) > $$.tmp && mv $$.tmp Makefile
+LC_ALL=C sort -s) > $$.tmp && mv $$.tmp Makefile
