@@ -21,15 +21,15 @@ clean:
 distclean: clean
 
 #deps
-coff32.c: ./../inc/coff32/filehdr.h
-coff32.c: ./../inc/coff32/scnhdr.h
-coff32.c: ./../inc/coff32/syms.h
-coff32.c: ./../inc/scc.h
-coff32.c: ./ld.h
-formats.c: ./ld.h
-main.c: ./../inc/ar.h
-main.c: ./../inc/scc.h
-main.c: ./../inc/syslibs.h
-main.c: ./ld.h
-obj.c: ./../inc/scc.h
-obj.c: ./ld.h
+coff32.o: ./../inc/coff32/filehdr.h
+coff32.o: ./../inc/coff32/scnhdr.h
+coff32.o: ./../inc/coff32/syms.h
+coff32.o: ./../inc/scc.h
+coff32.o: ./ld.h
+formats.o: ./ld.h
+main.o: ./../inc/ar.h
+main.o: ./../inc/scc.h
+main.o: ./../inc/syslibs.h
+main.o: ./ld.h
+obj.o: ./../inc/scc.h
+obj.o: ./ld.h
