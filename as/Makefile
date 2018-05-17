@@ -7,10 +7,7 @@ include $(LIBDIR)/libdep.mk
 OBJ = main.o symbol.o ins.o parser.o expr.o myro.o
 MOREFLAGS = -I$(PROJECTDIR)/inc/$(STD) $(AS_CFLAGS)
 
-all: as-amd64 as-i386 as-z80
-
-as: $(OBJ)
-	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
+all: as-amd64 as-i386 as-i286 as-z80
 
 dep:
 	$(PROJECTDIR)/mkdep.sh
@@ -24,6 +21,7 @@ clean:
 
 include target/amd64.mk
 include target/i386.mk
+include target/i286.mk
 include target/z80.mk
 
 #deps
