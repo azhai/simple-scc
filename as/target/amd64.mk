@@ -5,6 +5,3 @@ target/x86/amd64tbl.c: gentbl.awk target/x86/x86.dat target/x86/rules.dat
 
 as-amd64: $(AMD64_OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(AMD64_OBJ) -lscc -o $@
-
-debug:
-	echo $(AMD64_OBJ)

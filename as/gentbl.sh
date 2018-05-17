@@ -28,6 +28,6 @@ rm -f  $$.c target/$family/${cpu}tbl.c
 trap "rm -f $$.c" 0 2 3
 
 awk '!/^$/ {print $1,NR,$2,$3,$4,$5,$6}' target/$family/$family.dat |
-sort -k1 -k2n |
+LC_COLLATE=C sort -k1 -k2n |
 awk -v cpu=`echo $cpu | tr a-z A-Z` -v family=$family -f gentbl.awk  > $$.c &&
 mv $$.c target/$family/${cpu}tbl.c
