@@ -146,9 +146,10 @@ enum args {
 	AREG_YMM15,
 
 	AREG_MXCSR,
+
+	AREG_R8CLASS,   /* register class for 8 bit registers in i286 */
 };
 
 enum {
-	AREG8,
-	AREG16,
+	R8CLASS = 1 << 0,
 };
