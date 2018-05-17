@@ -1,27 +1,27 @@
 # Tab 16, tabs 16, :set ts=16
 # op	args	size	bytes	format	cpu
-.DB	imm8+	0	none	defb	i286,i386,amd64
-.DEFB	imm8+	0	none	defb	i286,i386,amd64
-.BYTE	imm8+	0	none	defb	i286,i386,amd64
-.DW	imm16+	0	none	defw	i286,i386,amd64
-.DEFW	imm16+	0	none	defw	i286,i386,amd64
-.SHORT	imm16+	0	none	defw	i286,i386,amd64
-.WORD	imm16+	0	none	defw	i286
-.WORD	imm32+	0	none	defd	i386,amd64
-.DD	imm32+	0	none	defd	i286,i386,amd64
-.DEFD	imm32+	0	none	defd	i286,i386,amd64
-.LONG	imm32+	0	none	defd	i286,i386
-.LONG	imm64+	0	none	defq	amd64
-.INT	imm32+	0	none	defd	i386,amd64
-.INT	imm16+	0	none	defd	i286
-.DQ	imm64+	0	none	defq	i286,i386,amd64
-.DEFQ	imm64+	0	none	defq	i286,i386,amd64
-.EQU	imm16	0	none	equ	i286
-.EQU	imm32	0	none	equ	i386
-.EQU	imm64	0	none	equ	amd64
-NOP	none	1	0x90	noargs	i286,i386,amd64
-RET	none	1	0xc3	noargs	i286,i386,amd64
+.DB	imm8+	0	none	defb	I286,I386,AMD64
+.DEFB	imm8+	0	none	defb	I286,I386,AMD64
+.BYTE	imm8+	0	none	defb	I286,I386,AMD64
+.DW	imm16+	0	none	defw	I286,I386,AMD64
+.DEFW	imm16+	0	none	defw	I286,I386,AMD64
+.SHORT	imm16+	0	none	defw	I286,I386,AMD64
+.WORD	imm16+	0	none	defw	I286
+.WORD	imm32+	0	none	defd	I386,AMD64
+.DD	imm32+	0	none	defd	I286,I386,AMD64
+.DEFD	imm32+	0	none	defd	I286,I386,AMD64
+.LONG	imm32+	0	none	defd	I286,I386
+.LONG	imm64+	0	none	defq	AMD64
+.INT	imm32+	0	none	defd	I386,AMD64
+.INT	imm16+	0	none	defd	I286
+.DQ	imm64+	0	none	defq	I286,I386,AMD64
+.DEFQ	imm64+	0	none	defq	I286,I386,AMD64
+.EQU	imm16	0	none	equ	I286
+.EQU	imm32	0	none	equ	I386
+.EQU	imm64	0	none	equ	AMD64
+NOP	none	1	0x90	noargs	I286,I386,AMD64
+RET	none	1	0xc3	noargs	I286,I386,AMD64
 
 
 # 8 bit arithmetic operations
-ADDB	reg8,reg8	2	0x00,0xc0	reg2reg	i286,i386,amd64
+#ADDB	reg8,reg8	2	0x00,0xc0	reg2reg	I286,I386,AMD64
