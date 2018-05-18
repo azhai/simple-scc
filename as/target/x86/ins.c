@@ -6,6 +6,15 @@ static char sccsid[] = "@(#) ./as/target/x86/ins.c";
 #include "../../as.h"
 #include "proc.h"
 
+#define addrbyte(mod, reg, rm) ((mod) << 6 | (reg) << 3 | (rm))
+
+enum addr_mode {
+	MEM_MODE   = 0,
+	MEM8_MODE  = 1,
+	MEM16_MODE = 2,
+	REG_MODE   = 3,
+};
+
 static int
 getclass(Node *np)
 {
@@ -220,4 +229,33 @@ match(Op *op, Node **args)
 Node *
 moperand(void)
 {
+}
+
+static int
+reg8toint(Node *np)
+{
+	switch (np->sym->value) {
+	case AREG_AL: return 0;
+	case AREG_CL: return 1;
+	case AREG_DL: return 2;
+	case AREG_BL: return 3;
+	case AREG_AH: return 4;
+	case AREG_CH: return 5;
+	case AREG_DH: return 6;
+	case AREG_BH: return 7;
+	default:      abort();
+	}
+}
+
+void
+reg8_reg8(Op *op, Node **args)
+{
+	int src, dst;
+	char buf[2];
+
+	src = reg8toint(args[0]);
+	dst = reg8toint(args[1]);
+	buf[0] = op->bytes[0];
+	buf[1] = addrbyte(REG_MODE, src, dst);
+	emit(buf, 2);
 }

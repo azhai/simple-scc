@@ -24,4 +24,4 @@ RET	none	1	0xc3	noargs	I286,I386,AMD64
 
 
 # 8 bit arithmetic operations
-#ADDB	reg8,reg8	2	0x00,0xc0	reg2reg	I286,I386,AMD64
+ADDB	reg8,reg8	2	0x00	reg8_reg8	I286,I386,AMD64
