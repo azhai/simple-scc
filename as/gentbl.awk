@@ -77,6 +77,12 @@ function str2args(s, args, i, j, out, n, found)
 	for (i = 1; i <= n; i++) {
 		a = args[i]
 		found = 0
+
+		if (a ~ /\?$/)
+			out = out "AOPT ,"
+		else if (a ~ /\+$/)
+			out = out "AREP ,"
+
 		for (j = 1; j <= nregs; j++) {
 			if (match(a, "^" regex[j])) {
 				out = out value[j]
@@ -92,11 +98,9 @@ function str2args(s, args, i, j, out, n, found)
 		}
 
 		a = substr(a, RLENGTH+1)
-		if (a ~ /^\+$/) {
-			return out "|AREP"
-		} else if (a ~ /^\?$/) {
-			return out "|AOPT"
-		} else if (a != "") {
+		sub(/\?$/, "", a)
+		sub(/\+$/, "", a)
+		if (a != "") {
 			print FILENAME ":" NR ":" \
 			      $0 ": trailing chars: ", a > "/dev/stderr"
 			exit 1

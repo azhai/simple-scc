@@ -180,20 +180,26 @@ int
 match(Op *op, Node **args)
 {
 	unsigned char *p;
-	int arg, class;
+	int arg, class, rep, opt;
 	Node *np;
 
 	if (!op->args)
 		return args == NULL;
 
+	opt = rep = 0;
 	for (p = op->args; arg = *p; ++p) {
-		if (arg & AREP)
+		if (rep)
 			--p;
 		if ((np = *args++) == NULL)
-			return (arg & (AREP|AOPT)) != 0;
+			return (rep|opt) != 0;
 
-		arg &= ~(AREP|AOPT);
 		switch (arg) {
+		case AOPT:
+			opt = 1;
+			break;
+		case AREP:
+			rep = 1;
+			break;
 		case AREG_R8CLASS:
 			class = R8CLASS;
 		check_class:
