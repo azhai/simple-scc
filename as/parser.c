@@ -300,24 +300,14 @@ Node **
 getargs(char *s)
 {
 	Node **ap;
-	extern int left2right;
-	static Node *args[NARGS+1];
+	static Node *args[NARGS];
 
 	if (!s)
 		return NULL;
 
-	if (!left2right) {
-		ap = args;
-		do {
-			if ((*ap = operand(&s)) == NULL)
-				return args;
-		} while (++ap < &args[NARGS]);
-	} else {
-		ap = &args[NARGS];
-		do {
-			if ((*--ap = operand(&s)) == NULL)
-				return ap+1;
-		} while (ap > args+1);
+	for (ap = args; ap < &args[NARGS-1]; ++ap) {
+		if ((*ap = operand(&s)) == NULL)
+			return args;
 	}
 	error("too many arguments in one instruction");
 }

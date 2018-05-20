@@ -105,19 +105,12 @@ int
 main(int argc, char *argv[])
 {
 	char **p;
-	extern int left2right;
 
 	outfile = "a.out";
 
 	ARGBEGIN {
 	case 'o':
 		outfile = EARGF(usage());
-		break;
-	case 'l':
-		left2right = 1;
-		break;
-	case 'r':
-		left2right = 0;
 		break;
 	default:
 		usage();
