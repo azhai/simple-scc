@@ -3,14 +3,13 @@ BEGIN		{
 		printf "#include \"../../../inc/scc.h\"\n"\
 		       "#include \"../../as.h\"\n"\
 		       "#include \"../" family "/proc.h\"\n"
-		nop = 0; nvar = 0
 
 		rules = "target/" family "/rules.dat" 
 		while (getline < rules > 0) {
 			regex[++nregs] = $1
 			value[nregs] = $2
 		}
-		close("target/rules.awk")
+		close(rules)
 }
 		{sub(/#.*/,"")}
 
