@@ -1,12 +1,9 @@
 .POSIX:
 
-PROJECTDIR = ..
+PROJECTDIR = ../..
 include $(PROJECTDIR)/rules.mk
 
-DIRS=ar nm as
+DIRS=execute
 
 all clean:
 	$(FORALL)
-
-distclean: clean
-dep:

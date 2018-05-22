@@ -1,16 +1,17 @@
 #!/bin/sh
 
 set -e
-file=${1?}
-exec >test.log
+cpu=${1?}
+exec >>test.log
 exec 2>&1
 
 tmp1=`mktemp`
 tmp2=`mktemp`
+file=$cpu.s
 
 trap "rm -f a.out $tmp1 $tmp2" 0 2 3 
 
-./as-$cpu $file
+as-$cpu $file
 
 sed -n '/^\// ! {
 	s%.*/%%
@@ -24,7 +25,7 @@ sed -n '/^\// ! {
 nl -b a > $tmp1
 
 
-../objdump/objdump |
+objdump |
 sed -n '/^data:/,$ {
 	/^data:/ ! {
 		s%.*:%%
