@@ -8,6 +8,7 @@ OBJ = main.o symbol.o ins.o parser.o expr.o myro.o
 MOREFLAGS = -I$(PROJECTDIR)/inc/$(STD) $(AS_CFLAGS)
 
 all: as-amd64 as-i386 as-i286 as-z80
+	cp as-* $(PROJECTDIR)/rootdir/bin
 
 dep:
 	$(PROJECTDIR)/mkdep.sh
