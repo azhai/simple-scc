@@ -39,9 +39,5 @@ sed -n '/^data:/,$ {
 }' |
 nl -b a > $tmp2
 
-printf "test.s\n"
-cat $tmp1
-printf "\nobjdump\n"
-cat $tmp2
-printf "\ndiff\n"
+echo diff
 diff -u $tmp1 $tmp2
