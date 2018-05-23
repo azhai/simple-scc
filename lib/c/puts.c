@@ -6,7 +6,7 @@ puts(const char *str)
 {
 	int ch;
 
-	while (ch = *str)
+	while (ch = *str++)
 		putchar(ch);
 	return putchar('\n');
 }
