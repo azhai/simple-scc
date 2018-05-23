@@ -7,6 +7,7 @@ include $(LIBDIR)/libdep.mk
 OBJ       = main.o 
 
 all: objdump
+	cp objdump $(PROJECTDIR)/rootdir/bin
 
 objdump: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@

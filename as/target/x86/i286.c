@@ -24,7 +24,7 @@ iarch(void)
 		"AL", AREG_AL,
 		"AH", AREG_AH,
 
-		"BC", AREG_BX,
+		"BX", AREG_BX,
 		"BL", AREG_BL,
 		"BH", AREG_BH,
 
