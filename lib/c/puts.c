@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#undef puts
 
 int
 puts(const char *str)

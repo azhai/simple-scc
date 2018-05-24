@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include "syscall.h"
 #undef fclose
 
 int
@@ -12,7 +13,7 @@ fclose(FILE *fp)
 		r = 0;
 		if (fflush(fp) == EOF)
 			r = EOF;
-		if (close(fp->fd) < 0)
+		if (_close(fp->fd) < 0)
 			r = EOF;
 	}
 
