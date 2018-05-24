@@ -30,7 +30,7 @@ typeof(SYMENT *ent)
 
 	switch (ent->n_scnum) {
 	case N_DEBUG:
-		c = '?';
+		c = 'n';
 		break;
 	case N_ABS:
 		c = 'a';
