@@ -757,7 +757,7 @@ L6:	JR	C,$L6	/ 38 02
 	POP	IX	/ DD E1
 	EX	(SP),IX	/ DD E3
 	PUSH	IX	/ DD E5
-	JP	(IX)	/ DD E9
+	JP	IX	/ DD E9
 	LD	SP,IX	/ DD F9
 	SBC	A,$64	/ DE 40
 	RST	$24	/ DF
@@ -770,7 +770,7 @@ L6:	JR	C,$L6	/ 38 02
 	AND	A,$16	/ E6 10
 	RST	$32	/ E7
 	RET	PE	/ E8
-	JP	(HL)	/ E9
+	JP	HL	/ E9
 	JP	PE,$16384	/ EA 00 40
 	EX	DE,HL	/ EB
 	CALL	PE,$16384	/ EC 00 40
@@ -1130,7 +1130,7 @@ L6:	JR	C,$L6	/ 38 02
 	POP	IY	/ FD E1
 	EX	(SP),IY	/ FD E3
 	PUSH	IY	/ FD E5
-	JP	(IY)	/ FD E9
+	JP	IY	/ FD E9
 	LD	SP,IY	/ FD F9
 	CP	A,$32	/ FE 20
 	RST	$56	/ FF

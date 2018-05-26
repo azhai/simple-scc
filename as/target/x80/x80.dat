@@ -358,9 +358,9 @@ JP	imm16	3	0xc3	jp	Z80,R800,GB80
 JP	cc,imm16	3	0xc2	jp	Z80,R800,GB80
 JR	imm16	2	0x18	jr	Z80,R800,GB80
 JR	ss,imm16	2	0x00	jr	Z80,R800,GB80
-JP	(HL)	1	0xe9	jp	Z80,R800,GB80
-JP	(IX)	2	0xdd,0xe9	jp	Z80,R800
-JP	(IY)	2	0xfd,0xe9	jp	Z80,R800
+JP	HL	1	0xe9	noargs	Z80,R800,GB80
+JP	IX	2	0xdd,0xe9	noargs	Z80,R800
+JP	IY	2	0xfd,0xe9	noargs	Z80,R800
 DJNZ	imm16	2	0x10	jr	Z80,R800
 
 # Call and return group
