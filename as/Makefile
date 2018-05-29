@@ -18,7 +18,6 @@ clean:
 	rm -f *.o target/*/*.o
 	rm -f target/*/*tbl.c
 	rm -f as-*
-	rm -f *.log
 
 include target/amd64.mk
 include target/i386.mk

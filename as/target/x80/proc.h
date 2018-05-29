@@ -63,7 +63,7 @@ enum args {
 	ARST,          /* 0h, 08h, 10h, 18h, 20h, 28h, 30h, 38h */
 };
 
-enum {
+enum class {
 	RCLASS  = 1 << 0,
 	PCLASS  = 1 << 1,
 	QCLASS  = 1 << 2,
