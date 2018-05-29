@@ -15,23 +15,20 @@ static char sccsid[] = "@(#) ./ld/coff32.c";
 #include "../inc/scc.h"
 #include "ld.h"
 
-static int (*unpack)(unsigned char *, char *, ...);
-static int align;
-
 static FILHDR *
-getfhdr(unsigned char *buff, FILHDR *hdr)
+getfhdr(Obj *obj, unsigned char *buff, FILHDR *hdr)
 {
 	int n;
 
-	n = (*unpack)(buff,
-	              "sslllss",
-	              &hdr->f_magic,
-	              &hdr->f_nscns,
-	              &hdr->f_timdat,
-	              &hdr->f_symptr,
-	              &hdr->f_nsyms,
-	              &hdr->f_opthdr,
-	              &hdr->f_flags);
+	n = (*obj->unpack)(buff,
+	                   "sslllss",
+	                   &hdr->f_magic,
+	                   &hdr->f_nscns,
+	                   &hdr->f_timdat,
+	                   &hdr->f_symptr,
+	                   &hdr->f_nsyms,
+	                   &hdr->f_opthdr,
+	                   &hdr->f_flags);
 	assert(n == FILHSZ);
 	return hdr;
 }
@@ -49,7 +46,7 @@ readstr(Obj *obj, long off)
 	if (fread(buff, 4, 1, obj->fp) != 1)
 		return -1;
 
-	(*unpack)(buff, "l", &siz);
+	(*obj->unpack)(buff, "l", &siz);
 
 	siz -= 4;
 	if (siz == 0) {
@@ -71,22 +68,22 @@ readstr(Obj *obj, long off)
 }
 
 static SCNHDR *
-getscn(unsigned char *buff, SCNHDR *scn)
+getscn(Obj *obj, unsigned char *buff, SCNHDR *scn)
 {
 	int n;
 
-	n = (*unpack)(buff,
-	              "'8llllllssl",
-	              scn->s_name,
-	              &scn->s_paddr,
-	              &scn->s_vaddr,
-	              &scn->s_size,
-	              &scn->s_scnptr,
-	              &scn->s_relptr,
-	              &scn->s_lnnoptr,
-	              &scn->s_nrelloc,
-	              &scn->s_nlnno,
-	              &scn->s_flags);
+	n = (*obj->unpack)(buff,
+	                   "'8llllllssl",
+	                   scn->s_name,
+	                   &scn->s_paddr,
+	                   &scn->s_vaddr,
+	                   &scn->s_size,
+	                   &scn->s_scnptr,
+	                   &scn->s_relptr,
+	                   &scn->s_lnnoptr,
+	                   &scn->s_nrelloc,
+	                   &scn->s_nlnno,
+	                   &scn->s_flags);
 	assert(n == SCNHSZ);
 	return scn;
 }
@@ -94,7 +91,7 @@ getscn(unsigned char *buff, SCNHDR *scn)
 static int
 readsects(Obj *obj, long off)
 {
-	unsigned nsec, i;
+	unsigned a, nsec, i;
 	unsigned char buff[SCNHSZ];
 	SCNHDR *scn, *p;
 	FILHDR *hdr;
@@ -111,13 +108,14 @@ readsects(Obj *obj, long off)
 	if (fseek(obj->fp, off, SEEK_SET) == EOF)
 		return -1;
 
+	a = obj->align - 1;
 	for (p = scn; p < &scn[nsec]; ++p) {
 		if (fread(buff, SCNHSZ, 1, obj->fp) != 1)
 			return -1;
-		getscn(buff, p);
+		getscn(obj, buff, p);
 		sym = lookup(p->s_name);
 
-		sym->size = (sym->size + align-1) & align-1;
+		sym->size = (sym->size + a) & a;
 		if (sym->size > ULLONG_MAX - p->s_size) {
 			fprintf(stderr,
 			        "ld: %s: overflow in section '%s'\n",
@@ -132,25 +130,25 @@ readsects(Obj *obj, long off)
 }
 
 static void
-getsym(unsigned char *buff, SYMENT *ent)
+getsym(Obj *obj, unsigned char *buff, SYMENT *ent)
 {
 	int n;
 	long off, zero;
 	char *name;
 
-	n = (*unpack)(buff,
-		      "'8lsscc",
-		      &ent->n_name,
-		      &ent->n_value,
-		      &ent->n_scnum,
-		      &ent->n_type,
-		      &ent->n_sclass,
-		      &ent->n_numaux);
+	n = (*obj->unpack)(buff,
+		           "'8lsscc",
+		           &ent->n_name,
+		           &ent->n_value,
+		           &ent->n_scnum,
+		           &ent->n_type,
+		           &ent->n_sclass,
+		           &ent->n_numaux);
 	assert(n == SYMESZ);
 
 	name = ent->n_name;
 	if (!name[0] && !name[1] && !name[2] && !name[3])
-		(*unpack)(buff, "ll", &ent->n_zeroes, &ent->n_offset);
+		(*obj->unpack)(buff, "ll", &ent->n_zeroes, &ent->n_offset);
 }
 
 static char *
@@ -267,7 +265,7 @@ readsyms(Obj *obj, long off)
 
 		if (fread(buff, SYMESZ, 1, obj->fp) != 1)
 			return -1;
-		getsym(buff, &ent);
+		getsym(obj, buff, &ent);
 		name = symname(obj, &ent);
 		type = typeof(obj, &ent);
 		sym = lookup(name);
@@ -321,7 +319,7 @@ readobj(Obj *obj)
 
 	if ((hdr = malloc(sizeof(*hdr))) == NULL)
 		outmem();
-	getfhdr(buff, hdr);
+	getfhdr(obj, buff, hdr);
 	obj->filhdr = hdr;
 
 	/* TODO: Check overflow */
@@ -344,34 +342,28 @@ bad_file:
 }
 
 static void
-pass1(char *fname, char *member, FILE *fp)
+pass1(Obj *obj)
 {
-	Obj *obj;
-	SYMENT *ent;
-	FILHDR *hdr;
-	unsigned n, nsyms;
-	int islib = member != NULL;
-
-	obj = newobj(fname, member);
-	obj->fp = fp;
 	readobj(obj);
-
-	hdr = obj->filhdr;
-	nsyms = hdr->f_nsyms;
 }
 
 static void
-pass2(char *fname, char *member, FILE *fp)
+pass2(Obj *obj)
 {
 }
 
-static int
+Fmt coff32;
+
+static Obj *
 probe(char *fname, char *member, FILE *fp)
 {
 	int c;
 	int c1, c2;
 	fpos_t pos;
 	unsigned short magic;
+	unsigned align;
+	int (*unpack)(unsigned char *, char *, ...);
+	Obj *obj;
 
 	fgetpos(fp, &pos);
 	c1 = getc(fp);
@@ -389,13 +381,21 @@ probe(char *fname, char *member, FILE *fp)
 	case COFF_Z80MAGIC:
 		unpack = lunpack;
 		align = 2;
-		return 1;
+		break;
 	default:
-		return 0;
+		return NULL;
 	}
+
+	obj = newobj(fname, member);
+	obj->fp = fp;
+	obj->unpack = unpack;
+	obj->align = align;
+	obj->fmt = &coff32;
+
+	return obj;
 }
 
-struct objfile coff32 = {
+Fmt coff32 = {
 	.probe = probe,
 	.pass1 = pass1,
 	.pass2 = pass2,

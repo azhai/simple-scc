@@ -6,9 +6,9 @@ static char sccsid[] = "@(#) ./ld/probe.c";
 #include "ld.h"
 
 /* TODO: Autogenerate this file */
-struct objfile coff32;
+struct objfmt coff32;
 
-struct objfile *formats[] = {
+struct objfmt *formats[] = {
 	&coff32,
 	NULL,
 };

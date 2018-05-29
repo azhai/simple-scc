@@ -31,21 +31,22 @@ outmem(void)
 static int
 object(char *fname, char *member, FILE *fp)
 {
-	extern struct objfile *formats[];
-	struct objfile **p, *obj;
-	void *data;
-	void (*fun)(char *, char *, FILE *);
+	extern Fmt *formats[];
+	Fmt **p, *fmt;
+	Obj *obj;
+	void (*fun)(Obj *obj);
 
 	for (p = formats; *p; ++p) {
-		obj = *p;
-		if ((*obj->probe)(fname, member, fp))
+		fmt = *p;
+		obj = (*fmt->probe)(fname, member, fp);
+		if (obj)
 			break;
 	}
 	if (*p == NULL)
 		return 0;
 
-	fun = (pass == 1) ? obj->pass1 : obj->pass2;
-	(*fun)(fname, member, fp);
+	(*obj->fmt->pass1)(obj);
+
 	return 1;
 }
 
@@ -156,8 +157,6 @@ static void
 pass2(int argc, char *argv[])
 {
 	pass = 2;
-	while (*argv)
-		process(*argv++);
 }
 
 static void

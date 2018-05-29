@@ -1,6 +1,7 @@
 
 typedef struct obj Obj;
 typedef struct symbol Symbol;
+typedef struct objfmt Fmt;
 
 struct obj {
 	char *fname;
@@ -11,6 +12,9 @@ struct obj {
 	Symbol **symbols;
 	char *strtbl;
 	size_t strsiz;
+	int (*unpack)(unsigned char *, char *, ...);
+	int align;
+	Fmt *fmt;
 	struct obj *next;
 };
 
@@ -24,10 +28,10 @@ struct symbol {
 	struct symbol *hash;
 };
 
-struct objfile {
-	int (*probe)(char *fname, char *member, FILE *fp);
-	void (*pass1)(char *fname, char *member, FILE *fp);
-	void (*pass2)(char *fname, char *member, FILE *fp);
+struct objfmt {
+	Obj  *(*probe)(char *fname, char *member, FILE *fp);
+	void (*pass1)(Obj *obj);
+	void (*pass2)(Obj *obj);
 };
 
 /* obj.c */
