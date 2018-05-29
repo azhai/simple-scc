@@ -95,21 +95,30 @@ readsects(Obj *obj, long off)
 	unsigned char buff[SCNHSZ];
 	SCNHDR *scn, *p;
 	FILHDR *hdr;
-	Symbol *sym;
+	Symbol *sym, **sec;
 
 	hdr = obj->filhdr;
 	nsec = hdr->f_nscns;
+
 	if (nsec > SIZE_MAX / sizeof(*scn))
 		return -1;
 
-	if ((scn = malloc(nsec * sizeof(*scn))) == NULL)
+	if (nsec > SIZE_MAX / sizeof(Symbol *))
 		return -1;
+
+	scn = malloc(nsec * sizeof(*scn));
+	sec = malloc(nsec * sizeof(Symbol *));
+	if (!scn || !sec)
+		outmem();
+	obj->sections = sec;
+	obj->scnhdr = scn;
 
 	if (fseek(obj->fp, off, SEEK_SET) == EOF)
 		return -1;
 
 	a = obj->align - 1;
-	for (p = scn; p < &scn[nsec]; ++p) {
+	for (i = 0; i < nsec; ++i) {
+		p = &scn[i];
 		if (fread(buff, SCNHSZ, 1, obj->fp) != 1)
 			return -1;
 		getscn(obj, buff, p);
@@ -123,8 +132,9 @@ readsects(Obj *obj, long off)
 			exit(EXIT_FAILURE);
 		}
 		sym->size += p->s_size;
+		obj->sections[i] = sym;
+		
 	}
-	obj->scnhdr = scn;
 
 	return 0;
 }
@@ -216,7 +226,9 @@ static TUINT
 getval(Obj *obj, SYMENT *ent)
 {
 	FILHDR *hdr = obj->filhdr;;
-	SCNHDR *scn = obj->scnhdr;
+	SCNHDR *scn;
+	Symbol *sym;
+	unsigned n;
 
 	if (ent->n_scnum > hdr->f_nscns) {
 		fprintf(stderr,
@@ -226,13 +238,13 @@ getval(Obj *obj, SYMENT *ent)
 		exit(EXIT_FAILURE);
 	}
 
-	scn = &scn[ent->n_scnum-1];
+	n = ent->n_scnum-1;
+	scn = obj->scnhdr;
+	scn = &scn[n];
+	sym = obj->sections[n];
 
-	/*
-	 * TODO: We have to add the composed size of the segment minus
-	 * the size of the fragment
-	 */
-	return ent->n_value - scn->s_size;
+
+	return ent->n_value + (sym->size - scn->s_size);
 }
 
 static int
@@ -276,10 +288,13 @@ readsyms(Obj *obj, long off)
 		type = typeof(obj, &ent);
 		sym = lookup(name);
 
+		if (ent.n_scnum <= 0)
+			continue;
+
 		switch (sym->type) {
 		case 'U':
 			sym->type = type;
-			sym->value = ent.n_value;
+			sym->value = getval(obj, &ent);
 			if (type == 'C')
 				sym->size = ent.n_value;
 			break;
@@ -292,7 +307,7 @@ readsyms(Obj *obj, long off)
 				break;
 			default:
 				sym->type = type;
-				sym->value = ent.n_value;
+				sym->value = getval(obj, &ent);
 				break;
 			}
 			break;
@@ -328,7 +343,6 @@ readobj(Obj *obj)
 	getfhdr(obj, buff, hdr);
 	obj->filhdr = hdr;
 
-	/* TODO: Check overflow */
 	stroff = pos + hdr->f_symptr + hdr->f_nsyms*SYMESZ;
 	symoff = pos + hdr->f_symptr;
 	secoff = pos + FILHSZ + hdr->f_opthdr;

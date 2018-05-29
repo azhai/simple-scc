@@ -7,14 +7,20 @@ struct obj {
 	char *fname;
 	char *member;
 	FILE *fp;
+	Fmt *fmt;
+
 	void *filhdr;
 	void *scnhdr;
+
 	Symbol **symbols;
+	Symbol **sections;
+
 	char *strtbl;
 	size_t strsiz;
+
 	int (*unpack)(unsigned char *, char *, ...);
 	int align;
-	Fmt *fmt;
+
 	struct obj *next;
 };
 
