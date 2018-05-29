@@ -19,6 +19,7 @@ int xflag;		/* discard local symbols */
 int Xflag;		/* discard locals starting with 'L' */
 int rflag;		/* preserve relocation bits */
 int dflag;		/* define common even with rflag */
+int gflag;              /* preserve debug symbols */
 
 void
 outmem(void)

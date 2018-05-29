@@ -1,7 +1,9 @@
 static char sccsid[] = "@(#) ./ld/coff32.c";
 
 #include <assert.h>
+#include <ctype.h>
 #include <errno.h>
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +16,7 @@ static char sccsid[] = "@(#) ./ld/coff32.c";
 #include "ld.h"
 
 static int (*unpack)(unsigned char *, char *, ...);
+static int align;
 
 static FILHDR *
 getfhdr(unsigned char *buff, FILHDR *hdr)
@@ -48,6 +51,13 @@ readstr(Obj *obj, long off)
 
 	(*unpack)(buff, "l", &siz);
 
+	siz -= 4;
+	if (siz == 0) {
+		obj->strtbl = NULL;
+		obj->strsiz = 0;
+		return 0;
+	}
+
 	if (siz > SIZE_MAX || (str = malloc(siz)) == NULL)
 		outmem();
 
@@ -55,6 +65,8 @@ readstr(Obj *obj, long off)
 		return -1;
 
 	obj->strtbl = str;
+	obj->strsiz = siz;
+
 	return 0;
 }
 
@@ -84,8 +96,9 @@ readsects(Obj *obj, long off)
 {
 	unsigned nsec, i;
 	unsigned char buff[SCNHSZ];
-	SCNHDR *scn;
+	SCNHDR *scn, *p;
 	FILHDR *hdr;
+	Symbol *sym;
 
 	hdr = obj->filhdr;
 	nsec = hdr->f_nscns;
@@ -98,10 +111,20 @@ readsects(Obj *obj, long off)
 	if (fseek(obj->fp, off, SEEK_SET) == EOF)
 		return -1;
 
-	for (i = 0; i < nsec; i++) {
+	for (p = scn; p < &scn[nsec]; ++p) {
 		if (fread(buff, SCNHSZ, 1, obj->fp) != 1)
 			return -1;
-		getscn(buff, &scn[i]);
+		getscn(buff, p);
+		sym = lookup(p->s_name);
+
+		sym->size = (sym->size + align-1) & align-1;
+		if (sym->size > ULLONG_MAX - p->s_size) {
+			fprintf(stderr,
+			        "ld: %s: overflow in section '%s'\n",
+			        obj->fname, p->s_name);
+			exit(EXIT_FAILURE);
+		}
+		sym->size += p->s_size;
 	}
 	obj->scnhdr = scn;
 
@@ -130,31 +153,156 @@ getsym(unsigned char *buff, SYMENT *ent)
 		(*unpack)(buff, "ll", &ent->n_zeroes, &ent->n_offset);
 }
 
+static char *
+symname(Obj *obj, SYMENT *ent)
+{
+	long off;
+
+	if (ent->n_zeroes != 0)
+		return ent->n_name;
+
+	off = ent->n_offset;
+	if (off >= obj->strsiz) {
+		fprintf(stderr,
+		        "ld: invalid offset in symbol table: %zd\n", off);
+		return "";
+	}
+
+	return &obj->strtbl[off];
+}
+
+static char
+typeof(Obj *obj, SYMENT *ent)
+{
+	SCNHDR *sec;
+	FILHDR *hdr;
+	int c, n;
+	long flags;
+
+	switch (ent->n_scnum) {
+	case N_DEBUG:
+		c = 'n';
+		break;
+	case N_ABS:
+		c = 'a';
+		break;
+	case N_UNDEF:
+		c = (ent->n_value != 0) ? 'C' : 'U';
+		break;
+	default:
+		sec = obj->scnhdr;
+		hdr = obj->filhdr;
+		n = ent->n_scnum;
+		if (n > hdr->f_nscns)
+			return '?';
+		sec = &sec[n-1];
+		flags = sec->s_flags;
+		if (flags & STYP_TEXT)
+			c = 't';
+		else if (flags & STYP_DATA)
+			c = 'd';
+		else if (flags & STYP_BSS)
+			c = 'b';
+		else
+			c = '?';
+		break;
+	}
+
+	if (ent->n_sclass == C_EXT)
+		c = toupper(c);
+
+	return c;
+}
+
+static TUINT
+getval(Obj *obj, SYMENT *ent)
+{
+	FILHDR *hdr = obj->filhdr;;
+	SCNHDR *scn = obj->scnhdr;
+
+	if (ent->n_scnum > hdr->f_nscns) {
+		fprintf(stderr,
+		        "ld: %s: incorrect section number\n",
+		        obj->fname,
+		        ent->n_scnum);
+		exit(EXIT_FAILURE);
+	}
+
+	scn = &scn[ent->n_scnum-1];
+
+	/*
+	 * TODO: We have to add the composed size of the segment minus
+	 * the size of the fragment
+	 */
+	return ent->n_value - scn->s_size;
+}
+
 static int
 readsyms(Obj *obj, long off)
 {
-	unsigned i, nsym;
-	unsigned char buff[SYMESZ];
-	SYMENT *ent;
-	FILHDR *hdr;
-
-	hdr = obj->filhdr;
-	nsym = hdr->f_nsyms;
-	if (nsym > SIZE_MAX / sizeof(*ent))
-		return -1;
-
-	if ((ent = malloc(nsym * sizeof(*ent))) == NULL)
-		outmem();
+	int type;
+	unsigned i;
+	FILHDR *hdr = obj->filhdr;;
 
 	if (fseek(obj->fp, off, SEEK_SET) == EOF)
 		return -1;
 
-	for (i = 0; i < nsym; i++) {
+	if (hdr->f_nsyms > SIZE_MAX / sizeof(Symbol *)) {
+		fprintf(stderr,
+		        "ld: %s: overflow in size of symbol redirection\n",
+		        obj->fname);
+		exit(EXIT_FAILURE);
+	}
+	obj->symbols = malloc(sizeof(Symbol *) * sizeof(Symbol *));
+	if (!obj->symbols)
+		outmem();
+
+	hdr = obj->filhdr;
+	for (i = 0; i < hdr->f_nsyms; i++) {
+		Symbol *sym;
+		TUINT value;
+		SYMENT ent;
+		unsigned char buff[SYMESZ];
+		char *name;
+
 		if (fread(buff, SYMESZ, 1, obj->fp) != 1)
 			return -1;
-		getsym(buff, &ent[i]);
+		getsym(buff, &ent);
+		name = symname(obj, &ent);
+		type = typeof(obj, &ent);
+		sym = lookup(name);
+
+		switch (sym->type) {
+		case 'U':
+			sym->type = type;
+			sym->value = ent.n_value;
+			if (type == 'C')
+				sym->size = ent.n_value;
+			break;
+		case 'C':
+			switch (type) {
+			case 'U':
+			case 'C':
+				if (ent.n_value > sym->size)
+					sym->size = ent.n_value;
+				break;
+			default:
+				sym->type = type;
+				sym->value = ent.n_value;
+				break;
+			}
+			break;
+		default:
+			if (type != 'U') {
+				fprintf(stderr,
+				        "ld: %s: redifinition of symbol '%s'\n",
+				        obj->fname, sym->name);
+			}
+			break;
+		}
+
+		obj->symbols[i] = sym;
 	}
-	obj->enthdr = ent;
 
 	return 0;
 }
@@ -183,9 +331,9 @@ readobj(Obj *obj)
 
 	if (readstr(obj, stroff) < 0)
 		goto bad_file;
-	if (readsyms(obj, symoff) < 0)
-		goto bad_file;
 	if (readsects(obj, secoff) < 0)
+		goto bad_file;
+	if (readsyms(obj, symoff) < 0)
 		goto bad_file;
 	return;
 
@@ -199,10 +347,17 @@ static void
 pass1(char *fname, char *member, FILE *fp)
 {
 	Obj *obj;
+	SYMENT *ent;
+	FILHDR *hdr;
+	unsigned n, nsyms;
+	int islib = member != NULL;
 
 	obj = newobj(fname, member);
 	obj->fp = fp;
 	readobj(obj);
+
+	hdr = obj->filhdr;
+	nsyms = hdr->f_nsyms;
 }
 
 static void
@@ -232,6 +387,8 @@ probe(char *fname, char *member, FILE *fp)
 
 	switch (magic) {
 	case COFF_Z80MAGIC:
+		unpack = lunpack;
+		align = 2;
 		return 1;
 	default:
 		return 0;

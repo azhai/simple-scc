@@ -2,6 +2,7 @@ static char sccsid[] = "@(#) ./ld/probe.c";
 
 #include <stdio.h>
 
+#include "../inc/scc.h"
 #include "ld.h"
 
 /* TODO: Autogenerate this file */
