@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#undef fputs
 
 int
 fputs(const char * restrict bp, FILE * restrict fp)

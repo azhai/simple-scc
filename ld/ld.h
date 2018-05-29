@@ -8,13 +8,19 @@ struct obj {
 	FILE *fp;
 	void *filhdr;
 	void *scnhdr;
-	void *enthdr;
+	Symbol **symbols;
 	char *strtbl;
+	size_t strsiz;
 	struct obj *next;
 };
 
 struct symbol {
 	char *name;
+	char type;
+	short flags;
+	long size;
+	TUINT base;
+	TUINT value;
 	struct symbol *hash;
 };
 
@@ -30,3 +36,14 @@ extern Symbol *lookup(char *name);
 
 /* main.c */
 extern void outmem(void);
+
+/*
+ * Definition of globals variables
+ */
+extern int pass;
+extern int sflag;
+extern int xflag;
+extern int Xflag;
+extern int rflag;
+extern int dflag;
+extern int gflag;

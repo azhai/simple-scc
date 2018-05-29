@@ -32,6 +32,16 @@ getclass(Node *np)
 	case AREG_DH:
 		return R8CLASS;
 
+	case AREG_AX:
+	case AREG_BX:
+	case AREG_CX:
+	case AREG_DX:
+	case AREG_DI:
+	case AREG_SI:
+	case AREG_SP:
+	case AREG_BP:
+		return R16CLASS;
+
 	case AREG_CS:
 	case AREG_DS:
 	case AREG_SS:
@@ -58,37 +68,29 @@ getclass(Node *np)
 	case AREG_VIP:
 	case AREG_ID:
 
-	case AREG_AX:
 	case AREG_EAX:
 	case AREG_RAX:
 
-	case AREG_BX:
 	case AREG_EBX:
 	case AREG_RBX:
 
-	case AREG_CX:
 	case AREG_ECX:
 	case AREG_RCX:
 
-	case AREG_DX:
 	case AREG_EDX:
 	case AREG_RDX:
 
-	case AREG_SI:
 	case AREG_SIL:
 	case AREG_ESI:
 	case AREG_RSI:
-	case AREG_DI:
 	case AREG_DIL:
 	case AREG_EDI:
 	case AREG_RDI:
 
-	case AREG_SP:
 	case AREG_SPL:
 	case AREG_ESP:
 	case AREG_RSP:
 
-	case AREG_BP:
 	case AREG_BPL:
 	case AREG_EBP:
 	case AREG_RBP:
@@ -202,6 +204,9 @@ match(Op *op, Node **args)
 			break;
 		case AREG_R8CLASS:
 			class = R8CLASS;
+			goto check_class;
+		case AREG_R16CLASS:
+			class = R16CLASS;
 		check_class:
 			if ((getclass(np) & class) == 0)
 				return 0;
@@ -261,6 +266,35 @@ reg8_reg8(Op *op, Node **args)
 
 	src = reg8toint(args[0]);
 	dst = reg8toint(args[1]);
+	buf[0] = op->bytes[0];
+	buf[1] = addrbyte(REG_MODE, src, dst);
+	emit(buf, 2);
+}
+
+static int
+reg16toint(Node *np)
+{
+	switch (np->sym->value) {
+	case AREG_AX: return 0;
+	case AREG_CX: return 1;
+	case AREG_DX: return 2;
+	case AREG_BX: return 3;
+	case AREG_SP: return 4;
+	case AREG_BP: return 5;
+	case AREG_SI: return 6;
+	case AREG_DI: return 7;
+	default:	abort();
+	}
+}
+
+void
+reg16_reg16(Op *op, Node **args)
+{
+	int src, dst;
+	char buf[2];
+
+	src = reg16toint(args[0]);
+	dst = reg16toint(args[1]);
 	buf[0] = op->bytes[0];
 	buf[1] = addrbyte(REG_MODE, src, dst);
 	emit(buf, 2);

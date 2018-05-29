@@ -46,18 +46,25 @@ newobj(char *fname, char *member)
 	return obj;
 }
 
+static unsigned
+hash(char *s)
+{
+	unsigned h, c;
+
+	for (h = 0; c = *s; ++s)
+		h = h*33 ^ c;
+	return h & NR_SYM_HASH-1;
+}
+
 Symbol *
 lookup(char *name)
 {
-	unsigned h, c;
+	unsigned h;
 	char *s;
 	size_t len;
 	Symbol *sym;
 
-	for (h = 0; c = *name; ++s)
-		h = h*33 ^ c;
-	h &= NR_SYM_HASH-1;
-
+	h = hash(name);
 	for (sym = symtbl[h]; sym; sym = sym->hash) {
 		s = sym->name;
 		if (*name == *s && !strcmp(name, s))
@@ -69,11 +76,13 @@ lookup(char *name)
 	s = malloc(len);
 	if (!sym || !s)
 		outmem();
+	memset(sym, 0, sizeof(*sym));
+	memcpy(s, name, len);
+
 	sym->hash = symtbl[h];
 	symtbl[h] = sym;
 	sym->name = s;
-	memset(sym, 0, sizeof(*sym));
-	memcpy(sym->name, name, len);
+	sym->type = 'U';
 
 	return sym;
 }

@@ -1,4 +1,3 @@
-#define __USE_MACROS
 #include <ctype.h>
 #undef isascii
 

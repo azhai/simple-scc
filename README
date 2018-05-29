@@ -1,6 +1,6 @@
 Derivations from standard C
 ===========================
-This compiler is aimed to be being fully compatible with the C99 standard, but
+This compiler aims to be fully compatible with the C99 standard, but
 it will have some differences:
 
 - Type qualifiers are accepted but ignored.

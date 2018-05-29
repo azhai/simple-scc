@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include "syscall.h"
 #undef fclose
 
 extern int _flsbuf(FILE *fp);
@@ -14,7 +15,7 @@ fclose(FILE *fp)
 		r = 0;
 		if (_flsbuf(fp) == EOF)
 			r = EOF;
-		if (close(fp->fd) < 0)
+		if (_close(fp->fd) < 0)
 			r = EOF;
 	}
 
