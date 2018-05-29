@@ -239,7 +239,7 @@ static int
 readsyms(Obj *obj, long off)
 {
 	int type;
-	unsigned i;
+	unsigned i, n, aux;
 	FILHDR *hdr = obj->filhdr;;
 
 	if (fseek(obj->fp, off, SEEK_SET) == EOF)
@@ -256,6 +256,7 @@ readsyms(Obj *obj, long off)
 		outmem();
 
 	hdr = obj->filhdr;
+	aux = n = 0;
 	for (i = 0; i < hdr->f_nsyms; i++) {
 		Symbol *sym;
 		TUINT value;
@@ -265,7 +266,12 @@ readsyms(Obj *obj, long off)
 
 		if (fread(buff, SYMESZ, 1, obj->fp) != 1)
 			return -1;
+		if (aux > 0) {
+			aux--;
+			continue;
+		}
 		getsym(obj, buff, &ent);
+		aux = ent.n_numaux;
 		name = symname(obj, &ent);
 		type = typeof(obj, &ent);
 		sym = lookup(name);
