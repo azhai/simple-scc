@@ -3,12 +3,14 @@
 #include <stdio.h>
 #undef setvbuf
 
+extern int _flsbuf(FILE *fp);
+
 int
 setvbuf(FILE * restrict fp, char * restrict buf, int mode, size_t size)
 {
 	int flags, r;
 
-	if (fflush(fp) == EOF)
+	if (_flsbuf(fp) == EOF)
 		return EOF;
 
 	switch (mode) {

@@ -10,7 +10,7 @@ OBJ = bsearch.o qsort.o \
       getc.o putc.o __putc.o __getc.o \
       rewind.o fseek.o ferror.o feof.o clearerr.o \
       setbuf.o setvbuf.o \
-      fclose.o fopen.c freopen.c _fpopen.o stdio.o \
+      fclose.o fopen.c freopen.c _fpopen.o _flsbuf.o stdio.o \
       realloc.o calloc.o malloc.o \
       __assert.o strcpy.o strcmp.o strlen.o strchr.o \
       strrchr.o strcat.o strncmp.o strncpy.o strncat.o strcoll.o \

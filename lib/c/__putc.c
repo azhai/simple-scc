@@ -2,35 +2,20 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "syscall.h"
 
-int
-_fflush(FILE *fp)
-{
-	int lnbuf = fp->flags & _IOLBF;
-	size_t cnt;
-
-	cnt = ((lnbuf) ? fp->lp : fp->wp) - fp->buf;
-
-	if (_write(fp->fd, fp->buf, cnt) != cnt) {
-		fp->flags |= _IOERR;
-		return EOF;
-	}
-	fp->rp = fp->wp = fp->buf;
-
-	return 0;
-}
+extern int _flsbuf(FILE *fp);
 
 int
 fflush(FILE *fp)
 {
-	int err = 0;
+	int err;
 
 	if (fp)
-		return _flsbuf(fp);
+		return flsbuf(fp);
 
+	err = 0;
 	for (fp = __iob; fp < &__iob[FOPEN_MAX]; ++fp) {
-		if ((fp->flags & _IOWRITE) == 0 && _flush(fp))
+		if ((fp->flags & _IOWRITE) == 0 && _flsbuf(fp))
 			err = EOF;
 	}
 	return err;
