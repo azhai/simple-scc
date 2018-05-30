@@ -26,6 +26,7 @@ newobj(char *fname, char *member)
 	s = malloc(len) + 1;
 	if (!obj || !s)
 		outmem();
+	memset(obj, 0, sizeof(*obj));
 	obj->fname = memcpy(s, fname, len);
 
 	if (!member) {

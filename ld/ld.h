@@ -20,6 +20,7 @@ struct obj {
 
 	int (*unpack)(unsigned char *, char *, ...);
 	int align;
+	int define;
 
 	struct obj *next;
 };
@@ -31,6 +32,7 @@ struct symbol {
 	long size;
 	TUINT base;
 	TUINT value;
+	Obj *where;
 	struct symbol *hash;
 };
 

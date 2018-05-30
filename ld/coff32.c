@@ -295,6 +295,10 @@ readsyms(Obj *obj, long off)
 		case 'U':
 			sym->type = type;
 			sym->value = getval(obj, &ent);
+			if (type != 'U') {
+				obj->define = 1;
+				sym->where = obj;
+			}
 			if (type == 'C')
 				sym->size = ent.n_value;
 			break;
@@ -306,6 +310,8 @@ readsyms(Obj *obj, long off)
 					sym->size = ent.n_value;
 				break;
 			default:
+				obj->define = 1;
+				sym->where =  obj;
 				sym->type = type;
 				sym->value = getval(obj, &ent);
 				break;
@@ -327,7 +333,7 @@ readsyms(Obj *obj, long off)
 }
 
 static void
-readobj(Obj *obj)
+load(Obj *obj)
 {
 	unsigned char buff[FILHSZ];
 	FILHDR *hdr;
@@ -362,9 +368,18 @@ bad_file:
 }
 
 static void
+unload(Obj *obj)
+{
+	/* TODO */
+}
+
+static void
 pass1(Obj *obj)
 {
-	readobj(obj);
+	load(obj);
+	if (obj->member && !obj->define)
+		unload(obj);
+		
 }
 
 static void
