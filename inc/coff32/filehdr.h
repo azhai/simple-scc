@@ -22,4 +22,5 @@ struct filehdr {
 #define F_AR32WR (1 << 5)
 #define F_A32WR  (1 << 6)
 
+#define COFF_I386MAGIC    0x014c
 #define COFF_Z80MAGIC     0x805a

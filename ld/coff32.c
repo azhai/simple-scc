@@ -413,6 +413,7 @@ probe(char *fname, char *member, FILE *fp)
 	magic = c1 | c2 << 8;
 
 	switch (magic) {
+	case COFF_I386MAGIC:
 	case COFF_Z80MAGIC:
 		unpack = lunpack;
 		align = 2;
