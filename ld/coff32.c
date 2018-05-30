@@ -371,6 +371,8 @@ static void
 unload(Obj *obj)
 {
 	/* TODO */
+	pop(obj);
+	delobj(obj);
 }
 
 static void
@@ -379,7 +381,6 @@ pass1(Obj *obj)
 	load(obj);
 	if (obj->member && !obj->define)
 		unload(obj);
-		
 }
 
 static void
@@ -422,8 +423,7 @@ probe(char *fname, char *member, FILE *fp)
 		return NULL;
 	}
 
-	obj = newobj(fname, member);
-	obj->fp = fp;
+	obj = newobj(fname, member, fp);
 	obj->unpack = unpack;
 	obj->align = align;
 	obj->fmt = &coff32;

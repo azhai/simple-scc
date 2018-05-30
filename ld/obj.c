@@ -1,5 +1,6 @@
 static char sccsid[] = "@(#) ./ld/obj.c";
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,12 +11,53 @@ static char sccsid[] = "@(#) ./ld/obj.c";
 #define NR_SYM_HASH 64
 
 Obj *objlst;
-static Obj *tail;
+static Obj *objtail;
 
+Symbol *sectlst;
 static Symbol *symtbl[NR_SYM_HASH];
 
+/*
+ * This function is always called with the last object created,
+ * so we can be sure that we only have to pop off the last
+ * object created
+ */
+void
+pop(Obj *obj)
+{
+	objtail = objtail->prev;
+	if (!objtail)
+		objlst = NULL;
+}
+
+void
+push(Obj *obj)
+{
+	obj->prev = objlst;
+	obj->next = NULL;
+
+	if (!objlst) {
+		objtail = objlst = obj;
+	} else {
+		objtail->next = obj;
+		objtail = obj;
+	}
+}
+
+void
+delobj(Obj *obj)
+{
+	free(obj->strtbl);
+	free(obj->sections);
+	free(obj->symbols);
+	free(obj->scnhdr);
+	free(obj->filhdr);
+	free(obj->fname);
+	free(obj->member);
+	free(obj);
+}
+
 Obj *
-newobj(char *fname, char *member)
+newobj(char *fname, char *member, FILE *fp)
 {
 	Obj *obj;
 	char *s, *t;
@@ -37,12 +79,12 @@ newobj(char *fname, char *member)
 			outmem();
 		obj->member = memcpy(s, member, len);
 	}
-	obj->next = NULL;
 
-	if (!objlst)
-		tail = objlst = obj;
-	else
-		tail->next = obj;
+	obj->fp = fp;
+	if ((obj->offset = ftell(fp)) == EOF) {
+		fprintf(stderr, "ld: %s: %s\n", fname, strerror(errno));
+		exit(1);
+	}
 
 	return obj;
 }

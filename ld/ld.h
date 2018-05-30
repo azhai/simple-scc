@@ -8,6 +8,7 @@ struct obj {
 	char *member;
 	FILE *fp;
 	Fmt *fmt;
+	long offset;
 
 	void *filhdr;
 	void *scnhdr;
@@ -22,7 +23,7 @@ struct obj {
 	int align;
 	int define;
 
-	struct obj *next;
+	struct obj *next, *prev;
 };
 
 struct symbol {
@@ -43,7 +44,10 @@ struct objfmt {
 };
 
 /* obj.c */
-extern Obj *newobj(char *fname, char *member);
+extern Obj *newobj(char *fname, char *member, FILE *fp);
+extern void delobj(Obj *obj);
+extern void pop(Obj *obj);
+extern void push(Obj *obj);
 extern Symbol *lookup(char *name);
 
 /* main.c */
