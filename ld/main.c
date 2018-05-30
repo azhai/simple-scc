@@ -250,7 +250,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-	if (argc < 0)
+	if (argc == 0)
 		usage();
 
 	pass1(argc, argv);
