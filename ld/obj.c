@@ -14,6 +14,7 @@ Obj *objlst;
 static Obj *objtail;
 
 Symbol *sectlst;
+static Symbol *secttail;
 static Symbol *symtbl[NR_SYM_HASH];
 
 /*
@@ -87,6 +88,22 @@ newobj(char *fname, char *member, FILE *fp)
 	}
 
 	return obj;
+}
+
+void
+newsect(Symbol *sym)
+{
+	if (sym->flags & SSECT)
+		return;
+
+	if (!sectlst) {
+		secttail = sectlst = sym;
+	} else {
+		secttail->next = sym;
+		secttail = sym;
+	}
+
+	sym->flags |= SSECT;
 }
 
 static unsigned

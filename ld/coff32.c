@@ -133,7 +133,7 @@ readsects(Obj *obj, long off)
 		}
 		sym->size += p->s_size;
 		obj->sections[i] = sym;
-		
+		newsect(sym);
 	}
 
 	return 0;

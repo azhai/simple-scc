@@ -26,6 +26,10 @@ struct obj {
 	struct obj *next, *prev;
 };
 
+enum symflgs {
+	SSECT = 1 << 0,
+};
+
 struct symbol {
 	char *name;
 	char type;
@@ -34,7 +38,7 @@ struct symbol {
 	TUINT base;
 	TUINT value;
 	Obj *where;
-	struct symbol *hash;
+	struct symbol *hash, *next;
 };
 
 struct objfmt {
@@ -48,6 +52,7 @@ extern Obj *newobj(char *fname, char *member, FILE *fp);
 extern void delobj(Obj *obj);
 extern void pop(Obj *obj);
 extern void push(Obj *obj);
+extern void newsect(Symbol *sym);
 extern Symbol *lookup(char *name);
 
 /* main.c */
