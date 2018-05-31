@@ -223,7 +223,7 @@ main(int argc, char *argv[])
 				if (argc == 0)
 					goto usage;
 				++argv, --argc;
-				lookup(*argv);
+				lookup(*argv, INSTALL);
 				break;
 			case 'o':
 				if (argc == 0)

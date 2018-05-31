@@ -122,18 +122,6 @@ readsects(Obj *obj, long off)
 		if (fread(buff, SCNHSZ, 1, obj->fp) != 1)
 			return -1;
 		getscn(obj, buff, p);
-		sym = lookup(p->s_name);
-
-		sym->size = (sym->size + a) & a;
-		if (sym->size > ULLONG_MAX - p->s_size) {
-			fprintf(stderr,
-			        "ld: %s: overflow in section '%s'\n",
-			        obj->fname, p->s_name);
-			exit(EXIT_FAILURE);
-		}
-		sym->size += p->s_size;
-		obj->sections[i] = sym;
-		newsect(sym);
 	}
 
 	return 0;
@@ -259,14 +247,68 @@ bad_file:
 	exit(EXIT_FAILURE);
 }
 
+static char *
+symname(Obj *obj, SYMENT *ent)
+{
+	long off;
+
+	if (ent->n_zeroes != 0)
+		return ent->n_name;
+
+	off = ent->n_offset;
+	if (off >= obj->strsiz) {
+		fprintf(stderr,
+		        "ld: invalid offset in symbol table: %zd\n", off);
+		return "";
+	}
+
+	return &obj->strtbl[off];
+}
+
+static int
+needed(Obj *obj)
+{
+	FILHDR *hdr = obj->filhdr;
+	SYMENT *ent, *ents = obj->enthdr;
+	long aux, i;
+
+	aux = 0;
+	for (i = 0; i < hdr->f_nsyms; i++) {
+		if (aux > 0) {
+			aux--;
+			continue;
+		}
+		ent = ents + i;
+		if (ent->n_sclass != C_EXT)
+			continue;
+
+		switch (ent->n_scnum) {
+		case N_DEBUG:
+		case N_UNDEF:
+			continue;
+		case N_ABS:
+		default:
+			if (!lookup(symname(obj, ent), NOINSTALL))
+				continue;
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
 static void
 pass1(Obj *obj)
 {
 	readobj(obj);
-	if (obj->member && !obj->define) {
-		delobj(obj);
-		return;
+
+	if (obj->member) {
+		if (!needed(obj)) {
+			delobj(obj);
+			return;
+		}
 	}
+
 	add(obj);
 }
 

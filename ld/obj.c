@@ -104,7 +104,7 @@ hash(char *s)
 }
 
 Symbol *
-lookup(char *name)
+lookup(char *name, int install)
 {
 	unsigned h;
 	char *s;
@@ -117,6 +117,9 @@ lookup(char *name)
 		if (*name == *s && !strcmp(name, s))
 			return sym;
 	}
+
+	if (!install)
+		return NULL;
 
 	len = strlen(name) + 1;
 	sym = malloc(sizeof(*sym));

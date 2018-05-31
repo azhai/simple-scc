@@ -1,4 +1,7 @@
 
+#define INSTALL   1
+#define NOINSTALL 0
+
 typedef struct obj Obj;
 typedef struct symbol Symbol;
 typedef struct objfmt Fmt;
@@ -22,7 +25,6 @@ struct obj {
 
 	int (*unpack)(unsigned char *, char *, ...);
 	int align;
-	int define;
 
 	struct obj *next, *prev;
 };
@@ -53,7 +55,7 @@ extern Obj *newobj(char *fname, char *member, FILE *fp);
 extern void add(Obj *obj);
 extern void delobj(Obj *obj);
 extern void newsect(Symbol *sym);
-extern Symbol *lookup(char *name);
+extern Symbol *lookup(char *name, int install);
 
 /* main.c */
 extern void outmem(void);
