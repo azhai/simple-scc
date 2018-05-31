@@ -12,6 +12,7 @@ struct obj {
 
 	void *filhdr;
 	void *scnhdr;
+	void *enthdr;
 
 	Symbol **symbols;
 	Symbol **sections;
@@ -49,9 +50,8 @@ struct objfmt {
 
 /* obj.c */
 extern Obj *newobj(char *fname, char *member, FILE *fp);
+extern void add(Obj *obj);
 extern void delobj(Obj *obj);
-extern void pop(Obj *obj);
-extern void push(Obj *obj);
 extern void newsect(Symbol *sym);
 extern Symbol *lookup(char *name);
 

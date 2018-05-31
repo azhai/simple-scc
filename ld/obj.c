@@ -17,21 +17,8 @@ Symbol *sectlst;
 static Symbol *secttail;
 static Symbol *symtbl[NR_SYM_HASH];
 
-/*
- * This function is always called with the last object created,
- * so we can be sure that we only have to pop off the last
- * object created
- */
 void
-pop(Obj *obj)
-{
-	objtail = objtail->prev;
-	if (!objtail)
-		objlst = NULL;
-}
-
-void
-push(Obj *obj)
+add(Obj *obj)
 {
 	obj->prev = objlst;
 	obj->next = NULL;

@@ -140,7 +140,7 @@ readsects(Obj *obj, long off)
 }
 
 static void
-getsym(Obj *obj, unsigned char *buff, SYMENT *ent)
+getent(Obj *obj, unsigned char *buff, SYMENT *ent)
 {
 	int n;
 	long off, zero;
@@ -161,179 +161,66 @@ getsym(Obj *obj, unsigned char *buff, SYMENT *ent)
 		(*obj->unpack)(buff, "ll", &ent->n_zeroes, &ent->n_offset);
 }
 
-static char *
-symname(Obj *obj, SYMENT *ent)
-{
-	long off;
-
-	if (ent->n_zeroes != 0)
-		return ent->n_name;
-
-	off = ent->n_offset;
-	if (off >= obj->strsiz) {
-		fprintf(stderr,
-		        "ld: invalid offset in symbol table: %zd\n", off);
-		return "";
-	}
-
-	return &obj->strtbl[off];
-}
-
-static char
-typeof(Obj *obj, SYMENT *ent)
-{
-	SCNHDR *sec;
-	FILHDR *hdr;
-	int c, n;
-	long flags;
-
-	switch (ent->n_scnum) {
-	case N_DEBUG:
-		c = 'n';
-		break;
-	case N_ABS:
-		c = 'a';
-		break;
-	case N_UNDEF:
-		c = (ent->n_value != 0) ? 'C' : 'U';
-		break;
-	default:
-		sec = obj->scnhdr;
-		hdr = obj->filhdr;
-		n = ent->n_scnum;
-		if (n > hdr->f_nscns)
-			return '?';
-		sec = &sec[n-1];
-		flags = sec->s_flags;
-		if (flags & STYP_TEXT)
-			c = 't';
-		else if (flags & STYP_DATA)
-			c = 'd';
-		else if (flags & STYP_BSS)
-			c = 'b';
-		else
-			c = '?';
-		break;
-	}
-
-	if (ent->n_sclass == C_EXT)
-		c = toupper(c);
-
-	return c;
-}
-
-static TUINT
-getval(Obj *obj, SYMENT *ent)
-{
-	FILHDR *hdr = obj->filhdr;;
-	SCNHDR *scn;
-	Symbol *sym;
-	unsigned n;
-
-	if (ent->n_scnum > hdr->f_nscns) {
-		fprintf(stderr,
-		        "ld: %s: incorrect section number\n",
-		        obj->fname,
-		        ent->n_scnum);
-		exit(EXIT_FAILURE);
-	}
-
-	n = ent->n_scnum-1;
-	scn = obj->scnhdr;
-	scn = &scn[n];
-	sym = obj->sections[n];
-
-
-	return ent->n_value + (sym->size - scn->s_size);
-}
-
 static int
-readsyms(Obj *obj, long off)
+readents(Obj *obj, long off)
 {
-	int type;
-	unsigned i, n, aux;
+	SYMENT *ent, *ents;
 	FILHDR *hdr = obj->filhdr;;
+	long i, nsyms = hdr->f_nsyms;
+	unsigned char buff[SYMESZ];
+
 
 	if (fseek(obj->fp, off, SEEK_SET) == EOF)
 		return -1;
 
-	if (hdr->f_nsyms > SIZE_MAX / sizeof(Symbol *)) {
+	if (nsyms > SIZE_MAX/sizeof(SYMENT)) {
 		fprintf(stderr,
 		        "ld: %s: overflow in size of symbol redirection\n",
 		        obj->fname);
 		exit(EXIT_FAILURE);
 	}
-	obj->symbols = malloc(sizeof(Symbol *) * sizeof(Symbol *));
-	if (!obj->symbols)
+
+	if ((ents = malloc((nsyms * sizeof(SYMENT)))) == NULL)
 		outmem();
+	obj->enthdr = ents;
 
-	hdr = obj->filhdr;
-	aux = n = 0;
-	for (i = 0; i < hdr->f_nsyms; i++) {
-		Symbol *sym;
-		TUINT value;
-		SYMENT ent;
-		unsigned char buff[SYMESZ];
-		char *name;
-
+	for (ent = ents; ent < &ents[nsyms]; ++ent) {
 		if (fread(buff, SYMESZ, 1, obj->fp) != 1)
 			return -1;
-		if (aux > 0) {
-			aux--;
-			continue;
-		}
-		getsym(obj, buff, &ent);
-		aux = ent.n_numaux;
-		name = symname(obj, &ent);
-		type = typeof(obj, &ent);
-		sym = lookup(name);
-
-		if (ent.n_scnum <= 0)
-			continue;
-
-		switch (sym->type) {
-		case 'U':
-			sym->type = type;
-			sym->value = getval(obj, &ent);
-			if (type != 'U') {
-				obj->define = 1;
-				sym->where = obj;
-			}
-			if (type == 'C')
-				sym->size = ent.n_value;
-			break;
-		case 'C':
-			switch (type) {
-			case 'U':
-			case 'C':
-				if (ent.n_value > sym->size)
-					sym->size = ent.n_value;
-				break;
-			default:
-				obj->define = 1;
-				sym->where =  obj;
-				sym->type = type;
-				sym->value = getval(obj, &ent);
-				break;
-			}
-			break;
-		default:
-			if (type != 'U') {
-				fprintf(stderr,
-				        "ld: %s: redifinition of symbol '%s'\n",
-				        obj->fname, sym->name);
-			}
-			break;
-		}
-
-		obj->symbols[i] = sym;
+		getent(obj, buff, &ents[i]);
 	}
 
 	return 0;
 }
 
+/*
+ * check overflow in: off + ptr + nitem*size
+ */
+static long
+fileptr(long off, long ptr, long nitem, long size)
+{
+	if (off < 0 || ptr < 0 || nitem < 0 || size < 0)
+		return -1;
+
+	if (off > LONG_MAX - ptr)
+		return -1;
+	off += ptr;
+
+	if (size > 0) {
+		if (nitem > LONG_MAX / size)
+			return -1;
+		size *= nitem;
+	}
+
+	if (off > LONG_MAX - size)
+		return -1;
+	off += size;
+
+	return off;
+}
+
 static void
-load(Obj *obj)
+readobj(Obj *obj)
 {
 	unsigned char buff[FILHSZ];
 	FILHDR *hdr;
@@ -349,38 +236,38 @@ load(Obj *obj)
 	getfhdr(obj, buff, hdr);
 	obj->filhdr = hdr;
 
-	stroff = pos + hdr->f_symptr + hdr->f_nsyms*SYMESZ;
-	symoff = pos + hdr->f_symptr;
-	secoff = pos + FILHSZ + hdr->f_opthdr;
+	stroff = fileptr(pos, hdr->f_symptr, hdr->f_nsyms, SYMESZ);
+	symoff = fileptr(pos, hdr->f_symptr, 0, 0);
+	secoff = fileptr(pos, hdr->f_opthdr, 1, FILHSZ);
+
+	if (stroff < 0 || symoff < 0 || secoff < 0)
+		goto bad_file;
 
 	if (readstr(obj, stroff) < 0)
 		goto bad_file;
 	if (readsects(obj, secoff) < 0)
 		goto bad_file;
-	if (readsyms(obj, symoff) < 0)
+	if (readents(obj, symoff) < 0)
 		goto bad_file;
 	return;
 
 bad_file:
-	if (ferror(obj->fp))
-		die("ld: %s: %s", obj->fname, strerror(errno));
-	die("ld: %s: corrupted file", obj->fname);
-}
-
-static void
-unload(Obj *obj)
-{
-	/* TODO */
-	pop(obj);
-	delobj(obj);
+	fprintf(stderr,
+	        "ld: %s: %s\n",
+	         obj->fname,
+	         (ferror(obj->fp)) ? strerror(errno) : "corrupted file");
+	exit(EXIT_FAILURE);
 }
 
 static void
 pass1(Obj *obj)
 {
-	load(obj);
-	if (obj->member && !obj->define)
-		unload(obj);
+	readobj(obj);
+	if (obj->member && !obj->define) {
+		delobj(obj);
+		return;
+	}
+	add(obj);
 }
 
 static void
