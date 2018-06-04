@@ -13,14 +13,14 @@ static char sccsid[] = "@(#) ./ld/obj.c";
 Obj *objlst;
 static Obj *objtail;
 
-Symbol *sectlst;
 static Symbol *secttail;
 static Symbol *symtbl[NR_SYM_HASH];
 
-void
+Section *sectlst;
+
+Obj *
 add(Obj *obj)
 {
-	obj->prev = objlst;
 	obj->next = NULL;
 
 	if (!objlst) {
@@ -35,8 +35,6 @@ void
 delobj(Obj *obj)
 {
 	free(obj->strtbl);
-	free(obj->sections);
-	free(obj->symbols);
 	free(obj->scnhdr);
 	free(obj->filhdr);
 	free(obj->fname);
@@ -77,20 +75,33 @@ newobj(char *fname, char *member, FILE *fp)
 	return obj;
 }
 
-void
-newsect(Symbol *sym)
+Section *
+slookup(char *name)
 {
-	if (sym->flags & SSECT)
-		return;
+	char *s;
+	Section *prev, *sp;
+	size_t len = strlen(name);
 
-	if (!sectlst) {
-		secttail = sectlst = sym;
-	} else {
-		secttail->next = sym;
-		secttail = sym;
+	for (prev = sp = sectlst; sp; prev = sp, sp = sp->next) {
+		if (!memcmp(sp->name, name, len))
+			return sp;
 	}
 
-	sym->flags |= SSECT;
+	sp = malloc(sizeof(*sp));
+	s = malloc(len);
+	if (!sp || !s)
+		outmem();
+	sp->name = s;
+	sp->base = 0;
+	sp->size = 0;
+	sp->next = NULL;
+
+	if (!prev)
+		sectlst = sp;
+	else
+		prev->next = sp;
+
+	return sp;
 }
 
 static unsigned
@@ -132,7 +143,6 @@ lookup(char *name, int install)
 	sym->hash = symtbl[h];
 	symtbl[h] = sym;
 	sym->name = s;
-	sym->type = 'U';
 
 	return sym;
 }

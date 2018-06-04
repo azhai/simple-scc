@@ -100,17 +100,16 @@ readsects(Obj *obj, long off)
 	hdr = obj->filhdr;
 	nsec = hdr->f_nscns;
 
-	if (nsec > SIZE_MAX / sizeof(*scn))
-		return -1;
+	scn = NULL;
+	sec = NULL;
+	if (nsec <= SIZE_MAX / sizeof(*scn))
+		scn = malloc(nsec * sizeof(*scn));
 
-	if (nsec > SIZE_MAX / sizeof(Symbol *))
-		return -1;
+	if (nsec <= SIZE_MAX / sizeof(Symbol *))
+		sec = malloc(nsec * sizeof(Symbol *));
 
-	scn = malloc(nsec * sizeof(*scn));
-	sec = malloc(nsec * sizeof(Symbol *));
 	if (!scn || !sec)
 		outmem();
-	obj->sections = sec;
 	obj->scnhdr = scn;
 
 	if (fseek(obj->fp, off, SEEK_SET) == EOF)
@@ -154,28 +153,24 @@ readents(Obj *obj, long off)
 {
 	SYMENT *ent, *ents;
 	FILHDR *hdr = obj->filhdr;;
-	long i, nsyms = hdr->f_nsyms;
+	long nsyms = hdr->f_nsyms;
 	unsigned char buff[SYMESZ];
 
 
 	if (fseek(obj->fp, off, SEEK_SET) == EOF)
 		return -1;
 
-	if (nsyms > SIZE_MAX/sizeof(SYMENT)) {
-		fprintf(stderr,
-		        "ld: %s: overflow in size of symbol redirection\n",
-		        obj->fname);
-		exit(EXIT_FAILURE);
-	}
-
-	if ((ents = malloc((nsyms * sizeof(SYMENT)))) == NULL)
+	ents = NULL;
+	if (nsyms <= SIZE_MAX/sizeof(SYMENT))
+		ents = malloc((nsyms * sizeof(SYMENT)));
+	if (!ents)
 		outmem();
 	obj->enthdr = ents;
 
 	for (ent = ents; ent < &ents[nsyms]; ++ent) {
 		if (fread(buff, SYMESZ, 1, obj->fp) != 1)
 			return -1;
-		getent(obj, buff, &ents[i]);
+		getent(obj, buff, ent);
 	}
 
 	return 0;
@@ -297,6 +292,63 @@ needed(Obj *obj)
 	return 0;
 }
 
+static Obj *
+load(Obj *obj)
+{
+	FILHDR *hdr = obj->filhdr;
+	SCNHDR *scn, *scns = obj->scnhdr;;
+	SYMENT *ent, *ents = obj->enthdr;
+	int nsect, aux;
+
+	for (scn = scns; scn < &scns[hdr->f_nscns]; ++scn) {
+		/* TODO: padding */
+		Section *sect = slookup(scn->s_name);
+		scn->s_vaddr = sect->base + sect->size;
+		sect->size += scn->s_size;
+	}
+
+	aux = 0;
+	for (ent = ents; ent < &ents[hdr->f_nsyms]; ++ent) {
+		if (aux > 0) {
+			--aux;
+			continue;
+		}
+		aux = ent->n_numaux;
+
+		scn = NULL;
+		switch (ent->n_scnum) {
+		case N_DEBUG:
+			continue;
+		case N_ABS:
+			break;
+		case N_UNDEF:
+			/* TODO: deal wth common blocks */
+			break;
+		default:
+			nsect = ent->n_scnum-1;
+			if (nsect >= hdr->f_nscns)
+				corrupted(obj->fname, obj->member);
+			scn = &scns[nsect];
+			ent->n_value += scn->s_vaddr;
+		}
+
+		if (ent->n_sclass == C_EXT && ent->n_scnum != N_UNDEF) {
+			Symbol *sym = lookup(symname(obj, ent), INSTALL);
+
+			if (sym->flags & SDEFINED) {
+				redefined(obj, sym);
+			} else {
+				sym->flags |= SDEFINED;
+				sym->where = obj;
+				if (scn)
+					sym->section = slookup(scn->s_name);
+			}
+		}
+	}
+
+	return obj;
+}
+
 static void
 pass1(Obj *obj)
 {
@@ -310,6 +362,7 @@ pass1(Obj *obj)
 	}
 
 	add(obj);
+	load(obj);
 }
 
 static void
@@ -324,16 +377,16 @@ probe(char *fname, char *member, FILE *fp)
 {
 	int c;
 	int c1, c2;
-	fpos_t pos;
+	long pos;
 	unsigned short magic;
 	unsigned align;
 	int (*unpack)(unsigned char *, char *, ...);
 	Obj *obj;
 
-	fgetpos(fp, &pos);
+	pos = ftell(fp);
 	c1 = getc(fp);
 	c2 = getc(fp);
-	fsetpos(fp, &pos);
+	fseek(fp, pos, SEEK_SET);
 
 	if (ferror(fp))
 		die("ld: %s: %s", fname, strerror(errno));
@@ -356,6 +409,7 @@ probe(char *fname, char *member, FILE *fp)
 	obj->unpack = unpack;
 	obj->align = align;
 	obj->fmt = &coff32;
+	obj->offset = pos;
 
 	return obj;
 }

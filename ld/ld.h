@@ -5,6 +5,7 @@
 typedef struct obj Obj;
 typedef struct symbol Symbol;
 typedef struct objfmt Fmt;
+typedef struct section Section;
 
 struct obj {
 	char *fname;
@@ -17,31 +18,35 @@ struct obj {
 	void *scnhdr;
 	void *enthdr;
 
-	Symbol **symbols;
-	Symbol **sections;
-
 	char *strtbl;
 	size_t strsiz;
 
 	int (*unpack)(unsigned char *, char *, ...);
 	int align;
 
-	struct obj *next, *prev;
+	struct obj *next;
 };
 
-enum symflgs {
-	SSECT = 1 << 0,
+enum symflg {
+	SDEFINED = 1 << 1,
 };
 
 struct symbol {
 	char *name;
-	char type;
-	short flags;
+	unsigned char flags;
 	long size;
 	TUINT base;
 	TUINT value;
+	Section *section;
 	Obj *where;
 	struct symbol *hash, *next;
+};
+
+struct section {
+	char *name;
+	TUINT base;
+	TUINT size;
+	struct section *next;
 };
 
 struct objfmt {
@@ -52,13 +57,15 @@ struct objfmt {
 
 /* obj.c */
 extern Obj *newobj(char *fname, char *member, FILE *fp);
-extern void add(Obj *obj);
+extern Obj *add(Obj *obj);
 extern void delobj(Obj *obj);
-extern void newsect(Symbol *sym);
+extern Section *slookup(char *name);
 extern Symbol *lookup(char *name, int install);
 
 /* main.c */
 extern void outmem(void);
+extern void corrupted(char *fname, char *member);
+extern void redefined(Obj *obj, Symbol *sym);
 
 /*
  * Definition of globals variables

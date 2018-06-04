@@ -22,6 +22,26 @@ int dflag;		/* define common even with rflag */
 int gflag;              /* preserve debug symbols */
 
 void
+redefined(Obj *obj, Symbol *sym)
+{
+	/* TODO: add infotmation about where it is defined */
+	fprintf(stderr,
+		"ld: %s: redifinition of symbol '%s'\n",
+		obj->fname, sym->name);
+}
+
+void
+corrupted(char *fname, char *member)
+{
+	char *fmt;
+
+	fmt = (member) ?
+		"ld: %s(%s): corrupted file\n" : "ld: %s: corrupted file\n";
+	fprintf(stderr, fmt, fname, member);
+	exit(EXIT_FAILURE);
+}
+
+void
 outmem(void)
 {
 	fputs("ld: out of memory\n", stderr);
