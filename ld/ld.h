@@ -4,14 +4,12 @@
 
 typedef struct obj Obj;
 typedef struct symbol Symbol;
-typedef struct objfmt Fmt;
 typedef struct section Section;
 
 struct obj {
 	char *fname;
 	char *member;
 	FILE *fp;
-	Fmt *fmt;
 	long offset;
 
 	void *filhdr;
@@ -49,12 +47,6 @@ struct section {
 	struct section *next;
 };
 
-struct objfmt {
-	Obj  *(*probe)(char *fname, char *member, FILE *fp);
-	void (*pass1)(Obj *obj);
-	void (*pass2)(Obj *obj);
-};
-
 /* obj.c */
 extern Obj *newobj(char *fname, char *member, FILE *fp);
 extern Obj *add(Obj *obj);
@@ -67,6 +59,10 @@ extern void outmem(void);
 extern void corrupted(char *fname, char *member);
 extern void redefined(Obj *obj, Symbol *sym);
 
+/* object format */
+extern Obj *probe(char *fname, char *member, FILE *fp);
+extern Obj *load(Obj *obj);
+
 /*
  * Definition of globals variables
  */
@@ -77,3 +73,4 @@ extern int Xflag;
 extern int rflag;
 extern int dflag;
 extern int gflag;
+extern Obj *objlst;

@@ -260,45 +260,15 @@ symname(Obj *obj, SYMENT *ent)
 	return &obj->strtbl[off];
 }
 
-static int
-needed(Obj *obj)
-{
-	FILHDR *hdr = obj->filhdr;
-	SYMENT *ent, *ents = obj->enthdr;
-	long aux, i;
-
-	aux = 0;
-	for (i = 0; i < hdr->f_nsyms; i++) {
-		if (aux > 0) {
-			aux--;
-			continue;
-		}
-		ent = ents + i;
-		if (ent->n_sclass != C_EXT)
-			continue;
-
-		switch (ent->n_scnum) {
-		case N_DEBUG:
-		case N_UNDEF:
-			continue;
-		case N_ABS:
-		default:
-			if (!lookup(symname(obj, ent), NOINSTALL))
-				continue;
-			return 1;
-		}
-	}
-
-	return 0;
-}
-
-static Obj *
+Obj *
 load(Obj *obj)
 {
 	FILHDR *hdr = obj->filhdr;
 	SCNHDR *scn, *scns = obj->scnhdr;;
 	SYMENT *ent, *ents = obj->enthdr;
 	int nsect, aux;
+
+	readobj(obj);
 
 	for (scn = scns; scn < &scns[hdr->f_nscns]; ++scn) {
 		/* TODO: padding */
@@ -346,33 +316,12 @@ load(Obj *obj)
 		}
 	}
 
-	return obj;
+	/* TODO: Check if the object in library is needed: delobj(obj) */
+
+	return add(obj);
 }
 
-static void
-pass1(Obj *obj)
-{
-	readobj(obj);
-
-	if (obj->member) {
-		if (!needed(obj)) {
-			delobj(obj);
-			return;
-		}
-	}
-
-	add(obj);
-	load(obj);
-}
-
-static void
-pass2(Obj *obj)
-{
-}
-
-Fmt coff32;
-
-static Obj *
+Obj *
 probe(char *fname, char *member, FILE *fp)
 {
 	int c;
@@ -408,14 +357,7 @@ probe(char *fname, char *member, FILE *fp)
 	obj = newobj(fname, member, fp);
 	obj->unpack = unpack;
 	obj->align = align;
-	obj->fmt = &coff32;
 	obj->offset = pos;
 
 	return obj;
 }
-
-Fmt coff32 = {
-	.probe = probe,
-	.pass1 = pass1,
-	.pass2 = pass2,
-};

@@ -51,21 +51,12 @@ outmem(void)
 static int
 object(char *fname, char *member, FILE *fp)
 {
-	extern Fmt *formats[];
-	Fmt **p, *fmt;
 	Obj *obj;
-	void (*fun)(Obj *obj);
 
-	for (p = formats; *p; ++p) {
-		fmt = *p;
-		obj = (*fmt->probe)(fname, member, fp);
-		if (obj)
-			break;
-	}
-	if (*p == NULL)
+	obj = probe(fname, member, fp);
+	if (!obj)
 		return 0;
-
-	(*obj->fmt->pass1)(obj);
+	load(obj);
 
 	return 1;
 }
@@ -98,35 +89,36 @@ ar(char *fname, FILE *fp)
 		goto file_error;
 
 	while (fread(&hdr, sizeof(hdr), 1, fp) == 1) {
-		pos = ftell(fp);
 		if (strncmp(hdr.ar_fmag, ARFMAG, sizeof(hdr.ar_fmag)))
-			goto corrupted;
+			corrupted(fname, NULL);
 
 		siz = 0;
 		sscanf(hdr.ar_size, "%10ld", &siz);
-		if (siz == 0)
-			goto corrupted;
-
 		if (siz & 1)
 			siz++;
-		if (pos == -1 || pos > LONG_MAX - siz)
-			die("ld: %s: overflow in size of archive", fname);
+		if (siz == 0)
+			corrupted(fname, NULL);
+
+		pos = ftell(fp);
+		if (pos == -1 || pos > LONG_MAX - siz) {
+			fprintf(stderr,
+			        "ld: %s(%s): overflow in size of archive",
+			         fname, member);
+			exit(EXIT_FAILURE);
+		}
 		pos += siz;
 
 		getfname(&hdr, member);
 		object(fname, member, fp);
 		if (fseek(fp, pos, SEEK_SET) == EOF)
-			goto file_error;
+			break;
 	}
 
-	if (ferror(fp))
-		goto file_error;
-	return;
-
-corrupted:
-	die("ld: %s: corrupted archive", fname);
 file_error:
-	die("ld: %s: %s", fname, strerror(errno));
+	if (ferror(fp)) {
+		fprintf(stderr, "ld: %s: %s\n", fname, strerror(errno));
+		exit(EXIT_FAILURE);
+	}
 }
 
 static int
@@ -140,7 +132,7 @@ archive(char *fname, FILE *fp)
 	fsetpos(fp, &pos);
 
 	if (ferror(fp))
-		die("ld: %s: %s", fname, strerror(errno));
+		return 0;
 	if (strncmp(magic, ARMAG, SARMAG) != 0)
 		return 0;
 
@@ -149,34 +141,27 @@ archive(char *fname, FILE *fp)
 }
 
 static void
-process(char *fname)
-{
-	FILE *fp;
-
-	if ((fp = fopen(fname, "rb")) == NULL)
-		die("ld: %s: %s", fname, strerror(errno));
-
-	if (!object(fname, NULL, fp) && !archive(fname, fp))
-		die("ld: %s: File format not recognized", fname);
-
-	if (ferror(fp))
-		die("ld: %s: %s", fname, strerror(errno));
-
-	fclose(fp);
-}
-
-static void
 pass1(int argc, char *argv[])
 {
-	pass = 1;
-	while (*argv)
-		process(*argv++);
+	FILE *fp;
+	char *s;
+
+	while ((s = *argv++) != NULL) {
+		if ((fp = fopen(s, "rb")) == NULL) {
+			fprintf(stderr, "ld: %s: %s\n", s, strerror(errno));
+			exit(EXIT_FAILURE);
+		}
+		if (!object(s, NULL, fp) && !archive(s, fp)) {
+			fprintf(stderr, "ld: %s: File format not recognized\n", s);
+			exit(EXIT_FAILURE);
+		}
+		fclose(fp);
+	}
 }
 
 static void
 pass2(int argc, char *argv[])
 {
-	pass = 2;
 }
 
 static void
