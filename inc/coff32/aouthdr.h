@@ -13,3 +13,10 @@ struct aouthdr {
 };
 
 typedef struct aouthdr AOUTHDR;
+
+#define QMAGIC      0314
+#define STMAGIC     0401
+#define OMAGIC      0404
+#define JMAGIC      0407
+#define DMAGIC      0410
+#define ZMAGIC      0413

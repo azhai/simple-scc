@@ -14,13 +14,18 @@ struct filehdr {
 #define FILHDR struct filehdr
 #define FILHSZ 20
 
-#define F_RELFLG (1 << 0)
-#define F_EXEC   (1 << 1)
-#define F_LMNO   (1 << 2)
-#define F_SYMS   (1 << 3)
-#define F_AR16WR (1 << 4)
-#define F_AR32WR (1 << 5)
-#define F_A32WR  (1 << 6)
+#define F_RELFLG          0000001
+#define F_EXEC            0000002
+#define F_LMNO            0000004
+#define F_SYMS            0000010
+#define F_MINMAL          0000020
+#define F_UPDATE          0000040
+#define F_SWADB           0000100
+#define F_AR16WR          0000200
+#define F_AR32WR          0000400
+#define F_A32WR           0001000
+#define F_PATCH           0002000
+#define F_NODF            0002000
 
 #define COFF_I386MAGIC    0x014c
 #define COFF_Z80MAGIC     0x805a
