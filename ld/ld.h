@@ -62,6 +62,8 @@ extern void redefined(Obj *obj, Symbol *sym);
 /* object format */
 extern Obj *probe(char *fname, char *member, FILE *fp);
 extern Obj *load(Obj *obj);
+extern void writeout(FILE *fp);
+
 
 /*
  * Definition of globals variables
@@ -74,3 +76,10 @@ extern int rflag;
 extern int dflag;
 extern int gflag;
 extern Obj *objlst;
+extern Section *sectlst;
+extern long numsects;
+extern long numsymbols;
+extern TUINT tsize, dsize, bsize;
+extern char *output;
+extern char *entry;
+extern char *datasiz;

@@ -10,9 +10,12 @@ static char sccsid[] = "@(#) ./ld/obj.c";
 
 #define NR_SYM_HASH 64
 
+TUINT tsize, dsize, bsize;
+
 Obj *objlst;
 static Obj *objtail;
 
+long numsects, numsymbols;
 static Symbol *secttail;
 static Symbol *symtbl[NR_SYM_HASH];
 
@@ -100,6 +103,7 @@ slookup(char *name)
 		sectlst = sp;
 	else
 		prev->next = sp;
+	numsects++;
 
 	return sp;
 }
@@ -143,6 +147,7 @@ lookup(char *name, int install)
 	sym->hash = symtbl[h];
 	symtbl[h] = sym;
 	sym->name = s;
+	numsymbols++;
 
 	return sym;
 }

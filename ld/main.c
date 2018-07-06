@@ -12,7 +12,7 @@ static char sccsid[] = "@(#) ./ld/main.c";
 #include "../inc/syslibs.h"
 #include "ld.h"
 
-char *output = "a.out", *entry, *datasiz;
+char *output = "a.out", *entry = "start", *datasiz;
 int pass;
 int sflag;		/* discard all the symbols */
 int xflag;		/* discard local symbols */
@@ -20,6 +20,8 @@ int Xflag;		/* discard locals starting with 'L' */
 int rflag;		/* preserve relocation bits */
 int dflag;		/* define common even with rflag */
 int gflag;              /* preserve debug symbols */
+
+static int done;
 
 void
 redefined(Obj *obj, Symbol *sym)
@@ -46,6 +48,13 @@ outmem(void)
 {
 	fputs("ld: out of memory\n", stderr);
 	exit(EXIT_FAILURE);
+}
+
+static void
+cleanup(void)
+{
+	if (!done)
+		remove(output);
 }
 
 static int
@@ -162,6 +171,16 @@ pass1(int argc, char *argv[])
 static void
 pass2(int argc, char *argv[])
 {
+	FILE *fp;
+
+	if ((fp = fopen(output, "wb")) != NULL) {
+		writeout(fp);
+		if (fclose(fp) != EOF)
+			return;
+	}
+
+	fprintf(stderr, "ld: %s: %s\n", output, strerror(errno));
+	exit(EXIT_FAILURE);
 }
 
 static void
@@ -258,8 +277,12 @@ main(int argc, char *argv[])
 	if (argc == 0)
 		usage();
 
+	atexit(cleanup);
+
 	pass1(argc, argv);
 	pass2(argc, argv);
+
+	done = 1;
 
 	return 0;
 }

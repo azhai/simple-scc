@@ -9,28 +9,133 @@ static char sccsid[] = "@(#) ./ld/coff32.c";
 #include <stdlib.h>
 #include <string.h>
 
+#include "../inc/coff32/aouthdr.h"
 #include "../inc/coff32/filehdr.h"
 #include "../inc/coff32/scnhdr.h"
 #include "../inc/coff32/syms.h"
 #include "../inc/scc.h"
 #include "ld.h"
 
-static FILHDR *
-getfhdr(Obj *obj, unsigned char *buff, FILHDR *hdr)
+#define NUMSCN_MAX 65536
+#define NUMENT_MAX 2147483648
+
+typedef int (*packfun)(unsigned char *, char *, ...);
+static long textpc = 0x1000;
+
+static void
+pack_hdr(packfun fun, unsigned char *buff, FILHDR *hdr)
 {
 	int n;
 
-	n = (*obj->unpack)(buff,
-	                   "sslllss",
-	                   &hdr->f_magic,
-	                   &hdr->f_nscns,
-	                   &hdr->f_timdat,
-	                   &hdr->f_symptr,
-	                   &hdr->f_nsyms,
-	                   &hdr->f_opthdr,
-	                   &hdr->f_flags);
+	n = (*fun)(buff,
+	           "sslllss",
+	           hdr->f_magic,
+	           hdr->f_nscns,
+	           hdr->f_timdat,
+	           hdr->f_symptr,
+	           hdr->f_nsyms,
+	           hdr->f_opthdr,
+	           hdr->f_flags);
 	assert(n == FILHSZ);
-	return hdr;
+}
+
+static void
+unpack_hdr(packfun fun, unsigned char *buff, FILHDR *hdr)
+{
+	int n;
+
+	n = (*fun)(buff,
+	           "sslllss",
+	           &hdr->f_magic,
+	           &hdr->f_nscns,
+	           &hdr->f_timdat,
+	           &hdr->f_symptr,
+	           &hdr->f_nsyms,
+	           &hdr->f_opthdr,
+	           &hdr->f_flags);
+	assert(n == FILHSZ);
+}
+
+static void
+pack_scn(packfun fun, unsigned char *buff, SCNHDR *scn)
+{
+	int n;
+
+	n = (*fun)(buff,
+                  "'8llllllssl",
+	          scn->s_name,
+	          scn->s_paddr,
+	          scn->s_vaddr,
+	          scn->s_size,
+	          scn->s_scnptr,
+	          scn->s_relptr,
+	          scn->s_lnnoptr,
+	          scn->s_nrelloc,
+	          scn->s_nlnno,
+	          scn->s_flags);
+	assert(n == SCNHSZ);
+}
+
+static void
+unpack_scn(packfun fun, unsigned char *buff, SCNHDR *scn)
+{
+	int n;
+
+	n = (*fun)(buff,
+                  "'8llllllssl",
+	          scn->s_name,
+	          &scn->s_paddr,
+	          &scn->s_vaddr,
+	          &scn->s_size,
+	          &scn->s_scnptr,
+	          &scn->s_relptr,
+	          &scn->s_lnnoptr,
+	          &scn->s_nrelloc,
+	          &scn->s_nlnno,
+	          &scn->s_flags);
+	assert(n == SCNHSZ);
+}
+
+static void
+pack_aout(packfun fun, unsigned char *buff, AOUTHDR *aout)
+{
+}
+
+static void
+unpack_ent(packfun fun, unsigned char *buff, SYMENT *ent)
+{
+	int n;
+
+	n = (*fun)(buff,
+		   "'8lsscc",
+		   &ent->n_name,
+		   &ent->n_value,
+		   &ent->n_scnum,
+		   &ent->n_type,
+		   &ent->n_sclass,
+		   &ent->n_numaux);
+	assert(n == SYMESZ);
+}
+
+/*
+ * check overflow in: off + ptr + nitem*size
+ */
+static char *
+symname(Obj *obj, SYMENT *ent)
+{
+	long off;
+
+	if (ent->n_zeroes != 0)
+		return ent->n_name;
+
+	off = ent->n_offset;
+	if (off >= obj->strsiz) {
+		fprintf(stderr,
+		        "ld: invalid offset in symbol table: %zd\n", off);
+		return "";
+	}
+
+	return &obj->strtbl[off];
 }
 
 static int
@@ -67,94 +172,55 @@ readstr(Obj *obj, long off)
 	return 0;
 }
 
-static SCNHDR *
-getscn(Obj *obj, unsigned char *buff, SCNHDR *scn)
-{
-	int n;
-
-	n = (*obj->unpack)(buff,
-	                   "'8llllllssl",
-	                   scn->s_name,
-	                   &scn->s_paddr,
-	                   &scn->s_vaddr,
-	                   &scn->s_size,
-	                   &scn->s_scnptr,
-	                   &scn->s_relptr,
-	                   &scn->s_lnnoptr,
-	                   &scn->s_nrelloc,
-	                   &scn->s_nlnno,
-	                   &scn->s_flags);
-	assert(n == SCNHSZ);
-	return scn;
-}
-
 static int
 readsects(Obj *obj, long off)
 {
 	unsigned a, nsec, i;
 	unsigned char buff[SCNHSZ];
-	SCNHDR *scn, *p;
+	SCNHDR *scns, *p;
 	FILHDR *hdr;
-	Symbol *sym, **sec;
+	Symbol *sym;
+	Section *sp;
 
 	hdr = obj->filhdr;
 	nsec = hdr->f_nscns;
 
-	scn = NULL;
-	sec = NULL;
-	if (nsec <= SIZE_MAX / sizeof(*scn))
-		scn = malloc(nsec * sizeof(*scn));
-
-	if (nsec <= SIZE_MAX / sizeof(Symbol *))
-		sec = malloc(nsec * sizeof(Symbol *));
-
-	if (!scn || !sec)
+	scns = NULL;
+	if (nsec <= SIZE_MAX / sizeof(*scns))
+		scns = malloc(nsec * sizeof(*scns));
+	if (!scns)
 		outmem();
-	obj->scnhdr = scn;
+	obj->scnhdr = scns;
 
 	if (fseek(obj->fp, off, SEEK_SET) == EOF)
 		return -1;
 
 	a = obj->align - 1;
 	for (i = 0; i < nsec; ++i) {
-		p = &scn[i];
+		p = &scns[i];
 		if (fread(buff, SCNHSZ, 1, obj->fp) != 1)
 			return -1;
-		getscn(obj, buff, p);
+		unpack_scn(obj->unpack, buff, p);
+		sp = slookup(p->s_name);
+		p->s_vaddr = sp->base + sp->size;
+		sp->size += p->s_size;
 	}
 
 	return 0;
-}
-
-static void
-getent(Obj *obj, unsigned char *buff, SYMENT *ent)
-{
-	int n;
-	long off, zero;
-	char *name;
-
-	n = (*obj->unpack)(buff,
-		           "'8lsscc",
-		           &ent->n_name,
-		           &ent->n_value,
-		           &ent->n_scnum,
-		           &ent->n_type,
-		           &ent->n_sclass,
-		           &ent->n_numaux);
-	assert(n == SYMESZ);
-
-	name = ent->n_name;
-	if (!name[0] && !name[1] && !name[2] && !name[3])
-		(*obj->unpack)(buff, "ll", &ent->n_zeroes, &ent->n_offset);
 }
 
 static int
 readents(Obj *obj, long off)
 {
 	SYMENT *ent, *ents;
+	SCNHDR *scn, *scns = obj->scnhdr;
 	FILHDR *hdr = obj->filhdr;;
 	long nsyms = hdr->f_nsyms;
+	unsigned nsect;
 	unsigned char buff[SYMESZ];
+	char *s;
+	int aux;
+	Symbol *sym;
 
 
 	if (fseek(obj->fp, off, SEEK_SET) == EOF)
@@ -167,120 +233,17 @@ readents(Obj *obj, long off)
 		outmem();
 	obj->enthdr = ents;
 
+	aux = 0;
 	for (ent = ents; ent < &ents[nsyms]; ++ent) {
 		if (fread(buff, SYMESZ, 1, obj->fp) != 1)
 			return -1;
-		getent(obj, buff, ent);
-	}
+		unpack_ent(obj->unpack, buff, ent);
+		s = ent->n_name;
+		if (!s[0] && !s[1] && !s[2] && !s[3])
+			(*obj->unpack)(buff, "ll", &ent->n_zeroes, &ent->n_offset);
 
-	return 0;
-}
-
-/*
- * check overflow in: off + ptr + nitem*size
- */
-static long
-fileptr(long off, long ptr, long nitem, long size)
-{
-	if (off < 0 || ptr < 0 || nitem < 0 || size < 0)
-		return -1;
-
-	if (off > LONG_MAX - ptr)
-		return -1;
-	off += ptr;
-
-	if (size > 0) {
-		if (nitem > LONG_MAX / size)
-			return -1;
-		size *= nitem;
-	}
-
-	if (off > LONG_MAX - size)
-		return -1;
-	off += size;
-
-	return off;
-}
-
-static void
-readobj(Obj *obj)
-{
-	unsigned char buff[FILHSZ];
-	FILHDR *hdr;
-	char *strtbl;
-	long symoff, secoff, stroff, pos;
-
-	pos = ftell(obj->fp);
-	if (fread(buff, FILHSZ, 1, obj->fp) != 1)
-		goto bad_file;
-
-	if ((hdr = malloc(sizeof(*hdr))) == NULL)
-		outmem();
-	getfhdr(obj, buff, hdr);
-	obj->filhdr = hdr;
-
-	stroff = fileptr(pos, hdr->f_symptr, hdr->f_nsyms, SYMESZ);
-	symoff = fileptr(pos, hdr->f_symptr, 0, 0);
-	secoff = fileptr(pos, hdr->f_opthdr, 1, FILHSZ);
-
-	if (stroff < 0 || symoff < 0 || secoff < 0)
-		goto bad_file;
-
-	if (readstr(obj, stroff) < 0)
-		goto bad_file;
-	if (readsects(obj, secoff) < 0)
-		goto bad_file;
-	if (readents(obj, symoff) < 0)
-		goto bad_file;
-	return;
-
-bad_file:
-	fprintf(stderr,
-	        "ld: %s: %s\n",
-	         obj->fname,
-	         (ferror(obj->fp)) ? strerror(errno) : "corrupted file");
-	exit(EXIT_FAILURE);
-}
-
-static char *
-symname(Obj *obj, SYMENT *ent)
-{
-	long off;
-
-	if (ent->n_zeroes != 0)
-		return ent->n_name;
-
-	off = ent->n_offset;
-	if (off >= obj->strsiz) {
-		fprintf(stderr,
-		        "ld: invalid offset in symbol table: %zd\n", off);
-		return "";
-	}
-
-	return &obj->strtbl[off];
-}
-
-Obj *
-load(Obj *obj)
-{
-	FILHDR *hdr = obj->filhdr;
-	SCNHDR *scn, *scns = obj->scnhdr;;
-	SYMENT *ent, *ents = obj->enthdr;
-	int nsect, aux;
-
-	readobj(obj);
-
-	for (scn = scns; scn < &scns[hdr->f_nscns]; ++scn) {
-		/* TODO: padding */
-		Section *sect = slookup(scn->s_name);
-		scn->s_vaddr = sect->base + sect->size;
-		sect->size += scn->s_size;
-	}
-
-	aux = 0;
-	for (ent = ents; ent < &ents[hdr->f_nsyms]; ++ent) {
 		if (aux > 0) {
-			--aux;
+			aux--;
 			continue;
 		}
 		aux = ent->n_numaux;
@@ -316,9 +279,70 @@ load(Obj *obj)
 		}
 	}
 
-	/* TODO: Check if the object in library is needed: delobj(obj) */
+	return 0;
+}
 
+static long
+fileptr(long off, long ptr, long nitem, long size)
+{
+	if (off < 0 || ptr < 0 || nitem < 0 || size < 0)
+		return -1;
+
+	if (off > LONG_MAX - ptr)
+		return -1;
+	off += ptr;
+
+	if (size > 0) {
+		if (nitem > LONG_MAX / size)
+			return -1;
+		size *= nitem;
+	}
+
+	if (off > LONG_MAX - size)
+		return -1;
+	off += size;
+
+	return off;
+}
+
+Obj *
+load(Obj *obj)
+{
+	unsigned char buff[FILHSZ];
+	FILHDR *hdr;
+	char *strtbl;
+	long symoff, secoff, stroff, pos;
+
+	pos = ftell(obj->fp);
+	if (fread(buff, FILHSZ, 1, obj->fp) != 1)
+		goto bad_file;
+
+	if ((hdr = malloc(sizeof(*hdr))) == NULL)
+		outmem();
+	unpack_hdr(obj->unpack, buff, hdr);
+	obj->filhdr = hdr;
+
+	stroff = fileptr(pos, hdr->f_symptr, hdr->f_nsyms, SYMESZ);
+	symoff = fileptr(pos, hdr->f_symptr, 0, 0);
+	secoff = fileptr(pos, hdr->f_opthdr, 1, FILHSZ);
+
+	if (stroff < 0 || symoff < 0 || secoff < 0)
+		goto bad_file;
+
+	if (readstr(obj, stroff) < 0)
+		goto bad_file;
+	if (readsects(obj, secoff) < 0)
+		goto bad_file;
+	if (readents(obj, symoff) < 0)
+		goto bad_file;
 	return add(obj);
+
+bad_file:
+	fprintf(stderr,
+	        "ld: %s: %s\n",
+	         obj->fname,
+	         (ferror(obj->fp)) ? strerror(errno) : "corrupted file");
+	exit(EXIT_FAILURE);
 }
 
 Obj *
@@ -330,6 +354,7 @@ probe(char *fname, char *member, FILE *fp)
 	unsigned short magic;
 	unsigned align;
 	int (*unpack)(unsigned char *, char *, ...);
+	int (*pack)(unsigned char *, char *, ...);
 	Obj *obj;
 
 	pos = ftell(fp);
@@ -348,6 +373,7 @@ probe(char *fname, char *member, FILE *fp)
 	case COFF_I386MAGIC:
 	case COFF_Z80MAGIC:
 		unpack = lunpack;
+		pack = lpack;
 		align = 2;
 		break;
 	default:
@@ -360,4 +386,113 @@ probe(char *fname, char *member, FILE *fp)
 	obj->offset = pos;
 
 	return obj;
+}
+
+static void
+wrhdr(FILE *fp)
+{
+	FILHDR hdr;
+	Section *sp;
+	unsigned char buff[FILHSZ];
+
+	if (numsects > NUMSCN_MAX || numsymbols > NUMENT_MAX) {
+		fprintf(stderr, "ld: too many symbols or sections\n");
+		exit(EXIT_FAILURE);
+	}
+
+	/*
+	 * we set the timestamp to 0 to make the output
+	 * reproductible and to avoid a not standard use
+	 * of time()
+	 */
+	hdr.f_symptr = 0;
+	hdr.f_magic = COFF_Z80MAGIC;
+	hdr.f_nscns = numsects;
+	hdr.f_symptr = 0;
+	hdr.f_timdat = 0;
+	hdr.f_nsyms = 0;
+	hdr.f_opthdr = AOUTSZ;
+	hdr.f_flags = F_EXEC | F_AR32WR; /* TODO: set the correct endianess */
+
+	if (!sflag) {
+		hdr.f_symptr = 0; /* TODO: set correct value here */
+		hdr.f_flags |= F_SYMS;
+		hdr.f_nsyms = numsymbols;
+	}
+
+	pack_hdr(lpack, buff, &hdr);
+	fwrite(buff, FILHSZ, 1, fp);
+}
+
+static void
+wraout(FILE *fp)
+{
+	AOUTHDR aout;
+	unsigned char buff[AOUTSZ];
+	Symbol *sym;
+	long addr;
+
+	if ((sym = lookup(entry, NOINSTALL)) != NULL) {
+		addr = sym->value;
+	} else {
+		fprintf(stderr,
+		        "ld: warning: cannot find entry symbol '%s'; defaulting to 0\n",
+		        entry);
+		addr = 0;
+	} 
+
+	aout.magic = ZMAGIC;
+	aout.vstamp = 0;
+	aout.entry = addr;
+	aout.tsize = tsize;
+	aout.dsize = dsize;
+	aout.bsize = bsize;
+	aout.text_start = textpc;
+	aout.data_start = textpc + dsize;
+
+	pack_aout(lpack, buff, &aout);
+	fwrite(buff, AOUTSZ, 1, fp);
+}
+
+static void
+wrscn(FILE *fp, Section *sp, long pc)
+{
+	SCNHDR scn;
+	unsigned char buff[SCNHSZ];
+
+	strcpy(scn.s_name, sp->name);
+	scn.s_paddr = pc;
+	scn.s_vaddr = pc;
+	scn.s_size = sp->size;
+	scn.s_scnptr = 0; /* TODO: file ptr */
+	scn.s_relptr = 0;
+	scn.s_lnnoptr = 0;
+	scn.s_nrelloc = 0;
+	scn.s_nlnno = 0;
+	scn.s_flags = 0; /* TODO: Add flags */
+
+	pack_scn(lpack, buff, &scn);
+	fwrite(buff, SCNHSZ, 1, fp);
+}
+
+void
+writeout(FILE *fp)
+{
+	Section *sp;
+	long pc = textpc;
+
+	wrhdr(fp);
+	wraout(fp);
+
+	for (sp = sectlst; sp; sp = sp->next) {
+		wrscn(fp, sp, pc);
+		pc += sp->size;
+	}
+
+	/* TODO: run over all the files */
+
+	if (fflush(fp) != EOF) {
+		perror("ld: error writing output file");
+		exit(EXIT_FAILURE);
+	}
 }
