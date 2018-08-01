@@ -13,6 +13,7 @@ struct aouthdr {
 };
 
 typedef struct aouthdr AOUTHDR;
+#define AOUTSZ sizeof(AOUTHDR)
 
 #define QMAGIC      0314
 #define STMAGIC     0401
