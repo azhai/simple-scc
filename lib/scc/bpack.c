@@ -5,16 +5,27 @@
 int
 bpack(unsigned char *dst, char *fmt, ...)
 {
-	unsigned char *bp;
+	unsigned char *bp, *cp;
 	unsigned s;
 	unsigned long l;
 	unsigned long long q;
+	size_t n;
+	int d;
 	va_list va;
 
 	bp = dst;
 	va_start(va, fmt);
 	while (*fmt) {
 		switch (*fmt++) {
+		case '\'':
+			for (n = 0; isdigit(*fmt); n += d) {
+				n *= 10;
+				d = *fmt++ - '0';
+			}
+			cp = va_arg(va, char *);
+			while (n--)
+				*bp++ = *cp++;
+			break;
 		case 'c':
 			*bp++ = va_arg(va, unsigned);
 			break;
