@@ -1,8 +1,5 @@
 .POSIX:
 
-# Makefile is only used as a template for makefile.
-# If you modify Makefile remember to run make dep
-
 PROJECTDIR = ..
 include $(PROJECTDIR)/rules.mk
 include $(LIBDIR)/libdep.mk
@@ -10,13 +7,12 @@ include $(LIBDIR)/libdep.mk
 MOREFLAGS = -I$(PROJECTDIR)/inc/$(STD) $(CC2_CFLAGS)
 
 OBJ = main.o parser.o peep.o symbol.o node.o code.o optm.o
-HDR = cc2.h $(PROJECTDIR)/inc/$(STD)/cstd.h $(PROJECTDIR)/inc/scc.h
 
 all:
 	cp cc2-* $(PROJECTDIR)/rootdir/libexec/scc/
 
 dep:
-	MKQBE=${MKQBE} ./gendep.sh $(TARGETS)
+	$(PROJECTDIR)/mkdep.sh
 
 main.o: error.h
 
@@ -30,4 +26,67 @@ clean:
 	rm -f cc2-* error.h
 
 distclean: clean
-	rm -f makefile
+
+include target/amd64-sysv/target.mk
+include target/i386-sysv/target.mk
+include target/qbe_amd64-sysv/target.mk
+include target/qbe_arm64-sysv/target.mk
+include target/z80-scc/target.mk
+
+parser.c: $(PROJECTDIR)/inc/$(STD)/cstd.h
+
+#deps
+code.o: ./../inc/scc.h
+code.o: ./cc2.h
+main.o: ./../inc/arg.h
+main.o: ./../inc/scc.h
+main.o: ./cc2.h
+main.o: ./error.h
+node.o: ./../inc/scc.h
+node.o: ./cc2.h
+optm.o: ./../inc/scc.h
+optm.o: ./cc2.h
+parser.o: ./../inc/scc.h
+parser.o: ./cc2.h
+peep.o: ./../inc/scc.h
+peep.o: ./cc2.h
+symbol.o: ./../inc/scc.h
+symbol.o: ./cc2.h
+target/amd64-sysv/cgen.o: ./target/amd64-sysv/../../../inc/scc.h
+target/amd64-sysv/cgen.o: ./target/amd64-sysv/../../cc2.h
+target/amd64-sysv/cgen.o: ./target/amd64-sysv/arch.h
+target/amd64-sysv/code.o: ./target/amd64-sysv/../../../inc/scc.h
+target/amd64-sysv/code.o: ./target/amd64-sysv/../../cc2.h
+target/amd64-sysv/code.o: ./target/amd64-sysv/arch.h
+target/amd64-sysv/optm.o: ./target/amd64-sysv/../../../inc/scc.h
+target/amd64-sysv/optm.o: ./target/amd64-sysv/../../cc2.h
+target/amd64-sysv/types.o: ./target/amd64-sysv/../../../inc/scc.h
+target/amd64-sysv/types.o: ./target/amd64-sysv/../../cc2.h
+target/i386-sysv/cgen.o: ./target/i386-sysv/../../../inc/scc.h
+target/i386-sysv/cgen.o: ./target/i386-sysv/../../cc2.h
+target/i386-sysv/cgen.o: ./target/i386-sysv/arch.h
+target/i386-sysv/code.o: ./target/i386-sysv/../../../inc/scc.h
+target/i386-sysv/code.o: ./target/i386-sysv/../../cc2.h
+target/i386-sysv/code.o: ./target/i386-sysv/arch.h
+target/i386-sysv/optm.o: ./target/i386-sysv/../../../inc/scc.h
+target/i386-sysv/optm.o: ./target/i386-sysv/../../cc2.h
+target/i386-sysv/types.o: ./target/i386-sysv/../../../inc/scc.h
+target/i386-sysv/types.o: ./target/i386-sysv/../../cc2.h
+target/qbe/cgen.o: ./target/qbe/../../../inc/scc.h
+target/qbe/cgen.o: ./target/qbe/../../cc2.h
+target/qbe/cgen.o: ./target/qbe/arch.h
+target/qbe/code.o: ./target/qbe/../../../inc/scc.h
+target/qbe/code.o: ./target/qbe/../../cc2.h
+target/qbe/code.o: ./target/qbe/arch.h
+target/qbe/optm.o: ./target/qbe/../../../inc/scc.h
+target/qbe/optm.o: ./target/qbe/../../cc2.h
+target/z80-scc/cgen.o: ./target/z80-scc/../../../inc/scc.h
+target/z80-scc/cgen.o: ./target/z80-scc/../../cc2.h
+target/z80-scc/cgen.o: ./target/z80-scc/arch.h
+target/z80-scc/code.o: ./target/z80-scc/../../../inc/scc.h
+target/z80-scc/code.o: ./target/z80-scc/../../cc2.h
+target/z80-scc/code.o: ./target/z80-scc/arch.h
+target/z80-scc/optm.o: ./target/z80-scc/../../../inc/scc.h
+target/z80-scc/optm.o: ./target/z80-scc/../../cc2.h
+target/z80-scc/types.o: ./target/z80-scc/../../../inc/scc.h
+target/z80-scc/types.o: ./target/z80-scc/../../cc2.h
