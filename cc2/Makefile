@@ -2,7 +2,7 @@
 
 PROJECTDIR = ..
 include $(PROJECTDIR)/rules.mk
-include $(LIBDIR)/libdep.mk
+include $(LIBSCC)/libdep.mk
 
 MOREFLAGS = -I$(PROJECTDIR)/inc/$(STD) $(CC2_CFLAGS)
 
@@ -24,8 +24,6 @@ clean:
 	rm -f *.o
 	rm -f target/*/*.o
 	rm -f cc2-* error.h
-
-distclean: clean
 
 include target/amd64-sysv/target.mk
 include target/i386-sysv/target.mk

@@ -2,10 +2,10 @@
 
 PROJECTDIR = ..
 include $(PROJECTDIR)/rules.mk
-include $(LIBDIR)/libdep.mk
+include $(LIBSCC)/libdep.mk
 
 OBJ = main.o symbol.o ins.o parser.o expr.o myro.o
-MOREFLAGS = -I$(PROJECTDIR)/inc/$(STD) $(AS_CFLAGS)
+MOREFLAGS = -I$(INCDIR)/$(STD) $(AS_CFLAGS)
 
 all: as-amd64 as-i386 as-i286 as-z80
 	cp as-* $(PROJECTDIR)/rootdir/bin
@@ -13,7 +13,6 @@ all: as-amd64 as-i386 as-i286 as-z80
 dep:
 	$(PROJECTDIR)/mkdep.sh
 
-distclean: clean
 clean:
 	rm -f *.o target/*/*.o
 	rm -f target/*/*tbl.c

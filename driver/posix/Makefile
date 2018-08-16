@@ -39,6 +39,6 @@ clean:
 	rm -f scc
 	rm -f scpp
 
-distclean: clean
+distclean:
 	rm -f config.h
 

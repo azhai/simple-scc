@@ -1,16 +1,16 @@
 
-LIB-OBJ = $(LIBDIR)/debug.o \
-          $(LIBDIR)/die.o \
-          $(LIBDIR)/newitem.o \
-          $(LIBDIR)/xcalloc.o \
-          $(LIBDIR)/xmalloc.o \
-          $(LIBDIR)/xrealloc.o \
-          $(LIBDIR)/xstrdup.o \
-          $(LIBDIR)/alloc.o \
-          $(LIBDIR)/casecmp.o \
-          $(LIBDIR)/lunpack.o \
-          $(LIBDIR)/lpack.o \
-          $(LIBDIR)/bunpack.o \
-          $(LIBDIR)/bpack.o \
-          $(LIBDIR)/wmyro.o \
-          $(LIBDIR)/rmyro.o \
+LIBSCC-OBJ = $(LIBSCC)/debug.o \
+             $(LIBSCC)/die.o \
+             $(LIBSCC)/newitem.o \
+             $(LIBSCC)/xcalloc.o \
+             $(LIBSCC)/xmalloc.o \
+             $(LIBSCC)/xrealloc.o \
+             $(LIBSCC)/xstrdup.o \
+             $(LIBSCC)/alloc.o \
+             $(LIBSCC)/casecmp.o \
+             $(LIBSCC)/lunpack.o \
+             $(LIBSCC)/lpack.o \
+             $(LIBSCC)/bunpack.o \
+             $(LIBSCC)/bpack.o \
+             $(LIBSCC)/wmyro.o \
+             $(LIBSCC)/rmyro.o \

@@ -1,14 +1,14 @@
 include $(PROJECTDIR)/config.mk
 
 INCDIR  = $(PROJECTDIR)/inc/
-LIBDIR = $(PROJECTDIR)/lib/scc
+LIBSCC = $(PROJECTDIR)/lib/scc
 
 SCC_CFLAGS = $(MOREFLAGS) \
              $(SYSCFLAGS) \
              -g \
              $(CFLAGS)
 
-SCC_LDFLAGS = -L$(LIBDIR) -g $(LDFLAGS)
+SCC_LDFLAGS = -L$(LIBSCC) -g $(LDFLAGS)
 
 # helper macro to run over all the directories
 FORALL = +@set -e ;\
@@ -37,3 +37,7 @@ $(PROJECTDIR)/rootdir/bin:
 
 $(PROJECTDIR)/rootdir/libexec/scc:
 	mkdir -p $(PROJECTDIR)/rootdir/libexec/scc
+
+distclean: clean
+
+dep:

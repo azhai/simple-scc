@@ -1,6 +1,6 @@
 all: cc2-qbe_amd64-sysv
 
-target/qbe/cgen.o: $(PROJECTDIR)/inc/$(STD)/cstd.h
+target/qbe/cgen.o: $(INCDIR)/$(STD)/cstd.h
 
 OBJ-qbe_amd64-sysv = $(OBJ)  \
         target/qbe/cgen.o \
@@ -8,5 +8,5 @@ OBJ-qbe_amd64-sysv = $(OBJ)  \
         target/qbe/code.o \
         target/amd64-sysv/types.o
 
-cc2-qbe_amd64-sysv: $(OBJ-qbe_amd64-sysv) $(LIBDIR)/libscc.a
+cc2-qbe_amd64-sysv: $(OBJ-qbe_amd64-sysv) $(LIBSCC)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ-qbe_amd64-sysv) -lscc -o $@

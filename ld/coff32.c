@@ -491,7 +491,7 @@ writeout(FILE *fp)
 
 	/* TODO: run over all the files */
 
-	if (fflush(fp) != EOF) {
+	if (fflush(fp) == EOF) {
 		perror("ld: error writing output file");
 		exit(EXIT_FAILURE);
 	}

@@ -7,6 +7,3 @@ DIRS=ar nm as
 
 all clean:
 	$(FORALL)
-
-distclean: clean
-dep:
