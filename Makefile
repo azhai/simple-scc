@@ -7,10 +7,7 @@ include rules.mk
 
 DIRS  = inc cc1 cc2 driver lib as ar nm objdump ld
 
-all:
-	$(FORALL)
-
-clean:
+all clean dep:
 	$(FORALL)
 
 distclean:
@@ -19,9 +16,6 @@ distclean:
 	$(FORALL)
 	rm -rf rootdir
 	rm -f config.mk
-
-dep: config.mk
-	$(FORALL)
 
 tests: all
 	+cd tests && $(MAKE) -e all
