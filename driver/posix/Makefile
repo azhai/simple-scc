@@ -1,30 +1,14 @@
 .POSIX:
 
 PROJECTDIR = ../..
-LIBDIR = $(PROJECTDIR)/lib/scc
 include $(PROJECTDIR)/rules.mk
-include $(LIBDIR)/libdep.mk
-
-OBJ = scc.o
-HDR = config.h \
-      $(PROJECTDIR)/inc/scc.h \
-      $(PROJECTDIR)/inc/arg.h \
-      $(PROJECTDIR)/inc/syscrts.h \
-      $(PROJECTDIR)/inc/sysincludes.h \
-      $(PROJECTDIR)/inc/syslibs.h \
-      $(PROJECTDIR)/inc/ldflags.h
+include $(LIBSCC)/libdep.mk
 
 all: scc cpp
-	mkdir -p $(PROJECTDIR)/rootdir/bin
 	cp scc cpp $(PROJECTDIR)/rootdir/bin/
 
-dep:
-	PREFIX=$(PREFIX) USEQBE=$(USEQBE) ./gendep.sh $(TARGETS)
-
-$(OBJ): $(HDR)
-
-scc: $(OBJ) $(LIBDIR)/libscc.a
-	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
+scc: scc.o $(LIBSCC)/libscc.a
+	$(CC) $(SCC_LDFLAGS) scc.o -lscc -o $@
 
 cpp: cpp.sh config.h
 	set -x ;\
@@ -34,11 +18,14 @@ cpp: cpp.sh config.h
 	chmod +x $$$$.sh && \
 	mv $$$$.sh $@
 
+dep:
+	PREFIX=$(PREFIX) USEQBE=$(USEQBE) ./config.sh $(TARGETS)
+	$(PROJECTDIR)/mkdep.sh
+
 clean:
-	rm -f $(OBJ)
-	rm -f scc
-	rm -f scpp
+	rm -f scc scpp *.o
 
 distclean:
 	rm -f config.h
 
+include deps.mk
