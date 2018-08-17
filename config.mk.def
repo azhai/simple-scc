@@ -2,12 +2,6 @@
 VERSION = 0.1
 
 ## Customize below to fit your system
-# USEQBE selects QBE by default in the targets that support it
-USEQBE = 1
-
-#MKQBE enable build of qbe backends
-MKQBE = 1
-
 DRIVER = posix
 
 # Can be c89 or c99

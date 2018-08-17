@@ -60,7 +60,7 @@ static char *prefix, *objfile, *outfile;
 static char *tmpdir;
 static size_t tmpdirln;
 static struct items objtmp, objout;
-static int Mflag, Eflag, Sflag, cflag, dflag, kflag, sflag, Qflag = USEQBE;
+static int Mflag, Eflag, Sflag, cflag, dflag, kflag, sflag, Qflag = 1; /* TODO: Remove Qflag */
 static int devnullfd = -1;
 
 extern int failure;

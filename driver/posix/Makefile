@@ -32,7 +32,7 @@ cpp: cpp.sh config.h
 	mv $$$$.sh $@
 
 config.h:
-	PREFIX=$(PREFIX) USEQBE=$(USEQBE) ./config.sh $(SYSLST)
+	PREFIX=$(PREFIX) ./config.sh $(SYSLST)
 
 dep:
 	$(PROJECTDIR)/mkdep.sh
@@ -40,8 +40,6 @@ dep:
 clean:
 	rm -f scc scpp *.o
 	rm -f $(TARGETS)
-
-distclean:
 	rm -f config.h
 
 include deps.mk
