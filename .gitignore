@@ -23,3 +23,4 @@ objdump/objdump
 as/target/*/*tbl.c
 *.out
 ld/ld
+config

@@ -14,6 +14,9 @@ $(BINDIR)/ld: ld
 ld: $(OBJ) $(LIBSCC)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
+$(INCDIR)/syslibs.h:
+	+@cd $(INCDIR) && $(MAKE)
+
 dep:
 	$(PROJECTDIR)/mkdep.sh
 

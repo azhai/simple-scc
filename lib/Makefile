@@ -6,5 +6,12 @@ include $(PROJECTDIR)/rules.mk
 
 DIRS = scc
 
-all dep clean distclean:
+all: $(DIRS)
+
+FORCE:
+
+$(DIRS): FORCE
+	+@cd $@ && $(MAKE)
+
+dep clean distclean:
 	$(FORALL)
