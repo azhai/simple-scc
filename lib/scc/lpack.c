@@ -1,3 +1,5 @@
+
+#include <ctype.h>
 #include <stdarg.h>
 
 #include "../../inc/scc.h"
