@@ -6,9 +6,9 @@ include $(PROJECTDIR)/rules.mk
 
 HDR = ldflags.h syscrts.h sysincludes.h syslibs.h
 
-all:
+all: config
 
-dep: $(HDR)
+config: $(HDR)
 
 ldflags.h:
 	rm -f $@ ; \
@@ -34,6 +34,5 @@ syslibs.h:
 	sed 's,PREFIX,"$(PREFIX)",g' < syslibs.def.h > $$$$.h && \
 	mv $$$$.h $@
 
-clean:
 distclean:
 	rm -f $(HDR)

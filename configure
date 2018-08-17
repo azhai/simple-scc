@@ -17,6 +17,6 @@ then
 fi
 
 echo Generating arch-dependant build files...
-make dep > /dev/null
+cd inc && make config > /dev/null
 
 echo You can now install scc with \"make install\"

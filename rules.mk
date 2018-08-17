@@ -1,8 +1,8 @@
 include $(PROJECTDIR)/config.mk
 
 BINDIR  = $(PROJECTDIR)/rootdir/bin
-INCDIR  = $(PROJECTDIR)/inc/
-LIBEXEC = $(PROJECTDIR)/rootdir/libexec/scc/
+INCDIR  = $(PROJECTDIR)/inc
+LIBEXEC = $(PROJECTDIR)/rootdir/libexec/scc
 LIBSCC  = $(PROJECTDIR)/lib/scc
 
 SCC_CFLAGS = $(MOREFLAGS) \
@@ -33,4 +33,5 @@ FORALL = +@set -e ;\
 
 all:
 dep:
+clean:
 distclean: clean

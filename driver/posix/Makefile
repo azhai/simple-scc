@@ -31,8 +31,10 @@ cpp: cpp.sh config.h
 	chmod +x $$$$.sh && \
 	mv $$$$.sh $@
 
-dep:
+config.h:
 	PREFIX=$(PREFIX) USEQBE=$(USEQBE) ./config.sh $(SYSLST)
+
+dep:
 	$(PROJECTDIR)/mkdep.sh
 
 clean:
