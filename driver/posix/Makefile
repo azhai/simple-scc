@@ -4,8 +4,21 @@ PROJECTDIR = ../..
 include $(PROJECTDIR)/rules.mk
 include $(LIBSCC)/libdep.mk
 
-all: scc cpp
-	cp scc cpp $(PROJECTDIR)/rootdir/bin/
+# SYSLST is a list of backend-arch-abi-sys. First
+# element of the list becomes the default target
+
+SYSLST  = amd64-sysv-linux-elf z80-scc-none-none \
+          i386-sysv-linux-elf amd64-sysv-openbsd-elf
+
+TARGETS = $(BINDIR)/scc $(BINDIR)/scpp
+
+all: $(TARGETS)
+
+$(BINDIR)/scc: scc
+	cp scc $@
+
+$(BINDIR)/scpp: cpp
+	cp cpp $@
 
 scc: scc.o $(LIBSCC)/libscc.a
 	$(CC) $(SCC_LDFLAGS) scc.o -lscc -o $@
@@ -19,11 +32,12 @@ cpp: cpp.sh config.h
 	mv $$$$.sh $@
 
 dep:
-	PREFIX=$(PREFIX) USEQBE=$(USEQBE) ./config.sh $(TARGETS)
+	PREFIX=$(PREFIX) USEQBE=$(USEQBE) ./config.sh $(SYSLST)
 	$(PROJECTDIR)/mkdep.sh
 
 clean:
 	rm -f scc scpp *.o
+	rm -f $(TARGETS)
 
 distclean:
 	rm -f config.h

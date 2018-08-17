@@ -8,13 +8,13 @@ MOREFLAGS = -I$(PROJECTDIR)/inc/$(STD) $(CC2_CFLAGS)
 
 OBJ = main.o parser.o peep.o symbol.o node.o code.o optm.o
 
-all:
-	cp cc2-* $(PROJECTDIR)/rootdir/libexec/scc/
+TARGETS  = $(LIBEXEC)/cc2-amd64-sysv  $(LIBEXEC)/cc2-i386-sysv \
+           $(LIBEXEC)/cc2-qbe_amd64-sysv $(LIBEXEC)/cc2-z80-scc
+
+all: $(TARGETS)
 
 dep:
 	$(PROJECTDIR)/mkdep.sh
-
-main.o: error.h
 
 error.h: cc2.h
 	rm -f $@; trap 'rm -f $$$$.h' EXIT INT QUIT ;\
@@ -24,6 +24,7 @@ clean:
 	rm -f *.o
 	rm -f target/*/*.o
 	rm -f cc2-* error.h
+	rm -f $(TARGETS)
 
 include target/amd64-sysv/target.mk
 include target/i386-sysv/target.mk

@@ -1,3 +1,7 @@
+
+$(LIBEXEC)/as-i386: as-i386
+	cp as-i386 $@
+
 I386_OBJ = $(OBJ) target/x86/i386tbl.o target/x86/i386.o target/x86/ins.o
 
 target/x86/i386tbl.c: gentbl.awk target/x86/x86.dat target/x86/rules.dat

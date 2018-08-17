@@ -1,4 +1,6 @@
-all: cc2-amd64-sysv
+
+$(LIBEXEC)/cc2-amd64-sysv: cc2-amd64-sysv
+	cp cc2-amd64-sysv $@
 
 target/amd64-sysv/code.o: $(INCDIR)/$(STD)/cstd.h
 

@@ -12,7 +12,6 @@ all:
 
 clean:
 	$(FORALL)
-	rm -rf rootdir
 
 distclean:
 	touch config.mk    # we need config.mk for makes in $DIRS

@@ -6,9 +6,10 @@ include $(LIBSCC)/libdep.mk
 
 OBJ = main.o symbol.o ins.o parser.o expr.o myro.o
 MOREFLAGS = -I$(INCDIR)/$(STD) $(AS_CFLAGS)
+TARGETS = $(LIBEXEC)/as-amd64 $(LIBEXEC)/as-i386 \
+          $(LIBEXEC)/as-i286 $(LIBEXEC)/as-z80
 
-all: as-amd64 as-i386 as-i286 as-z80
-	cp as-* $(PROJECTDIR)/rootdir/bin
+all: $(TARGETS)
 
 dep:
 	$(PROJECTDIR)/mkdep.sh
@@ -17,6 +18,7 @@ clean:
 	rm -f *.o target/*/*.o
 	rm -f target/*/*tbl.c
 	rm -f as-*
+	rm -f $(TARGETS)
 
 include target/amd64.mk
 include target/i386.mk

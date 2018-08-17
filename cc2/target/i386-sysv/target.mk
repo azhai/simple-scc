@@ -1,4 +1,6 @@
-all: cc2-i386-sysv
+
+$(LIBEXEC)/cc2-i386-sysv: cc2-i386-sysv
+	cp cc2-i386-sysv $@
 
 target/i386-sysv/code.o: $(INCDIR)/$(STD)/cstd.h
 

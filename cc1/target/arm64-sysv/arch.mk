@@ -1,4 +1,6 @@
-all: cc1-arm64-sysv
+
+$(LIBEXEC)/cc1-arm64-sysv: cc1-arm64-sysv
+	cp cc1-arm64-sysv $@
 
 OBJ-arm64-sysv= $(OBJ)  target/arm64-sysv/arch.o
 

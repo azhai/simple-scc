@@ -2,14 +2,6 @@
 VERSION = 0.1
 
 ## Customize below to fit your system
-# TARGETS is defined by a list of backend-arch-abi-sys. First
-# element of the list becomes the default target
-
-TARGETS = amd64-sysv-linux-elf \
-          z80-scc-none-none \
-          i386-sysv-linux-elf \
-          amd64-sysv-openbsd-elf
-
 # USEQBE selects QBE by default in the targets that support it
 USEQBE = 1
 

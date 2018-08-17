@@ -1,4 +1,6 @@
-all: cc2-qbe_amd64-sysv
+
+$(LIBEXEC)/cc2-qbe_amd64-sysv: cc2-qbe_amd64-sysv
+	cp cc2-qbe_amd64-sysv $@
 
 target/qbe/cgen.o: $(INCDIR)/$(STD)/cstd.h
 

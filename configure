@@ -1,5 +1,11 @@
 #!/bin/sh
 
+set -e
+
+echo Generating file tree...
+mkdir -p rootdir/libexec/scc
+mkdir -p rootdir/bin
+
 if test ! -e config.mk
 then
 	printf '%s\n' 'Generating config.mk from defaults...' \
@@ -10,6 +16,7 @@ then
 	mv $$.mk config.mk
 fi
 
-printf 'Generating arch-dependant build files...\n'
-make dep > /dev/null &&
-printf 'You can now install scc with “make install”\n'
+echo Generating arch-dependant build files...
+make dep > /dev/null
+
+echo You can now install scc with \"make install\"

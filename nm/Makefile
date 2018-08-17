@@ -6,7 +6,9 @@ include $(LIBSCC)/libdep.mk
 
 OBJ       = main.o coff32.o formats.o
 
-all: nm
+all: $(BINDIR)/nm
+
+$(BINDIR)/nm: nm
 	cp nm $(PROJECTDIR)/rootdir/bin/nm
 
 nm: $(OBJ) $(LIBSCC)/libscc.a
@@ -16,7 +18,7 @@ dep:
 	$(PROJECTDIR)/mkdep.sh
 
 clean:
-	rm -f nm *.o
+	rm -f $(BINDIR)/nm nm *.o
 
 distclean: clean
 

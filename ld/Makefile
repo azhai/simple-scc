@@ -6,8 +6,10 @@ include $(LIBSCC)/libdep.mk
 
 OBJ = main.o coff32.o obj.o
 
-all: ld
-	cp ld $(PROJECTDIR)/rootdir/bin
+all: $(BINDIR)/ld
+
+$(BINDIR)/ld: ld
+	cp ld $@
 
 ld: $(OBJ) $(LIBSCC)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
@@ -16,6 +18,6 @@ dep:
 	$(PROJECTDIR)/mkdep.sh
 
 clean:
-	rm -f ld *.o
+	rm -f $(BINDIR)/ld ld *.o
 
 include deps.mk

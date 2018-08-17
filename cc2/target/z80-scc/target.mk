@@ -1,4 +1,6 @@
-all: cc2-z80-scc
+
+$(LIBEXEC)/cc2-z80-scc: cc2-z80-scc
+	cp cc2-z80-scc $@
 
 target/z80-scc/code.o: $(INCDIR)/$(STD)/cstd.h
 
