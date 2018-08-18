@@ -3,6 +3,7 @@
 PROJECTDIR = ..
 include $(PROJECTDIR)/rules.mk
 include $(LIBSCC)/libdep.mk
+include $(LIBCOFF32)/libdep.mk
 
 OBJ = main.o coff32.o obj.o
 

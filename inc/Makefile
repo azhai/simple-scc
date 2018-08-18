@@ -3,36 +3,35 @@
 PROJECTDIR = ..
 
 include $(PROJECTDIR)/rules.mk
-
-HDR = ldflags.h syscrts.h sysincludes.h syslibs.h
+include inclst.mk
 
 all: config
 
-config: $(HDR)
+config: $(SYSHDR)
 
-ldflags.h:
+$(INCDIR)/ldflags.h:
 	rm -f $@ ; \
 	trap "rm -f $$$$.h" 0 2 3; \
 	cat < ldflags.def.h > $$$$.h; \
 	mv $$$$.h $@
 
-syscrts.h:
+$(INCDIR)/syscrts.h:
 	rm -f $@ ; \
 	trap "rm -f $$$$.h" 0 2 3; \
 	sed 's,PREFIX,"$(PREFIX)",g' < syscrts.def.h > $$$$.h && \
 	mv $$$$.h $@
 
-sysincludes.h:
+$(INCDIR)/sysincludes.h:
 	rm -f $@ ; \
 	trap "rm -f $$$$.h" 0 2 3; \
 	sed 's,PREFIX,"$(PREFIX)",g' < sysincludes.def.h > $$$$.h && \
 	mv $$$$.h $@
 
-syslibs.h:
+$(INCDIR)/syslibs.h:
 	rm -f $@ ; \
 	trap "rm -f $$$$.h" 0 2 3; \
 	sed 's,PREFIX,"$(PREFIX)",g' < syslibs.def.h > $$$$.h && \
 	mv $$$$.h $@
 
 distclean:
-	rm -f $(HDR)
+	rm -f $(SYSHDR)

@@ -3,15 +3,13 @@
 PROJECTDIR = ../..
 include $(PROJECTDIR)/rules.mk
 include $(LIBSCC)/libdep.mk
+include $(INCDIR)/incdep.mk
 
 # SYSLST is a list of backend-arch-abi-sys. First
 # element of the list becomes the default target
 
 SYSLST  = amd64-sysv-linux-elf z80-scc-none-none \
           i386-sysv-linux-elf amd64-sysv-openbsd-elf
-
-SYSHDR  = $(INCDIR)/ldflags.h $(INCDIR)/syscrts.h \
-          $(INCDIR)/sysincludes.h $(INCDIR)/syslibs.h
 
 TARGETS = $(BINDIR)/scc $(BINDIR)/scpp
 
@@ -22,9 +20,6 @@ $(BINDIR)/scc: scc
 
 $(BINDIR)/scpp: cpp
 	cp cpp $@
-
-$(SYSHDR):
-	+@cd $(INCDIR) && $(MAKE)
 
 scc: scc.o $(LIBSCC)/libscc.a
 	$(CC) $(SCC_LDFLAGS) scc.o -lscc -o $@
