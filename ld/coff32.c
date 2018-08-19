@@ -13,109 +13,14 @@ static char sccsid[] = "@(#) ./ld/coff32.c";
 #include "../inc/coff32/filehdr.h"
 #include "../inc/coff32/scnhdr.h"
 #include "../inc/coff32/syms.h"
+#include "../inc/coff32/coff32.h"
 #include "../inc/scc.h"
 #include "ld.h"
 
 #define NUMSCN_MAX 65536
 #define NUMENT_MAX 2147483648
 
-typedef int (*packfun)(unsigned char *, char *, ...);
 static long textpc = 0x1000;
-
-static void
-pack_hdr(packfun fun, unsigned char *buff, FILHDR *hdr)
-{
-	int n;
-
-	n = (*fun)(buff,
-	           "sslllss",
-	           hdr->f_magic,
-	           hdr->f_nscns,
-	           hdr->f_timdat,
-	           hdr->f_symptr,
-	           hdr->f_nsyms,
-	           hdr->f_opthdr,
-	           hdr->f_flags);
-	assert(n == FILHSZ);
-}
-
-static void
-unpack_hdr(packfun fun, unsigned char *buff, FILHDR *hdr)
-{
-	int n;
-
-	n = (*fun)(buff,
-	           "sslllss",
-	           &hdr->f_magic,
-	           &hdr->f_nscns,
-	           &hdr->f_timdat,
-	           &hdr->f_symptr,
-	           &hdr->f_nsyms,
-	           &hdr->f_opthdr,
-	           &hdr->f_flags);
-	assert(n == FILHSZ);
-}
-
-static void
-pack_scn(packfun fun, unsigned char *buff, SCNHDR *scn)
-{
-	int n;
-
-	n = (*fun)(buff,
-                  "'8llllllssl",
-	          scn->s_name,
-	          scn->s_paddr,
-	          scn->s_vaddr,
-	          scn->s_size,
-	          scn->s_scnptr,
-	          scn->s_relptr,
-	          scn->s_lnnoptr,
-	          scn->s_nrelloc,
-	          scn->s_nlnno,
-	          scn->s_flags);
-	assert(n == SCNHSZ);
-}
-
-static void
-unpack_scn(packfun fun, unsigned char *buff, SCNHDR *scn)
-{
-	int n;
-
-	n = (*fun)(buff,
-                  "'8llllllssl",
-	          scn->s_name,
-	          &scn->s_paddr,
-	          &scn->s_vaddr,
-	          &scn->s_size,
-	          &scn->s_scnptr,
-	          &scn->s_relptr,
-	          &scn->s_lnnoptr,
-	          &scn->s_nrelloc,
-	          &scn->s_nlnno,
-	          &scn->s_flags);
-	assert(n == SCNHSZ);
-}
-
-static void
-pack_aout(packfun fun, unsigned char *buff, AOUTHDR *aout)
-{
-}
-
-static void
-unpack_ent(packfun fun, unsigned char *buff, SYMENT *ent)
-{
-	int n;
-
-	n = (*fun)(buff,
-		   "'8lsscc",
-		   &ent->n_name,
-		   &ent->n_value,
-		   &ent->n_scnum,
-		   &ent->n_type,
-		   &ent->n_sclass,
-		   &ent->n_numaux);
-	assert(n == SYMESZ);
-}
 
 /*
  * check overflow in: off + ptr + nitem*size
@@ -200,7 +105,7 @@ readsects(Obj *obj, long off)
 		p = &scns[i];
 		if (fread(buff, SCNHSZ, 1, obj->fp) != 1)
 			return -1;
-		unpack_scn(obj->unpack, buff, p);
+		coff32_unpack_scn(obj->unpack, buff, p);
 		sp = slookup(p->s_name);
 		p->s_vaddr = sp->base + sp->size;
 		sp->size += p->s_size;
@@ -237,7 +142,7 @@ readents(Obj *obj, long off)
 	for (ent = ents; ent < &ents[nsyms]; ++ent) {
 		if (fread(buff, SYMESZ, 1, obj->fp) != 1)
 			return -1;
-		unpack_ent(obj->unpack, buff, ent);
+		coff32_unpack_ent(obj->unpack, buff, ent);
 		s = ent->n_name;
 		if (!s[0] && !s[1] && !s[2] && !s[3])
 			(*obj->unpack)(buff, "ll", &ent->n_zeroes, &ent->n_offset);
@@ -319,7 +224,7 @@ load(Obj *obj)
 
 	if ((hdr = malloc(sizeof(*hdr))) == NULL)
 		outmem();
-	unpack_hdr(obj->unpack, buff, hdr);
+	coff32_unpack_hdr(obj->unpack, buff, hdr);
 	obj->filhdr = hdr;
 
 	stroff = fileptr(pos, hdr->f_symptr, hdr->f_nsyms, SYMESZ);
@@ -420,7 +325,7 @@ wrhdr(FILE *fp)
 		hdr.f_nsyms = numsymbols;
 	}
 
-	pack_hdr(lpack, buff, &hdr);
+	coff32_pack_hdr(lpack, buff, &hdr);
 	fwrite(buff, FILHSZ, 1, fp);
 }
 
@@ -450,7 +355,7 @@ wraout(FILE *fp)
 	aout.text_start = textpc;
 	aout.data_start = textpc + dsize;
 
-	pack_aout(lpack, buff, &aout);
+	coff32_pack_aout(lpack, buff, &aout);
 	fwrite(buff, AOUTSZ, 1, fp);
 }
 
@@ -471,7 +376,7 @@ wrscn(FILE *fp, Section *sp, long pc)
 	scn.s_nlnno = 0;
 	scn.s_flags = 0; /* TODO: Add flags */
 
-	pack_scn(lpack, buff, &scn);
+	coff32_pack_scn(lpack, buff, &scn);
 	fwrite(buff, SCNHSZ, 1, fp);
 }
 

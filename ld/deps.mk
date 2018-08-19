@@ -1,6 +1,7 @@
 
 #deps
 coff32.o: ../inc/coff32/aouthdr.h
+coff32.o: ../inc/coff32/coff32.h
 coff32.o: ../inc/coff32/filehdr.h
 coff32.o: ../inc/coff32/scnhdr.h
 coff32.o: ../inc/coff32/syms.h

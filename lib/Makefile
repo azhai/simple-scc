@@ -8,8 +8,6 @@ DIRS = scc coff32
 
 all: $(DIRS)
 
-FORCE:
-
 $(DIRS): FORCE
 	+@cd $@ && $(MAKE)
 

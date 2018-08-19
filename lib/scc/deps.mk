@@ -1,3 +1,4 @@
+#deps
 alloc.o: ../../inc/scc.h
 bpack.o: ../../inc/scc.h
 bunpack.o: ../../inc/scc.h

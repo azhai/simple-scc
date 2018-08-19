@@ -6,17 +6,16 @@ include $(LIBSCC)/libdep.mk
 include $(LIBCOFF32)/libdep.mk
 
 OBJ = main.o coff32.o obj.o
+LIB = $(LIBSCC)/libscc.a $(LIBCOFF32)/libcoff32.a
+MORELFLAGS = -L$(LIBCOFF32)
 
 all: $(BINDIR)/ld
 
 $(BINDIR)/ld: ld
 	cp ld $@
 
-ld: $(OBJ) $(LIBSCC)/libscc.a
-	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
-
-$(INCDIR)/syslibs.h:
-	+@cd $(INCDIR) && $(MAKE)
+ld: $(OBJ) $(LIB)
+	$(CC) $(SCC_LDFLAGS) $(OBJ) -lcoff32 -lscc -o $@
 
 dep:
 	$(PROJECTDIR)/mkdep.sh

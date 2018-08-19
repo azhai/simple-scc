@@ -12,8 +12,6 @@ all: $(DIRS)
 $(DIRS): config $(BINDIR) $(LIBEXEC) FORCE 
 	+@cd $@ && $(MAKE) all
 
-FORCE:
-
 $(BINDIR):
 	mkdir -p $@
 

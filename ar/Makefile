@@ -5,7 +5,7 @@ include $(PROJECTDIR)/rules.mk
 include $(LIBSCC)/libdep.mk
 
 OBJ       = main.o $(DRIVER)/driver.o
-MOREFLAGS = -I$(DRIVER)
+MORECFLAGS = -I$(DRIVER)
 
 all: $(BINDIR)/ar
 

@@ -1,14 +1,15 @@
+.POSIX:
 
 PROJECTDIR = ../..
-LIBSCC = .
+LIBCOFF32 = .
 include $(PROJECTDIR)/rules.mk
 include objlst.mk
 
 MORECFLAGS = $(STDCFLAGS)
 
-all: libscc.a
+all: libcoff32.a
 
-libscc.a: $(LIBSCC-OBJ)
+libcoff32.a: $(LIBCOFF32-OBJ)
 	$(AR) $(ARFLAGS) $@ $?
 	ranlib $@
 

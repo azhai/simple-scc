@@ -10,7 +10,7 @@ dep:
 	./gendep.sh $(TARGETS)
 
 clean:
-	rm -f */crt.o
+	rm -f ./*/crt.o
 
 distclean: clean
 	rm -f makefile
