@@ -2,7 +2,7 @@ include $(PROJECTDIR)/config.mk
 
 BINDIR     = $(PROJECTDIR)/rootdir/bin
 INCDIR     = $(PROJECTDIR)/inc
-LIBDIR     = $(PROJECTDIR)/lib
+LIBDIR     = $(PROJECTDIR)/rootdir/lib
 LIBEXEC    = $(PROJECTDIR)/rootdir/libexec/scc
 LIBSCC     = $(PROJECTDIR)/lib/scc
 LIBCOFF32  = $(PROJECTDIR)/lib/coff32
