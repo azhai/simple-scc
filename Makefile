@@ -9,14 +9,8 @@ DIRS  = inc cc1 cc2 driver lib as ar nm objdump ld
 
 all: $(DIRS)
 
-$(DIRS): config $(BINDIR) $(LIBEXEC) FORCE 
+$(DIRS): config FORCE 
 	+@cd $@ && $(MAKE) all
-
-$(BINDIR):
-	mkdir -p $@
-
-$(LIBEXEC):
-	mkdir -p $@
 
 clean dep:
 	$(FORALL)
@@ -24,7 +18,6 @@ clean dep:
 distclean: unconfig
 	$(FORALL)
 	rm -f config
-	rm -rf rootdir
 
 tests: all
 	+@cd tests && $(MAKE) -e all
