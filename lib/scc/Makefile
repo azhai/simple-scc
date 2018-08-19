@@ -4,8 +4,6 @@ LIBSCC = .
 include $(PROJECTDIR)/rules.mk
 include objlst.mk
 
-MORECFLAGS = $(STDCFLAGS)
-
 all: libscc.a
 
 libscc.a: $(LIBSCC-OBJ)

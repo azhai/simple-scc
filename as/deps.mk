@@ -1,3 +1,4 @@
+parser.o: $(PROJECTDIR)/inc/$(STD)/cstd.h
 
 #deps
 expr.o: ../inc/scc.h

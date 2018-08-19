@@ -5,8 +5,6 @@ LIBCOFF32 = .
 include $(PROJECTDIR)/rules.mk
 include objlst.mk
 
-MORECFLAGS = $(STDCFLAGS)
-
 all: libcoff32.a
 
 libcoff32.a: $(LIBCOFF32-OBJ)

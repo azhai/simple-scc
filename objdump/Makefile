@@ -5,7 +5,6 @@ include $(PROJECTDIR)/rules.mk
 include $(LIBSCC)/libdep.mk
 
 OBJ       = main.o 
-MORECFLAGS = $(STDCFLAGS)
 
 all: $(BINDIR)/objdump
 

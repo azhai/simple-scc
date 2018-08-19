@@ -5,7 +5,7 @@ include $(PROJECTDIR)/rules.mk
 include $(LIBSCC)/libdep.mk
 
 OBJ = main.o symbol.o ins.o parser.o expr.o myro.o
-MORECFLAGS = -I$(INCDIR)/$(STD) $(STDCFLAGS)
+MORECFLAGS = -I$(INCDIR)/$(STD)
 TARGETS = $(LIBEXEC)/as-amd64 $(LIBEXEC)/as-i386 \
           $(LIBEXEC)/as-i286 $(LIBEXEC)/as-z80
 

@@ -4,8 +4,9 @@ PROJECTDIR = ..
 include $(PROJECTDIR)/rules.mk
 include $(LIBSCC)/libdep.mk
 
-OBJ       = main.o $(DRIVER)/driver.o
+OBJ        = main.o $(DRIVER)/driver.o
 MORECFLAGS = -I$(DRIVER)
+STDCFLAGS  =
 
 all: $(BINDIR)/ar
 

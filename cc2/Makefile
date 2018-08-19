@@ -4,7 +4,7 @@ PROJECTDIR = ..
 include $(PROJECTDIR)/rules.mk
 include $(LIBSCC)/libdep.mk
 
-MORECFLAGS = -I$(PROJECTDIR)/inc/$(STD) $(STDCFLAGS)
+MORECFLAGS = -I$(PROJECTDIR)/inc/$(STD)
 
 OBJ = main.o parser.o peep.o symbol.o node.o code.o optm.o
 

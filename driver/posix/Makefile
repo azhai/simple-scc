@@ -11,6 +11,8 @@ include $(INCDIR)/incdep.mk
 SYSLST  = amd64-sysv-linux-elf z80-scc-none-none \
           i386-sysv-linux-elf amd64-sysv-openbsd-elf
 
+STDCFLAGS =
+
 TARGETS = $(BINDIR)/scc $(BINDIR)/scpp
 
 all: $(TARGETS)

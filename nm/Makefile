@@ -4,8 +4,6 @@ PROJECTDIR = ..
 include $(PROJECTDIR)/rules.mk
 include $(LIBSCC)/libdep.mk
 
-MORECFLAGS = $(STDCFLAGS)
-
 OBJ       = main.o coff32.o formats.o
 
 all: $(BINDIR)/nm
