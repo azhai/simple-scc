@@ -15,6 +15,8 @@ TARGETS   = $(LIBEXEC)/cc1-amd64-sysv $(LIBEXEC)/cc1-arm64-sysv \
 
 all: $(TARGETS)
 
+$(TARGETS): $(LIBDIR)/libscc.a
+
 dep:
 	$(PROJECTDIR)/mkdep.sh
 

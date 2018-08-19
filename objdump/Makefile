@@ -8,7 +8,7 @@ OBJ       = main.o
 
 all: $(BINDIR)/objdump
 
-$(BINDIR)/objdump: $(OBJ) $(LIBSCC)/libscc.a
+$(BINDIR)/objdump: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
 dep:

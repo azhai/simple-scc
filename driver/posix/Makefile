@@ -23,7 +23,7 @@ $(BINDIR)/scc: scc
 $(BINDIR)/scpp: cpp
 	cp cpp $@
 
-scc: scc.o $(LIBSCC)/libscc.a
+scc: scc.o $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) scc.o -lscc -o $@
 
 cpp: cpp.sh config.h

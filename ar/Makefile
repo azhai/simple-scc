@@ -10,7 +10,7 @@ STDCFLAGS  =
 
 all: $(BINDIR)/ar
 
-$(BINDIR)/ar: $(OBJ) $(LIBSCC)/libscc.a
+$(BINDIR)/ar: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
 dep:

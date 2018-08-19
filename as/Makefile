@@ -11,6 +11,8 @@ TARGETS = $(LIBEXEC)/as-amd64 $(LIBEXEC)/as-i386 \
 
 all: $(TARGETS)
 
+$(TARGETS): $(LIBDIR)/libscc.a
+
 dep:
 	$(PROJECTDIR)/mkdep.sh
 

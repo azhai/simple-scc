@@ -4,9 +4,11 @@ LIBSCC = .
 include $(PROJECTDIR)/rules.mk
 include objlst.mk
 
-all: libscc.a
+TARGET = $(LIBDIR)/libscc.a
 
-libscc.a: $(LIBSCC-OBJ)
+all: $(TARGET)
+
+$(TARGET): $(LIBSCC-OBJ)
 	$(AR) $(ARFLAGS) $@ $?
 	ranlib $@
 
@@ -14,6 +16,6 @@ dep:
 	$(PROJECTDIR)/mkdep.sh
 
 clean:
-	rm -f *.o *.a
+	rm -f *.o $(LIBDIR)/libscc.a
 
 include deps.mk

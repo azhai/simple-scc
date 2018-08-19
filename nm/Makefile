@@ -8,7 +8,7 @@ OBJ       = main.o coff32.o formats.o
 
 all: $(BINDIR)/nm
 
-$(BINDIR)/nm: $(OBJ) $(LIBSCC)/libscc.a
+$(BINDIR)/nm: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
 dep:

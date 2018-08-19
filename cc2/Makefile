@@ -13,6 +13,8 @@ TARGETS  = $(LIBEXEC)/cc2-amd64-sysv  $(LIBEXEC)/cc2-i386-sysv \
 
 all: $(TARGETS)
 
+$(TARGETS): $(LIBDIR)/libscc.a
+
 dep:
 	$(PROJECTDIR)/mkdep.sh
 

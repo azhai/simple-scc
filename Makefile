@@ -27,7 +27,7 @@ unconfig:
 	rm -f config
 
 config:
-	./configure.sh
+	./config.sh
 	touch $@
 
 install: all
