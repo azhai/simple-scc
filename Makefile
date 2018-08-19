@@ -27,7 +27,7 @@ unconfig:
 	rm -f config
 
 config:
-	(echo '/^# '`uname`'/+;/^###$$/- s/^#//'; echo w) | ed -s config.mk
+	./configure.sh
 	touch $@
 
 install: all
