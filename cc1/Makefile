@@ -21,7 +21,6 @@ dep:
 clean:
 	rm -f *.o
 	rm -f target/*/*.o
-	rm -f cc1-*
 	rm -f $(TARGETS)
 
 include target/amd64-sysv/arch.mk

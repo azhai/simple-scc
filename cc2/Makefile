@@ -21,9 +21,8 @@ error.h: cc2.h
 	awk -f generror.awk cc2.h > $$$$.h && mv $$$$.h $@
 
 clean:
-	rm -f *.o
+	rm -f *.o error.h
 	rm -f target/*/*.o
-	rm -f cc2-* error.h
 	rm -f $(TARGETS)
 
 include target/amd64-sysv/target.mk

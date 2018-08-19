@@ -8,16 +8,13 @@ OBJ       = main.o
 
 all: $(BINDIR)/objdump
 
-$(BINDIR)/objdump: objdump
-	cp objdump $@
-
-objdump: $(OBJ) $(LIBSCC)/libscc.a
+$(BINDIR)/objdump: $(OBJ) $(LIBSCC)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
 dep:
 	$(PROJECTDIR)/mkdep.sh
 
 clean:
-	rm -f $(BINDIR)/objdump objdump *.o
+	rm -f $(BINDIR)/objdump *.o
 
 include deps.mk

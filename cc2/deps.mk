@@ -1,4 +1,8 @@
 parser.c: $(PROJECTDIR)/inc/$(STD)/cstd.h
+target/amd64-sysv/code.o: $(INCDIR)/$(STD)/cstd.h
+target/i386-sysv/code.o: $(INCDIR)/$(STD)/cstd.h
+target/qbe/cgen.o: $(INCDIR)/$(STD)/cstd.h
+target/z80-scc/code.o: $(INCDIR)/$(STD)/cstd.h
 
 #deps
 code.o: ../inc/scc.h
