@@ -17,16 +17,10 @@ TARGETS = $(BINDIR)/scc $(BINDIR)/scpp
 
 all: $(TARGETS)
 
-$(BINDIR)/scc: scc
-	cp scc $@
-
-$(BINDIR)/scpp: cpp
-	cp cpp $@
-
-scc: scc.o $(LIBDIR)/libscc.a
+$(BINDIR)/scc: scc.o $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) scc.o -lscc -o $@
 
-cpp: cpp.sh config.h
+$(BINDIR)/scpp: cpp.sh config.h
 	set -x ;\
 	trap "rm -f $$$$.sh" 0 2 3;\
 	rm -f $@ ;\
