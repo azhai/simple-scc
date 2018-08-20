@@ -1,9 +1,9 @@
 #!/bin/sh
 
 set -e
-trap "rm -f $$.tmp" 0 2 3
 
-(sed '/^#deps/q' deps.mk
+(echo '/^#deps/+;$c'
+
 for i in `find . -name '*.c'`
 do
 	file=`basename $i | sed 's/\.c$/.o/'`
@@ -13,4 +13,7 @@ do
 
 	sed -n "/#include \"/ s,#include \"\(.*\)\",$dir$file: $dir\1,p" $i
 done |
-LC_ALL=C sort -s) > $$.tmp && mv $$.tmp deps.mk
+LC_ALL=C sort -s
+
+echo .
+echo w) | ed -s deps.mk
