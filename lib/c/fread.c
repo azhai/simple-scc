@@ -8,6 +8,7 @@ fread(void * restrict ptr, size_t size, size_t nmemb,
 {
 	unsigned char *bp = ptr;
 	size_t n, i;
+	int c;
 
 	if (size == 0)
 		return 0;
@@ -15,8 +16,9 @@ fread(void * restrict ptr, size_t size, size_t nmemb,
 	for (n = 0; n < nmemb; n++) {
 		i = size;
 		do {
-			if ((*bp++ = getc(fp)) == EOF)
+			if ((c = getc(fp)) == EOF)
 				return n;
+			*bp++ = c;
 		} while (--i);
 	}
 
