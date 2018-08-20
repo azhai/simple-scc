@@ -3,7 +3,7 @@
 PROJECTDIR = ../..
 include $(PROJECTDIR)/rules.mk
 include $(LIBSCC)/libdep.mk
-include $(INCDIR)/incdep.mk
+include $(INCLUDE)/incdep.mk
 
 # SYSLST is a list of backend-arch-abi-sys. First
 # element of the list becomes the default target

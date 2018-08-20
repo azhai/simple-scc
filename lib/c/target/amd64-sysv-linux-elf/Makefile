@@ -7,7 +7,7 @@ include ../script/objlst.mk
 include syscall.mk
 include ../script/common.mk
 
-SCC_CFLAGS = -nostdinc -I../../include -I../../include/bits/amd64-sysv/
+SCC_CFLAGS = -nostdinc -I$(INCDIR) -I$(INCDIR)/bits/amd64-sysv/
 
 dep:
 	../script/syscall.sh

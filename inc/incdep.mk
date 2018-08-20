@@ -1,7 +1,7 @@
-include $(INCDIR)/inclst.mk
+include $(INCLUDE)/inclst.mk
 
 debug:
 	echo $(SYSHDR)
 
 $(SYSHDR):
-	+@cd $(INCDIR) && $(MAKE)
+	+@cd $(INCLUDE) && $(MAKE)

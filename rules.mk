@@ -1,9 +1,12 @@
 include $(PROJECTDIR)/config.mk
 
+INCLUDE    = $(PROJECTDIR)/inc
+
 BINDIR     = $(PROJECTDIR)/rootdir/bin
-INCDIR     = $(PROJECTDIR)/inc
+INCDIR     = $(PROJECTDIR)/rootdir/include/scc
 LIBDIR     = $(PROJECTDIR)/rootdir/lib/scc
 LIBEXEC    = $(PROJECTDIR)/rootdir/libexec/scc
+
 LIBSCC     = $(PROJECTDIR)/lib/scc
 LIBCOFF32  = $(PROJECTDIR)/lib/coff32
 

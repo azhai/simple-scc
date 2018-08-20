@@ -1,4 +1,4 @@
-SYSHDR = $(INCDIR)/ldflags.h\
-         $(INCDIR)/syscrts.h\
-         $(INCDIR)/sysincludes.h\
-         $(INCDIR)/syslibs.h
+SYSHDR = $(INCLUDE)/ldflags.h\
+         $(INCLUDE)/syscrts.h\
+         $(INCLUDE)/sysincludes.h\
+         $(INCLUDE)/syslibs.h
