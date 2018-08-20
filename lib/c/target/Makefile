@@ -10,7 +10,7 @@ DIRS = amd64-sysv-linux-elf \
 #       z80-scc-none-none
 
 dep:
-	./objlst.sh
+	./script/objlst.sh
 
 all clean distclean:
 	$(FORALL)
