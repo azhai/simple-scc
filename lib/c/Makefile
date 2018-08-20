@@ -1,6 +1,7 @@
 .POSIX:
 
 PROJECTDIR = ../..
+include $(PROJECTDIR)/rules.mk
 
 DIRS = target
 

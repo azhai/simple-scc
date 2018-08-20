@@ -9,13 +9,13 @@ vsnprintf(char * restrict s, size_t siz, const char * restrict fmt, va_list ap)
 	FILE f;
 	int r;
 
-	f.flag = _IOWRT | _IOSTRG;
-	f.size = siz;
+	f.flags = _IORW | _IOSTRG;
+	f.len = siz;
 	f.buf = s;
 	f.wp = s;
 	f.rp = s + siz;
 
-	r = vfprintf(&f, fmt, va);
+	r = vfprintf(&f, fmt, ap);
 	if (s) {
 		if (f.wp == f.rp)
 			--f.wp;

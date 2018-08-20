@@ -11,7 +11,7 @@ fflush(FILE *fp)
 	int err;
 
 	if (fp)
-		return flsbuf(fp);
+		return _flsbuf(fp);
 
 	err = 0;
 	for (fp = __iob; fp < &__iob[FOPEN_MAX]; ++fp) {
@@ -56,10 +56,10 @@ __putc(int ch, FILE *fp)
 	}
 
 	if (fp->flags & _IOLBF) {
-		if (fp->lp == fp->rp && _flush(fp))
+		if (fp->lp == fp->rp && _flsbuf(fp))
 			return EOF;
 		*fp->lp++ = ch;
-		if (ch == '\n' && flsbuf(fp))
+		if (ch == '\n' && _flsbuf(fp))
 			return EOF;
 	} else {
 		if (fp->wp == fp->rp && _flsbuf(fp))

@@ -11,7 +11,7 @@ strpbrk(const char *s1, const char *s2)
 		for (p = s2; *p && *p != c; ++p)
 			;
 		if (*p == c)
-			return s1;
+			return (char *) s1;
 	}
 	return NULL;
 }

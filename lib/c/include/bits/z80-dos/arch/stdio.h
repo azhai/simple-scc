@@ -10,4 +10,6 @@ typedef unsigned size_t;
 #define TMP_MAX        25
 #define L_tmpnam      256
 
+#define _TMPNAME      "TMP.000"
+
 typedef long fpos_t;

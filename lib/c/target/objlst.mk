@@ -5,12 +5,12 @@ OBJ = bsearch.o qsort.o \
       tmpnam.o \
       sprintf.o snprintf.o vsprintf.o vsnprintf.o \
       printf.o fprintf.o vfprintf.o \
-      fgets.o gets.of fgetc.o fputc.o getchar.o putchar.o \
+      fgets.o gets.o fgetc.o fputc.o getchar.o putchar.o \
       fputs.o puts.o fread.o fwrite.o \
       getc.o putc.o __putc.o __getc.o \
       rewind.o fseek.o ferror.o feof.o clearerr.o \
       setbuf.o setvbuf.o \
-      fclose.o fopen.c freopen.c _fpopen.o _flsbuf.o stdio.o \
+      fclose.o fopen.o freopen.o _fpopen.o _flsbuf.o stdio.o \
       realloc.o calloc.o malloc.o \
       __assert.o strcpy.o strcmp.o strlen.o strchr.o \
       strrchr.o strcat.o strncmp.o strncpy.o strncat.o strcoll.o \

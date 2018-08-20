@@ -6,6 +6,7 @@
 #define ERANGE 3
 #define ENOMEM 4
 #define EBADF  5
+#define EINVAL 6
 
 extern int errno;
 extern char *_sys_errlist[];

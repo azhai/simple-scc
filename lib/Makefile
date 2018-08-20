@@ -4,7 +4,7 @@ PROJECTDIR = ..
 
 include $(PROJECTDIR)/rules.mk
 
-DIRS = scc coff32 crt
+DIRS = scc coff32 crt c
 
 all: $(DIRS)
 

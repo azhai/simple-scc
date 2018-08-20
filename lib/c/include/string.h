@@ -29,5 +29,6 @@ extern char *strtok(char * restrict s1, const char * restrict s2);
 extern void *memset(void *s, int c, size_t n);
 extern char *strerror(int errnum);
 extern size_t strlen(const char *s);
+extern size_t strnlen(const char *s, size_t maxlen);
 
 #endif

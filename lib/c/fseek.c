@@ -14,9 +14,9 @@ fseek(FILE *fp, long off, int whence)
 	if ((fp->flags & _IOWRITE) && _flsbuf(fp))
 		return -1;
 	else if (whence == SEEK_CUR && (fp->flags & _IOREAD))
-		off -= fp->wp - fp->rd;
+		off -= fp->wp - fp->rp;
 
-	if (_seek(fp->fd, off, type) < 0) {
+	if (_lseek(fp->fd, off, whence) < 0) {
 		fp->flags |= _IOERR;
 		return EOF;
 	}

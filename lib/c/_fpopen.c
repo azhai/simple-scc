@@ -52,12 +52,12 @@ _fpopen(const char * restrict fname,
 		return NULL;
 	}
 
-	if ((fd = _open(name, flags)) < 0)
+	if ((fd = _open(fname, flags)) < 0)
 		return NULL;
 
 	if (fp->buf == NULL) {
 		if ((fp->buf = malloc(BUFSIZ)) == NULL) {
-			close(fd);
+			_close(fd);
 			errno = ENOMEM;
 			return NULL;
 		}
@@ -66,7 +66,7 @@ _fpopen(const char * restrict fname,
 	fp->fd = fd;
 
 	if (!bin)
-		fp->flags |= _IOTEXT;
+		fp->flags |= _IOTXT;
 
 	if (flags & O_RDWR)
 		fp->flags |= _IORW;
