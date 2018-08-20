@@ -24,7 +24,7 @@ lpack(unsigned char *dst, char *fmt, ...)
 				n *= 10;
 				d = *fmt++ - '0';
 			}
-			cp = va_arg(va, char *);
+			cp = va_arg(va, unsigned char *);
 			while (n--)
 				*bp++ = *cp++;
 			break;
