@@ -1,4 +1,8 @@
 .POSIX:
 
+PROJECTDIR = ../..
+
+DIRS = target
+
 all dep clean distclean:
-	+cd target && $(MAKE) $@
+	$(FORALL)
