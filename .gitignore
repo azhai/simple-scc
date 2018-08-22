@@ -8,6 +8,7 @@ rootdir/bin/scc
 rootdir/bin/scpp
 rootdir/bin/ar
 rootdir/bin/nm
+rootdir/bin/objdump
 test.log
 cc2/error.h
 instbl.c
