@@ -1,8 +1,9 @@
 SYSASM = $(SYS:.o=.s)
+TARGET = $(LIBDIR)/$(SYSNAME)/libc.a
 
-all: libc.a
+all: $(TARGET)
 
-libc.a: $(OBJ) $(SYS)
+$(TARGET): $(OBJ) $(SYS)
 	$(AR) $(ARFLAGS) $@ $?
 	ranlib $@
 

@@ -3,8 +3,8 @@ PROJECTDIR = ../../..
 
 include $(PROJECTDIR)/rules.mk
 
-DIRS = amd64-sysv-linux-elf \
-       amd64-sysv-openbsd-elf
+DIRS = amd64-sysv-linux \
+       amd64-sysv-openbsd
 
 #       i386-sysv-linux-elf \
 #       z80-scc-none-none
