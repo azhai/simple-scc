@@ -1,12 +1,12 @@
 .POSIX:
 
 PROJECTDIR=$$PWD/../../../
-ROOTDIR=$(PROJECTDIR)/rootdir
+ROOT=$(PROJECTDIR)/rootdir
 
 all: tests
 
 tests:
-	PATH=$(ROOTDIR)/bin:$$PATH ./chktest.sh
+	PATH=$(ROOT)/bin:$$PATH ./chktest.sh
 
 clean:
 	rm -f test.log
