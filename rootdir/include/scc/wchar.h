@@ -1,6 +1,5 @@
-#ifndef _WCHAR_H_
-#define _WCHAR_H_
-
+#ifndef _WCHAR_H
+#define _WCHAR_H
 
 /* TODO: This is only a placeholder */
 typedef long wchar_t;
