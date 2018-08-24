@@ -14,3 +14,6 @@ clean:
 
 $(SYSASM): syscall.lst
 	../script/amd64-sysv.sh
+
+dep:
+	../script/syscall.sh
