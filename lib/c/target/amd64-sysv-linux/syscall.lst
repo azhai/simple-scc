@@ -9,3 +9,5 @@
 38	_getpid
 60	_Exit
 32	_kill
+39	_getpid
+62	_kill

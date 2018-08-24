@@ -17,4 +17,4 @@ EOF
 done
 
 echo .
-echo w)  | ed -s objlst.mk
+echo w)  | ed -s script/objlst.mk

@@ -7,12 +7,6 @@ extern int _lseek(int fd, long off, int whence);
 extern void _Exit(int status);
 extern int _access(char *path, int mode);
 
-extern int raise(int sig);
-extern void (*signal(int sig, void (*func)(int)))(int);
-extern char *getenv(const char *var);
-extern int rename(const char *from, const char *to);
-extern int remove(const char *path);
-
 /* auxiliar functions */
 
 #ifdef stdin
