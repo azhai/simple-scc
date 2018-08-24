@@ -4,13 +4,12 @@ PROJECTDIR = ../../..
 include $(PROJECTDIR)/rules.mk
 
 DIRS = amd64-sysv-linux \
-       amd64-sysv-openbsd
+       amd64-sysv-openbsd \
+       amd64-sysv-netbsd \
 
-#       i386-sysv-linux-elf \
-#       z80-scc-none-none
+all clean distclean:
+	$(FORALL)
 
 dep:
 	./script/objlst.sh
-
-all clean distclean:
 	$(FORALL)

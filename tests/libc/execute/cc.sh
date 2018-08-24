@@ -24,7 +24,7 @@ do
 	esac
 done
 
-sys=${sys:-linux}
+sys=${sys:-`uname | tr 'A-Z' 'a-z'`}
 abi=${abi:-amd64-sysv}
 root=${root:-$SCCPREFIX}
 inc=$root/include/scc
