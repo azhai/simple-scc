@@ -2,7 +2,7 @@
 
 uid=`id -u`
 gid=`id -g`
-time=`date -d "1980-01-01" +%s`
+time=315532800
 
 cat <<EOF >master.a
 !<arch>
