@@ -7,4 +7,4 @@ _lseek.s
 _open.s
 _read.s
 _write.s
-_sigaction
+_sigaction.s
