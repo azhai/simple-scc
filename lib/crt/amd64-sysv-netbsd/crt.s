@@ -1,13 +1,12 @@
 	.file	"crt.s"
 
-	.section ".note.netbsd.ident", "a"
+	.section .note.netbsd.ident
+	.long   7
+	.long   4
+	.long   1
+	.ascii "NetBSD\0"
 	.p2align 2
-	.long	8
-	.long	4
-	.long	1
-	.ascii	"NetBSD\0"
-	.p2align 2
-	.long	200000000
+	.long      200000000
 
 	.text
 	.align	8
