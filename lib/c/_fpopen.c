@@ -3,12 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "syscall.h"
+#include "libc.h"
 #undef fopen
 
 FILE *
 _fpopen(const char * restrict fname,
-         const char * restrict mode,
-         FILE * restrict fp)
+        const char * restrict mode,
+        FILE * restrict fp)
 {
 	int i, flags, fd, rw, bin;
 
