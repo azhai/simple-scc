@@ -8,7 +8,6 @@ tabs 40
 ulimit -c 0
 rm -f test.log
 
-cat $file |
 while read i state
 do
 	echo $i >>test.log
@@ -17,4 +16,4 @@ do
 	rm -f a.out
 	(scc -Isysinclude $CFLAGS "$i" && ./a.out) 2>test.log &&
 		echo "[OK]" || echo "[FAILED]"
-done
+done < $file
