@@ -33,4 +33,4 @@ lib=$root/lib/scc/${abi}-${sys}
 obj=${1%.c}.o
 
 c99 -nostdinc -I$inc -I$arch_inc -c $1
-ld -L$lib $lib/crt.o $obj -lc
+ld -z nodefaultlib -static -L$lib $lib/crt.o $obj -lc
