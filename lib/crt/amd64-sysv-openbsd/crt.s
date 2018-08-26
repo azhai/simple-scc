@@ -15,9 +15,4 @@
 _start:
 	call	main
 	movl    %eax, %edi
-	call	exit
-
-	.data
-	.global	__guard_local
-__guard_local:
-	.long	0
+	jmp	exit

@@ -5,4 +5,4 @@
 _start:
 	call	main
 	movl    %eax, %edi
-	call	exit
+	jmp	exit
