@@ -7,7 +7,7 @@ include $(LIBCOFF32)/libdep.mk
 
 OBJ = main.o coff32.o obj.o
 LIB = $(LIBDIR)/libscc.a $(LIBDIR)/libcoff32.a
-TARGET = $(BINDIR)/ld
+TARGET = ld
 
 all: $(TARGET)
 
