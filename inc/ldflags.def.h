@@ -1,6 +1,5 @@
 char *ldflags[] = {
 	"-static",
-	/* on OpenBSD, disable pie */
-	/* "-nopie", */
+	"-z","nodefaultlib",
 	NULL
 };
