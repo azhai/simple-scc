@@ -8,12 +8,20 @@ tabs 40
 ulimit -c 0
 rm -f test.log
 
+SYS=`uname | tr A-Z a-z`
+FORMAT=elf
+ABI=sysv
+ARCH=amd64
+
+export SYS FORMAT ABI ARCH
+
 while read i state
 do
 	echo $i >>test.log
 	printf "%s\t" $i
 	printf "%s" $state
 	rm -f a.out
-	(scc -Isysinclude $CFLAGS "$i" && ./a.out) 2>test.log &&
+
+	(scc -Isysinclude $CFLAGS "$i" && ./a.out) 2>>test.log &&
 		echo "[OK]" || echo "[FAILED]"
 done < $file
