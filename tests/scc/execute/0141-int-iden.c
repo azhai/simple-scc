@@ -32,6 +32,11 @@ main(void)
 	i = i & ~0;
 	i = ~0 & i;
 	i = i % 1;
-	i = i / 0;
-	i = i % 0;
+
+	if (0)
+		i = i / 0;
+	if (0)
+		i = i % 0;
+
+	return 0;
 }
