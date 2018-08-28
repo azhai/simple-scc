@@ -24,7 +24,7 @@ do
 	esac
 done
 
-sys=${sys:-linux}
+sys=${sys:-`uname | tr 'A-Z' 'a-z'`}
 abi=${abi:-amd64-sysv}
 root=${root:-$SCCPREFIX}
 inc=$root/include/scc
@@ -33,5 +33,4 @@ lib=$root/lib/scc/${abi}-${sys}
 obj=${1%.c}.o
 
 c99 -nostdinc -I$inc -I$arch_inc -c $1
-echo ld -L$lib $lib/crt.o $obj -lc >&2
-ld -L$lib $lib/crt.o $obj -lc
+ld -z nodefaultlib -static -L$lib $lib/crt.o $obj -lc

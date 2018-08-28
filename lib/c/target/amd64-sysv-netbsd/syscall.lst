@@ -7,5 +7,5 @@
 17	_brk
 20	_getpid
 37	_kill
-46	_sigaction
 199	_lseek
+340	_sigaction
