@@ -2,10 +2,10 @@
 
 set -e
 
-trap "rm -f file.a f1 f2 f3 $tmp1 $tmp2" 0 2 3
-
 tmp1=`mktemp`
 tmp2=`mktemp`
+
+trap "rm -f file.a f1 f2 f3 $tmp1 $tmp2" 0 2 3
 
 ###########################################################################
 #Append generated files one by one to an empty file

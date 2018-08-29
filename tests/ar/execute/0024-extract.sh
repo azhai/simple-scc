@@ -1,12 +1,11 @@
 #!/bin/sh
 
-
 set -e
 
 tmp1=`mktemp`
 tmp2=`mktemp`
-trap "rm -f file* $tmp1 $tmp2" 0 2 3
 
+trap "rm -f file* $tmp1 $tmp2" 0 2 3
 
 ############################################################################
 #extract 3rd member
