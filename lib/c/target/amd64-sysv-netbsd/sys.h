@@ -11,7 +11,7 @@ typedef int pid_t;
 
 struct sigaction {
 	void (*sa_handler)(int);
-	int sa_mask;
+	char sa_mask[8];
 	int sa_flags;
 };
 

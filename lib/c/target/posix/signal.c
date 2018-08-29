@@ -12,7 +12,6 @@ void
 {
 	struct sigaction sa = {
 		.sa_handler = func,
-		.sa_flags = 0,
 	};
 
 	if (_sigaction(signum, &sa, &sa) < 0)
