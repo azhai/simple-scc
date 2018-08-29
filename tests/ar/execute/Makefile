@@ -6,7 +6,7 @@ ROOT=$(PROJECTDIR)/rootdir
 all: tests
 
 tests: master.a
-	TZ=UTC PATH=$(ROOT)/bin:$$PATH ./chktest.sh
+	@TZ=UTC PATH=$(ROOT)/bin:$$PATH ./chktest.sh
 
 master.a:
 	./mkmaster.sh
