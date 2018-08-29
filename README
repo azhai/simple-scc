@@ -8,6 +8,7 @@ it will have some differences:
 
 Type qualifiers make the type system ugly, and their uselessness adds
 unnecessary complexity to the compiler (and increased compilation time):
+
 	- const: The definition of const is not clear in the standard.
 	  If a const value is modified the behaviour is undefined
 	  behaviour. It seems it was defined in order to be able to
@@ -27,7 +28,9 @@ unnecessary complexity to the compiler (and increased compilation time):
 	  In the second case, this is non-portable code by definition
 	  (depending on the register mapped), so it is better to deal with
 	  it using another solution (compiler extensions or direct
-	  assembly).
+	  assembly). Since it is needed for the correct behaviour
+	  of portable programs that use longjmp, this specifier eventually
+	  will be implemented.
 
 	- restrict: This qualifier can only be applied to pointers to
 	  mark that the pointed object has no other alias. This qualifier
@@ -86,3 +89,15 @@ struct foo x;
 struct foo {
 	int i;
 };
+
+- Variadic function alike macros
+  ------------------------------
+
+The standard (C99 6.10.3 c 4) forces to pass more parameters than
+the number of parameters present in the variadic argument list
+(excluding ...). Scc accepts a parameter list with the same number
+of arguments.
+
+#define P(a, ...) a
+
+P(1)
