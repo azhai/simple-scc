@@ -16,3 +16,8 @@ _start:
 	call	main
 	movl    %eax, %edi
 	jmp	exit
+
+	.data
+	.global	__guard_local
+__guard_local:
+	.long	0
