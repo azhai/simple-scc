@@ -12,7 +12,7 @@ LIBCOFF32  = $(PROJECTDIR)/lib/coff32
 
 SCC_CFLAGS = $(MORECFLAGS) $(SYSCFLAGS) $(STDCFLAGS) -g $(CFLAGS)
 
-SCC_LDFLAGS = $(MORELFLAGS) -L$(LIBDIR) -g $(LDFLAGS)
+SCC_LDFLAGS = $(MORELFLAGS) $(SYSLDFLAGS) -L$(LIBDIR) -g $(LDFLAGS)
 
 # helper macro to run over all the directories
 FORALL = +@set -e ;\
