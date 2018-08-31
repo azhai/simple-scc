@@ -6,6 +6,6 @@
 6	_close
 17	_brk
 20	_getpid
-37	_kill
 46	_sigaction
-199	_lseek
+122	_kill
+198	_lseek
