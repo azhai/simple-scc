@@ -197,7 +197,7 @@ repeat:
 		newline();
 		break;
 	default:
-		if (!isprint(c) && !ispunct(c))
+		if (!isprint(c) && !ispunct(c) && !isspace(c))
 			warn("invalid input character. The shame of UB is yours");
 		break;
 	}
