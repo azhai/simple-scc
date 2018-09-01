@@ -1,0 +1,2 @@
+First assert
+Second assert, that must fail
