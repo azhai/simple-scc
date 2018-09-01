@@ -17,7 +17,7 @@ _flsbuf(FILE *fp)
 		fp->flags |= _IOERR;
 		return EOF;
 	}
-	fp->rp = fp->wp = fp->buf;
+	fp->lp = fp->rp = fp->wp = fp->buf;
 
 	return 0;
 }
