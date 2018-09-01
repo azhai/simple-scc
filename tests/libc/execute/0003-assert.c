@@ -1,6 +1,13 @@
 #include <assert.h>
 #include <stdio.h>
 
+/*
+output:
+First assert
+Second assert, that must fail
+end:
+*/
+
 int
 main()
 {

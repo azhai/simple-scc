@@ -3,6 +3,12 @@
 #include <signal.h>
 #include <stdlib.h>
 
+/*
+output:
+aborting
+end:
+*/
+
 int
 main(void)
 {

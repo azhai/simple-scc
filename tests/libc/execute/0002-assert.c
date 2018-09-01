@@ -4,6 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+output:
+First assert
+Second assert, that must fail
+end:
+*/
+
 void
 handler(int dummy)
 {
