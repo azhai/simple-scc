@@ -1,5 +1,5 @@
 
-void __assert(char *exp, char *file, long line);
+extern void __assert(char *exp, char *file, long line);
 
 #undef assert
 #ifndef NDEBUG
@@ -7,4 +7,3 @@ void __assert(char *exp, char *file, long line);
 #else
 # define assert(exp) ((void)0)
 #endif
-
