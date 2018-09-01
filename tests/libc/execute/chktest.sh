@@ -3,13 +3,13 @@
 file=${1?' empty input file'}
 tmp1=`mktemp`
 tmp2=`mktemp`
-trap "rm -f a.out $tmp1 $tmp2" 0 1 2 3 15
+trap "rm -f a.out *.o $tmp1 $tmp2" 0 1 2 3 15
 ulimit -c 0
 rm -f test.log
 
 while read i state
 do
-	rm -f a.out *.o
+	rm -f a.out *.o $tmp1 $tmp2
 
 	(echo $i
 	 ./cc.sh $CFLAGS $i.c
