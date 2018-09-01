@@ -3,22 +3,19 @@
 #include <signal.h>
 #include <stdlib.h>
 
-sig_atomic_t v;
-
 void
 handler(int dummy)
 {
-	v = 1;
+	_Exit(0);
 }
 
 int
 main(void)
 {
+	printf("aborting\n");
 	signal(SIGABRT, handler);
 	abort();
-
-	if (v == 1)
-		printf("ok\n");
+	printf("borning\n");
 
 	return 1;
 }
