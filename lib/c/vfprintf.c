@@ -64,7 +64,7 @@ getnum(va_list va, int flags, int *sign)
 		uval = (uintmax_t) va_arg(va, void *);
 	} else {
 		val = va_arg(va, int);
-		uval = (unsigned) uval;
+		uval = (unsigned) val;
 	}
 
 	if ((flags & UNSIGNED) == 0 && val < 0) {
