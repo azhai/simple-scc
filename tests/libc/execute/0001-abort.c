@@ -1,4 +1,4 @@
-
+#include <assert.h>
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -13,9 +13,9 @@ int
 main(void)
 {
 	printf("aborting\n");
-	signal(SIGABRT, handler);
+	assert(signal(SIGABRT, handler) != SIG_ERR);
 	abort();
 	printf("borning\n");
 
-	return 1;
+	return 0;
 }

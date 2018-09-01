@@ -8,14 +8,12 @@ rm -f test.log
 
 while read i state
 do
-	rm -f a.out
+	rm -f a.out *.o
 
-	(echo
-	 echo $i
-	 ./cc.sh $CFLAGS $i.c &&
-	 ./a.out > $tmp &&
-	 cat $tmp
-	 diff -u $tmp $i.txt) > test.log 2>&1 &&
+	(echo $i
+	 ./cc.sh $CFLAGS $i.c
+	 ./a.out > $tmp
+	 diff -u $tmp $i.txt) >> test.log 2>&1 &&
 	printf '[PASS]' || printf '[FAIL]'
 	printf '%s: %s\n' "$state" "$i"
 done < $file

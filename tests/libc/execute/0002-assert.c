@@ -1,9 +1,11 @@
 
 #include <assert.h>
 #include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 void
-handler(void)
+handler(int dummy)
 {
 	_Exit(0);
 }
@@ -14,7 +16,7 @@ main()
 	int i;
 	char c;
 
-	signal(SIGABRT, handler);
+	assert(signal(SIGABRT, handler) != SIG_ERR);
 
 	printf("First assert\n");
 	assert(sizeof(i) >= sizeof(c));
@@ -22,5 +24,5 @@ main()
 	printf("Second assert, that must fail\n");
 	assert(sizeof(i) < sizeof(c));
 
-	return 1;
+	return 0;
 }
