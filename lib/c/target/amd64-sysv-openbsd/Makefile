@@ -3,9 +3,12 @@
 PROJECTDIR = ../../../..
 include $(PROJECTDIR)/rules.mk
 
-SYSNAME    = amd64-sysv-openbsd
-SCC_CFLAGS = -g -nopie -fno-stack-protector -static -nostdinc -I$(INCDIR) -I$(INCDIR)/bits/amd64-sysv/ -I.
+SYS        = openbsd
+ARCH       = amd64
+ABI        = sysv
 SYSOBJ     = raise.o signal.o _sigaction.o
+SYSERRTBL  = ../posix/netbsd.e
+MORECFLAGS = -g -static -nostdinc
 
 include syscall.mk
 include ../script/objlst.mk

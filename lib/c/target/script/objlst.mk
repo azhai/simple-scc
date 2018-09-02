@@ -20,7 +20,7 @@ LIBOBJ = bsearch.o qsort.o \
          isgraph.o islower.o isprint.o ispunct.o isspace.o isupper.o \
          isxdigit.o toupper.o tolower.o ctype.o setlocale.o \
          localeconv.o atoi.o atol.o atoll.o atexit.o abort.o exit.o \
-         errno.o strnlen.o wcsnlen.o
+         errno.o _sys_errlist.o strnlen.o wcsnlen.o
 
 #rules
 __abs.o: ../../__abs.c
