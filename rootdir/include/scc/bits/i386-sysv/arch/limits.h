@@ -1,3 +1,4 @@
+#define CHAR_BIT   8
 #define SCHAR_MAX  0x7F
 #define SCHAR_MIN  (-SCHAR_MIN-1)
 #define CHAR_MAX   0x7F
