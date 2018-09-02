@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <limits.h>
 
+/*
+ * This test assumes an ascii representation
+ */
 
 #define TESTW(f) fputs(#f ":" , stdout); \
 	for (i = 0; i <= UCHAR_MAX; i++)  \
