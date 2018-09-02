@@ -8,7 +8,7 @@ ARCH       = amd64
 ABI        = sysv
 SYSOBJ     = raise.o signal.o
 SYSERRTBL  = ../posix/linux.e
-MORECFLAGS = -g -static -nostdinc
+MORECFLAGS = -std=c99 -g -static -nostdinc
 
 include syscall.mk
 include ../script/objlst.mk

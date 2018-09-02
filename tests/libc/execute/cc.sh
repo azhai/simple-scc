@@ -42,5 +42,5 @@ then
 	pie=-nopie
 fi
 
-gcc -g -w $pie -fno-stack-protector --freestanding -std=c99 -static -nostdinc -I$inc -I$arch_inc -c $1
+gcc -std=c99 -g -w $pie -fno-stack-protector --freestanding -std=c99 -static -nostdinc -I$inc -I$arch_inc -c $1
 ld -g $pie -z nodefaultlib -static -L$lib $lib/crt.o $obj -lc -o $out
