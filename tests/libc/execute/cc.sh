@@ -37,5 +37,5 @@ arch_inc=$root/include/scc/bits/$abi
 lib=$root/lib/scc/${abi}-${sys}
 obj=${1%.c}.o
 
-gcc -fno-stack-protector --freestanding -std=c99 -static -nostdinc -I$inc -I$arch_inc -c $1
-ld -z nodefaultlib -static -L$lib $lib/crt.o $obj -lc -o $out
+gcc -g -fno-stack-protector --freestanding -std=c99 -static -nostdinc -I$inc -I$arch_inc -c $1
+ld -g -z nodefaultlib -static -L$lib $lib/crt.o $obj -lc -o $out

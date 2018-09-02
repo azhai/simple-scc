@@ -4,7 +4,7 @@ PROJECTDIR = ../../../..
 include $(PROJECTDIR)/rules.mk
 
 SYSNAME    = amd64-sysv-netbsd
-SCC_CFLAGS = -static -nostdinc -I$(INCDIR) -I$(INCDIR)/bits/amd64-sysv/ -I.
+SCC_CFLAGS = -g -static -nostdinc -I$(INCDIR) -I$(INCDIR)/bits/amd64-sysv/ -I.
 SYSOBJ = raise.o signal.o _sigaction.o _sigaction2.o _setcontext.o
 
 include syscall.mk
