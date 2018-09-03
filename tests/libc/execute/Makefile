@@ -1,6 +1,8 @@
 .POSIX:
 
-ROOT=../../../rootdir
+ROOT   = ../../../rootdir
+CFLAGS =
+CC     = SCCPREFIX=$(ROOT) ./cc.sh
 
 all: tests
 
@@ -9,4 +11,3 @@ tests:
 
 clean:
 	rm -f *.o *core a.out test.log
-
