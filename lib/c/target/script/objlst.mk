@@ -19,7 +19,8 @@ LIBOBJ = bsearch.o qsort.o \
          isalnum.o isalpha.o isascii.o isblank.o iscntrl.o isdigit.o \
          isgraph.o islower.o isprint.o ispunct.o isspace.o isupper.o \
          isxdigit.o toupper.o tolower.o ctype.o setlocale.o \
-         localeconv.o atoi.o atol.o atoll.o atexit.o abort.o exit.o
+         localeconv.o atoi.o atol.o atoll.o atexit.o abort.o exit.o \
+         errno.o _sys_errlist.o strnlen.o wcsnlen.o
 
 #rules
 __abs.o: ../../__abs.c
@@ -75,6 +76,9 @@ clearerr.o: ../../clearerr.c
 
 ctype.o: ../../ctype.c
 	$(CC) $(SCC_CFLAGS) ../../ctype.c -c
+
+errno.o: ../../errno.c
+	$(CC) $(SCC_CFLAGS) ../../errno.c -c
 
 exit.o: ../../exit.c
 	$(CC) $(SCC_CFLAGS) ../../exit.c -c
@@ -271,6 +275,9 @@ strncmp.o: ../../strncmp.c
 strncpy.o: ../../strncpy.c
 	$(CC) $(SCC_CFLAGS) ../../strncpy.c -c
 
+strnlen.o: ../../strnlen.c
+	$(CC) $(SCC_CFLAGS) ../../strnlen.c -c
+
 strpbrk.o: ../../strpbrk.c
 	$(CC) $(SCC_CFLAGS) ../../strpbrk.c -c
 
@@ -306,4 +313,7 @@ vsnprintf.o: ../../vsnprintf.c
 
 vsprintf.o: ../../vsprintf.c
 	$(CC) $(SCC_CFLAGS) ../../vsprintf.c -c
+
+wcsnlen.o: ../../wcsnlen.c
+	$(CC) $(SCC_CFLAGS) ../../wcsnlen.c -c
 

@@ -9,13 +9,19 @@ FILE __iob[FOPEN_MAX] = {
 		.fd = 0,
 		.buf = inbuf,
 		.len = BUFSIZ,
-		.flags = _IOREAD
+		.flags = _IOREAD,
+		.lp = inbuf,
+		.rp = inbuf,
+		.wp = inbuf,
 	},
 	{
 		.fd = 1,
 		.buf = outbuf,
 		.len = BUFSIZ,
-		.flags = _IOWRITE | _IOLBF
+		.flags = _IOWRITE | _IOLBF,
+		.lp = outbuf,
+		.rp = outbuf,
+		.wp = outbuf,
 	},
 	{
 		.fd = 2,

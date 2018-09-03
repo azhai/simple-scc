@@ -5,5 +5,5 @@
 int
 putchar(int ch)
 {
-	return putc(ch, stdin);
+	return putc(ch, stdout);
 }

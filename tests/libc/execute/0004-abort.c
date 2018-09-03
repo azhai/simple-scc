@@ -9,17 +9,11 @@ aborting
 end:
 */
 
-void
-handler(int dummy)
-{
-	_Exit(0);
-}
-
 int
 main(void)
 {
 	printf("aborting\n");
-	assert(signal(SIGABRT, handler) != SIG_ERR);
+	assert(signal(SIGABRT, SIG_IGN) != SIG_ERR);
 	abort();
 	printf("borning\n");
 

@@ -3,9 +3,12 @@
 PROJECTDIR = ../../../..
 include $(PROJECTDIR)/rules.mk
 
-SYSNAME    = amd64-sysv-linux
-SCC_CFLAGS = -static -nostdinc -I$(INCDIR) -I$(INCDIR)/bits/amd64-sysv/ -I.
-SYSOBJ = raise.o signal.o
+SYS        = linux
+ARCH       = amd64
+ABI        = sysv
+SYSOBJ     = raise.o signal.o
+SYSERRTBL  = ../posix/linux.e
+MORECFLAGS = -std=c99 -g -static -nostdinc
 
 include syscall.mk
 include ../script/objlst.mk
