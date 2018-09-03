@@ -1,6 +1,6 @@
 #!/bin/sh
 
-trap "rm -f a.out" 0 2 3 15
+trap "rm -f a.out; exit" 0 2 3 15
 ulimit -c 0
 rm -f test.log
 

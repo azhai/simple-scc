@@ -4,7 +4,7 @@ file=${1?' empty input file'}
 err=/tmp/$$.err
 chk=/tmp/$$.chk
 
-trap "rm -f a.out *.o $chk $err" 0 1 2 3 15
+trap "rm -f a.out *.o $chk $err; exit" 0 1 2 3 15
 ulimit -c 0
 rm -f test.log
 
