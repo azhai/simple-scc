@@ -6,7 +6,7 @@ INCLUDE  = -I$(INCDIR) \
            -I$(INCDIR)/bits/$(SYS) \
            -I.
 SYSERRNO = $(INCDIR)/bits/$(SYS)/sys/errno.h
-OBJ      = $(LIBOBJ) $(SYSOBJ) $(SYSCALL)
+OBJ      = $(LIBOBJ) $(SYSOBJ) $(SYSCALL) $(ARCHOBJ)
 
 SCC_CFLAGS = $(MORECFLAGS) $(INCLUDE)
 
