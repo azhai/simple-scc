@@ -1,12 +1,8 @@
-typedef char sig_atomic_t;
+typedef int sig_atomic_t;
 
-#define SIG_ERR    -1
-#define SIG_DFL     0
-#define SIG_IGN     1
-
-#define SIG_ERR    -1
-#define SIG_DFL     0
-#define SIG_IGN     1
+#define SIG_ERR    ((void (*)(int))-1)
+#define SIG_DFL    ((void (*)(int)) 0)
+#define SIG_IGN    ((void (*)(int)) 1)
 
 #define SIGHUP      1
 #define SIGINT      2
