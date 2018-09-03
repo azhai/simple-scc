@@ -8,5 +8,5 @@ awk '
 END {
 	for (i in errno)
 		print "#define", i, errno[i] | "sort -n -k3"
-	close "sort -n -k3"
+	close("sort -n -k3")
 }' $@
