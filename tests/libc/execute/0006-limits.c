@@ -76,6 +76,9 @@ test1()
 	    LLONG_MAX < LONG_MAX || LLONG_MIN > LONG_MIN ||
 	    ULLONG_MAX < ULONG_MAX)
 		puts("wrong long long definition");
+
+	if (MB_LEN_MAX < sizeof(char))
+		puts("wrong value for MB_LEN_MAX");
 }
 
 
