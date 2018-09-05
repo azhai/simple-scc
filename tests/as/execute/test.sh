@@ -9,7 +9,7 @@ tmp1=`mktemp`
 tmp2=`mktemp`
 file=$cpu.s
 
-trap "rm -f a.out $tmp1 $tmp2" 0 2 3 
+trap "rm -f a.out $tmp1 $tmp2; exit" 0 2 3
 
 as-$cpu $file
 

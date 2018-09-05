@@ -4,7 +4,7 @@ set -e
 
 tmp1=`mktemp`
 tmp2=`mktemp`
-trap "rm -f f.out f.a $tmp1 $tmp2" 0 2 3
+trap "rm -f f.out f.a $tmp1 $tmp2; exit" 0 2 3
 
 rm -f f.a
 ar -qv f.a z80.out
