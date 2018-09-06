@@ -5,5 +5,9 @@
 size_t
 strnlen(const char *s, size_t maxlen)
 {
-	return 0;
+	size_t n;
+
+	for (n = 0; n < maxlen && *s++; ++n)
+		;
+	return n;
 }
