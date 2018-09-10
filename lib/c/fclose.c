@@ -1,6 +1,10 @@
 
+#include <stdlib.h>
 #include <stdio.h>
+#include "syscall.h"
 #undef fclose
+
+extern int _flsbuf(FILE *fp);
 
 int
 fclose(FILE *fp)
@@ -8,11 +12,11 @@ fclose(FILE *fp)
 	int r = EOF;
 
 	if ((fp->flags & _IOSTRG) == 0 &&
-	    fp->flags & (_IOWRITE | _IOREAD | _IOWR)) {
+	    fp->flags & (_IOWRITE | _IOREAD | _IORW)) {
 		r = 0;
-		if (fflush(fp) == EOF)
+		if (_flsbuf(fp) == EOF)
 			r = EOF;
-		if (close(fp->fd) < 0)
+		if (_close(fp->fd) < 0)
 			r = EOF;
 	}
 
@@ -21,7 +25,7 @@ fclose(FILE *fp)
 		fp->buf = NULL;
 	}
 
-	fp->flags &= ~(_IOWRITE | _IOREAD | _IOWR |
+	fp->flags &= ~(_IOWRITE | _IOREAD | _IORW |
 	               _IOERR | _IOEOF |
 	               _IOALLOC |
 	               _IOTXT |

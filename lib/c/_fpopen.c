@@ -2,13 +2,15 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys.h>
 #include "syscall.h"
+#include "libc.h"
 #undef fopen
 
 FILE *
 _fpopen(const char * restrict fname,
-         const char * restrict mode,
-         FILE * restrict fp)
+        const char * restrict mode,
+        FILE * restrict fp)
 {
 	int i, flags, fd, rw, bin;
 
@@ -52,12 +54,12 @@ _fpopen(const char * restrict fname,
 		return NULL;
 	}
 
-	if ((fd = _open(name, flags)) < 0)
+	if ((fd = _open(fname, flags)) < 0)
 		return NULL;
 
 	if (fp->buf == NULL) {
 		if ((fp->buf = malloc(BUFSIZ)) == NULL) {
-			close(fd);
+			_close(fd);
 			errno = ENOMEM;
 			return NULL;
 		}
@@ -66,7 +68,7 @@ _fpopen(const char * restrict fname,
 	fp->fd = fd;
 
 	if (!bin)
-		fp->flags |= _IOTEXT;
+		fp->flags |= _IOTXT;
 
 	if (flags & O_RDWR)
 		fp->flags |= _IORW;

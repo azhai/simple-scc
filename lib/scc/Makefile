@@ -1,23 +1,21 @@
-.POSIX:
 
 PROJECTDIR = ../..
-LIBDIR = .
+LIBSCC = .
 include $(PROJECTDIR)/rules.mk
 include objlst.mk
 
-all: libscc.a
+TARGET = $(LIBDIR)/libscc.a
 
-$(LIB-OBJ): $(PROJECTDIR)/inc/scc.h
-$(LIBDIR)/wmyro.o: $(PROJECTDIR)/inc/myro.h
-$(LIBDIR)/rmyro.o: $(PROJECTDIR)/inc/myro.h
+all: $(TARGET)
 
-libscc.a: $(LIB-OBJ)
-	ar $(ARFLAGS) $@ $?
+$(TARGET): $(LIBSCC-OBJ)
+	$(AR) $(ARFLAGS) $@ $?
 	ranlib $@
 
 dep:
+	$(PROJECTDIR)/mkdep.sh
 
 clean:
-	rm -f *.o *.a
+	rm -f *.o $(LIBDIR)/libscc.a
 
-distclean: clean
+include deps.mk

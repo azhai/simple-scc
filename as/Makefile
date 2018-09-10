@@ -2,30 +2,28 @@
 
 PROJECTDIR = ..
 include $(PROJECTDIR)/rules.mk
-include $(LIBDIR)/libdep.mk
+include $(LIBSCC)/libdep.mk
 
 OBJ = main.o symbol.o ins.o parser.o expr.o myro.o
-HDR = $(PROJECTDIR)/inc/scc.h as.h
-MOREFLAGS = -I$(PROJECTDIR)/inc/$(STD) $(AS_CFLAGS)
+MORECFLAGS = -I$(INCLUDE)/$(STD)
+TARGETS = $(LIBEXEC)/as-amd64 $(LIBEXEC)/as-i386 \
+          $(LIBEXEC)/as-i286 $(LIBEXEC)/as-z80
 
-all:
+all: $(TARGETS)
 
-$(OBJ): $(HDR)
-
-as: $(OBJ)
-	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
-
-myro.o: $(PROJECTDIR)/inc/myro.h
+$(TARGETS): $(LIBDIR)/libscc.a
 
 dep:
-	./gendep.sh $(TARGETS)
+	$(PROJECTDIR)/mkdep.sh
 
 clean:
 	rm -f *.o target/*/*.o
 	rm -f target/*/*tbl.c
 	rm -f as-*
-	rm -f *.log
+	rm -f $(TARGETS)
 
-distclean: clean
-	rm -f makefile
-
+include target/amd64.mk
+include target/i386.mk
+include target/i286.mk
+include target/z80.mk
+include deps.mk

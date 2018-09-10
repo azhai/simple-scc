@@ -7,25 +7,28 @@ include rules.mk
 
 DIRS  = inc cc1 cc2 driver lib as ar nm objdump ld
 
-all:
+all: $(DIRS)
+
+$(DIRS): config FORCE 
+	+@cd $@ && $(MAKE) all
+
+clean dep:
 	$(FORALL)
 
-clean:
+distclean: unconfig
 	$(FORALL)
-	rm -rf rootdir
-
-distclean:
-	touch config.mk    # we need config.mk for makes in $DIRS
-	find . -name makefile | xargs rm -f
-	$(FORALL)
-	rm -rf rootdir
-	rm -f config.mk
-
-dep: config.mk
-	$(FORALL)
+	rm -f config
 
 tests: all
-	+cd tests && $(MAKE) -e all
+	+@cd tests && $(MAKE) -e all
+
+unconfig:
+	(echo '/^### Systems/,$$ v/^#/ s/^/#/' ; echo w) | ed -s config.mk
+	rm -f config
+
+config:
+	./config.sh
+	touch $@
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/

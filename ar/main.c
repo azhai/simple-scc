@@ -50,10 +50,17 @@ cleanup(void)
 	}
 }
 
+/*
+ * I do know that you cannot call remove from a signal handler
+ * but we only can use stdio function to deal with files
+ * because we are C99 compliant, and it is very likely that
+ * remove is going to work in this case
+ */
 static void
 sigfun(int signum)
 {
-	exit(1);
+	cleanup();
+	_Exit(1);
 }
 
 static FILE *
@@ -609,6 +616,8 @@ main(int argc, char *argv[])
 		lflag = 1;
 		break;
 	case 'u':
+		/* TODO */
+		abort();
 		uflag = 1;
 		break;
 	default:

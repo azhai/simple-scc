@@ -16,6 +16,8 @@ static char sccsid[] = "@(#) ./driver/posix/scc.c";
 #include "config.h"
 #include "../../inc/arg.h"
 #include "../../inc/scc.h"
+#include "../../inc/syscrts.h"
+#include "../../inc/sysincludes.h"
 #include "../../inc/syslibs.h"
 #include "../../inc/ldflags.h"
 
@@ -58,7 +60,7 @@ static char *prefix, *objfile, *outfile;
 static char *tmpdir;
 static size_t tmpdirln;
 static struct items objtmp, objout;
-static int Mflag, Eflag, Sflag, cflag, dflag, kflag, sflag, Qflag = USEQBE;
+static int Mflag, Eflag, Sflag, cflag, dflag, kflag, sflag, Qflag = 1; /* TODO: Remove Qflag */
 static int devnullfd = -1;
 
 extern int failure;
@@ -118,6 +120,10 @@ inittool(int tool)
 
 	switch (tool) {
 	case CC1:
+		for (n = 0; sysincludes[n]; ++n) {
+			addarg(tool, "-I");
+			addarg(tool, sysincludes[n]);
+		}
 	case CC2:
 		fmt = (qbe(tool)) ? "%s-qbe_%s-%s" : "%s-%s-%s";
 		n = snprintf(t->bin, sizeof(t->bin), fmt, t->cmd, arch, abi);
@@ -139,14 +145,19 @@ inittool(int tool)
 			addarg(tool, "-L");
 			addarg(tool, syslibs[n]);
 		}
+		if (syscrts[0]) {
+			for (n = 0; syscrts[n]; ++n)
+				addarg(tool, syscrts[n]);
+			break;
+		}
 		n = snprintf(NULL, 0,
-		             "%s/lib/scc/crt/%s-%s-%s/crt.o",
+		             "%s/lib/scc/%s-%s-%s/crt.o",
 		             prefix, arch, abi, sys);
 		if (n < 0)
 			die("scc: wrong crt file name");
 		crt = xmalloc(++n);
 		sprintf(crt,
-		        "%s/lib/scc/crt/%s-%s-%s/crt.o",
+		        "%s/lib/scc/%s-%s-%s/crt.o",
 		        prefix, arch, abi, sys);
 		addarg(tool, crt);
 		break;

@@ -1,14 +1,17 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #undef setvbuf
+
+extern int _flsbuf(FILE *fp);
 
 int
 setvbuf(FILE * restrict fp, char * restrict buf, int mode, size_t size)
 {
 	int flags, r;
 
-	if (fflush(fp) == EOF)
+	if (_flsbuf(fp) == EOF)
 		return EOF;
 
 	switch (mode) {
@@ -27,18 +30,18 @@ setvbuf(FILE * restrict fp, char * restrict buf, int mode, size_t size)
 		}
 		break;
 	default:
-		errno = EIVAL;
+		errno = EINVAL;
 		return EOF;
 	}
 
 	flags = fp->flags;
 	if (flags & _IOALLOC)
 		free(fp->buf);
-	flag &= ~(_IONBF | _IOLBF | _IOFBF | _IOALLOC | _IOALLOC);
+	flags &= ~(_IONBF | _IOLBF | _IOFBF | _IOALLOC | _IOALLOC);
 	flags |= mode;
 	fp->flags = flags;
 	fp->buf = buf;
-	fp->size = size;
+	fp->len = size;
 
 	return 0;
 }

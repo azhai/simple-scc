@@ -7,32 +7,66 @@ static char sccsid[] = "@(#) ./ld/main.c";
 #include <stdlib.h>
 #include <string.h>
 
-#include "../inc/arg.h"
 #include "../inc/scc.h"
 #include "../inc/ar.h"
+#include "../inc/syslibs.h"
 #include "ld.h"
 
-char *argv0;
+char *output = "a.out", *entry = "start", *datasiz;
 int pass;
+int sflag;		/* discard all the symbols */
+int xflag;		/* discard local symbols */
+int Xflag;		/* discard locals starting with 'L' */
+int rflag;		/* preserve relocation bits */
+int dflag;		/* define common even with rflag */
+int gflag;              /* preserve debug symbols */
+
+static int done;
+
+void
+redefined(Obj *obj, Symbol *sym)
+{
+	/* TODO: add infotmation about where it is defined */
+	fprintf(stderr,
+		"ld: %s: redifinition of symbol '%s'\n",
+		obj->fname, sym->name);
+}
+
+void
+corrupted(char *fname, char *member)
+{
+	char *fmt;
+
+	fmt = (member) ?
+		"ld: %s(%s): corrupted file\n" : "ld: %s: corrupted file\n";
+	fprintf(stderr, fmt, fname, member);
+	exit(EXIT_FAILURE);
+}
+
+void
+outmem(void)
+{
+	fputs("ld: out of memory\n", stderr);
+	exit(EXIT_FAILURE);
+}
+
+static void
+cleanup(void)
+{
+	if (!done)
+		remove(output);
+}
 
 static int
 object(char *fname, char *member, FILE *fp)
 {
-	extern struct objfile *formats[];
-	struct objfile **p, *obj;
-	void *data;
-	void (*fun)(char *, char *, FILE *);
+	Obj *obj;
 
-	for (p = formats; *p; ++p) {
-		obj = *p;
-		if ((*obj->probe)(fname, member, fp))
-			break;
-	}
-	if (*p == NULL)
+	obj = probe(fname, member, fp);
+	if (!obj)
 		return 0;
+	load(obj);
 
-	fun = (pass == 1) ? obj->pass1 : obj->pass2;
-	(*fun)(fname, member, fp);
 	return 1;
 }
 
@@ -64,35 +98,36 @@ ar(char *fname, FILE *fp)
 		goto file_error;
 
 	while (fread(&hdr, sizeof(hdr), 1, fp) == 1) {
-		pos = ftell(fp);
 		if (strncmp(hdr.ar_fmag, ARFMAG, sizeof(hdr.ar_fmag)))
-			goto corrupted;
+			corrupted(fname, NULL);
 
 		siz = 0;
 		sscanf(hdr.ar_size, "%10ld", &siz);
-		if (siz == 0)
-			goto corrupted;
-
 		if (siz & 1)
 			siz++;
-		if (pos == -1 || pos > LONG_MAX - siz)
-			die("ld: %s: overflow in size of archive", fname);
+		if (siz == 0)
+			corrupted(fname, NULL);
+
+		pos = ftell(fp);
+		if (pos == -1 || pos > LONG_MAX - siz) {
+			fprintf(stderr,
+			        "ld: %s(%s): overflow in size of archive",
+			         fname, member);
+			exit(EXIT_FAILURE);
+		}
 		pos += siz;
 
 		getfname(&hdr, member);
 		object(fname, member, fp);
 		if (fseek(fp, pos, SEEK_SET) == EOF)
-			goto file_error;
+			break;
 	}
 
-	if (ferror(fp))
-		goto file_error;
-	return;
-
-corrupted:
-	die("ld: %s: corrupted archive", fname);
 file_error:
-	die("ld: %s: %s", fname, strerror(errno));
+	if (ferror(fp)) {
+		fprintf(stderr, "ld: %s: %s\n", fname, strerror(errno));
+		exit(EXIT_FAILURE);
+	}
 }
 
 static int
@@ -106,7 +141,7 @@ archive(char *fname, FILE *fp)
 	fsetpos(fp, &pos);
 
 	if (ferror(fp))
-		die("ld: %s: %s", fname, strerror(errno));
+		return 0;
 	if (strncmp(magic, ARMAG, SARMAG) != 0)
 		return 0;
 
@@ -115,73 +150,139 @@ archive(char *fname, FILE *fp)
 }
 
 static void
-process(char *fname)
-{
-	FILE *fp;
-
-	if ((fp = fopen(fname, "rb")) == NULL)
-		die("ld: %s: %s", fname, strerror(errno));
-
-	if (!object(fname, fname, fp) && !archive(fname, fp))
-		die("ld: %s: File format not recognized", fname);
-
-	if (ferror(fp))
-		die("ld: %s: %s", fname, strerror(errno));
-
-	fclose(fp);
-}
-
-static void
 pass1(int argc, char *argv[])
 {
-	while (*argv)
-		process(*argv++);
+	FILE *fp;
+	char *s;
+
+	while ((s = *argv++) != NULL) {
+		if ((fp = fopen(s, "rb")) == NULL) {
+			fprintf(stderr, "ld: %s: %s\n", s, strerror(errno));
+			exit(EXIT_FAILURE);
+		}
+		if (!object(s, NULL, fp) && !archive(s, fp)) {
+			fprintf(stderr, "ld: %s: File format not recognized\n", s);
+			exit(EXIT_FAILURE);
+		}
+		fclose(fp);
+	}
 }
 
 static void
 pass2(int argc, char *argv[])
 {
-	while (*argv)
-		process(*argv++);
+	FILE *fp;
+
+	if ((fp = fopen(output, "wb")) != NULL) {
+		writeout(fp);
+		if (fclose(fp) != EOF)
+			return;
+	}
+
+	fprintf(stderr, "ld: %s: %s\n", output, strerror(errno));
+	exit(EXIT_FAILURE);
 }
 
 static void
 usage(void)
 {
-	fputs("usage: ld [options] [@file] file ...\n", stderr);
+	fputs("usage: ld [options] file ...\n", stderr);
 	exit(1);
+}
+
+static void
+Lpath(char *path)
+{
+	char **bp;
+
+	for (bp = syslibs; bp < &syslibs[MAX_LIB_PATHS] && *bp; ++bp)
+		;
+	if (bp == &syslibs[MAX_LIB_PATHS]) {
+		fputs("ld: too many -L options\n", stderr);
+		exit(1);
+	}
+	*bp = path;
 }
 
 int
 main(int argc, char *argv[])
 {
-	unsigned i;
+	char *cp, **p;
 
-	ARGBEGIN {
-	case 's':
-	case 'u':
-	case 'l':
-	case 'x':
-	case 'X':
-	case 'r':
-	case 'd':
-	case 'n':
-	case 'i':
-	case 'o':
-	case 'e':
-	case 'O':
-	case 'D':
-		break;
-	default:
-		usage();
-	} ARGEND
-
+	for (--argc; *++argv; --argc) {
+		if (argv[0][0] != '-' || argv[0][1] == 'l')
+			break;
+		if (argv[0][1] == '-') {
+			--argc, ++argv;
+			break;
+		}
+		for (cp = &argv[0][1]; *cp; ++cp) {
+			switch (*cp) {
+			case 's':
+				sflag = 1;
+				break;
+			case 'x':
+				xflag = 1;
+				break;
+			case 'X':
+				Xflag = 1;
+				break;
+			case 'r':
+				rflag = 1;
+				break;
+			case 'd':
+				dflag = 1;
+				break;
+			case 'i':
+			case 'n':
+				/* TODO */
+				break;
+			case 'L':
+				if (argc == 0)
+					goto usage;
+				++argv, --argc;
+				Lpath(*argv);
+				break;
+			case 'u':
+				if (argc == 0)
+					goto usage;
+				++argv, --argc;
+				lookup(*argv, INSTALL);
+				break;
+			case 'o':
+				if (argc == 0)
+					goto usage;
+				++argv, --argc;
+				output = *argv;
+				break;
+			case 'e':
+				if (argc == 0)
+					goto usage;
+				++argv, --argc;
+				entry = *argv;
+				break;
+			case 'D':
+				if (argc == 0)
+					goto usage;
+				++argv, --argc;
+				datasiz = *argv;
+				break;
+			default:
+			usage:
+				usage();
+			}
+		}
+	}
 
 	if (argc == 0)
 		usage();
 
+	atexit(cleanup);
+
 	pass1(argc, argv);
 	pass2(argc, argv);
+
+	done = 1;
 
 	return 0;
 }

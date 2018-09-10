@@ -1,14 +1,13 @@
 .POSIX:
 
-PROJECTDIR=$$PWD/../../..
-ROOTDIR=$(PROJECTDIR)/rootdir
+ROOT=$(PROJECTDIR)/rootdir
 
 OUT = z80.out
 
 all: tests
 
 tests: $(OUT)
-	@PATH=$(ROOTDIR)/bin:$$PATH ./chktest.sh
+	@PATH=$(ROOT)/bin:$$PATH ./chktest.sh
 
 z80.out: master.s
 	z80-unknown-coff-as -o $@ master.s

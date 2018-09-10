@@ -26,7 +26,7 @@ lunpack(unsigned char *src, char *fmt, ...)
 				n *= 10;
 				d = *fmt++ - '0';
 			}
-			cp = va_arg(va, char *);
+			cp = va_arg(va, unsigned char *);
 			while (n--)
 				*cp++ = *bp++;
 			break;

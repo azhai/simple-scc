@@ -1,6 +1,7 @@
 
 #include <limits.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #undef vsprintf
 

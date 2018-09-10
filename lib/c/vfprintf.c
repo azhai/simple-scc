@@ -64,7 +64,7 @@ getnum(va_list va, int flags, int *sign)
 		uval = (uintmax_t) va_arg(va, void *);
 	} else {
 		val = va_arg(va, int);
-		uval = (unsigned) uval;
+		uval = (unsigned) val;
 	}
 
 	if ((flags & UNSIGNED) == 0 && val < 0) {
@@ -128,6 +128,7 @@ wstrout(wchar_t *ws, size_t len, int width, int fill, FILE * restrict fp)
 	int left = 0, adjust;
 	size_t cnt = 0;
 	wchar_t wc;
+#if 0
 
 	if (width < 0) {
 		left = 1;
@@ -148,7 +149,7 @@ wstrout(wchar_t *ws, size_t len, int width, int fill, FILE * restrict fp)
 
 	for ( ; adjust < 0; adjust--)
 		putc(' ', fp);
-
+#endif
 	return cnt;
 }
 

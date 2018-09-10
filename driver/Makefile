@@ -7,4 +7,4 @@ DRIVER = posix
 include $(PROJECTDIR)/rules.mk
 
 all dep clean distclean:
-	+cd $(DRIVER) && $(MAKE) $@
+	+@cd $(DRIVER) && $(MAKE) $@

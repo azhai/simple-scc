@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "malloc.h"
+#undef realloc
 
 void *
 realloc(void *ptr, size_t nbytes)

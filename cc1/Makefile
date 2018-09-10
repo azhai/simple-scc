@@ -1,33 +1,32 @@
 .POSIX:
 
-# Makefile is only used as a template for makefile.
-# If you modify Makefile remember to run make dep
-
 PROJECTDIR = ..
 
 include $(PROJECTDIR)/rules.mk
-include $(LIBDIR)/libdep.mk
+include $(LIBSCC)/libdep.mk
 
-MOREFLAGS = -I$(PROJECTDIR)/inc/$(STD) $(CC1_CFLAGS)
+MORECFLAGS = -I$(INCLUDE)/$(STD)
 
 OBJ = types.o decl.o lex.o error.o symbol.o main.o expr.o \
       code.o stmt.o cpp.o fold.o init.o builtin.o
 
-HDR = cc1.h \
-      $(PROJECTDIR)/inc/scc.h \
-      $(PROJECTDIR)/inc/$(STD)/cstd.h \
-      $(PROJECTDIR)/inc/sysincludes.h
+TARGETS   = $(LIBEXEC)/cc1-amd64-sysv $(LIBEXEC)/cc1-arm64-sysv \
+            $(LIBEXEC)/cc1-i386-sysv  $(LIBEXEC)/cc1-z80-scc
 
-all:
-	cp cc1-* $(PROJECTDIR)/rootdir/libexec/scc/
+all: $(TARGETS)
+
+$(TARGETS): $(LIBDIR)/libscc.a
 
 dep:
-	./gendep.sh $(TARGETS)
+	$(PROJECTDIR)/mkdep.sh
 
 clean:
 	rm -f *.o
 	rm -f target/*/*.o
-	rm -f cc1-*
+	rm -f $(TARGETS)
 
-distclean: clean
-	rm -f makefile
+include target/amd64-sysv/arch.mk
+include target/arm64-sysv/arch.mk
+include target/i386-sysv/arch.mk
+include target/z80-scc/arch.mk
+include deps.mk

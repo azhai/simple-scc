@@ -1,11 +1,19 @@
 #!/bin/sh
 
 set -e
-trap "rm -f $$.tmp" 0 2 3
 
-(sed '/^#deps/q' Makefile
-for i in *.c
+(echo '/^#deps/+;$c'
+
+for i in `find . -name '*.c'`
 do
-	sed -n '/#include "/ s/#include "\(.*\)"/'$i': \1/p' $i
+	file=`basename $i | sed 's/\.c$/.o/'`
+
+	dir=`dirname $i |
+	     sed -e 's,^\./,,' -e 's,^\.$,,' -e 's,...*[^/],&/,'`
+
+	sed -n "/#include \"/ s,#include \"\(.*\)\",$dir$file: $dir\1,p" $i
 done |
-sort) > $$.tmp && mv $$.tmp Makefile
+LC_ALL=C sort -s
+
+echo .
+echo w) | ed -s deps.mk

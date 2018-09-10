@@ -2,19 +2,19 @@
 
 PROJECTDIR = ..
 include $(PROJECTDIR)/rules.mk
-include $(LIBDIR)/libdep.mk
+include $(LIBSCC)/libdep.mk
 
 OBJ       = main.o 
 
-all: objdump
+all: $(BINDIR)/objdump
 
-objdump: $(OBJ) $(LIBDIR)/libscc.a
+$(BINDIR)/objdump: $(OBJ) $(LIBDIR)/libscc.a
 	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
 
-main.o: $(PROJECTDIR)/inc/scc.h $(PROJECTDIR)/inc/myro.h $(PROJECTDIR)/inc/arg.h
-
 dep:
-clean:
-	rm -f objdump *.o
+	$(PROJECTDIR)/mkdep.sh
 
-distclean: clean
+clean:
+	rm -f $(BINDIR)/objdump *.o
+
+include deps.mk

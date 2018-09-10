@@ -1,4 +1,4 @@
-include $(LIBDIR)/objlst.mk
+include $(LIBSCC)/objlst.mk
 
-$(LIBDIR)/libscc.a: $(LIB-OBJ)
-	+cd $(LIBDIR) && $(MAKE)
+$(LIBDIR)/libscc.a: $(LIBSCC-OBJ)
+	+@cd $(LIBSCC) && $(MAKE)

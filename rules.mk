@@ -1,14 +1,18 @@
 include $(PROJECTDIR)/config.mk
 
-INCDIR  = $(PROJECTDIR)/inc/
-LIBDIR = $(PROJECTDIR)/lib/scc
+INCLUDE    = $(PROJECTDIR)/inc
 
-SCC_CFLAGS = $(MOREFLAGS) \
-             $(SYSCFLAGS) \
-             -g \
-             $(CFLAGS)
+BINDIR     = $(PROJECTDIR)/rootdir/bin
+INCDIR     = $(PROJECTDIR)/rootdir/include/scc
+LIBDIR     = $(PROJECTDIR)/rootdir/lib/scc
+LIBEXEC    = $(PROJECTDIR)/rootdir/libexec/scc
 
-SCC_LDFLAGS = -L$(LIBDIR) -g $(LDFLAGS)
+LIBSCC     = $(PROJECTDIR)/lib/scc
+LIBCOFF32  = $(PROJECTDIR)/lib/coff32
+
+SCC_CFLAGS = $(MORECFLAGS) $(SYSCFLAGS) $(STDCFLAGS) -g $(CFLAGS)
+
+SCC_LDFLAGS = $(MORELFLAGS) $(SYSLDFLAGS) -L$(LIBDIR) -g $(LDFLAGS)
 
 # helper macro to run over all the directories
 FORALL = +@set -e ;\
@@ -26,14 +30,8 @@ FORALL = +@set -e ;\
 .c.o:
 	$(CC) $(SCC_CFLAGS) -o $@ -c $<
 
-.c:
-	$(CC) $(SCC_CFLAGS) $(SCC_LDFLAGS) -o $@ $<
-
-
-all: $(PROJECTDIR)/rootdir/bin $(PROJECTDIR)/rootdir/libexec/scc
-
-$(PROJECTDIR)/rootdir/bin:
-	mkdir -p $(PROJECTDIR)/rootdir/bin
-
-$(PROJECTDIR)/rootdir/libexec/scc:
-	mkdir -p $(PROJECTDIR)/rootdir/libexec/scc
+all:
+dep:
+clean:
+distclean: clean
+FORCE:

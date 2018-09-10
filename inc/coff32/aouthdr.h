@@ -12,4 +12,12 @@ struct aouthdr {
 	long data_start;    /* base of data segment */
 };
 
-typedef struct aouthdr AOUTHDR;
+#define AOUTHDR struct aouthdr 
+#define AOUTSZ sizeof(AOUTHDR)
+
+#define QMAGIC      0314
+#define STMAGIC     0401
+#define OMAGIC      0404
+#define JMAGIC      0407
+#define DMAGIC      0410
+#define ZMAGIC      0413

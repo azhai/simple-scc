@@ -1,16 +1,14 @@
 .POSIX:
 
 PROJECTDIR = ../..
-
 include $(PROJECTDIR)/rules.mk
 
-all:
+DIRS = amd64-sysv-linux amd64-sysv-openbsd amd64-sysv-netbsd
 
-dep:
-	./gendep.sh $(TARGETS)
+all: $(DIRS)
+
+$(DIRS): FORCE
+	@cd $@ && $(MAKE)
 
 clean:
-	rm -f */crt.o
-
-distclean: clean
-	rm -f makefile
+	$(FORALL)

@@ -3,10 +3,11 @@
 PROJECTDIR = ..
 include $(PROJECTDIR)/rules.mk
 
-DIRS=ar nm
+DIRS=ar/execute \
+     nm/execute \
+     as/execute \
+     libc/execute \
+     scc/execute scc/error
 
 all clean:
 	$(FORALL)
-
-distclean: clean
-dep:

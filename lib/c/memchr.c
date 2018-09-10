@@ -4,7 +4,7 @@
 void *
 memchr(const void *s, int c, size_t n)
 {
-	unsigned char *bp = (char *) s;
+	unsigned char *bp = (unsigned char *) s;
 
 	while (n > 0 && *bp++ != c)
 		--n;

@@ -1,3 +1,0 @@
-.POSIX:
-
-include ../Makefile.sys

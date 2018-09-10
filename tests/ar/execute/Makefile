@@ -1,12 +1,12 @@
 .POSIX:
 
 PROJECTDIR=$$PWD/../../../
-ROOTDIR=$(PROJECTDIR)/rootdir
+ROOT=$(PROJECTDIR)/rootdir
 
 all: tests
 
 tests: master.a
-	PATH=$(ROOTDIR)/bin:$$PATH ./chktest.sh
+	@TZ=UTC PATH=$(ROOT)/bin:$$PATH ./chktest.sh
 
 master.a:
 	./mkmaster.sh

@@ -30,7 +30,7 @@ typeof(SYMENT *ent)
 
 	switch (ent->n_scnum) {
 	case N_DEBUG:
-		c = '?';
+		c = 'n';
 		break;
 	case N_ABS:
 		c = 'a';
@@ -251,9 +251,9 @@ nm(char *fname, char *member, FILE *fp)
 	long pos = ftell(fp);
 
 	if (fread(buff, FILHSZ, 1, fp) != 1) {
-		if (ferror(fp))
-			die("nm: %s: %s", fname, strerror(errno));
-		die("nm: %s: corrupted file", fname);
+		if (!ferror(fp))
+			return 0;
+		die("nm: %s: %s", fname, strerror(errno));
 	}
 
 	getfhdr(buff, &hdr);
@@ -297,6 +297,7 @@ probe(char *fname, char *member, FILE *fp)
 	magic = c1 | c2 << 8;
 
 	switch (magic) {
+	case COFF_I386MAGIC:
 	case COFF_Z80MAGIC:
 		unpack = lunpack;
 		return 1;

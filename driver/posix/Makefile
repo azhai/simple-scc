@@ -1,30 +1,26 @@
 .POSIX:
 
 PROJECTDIR = ../..
-LIBDIR = $(PROJECTDIR)/lib/scc
 include $(PROJECTDIR)/rules.mk
-include $(LIBDIR)/libdep.mk
+include $(LIBSCC)/libdep.mk
+include $(INCLUDE)/incdep.mk
 
-OBJ = scc.o
-HDR = config.h \
-      $(PROJECTDIR)/inc/scc.h \
-      $(PROJECTDIR)/inc/arg.h \
-      $(PROJECTDIR)/inc/syslibs.h \
-      $(PROJECTDIR)/inc/ldflags.h
+# SYSLST is a list of backend-arch-abi-sys. First
+# element of the list becomes the default target
 
-all: scc cpp
-	mkdir -p $(PROJECTDIR)/rootdir/bin
-	cp scc cpp $(PROJECTDIR)/rootdir/bin/
+SYSLST  = amd64-sysv-linux-elf z80-scc-none-none \
+          i386-sysv-linux-elf amd64-sysv-openbsd-elf
 
-dep:
-	PREFIX=$(PREFIX) USEQBE=$(USEQBE) ./gendep.sh $(TARGETS)
+STDCFLAGS =
 
-$(OBJ): $(HDR)
+TARGETS = $(BINDIR)/scc $(BINDIR)/scpp
 
-scc: $(OBJ) $(LIBDIR)/libscc.a
-	$(CC) $(SCC_LDFLAGS) $(OBJ) -lscc -o $@
+all: $(TARGETS)
 
-cpp: cpp.sh config.h
+$(BINDIR)/scc: scc.o $(LIBDIR)/libscc.a
+	$(CC) $(SCC_LDFLAGS) scc.o -lscc -o $@
+
+$(BINDIR)/scpp: cpp.sh config.h
 	set -x ;\
 	trap "rm -f $$$$.sh" 0 2 3;\
 	rm -f $@ ;\
@@ -32,11 +28,15 @@ cpp: cpp.sh config.h
 	chmod +x $$$$.sh && \
 	mv $$$$.sh $@
 
-clean:
-	rm -f $(OBJ)
-	rm -f scc
-	rm -f scpp
+config.h:
+	PREFIX=$(PREFIX) ./config.sh $(SYSLST)
 
-distclean: clean
+dep:
+	$(PROJECTDIR)/mkdep.sh
+
+clean:
+	rm -f scc scpp *.o
+	rm -f $(TARGETS)
 	rm -f config.h
 
+include deps.mk

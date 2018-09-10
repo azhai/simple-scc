@@ -125,24 +125,24 @@
 0132-forward.c [TODO]
 0133-ftn-ptr.c [TODO]
 0134-arith.c [TODO]
-0135-unary.c [TODO]
-0136-if.c [TODO]
+0135-unary.c
+0136-if.c
 0137-int-cast.c [TODO]
-0138-namespace.c [TODO]
+0138-namespace.c
 0139-ptr-ary.c [TODO]
 0140-int-fold.c [TODO]
 0141-int-iden.c [TODO]
 0142-char-const.c [TODO]
-0143-int-const.c [TODO]
-0144-long-const.c [TODO]
+0143-int-const.c
+0144-long-const.c
 0145-llong-const.c [TODO]
-0146-ifdef.c [TODO]
-0147-intern-cpp.c [TODO]
-0148-cpp-string.c [TODO]
-0149-define.c [TODO]
-0150-define.c [TODO]
+0146-ifdef.c
+0147-intern-cpp.c
+0148-cpp-string.c
+0149-define.c
+0150-define.c
 0151-vararg.c [TODO]
-0152-cat.c [TODO]
+0152-cat.c
 0153-cpp-string.c [TODO]
 0154-if-defined [TODO]
 0155-struct-compl.c [TODO]
@@ -152,7 +152,7 @@
 0159-typedef.c [TODO]
 0160-cpp-if.c [TODO]
 0161-struct.c [TODO]
-0162-array.c [TODO]
+0162-array.c
 0163-array.c [TODO]
 0164-struct.c [TODO]
 0165-struct.c [TODO]
@@ -162,10 +162,13 @@
 0169-string.c [TODO]
 0170-line.c [TODO]
 0171-macros.c [TODO]
-0172-hexa.c [TODO]
-0173-macro.c [TODO]
+0172-hexa.c
+0173-macro.c
 0174-decay.c [TODO]
-0175-defined.c [TODO]
+0175-defined.c
 0176-macro.c [TODO]
 0177-literal.c [TODO]
 0178-include.c [TODO]
+0179-sizeof.c [TODO]
+0180-incomplete.c
+0181-stringize.c [TODO]

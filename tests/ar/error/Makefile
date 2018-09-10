@@ -1,3 +1,0 @@
-.POSIX:
-
-all clean:
