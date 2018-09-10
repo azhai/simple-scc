@@ -1,6 +1,5 @@
 
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
 #undef abort
 
