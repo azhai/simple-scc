@@ -1,10 +1,11 @@
+#include <limits.h>
 #include <string.h>
 #undef strcspn
 
 size_t
 strcspn(const char *s1, const char *s2)
 {
-	char buf[256];
+	char buf[sizeof(char) * CHAR_BIT];
 	unsigned char ch;
 	size_t n;
 
