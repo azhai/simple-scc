@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 /*
+TODO: Test va_copy, new c99 extension.
 output:
 test 1
 test 2

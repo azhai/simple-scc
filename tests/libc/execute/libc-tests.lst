@@ -8,3 +8,6 @@
 0008-longjmp
 0009-stdarg [TODO]
 0010-stddef
+0011-strcat
+0012-strchr
+0013-strcmp
