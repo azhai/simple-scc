@@ -4,15 +4,16 @@
 size_t
 strcspn(const char *s1, const char *s2)
 {
+	char buf[256];
+	unsigned char ch;
 	size_t n;
-	int c;
-	const char *p;
 
-	for (n = 0; c = *s1++; ++n) {
-		for (p = s2; *p && *p != c; ++p)
-			;
-		if (*p == c)
-			break;
-	}
+	memset(buf, 0, sizeof(buf));
+	while (ch = *s2++)
+		buf[ch] = 1;
+
+	for (n = 0; (ch = *s1++) && !buf[ch]; ++n)
+		;
+
 	return n;
 }
