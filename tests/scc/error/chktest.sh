@@ -11,10 +11,11 @@ rm -f test.log
 while read i state
 do
 	echo $i >> test.log
+	state=${state:-"\t"}
 
 	scc $CFLAGS -w -c $i 2> $err
 	echo "/^PATTERN/+;/^\./-w $chk" | ed -s $i
 	diff -c $chk $err >> test.log  && printf '[PASS]' || echo '[FAIL]'
-	printf "%s: %s\n" "$state" "$i"
+	printf "%s\t%s\n" "$state" "$i"
 	rm -f *.o
 done < $file
