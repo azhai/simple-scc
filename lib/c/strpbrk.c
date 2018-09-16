@@ -4,7 +4,7 @@
 char *
 strpbrk(const char *s1, const char *s2)
 {
-	char buf[128];
+	char buf[__NUMCHARS];
 	unsigned ch;
 
 	memset(buf, 0, sizeof(buf));

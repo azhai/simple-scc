@@ -4,7 +4,7 @@
 size_t
 strspn(const char *s1, const char *s2)
 {
-	char buf[128];
+	char buf[__NUMCHARS];
 	unsigned char ch;
 	size_t n;
 
