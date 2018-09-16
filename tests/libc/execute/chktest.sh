@@ -9,6 +9,7 @@ rm -f test.log
 
 while read i state
 do
+	state=${state:-"\t"}
 	rm -f a.out *.o $tmp1 $tmp2
 
 	(echo $i
@@ -17,5 +18,5 @@ do
 	 ./a.out > $tmp2
 	 diff -u $tmp1 $tmp2) >> test.log 2>&1 &&
 	printf '[PASS]' || printf '[FAIL]'
-	printf '%s: %s\n' "$state" "$i"
+	printf "$state\t%s\n" $i
 done < $file
