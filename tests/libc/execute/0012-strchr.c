@@ -16,6 +16,10 @@ main()
 
 	puts("testing");
 
+	p = strchr(buf, 0);
+	assert(p == buf+5);
+	assert(*p == '\0');
+
 	p = strchr(buf, 'a');
 	assert(p == buf);
 	assert(*p == 'a');

@@ -11,3 +11,18 @@
 0011-strcat
 0012-strchr
 0013-strcmp
+0014-strcoll
+0015-strcpy
+0016-strcspn
+0017-strerror [TODO]
+0018-strlen
+0019-strncat
+0020-strncmp
+0021-strncpy
+0022-strnlen
+0023-strpbrk
+0024-strrchr
+0025-strspn
+0026-strstr
+0027-strtok
+0028-strxfrm
