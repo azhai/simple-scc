@@ -3,6 +3,6 @@
 
 #include <arch/limits.h>
 
-#define MB_LEN_MAX 4
+#define MB_LEN_MAX 1
 
 #endif
