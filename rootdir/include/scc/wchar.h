@@ -4,8 +4,8 @@
 /* TODO: This is only a placeholder */
 typedef long wchar_t;
 /* typedef long size_t; */
-/* typedef long mbstate_t; */
-/* typedef long wint_t; */
+typedef long mbstate_t;
+typedef long wint_t;
 struct tm;
 
 /* #define WCHAR_MAX 1 */
