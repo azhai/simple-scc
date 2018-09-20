@@ -1,6 +1,6 @@
 .POSIX:
 
-ROOT=../../../rootdir
+ROOT=../../../root
 
 all: tests
 
