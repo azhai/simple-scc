@@ -1,4 +1,3 @@
-
 #define INSTALL   1
 #define NOINSTALL 0
 

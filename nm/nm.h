@@ -1,4 +1,3 @@
-
 struct symbol {
 	char *name;
 	int type;

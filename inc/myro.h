@@ -1,4 +1,3 @@
-
 #define MYROHDR_SIZ    48
 #define MYROSECT_SIZ   24
 #define MYROSYM_SIZ    26

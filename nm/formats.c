@@ -1,4 +1,3 @@
-
 static char sccsid[] = "@(#) ./nm/probe.c";
 
 #include <stdio.h>

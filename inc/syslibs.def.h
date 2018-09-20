@@ -1,4 +1,3 @@
-
 #define MAX_LIB_PATHS	32
 
 char *syslibs[MAX_LIB_PATHS + 1] = {

@@ -1,4 +1,3 @@
-
 #include <assert.h>
 
 #include "../../inc/coff32/scnhdr.h"
