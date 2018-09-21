@@ -16,6 +16,8 @@ environ:
 	.align	8
 	.global	_start
 _start:
+	movq	%rsp,%rbp
+	andq	$-16,%rsp
 	movq	16(%rbp),%rbx
 	movq	%rbx,environ
 	call	main

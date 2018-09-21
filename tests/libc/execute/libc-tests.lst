@@ -31,3 +31,4 @@
 0031-memmove
 0032-memset
 0033-memcmp
+0034-errno
