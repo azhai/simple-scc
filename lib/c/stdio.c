@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 
 static unsigned char inbuf[BUFSIZ];

@@ -1,4 +1,3 @@
-
 /* This file is inspired in the book "Understanding and using COFF" */
 
 #define E_SYMNMLEN   8

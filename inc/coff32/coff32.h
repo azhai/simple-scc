@@ -1,4 +1,3 @@
-
 typedef int (*packfun)(unsigned char *, char *, ...);
 
 #ifdef AOUTHDR

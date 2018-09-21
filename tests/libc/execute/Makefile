@@ -1,6 +1,6 @@
 .POSIX:
 
-ROOT   = ../../../rootdir
+ROOT   = ../../../root
 CFLAGS =
 CC     = SCCPREFIX=$(ROOT) ./cc.sh
 

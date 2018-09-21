@@ -1,7 +1,7 @@
 .POSIX:
 
 PROJECTDIR=$$PWD/../../../
-ROOT=$(PROJECTDIR)/rootdir
+ROOT=$(PROJECTDIR)/root
 
 all: tests
 

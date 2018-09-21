@@ -1,4 +1,3 @@
-
 int a;
 unsigned b;
 char c;

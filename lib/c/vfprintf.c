@@ -343,7 +343,7 @@ flags:
 		case 's':
 			if (flags & LONG) {
 				ws = va_arg(va, wchar_t *);
-				len = wcsnlen(ws, conv.prec);
+				/* len = wcsnlen(ws, conv.prec); */
 				goto wstrout;
 			} else {
 				s = va_arg(va, char *);

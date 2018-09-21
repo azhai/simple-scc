@@ -1,4 +1,3 @@
-
 extern void __assert(char *exp, char *file, long line);
 
 #undef assert

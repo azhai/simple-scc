@@ -1,6 +1,6 @@
 .POSIX:
 
-ROOT=$(PROJECTDIR)/rootdir
+ROOT=$(PROJECTDIR)/root
 
 OUT = z80.out
 

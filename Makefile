@@ -32,7 +32,7 @@ config:
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/
-	cp -r rootdir/* $(DESTDIR)$(PREFIX)/
+	cp -r root/* $(DESTDIR)$(PREFIX)/
 	cd $(DESTDIR)$(PREFIX)/libexec/scc/ && chmod 755 cc*
 	cd $(DESTDIR)$(PREFIX)/bin && chmod 755 scc cpp
 	mkdir -p $(DESTDIR)$(MANPREFIX)/man1

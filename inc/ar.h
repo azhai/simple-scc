@@ -1,4 +1,3 @@
-
 #define ARMAG      "!<arch>\n"     /* ar "magic number" */
 #define SARMAG     8               /* strlen(ARMAG); */
 #define ARFMAG     "`\n"

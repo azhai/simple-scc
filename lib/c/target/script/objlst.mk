@@ -20,7 +20,7 @@ LIBOBJ = bsearch.o qsort.o \
          isgraph.o islower.o isprint.o ispunct.o isspace.o isupper.o \
          isxdigit.o toupper.o tolower.o ctype.o setlocale.o \
          localeconv.o atoi.o atol.o atoll.o atexit.o abort.o exit.o \
-         errno.o _sys_errlist.o strnlen.o wcsnlen.o
+         errno.o _sys_errlist.o strnlen.o
 
 #rules
 __abs.o: ../../__abs.c
@@ -313,7 +313,4 @@ vsnprintf.o: ../../vsnprintf.c
 
 vsprintf.o: ../../vsprintf.c
 	$(CC) $(SCC_CFLAGS) ../../vsprintf.c -c
-
-wcsnlen.o: ../../wcsnlen.c
-	$(CC) $(SCC_CFLAGS) ../../wcsnlen.c -c
 

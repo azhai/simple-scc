@@ -1,4 +1,3 @@
-
 static char sccsid[] = "@(#) ./nm/coff.c";
 
 #include <assert.h>
