@@ -8,10 +8,16 @@
 	.p2align 2
 	.long      200000000
 
+	.bss
+environ:
+	.quad	0
+
 	.text
 	.align	8
 	.global	_start
 _start:
+	movq	16(%rbp),%rbx
+	movq	%rbx,environ
 	call	main
-	movl    %eax, %edi
+	movl    %eax,%edi
 	jmp	exit
