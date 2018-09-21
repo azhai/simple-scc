@@ -13,14 +13,10 @@ int
 main()
 {
 	char buf[40];
-	size_t n;
 
 	puts("testing");
-
-	assert(strxfrm(buf, "test", 40) == 4);
-	assert(strxfrm(buf, "", 0) == 0);
-	assert(strxfrm(NULL, "abc", 0) > 0);
-
+	assert(!memcmp(memcpy(buf, "abc", 3), "abc", 3));
+	assert(memcpy(buf, "abc", 0) == buf);
 	puts("done");
 
 	return 0;

@@ -13,6 +13,8 @@ four
 test2
 one
 three
+test3
+one
 done
 end:
 */
@@ -52,6 +54,7 @@ main()
 	puts("testing");
 	test("test1", "-+001--0002++3+-4");
 	test("test2", "001--+-+-+-3+-");
+	test("test3", "001");
 	puts("done");
 	return 0;
 }

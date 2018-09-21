@@ -26,3 +26,8 @@
 0026-strstr
 0027-strtok
 0028-strxfrm
+0029-memchr
+0030-memcpy
+0031-memmove
+0032-memset
+0033-memcmp
