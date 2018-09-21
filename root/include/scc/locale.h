@@ -31,12 +31,6 @@ struct lconv {
 	char p_sign_posn;
 	char n_sign_posn;
 	char int_frac_digits;
-	char int_p_cs_precedes;
-	char int_n_cs_precedes;
-	char int_p_sep_by_space;
-	char int_n_sep_by_space;
-	char int_p_sign_posn;
-	char int_n_sign_posn;
 };
 
 extern char *setlocale(int category, const char *locale);

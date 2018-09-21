@@ -32,3 +32,5 @@
 0032-memset
 0033-memcmp
 0034-errno
+0035-setlocale
+0036-localeconv
