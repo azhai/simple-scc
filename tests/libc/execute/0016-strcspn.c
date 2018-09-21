@@ -14,7 +14,7 @@ main()
 {
 	puts("testing");
 
-	assert(strcspn("012", "56789") == 3);
+	assert(strcspn("0125", "56789") == 3);
 	assert(strcspn("", "56789") == 0);
 	assert(strcspn("01234", "") == 5);
 	assert(strcspn("", "") == 0);

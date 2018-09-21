@@ -13,8 +13,8 @@ int
 main()
 {
 	puts("testing");
-	assert(strspn("abcdef", "cba") == 3);
-	assert(strspn("abc", "cba0") == 3);
+	assert(strspn("abccdef", "cba") == 4);
+	assert(strspn("abcg", "cba0") == 3);
 	assert(strspn("", "abc") == 0);
 	assert(strspn("abc", "") == 0);
 	assert(strspn("", "") == 0);
