@@ -4,3 +4,6 @@ raise.o: ../posix/raise.c ../../syscall.h
 
 signal.o: ../posix/signal.c ../../syscall.h
 	$(CC) $(SCC_CFLAGS) ../posix/signal.c -c
+
+getenv.o: ../posix/getenv.c
+	$(CC) $(SCC_CFLAGS) ../posix/getenv.c -c

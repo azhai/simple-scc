@@ -8,7 +8,7 @@ ARCH       = amd64
 ABI        = sysv
 SYSERRTBL  = ../posix/netbsd.e
 MORECFLAGS = -std=c99 -g -static -nostdinc
-SYSOBJ     = raise.o signal.o _sigaction.o _sigaction2.o _setcontext.o
+SYSOBJ     = getenv.o raise.o signal.o _sigaction.o _sigaction2.o _setcontext.o
 
 include syscall.mk
 include ../amd64-sysv/objlst.mk

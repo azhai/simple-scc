@@ -9,7 +9,7 @@
 	.long      200000000
 
 	.bss
-environ:
+_environ:
 	.quad	0
 
 	.text
@@ -19,7 +19,7 @@ _start:
 	movq	%rsp,%rbp
 	andq	$-16,%rsp
 	movq	16(%rbp),%rbx
-	movq	%rbx,environ
+	movq	%rbx,_environ
 	call	main
 	movl    %eax,%edi
 	jmp	exit
