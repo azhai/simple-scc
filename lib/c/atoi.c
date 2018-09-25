@@ -23,4 +23,3 @@ atoi(const char *s)
 
 	return sign * n;
 }
-
