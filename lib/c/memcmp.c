@@ -9,6 +9,6 @@ memcmp(const void *s1, const void *s2, size_t n)
 
 	for ( ; n > 0 && *s == *t; --n)
 		++s, ++t;
-	
+
 	return (n > 0) ? *(unsigned char *) s - *(unsigned char *) t : 0;
 }
