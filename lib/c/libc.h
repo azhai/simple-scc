@@ -11,7 +11,7 @@
 #define DEC     11
 
 #define EPOCH 1970
-#define FEBDAYS(y) ((_yeardays(y) == 366) ? 29 : 28)
+#define FEBDAYS(y) ((_daysyear(y) == 366) ? 29 : 28)
 #define SECMIN     60
 #define SECHOUR    (60 * SECMIN)    /* 3600 */
 #define SECDAY     (24 * SECHOUR)   /* 86400 */
@@ -27,6 +27,8 @@ struct tzone {
 	int gmtoff;
 	int isdst;
 };
+
+struct tm;
 
 extern struct tzone *_tzone(struct tm *tm);
 extern int _daysyear(int year);

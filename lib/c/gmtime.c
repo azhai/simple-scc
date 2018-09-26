@@ -18,8 +18,8 @@ gmtime(const time_t *t)
 
 	tm.tm_wday = (day + THU) % 7; /* 1/1/1970 was Thursday */
 
-	for (i = EPOCH; day >= _yeardays(i); ++i)
-		day -= _yeardays(i);
+	for (i = EPOCH; day >= _daysyear(i); ++i)
+		day -= _daysyear(i);
         tm.tm_year = i - 1900;
 	tm.tm_yday = day;
 
