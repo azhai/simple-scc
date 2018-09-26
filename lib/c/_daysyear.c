@@ -28,4 +28,3 @@ _newyear(int year)
 
 	return day % 7;
 }
-
