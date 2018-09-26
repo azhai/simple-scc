@@ -78,7 +78,7 @@ normalize(struct tm *tm)
 time_t
 mktime(struct tm *tm)
 {
-	int i, year, min, hour, dst;
+	int i, year, dst;
 	time_t t;
 	struct tm *aux;
 
@@ -100,17 +100,13 @@ mktime(struct tm *tm)
 
 	aux = localtime(&t);
 
-	hour = aux->tm_gmtoff / SECHOUR;
-	min = aux->tm_gmtoff / SECMIN;
 	dst = 0;
-
 	if (tm->tm_isdst == 0 && aux->tm_isdst == 1)
-		dst = -1;
-	else if (tm->tm_isdst > 0 && aux->tm_isdst == 0)
-		dst = +1;
+		dst = -SECHOUR;
+	else if (tm->tm_isdst == 1 && aux->tm_isdst == 0)
+		dst = +SECHOUR;
 
-	t += (hour +dst) * SECHOUR;
-	t -= min * SECMIN;
+	t += aux->tm_gmtoff + dst;
 
 	return t;
 }
