@@ -17,8 +17,8 @@ _environ:
 	.align	8
 	.global	_start
 _start:
-	movq	%rsp,%rbp
 	andq	$-16,%rsp
+	movq	%rsp,%rbp
 
 	movq	(%rbp),%rdi             # rdi = argc
 	leaq	8(%rbp),%rsi            # rsi = argv

@@ -24,4 +24,3 @@ atoll(const char *s)
 
 	return sign * n;
 }
-
