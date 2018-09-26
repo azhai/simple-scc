@@ -1,9 +1,6 @@
 #include <stddef.h>
 #include <signal.h>
 #include <sys.h>
-
-#include "../../syscall.h"
-
 #undef signal
 
 void

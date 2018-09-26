@@ -20,6 +20,8 @@ LIBOBJ = bsearch.o qsort.o \
          isgraph.o islower.o isprint.o ispunct.o isspace.o isupper.o \
          isxdigit.o toupper.o tolower.o ctype.o setlocale.o \
          localeconv.o atoi.o atol.o atoll.o atexit.o abort.o exit.o \
+         mktime.o localtime.o gmtime.o difftime.o \
+         _daysyear.o ctime.o asctime.o strftime.o \
          errno.o _sys_errlist.o strnlen.o
 
 #rules
@@ -41,6 +43,9 @@ __llabs.o: ../../__llabs.c
 __putc.o: ../../__putc.c
 	$(CC) $(SCC_CFLAGS) ../../__putc.c -c
 
+_daysyear.o: ../../_daysyear.c
+	$(CC) $(SCC_CFLAGS) ../../_daysyear.c -c
+
 _flsbuf.o: ../../_flsbuf.c
 	$(CC) $(SCC_CFLAGS) ../../_flsbuf.c -c
 
@@ -52,6 +57,9 @@ abort.o: ../../abort.c
 
 abs.o: ../../abs.c
 	$(CC) $(SCC_CFLAGS) ../../abs.c -c
+
+asctime.o: ../../asctime.c
+	$(CC) $(SCC_CFLAGS) ../../asctime.c -c
 
 atexit.o: ../../atexit.c
 	$(CC) $(SCC_CFLAGS) ../../atexit.c -c
@@ -74,8 +82,14 @@ calloc.o: ../../calloc.c
 clearerr.o: ../../clearerr.c
 	$(CC) $(SCC_CFLAGS) ../../clearerr.c -c
 
+ctime.o: ../../ctime.c
+	$(CC) $(SCC_CFLAGS) ../../ctime.c -c
+
 ctype.o: ../../ctype.c
 	$(CC) $(SCC_CFLAGS) ../../ctype.c -c
+
+difftime.o: ../../difftime.c
+	$(CC) $(SCC_CFLAGS) ../../difftime.c -c
 
 errno.o: ../../errno.c
 	$(CC) $(SCC_CFLAGS) ../../errno.c -c
@@ -131,6 +145,9 @@ getchar.o: ../../getchar.c
 gets.o: ../../gets.c
 	$(CC) $(SCC_CFLAGS) ../../gets.c -c
 
+gmtime.o: ../../gmtime.c
+	$(CC) $(SCC_CFLAGS) ../../gmtime.c -c
+
 isalnum.o: ../../isalnum.c
 	$(CC) $(SCC_CFLAGS) ../../isalnum.c -c
 
@@ -179,6 +196,9 @@ llabs.o: ../../llabs.c
 localeconv.o: ../../localeconv.c
 	$(CC) $(SCC_CFLAGS) ../../localeconv.c -c
 
+localtime.o: ../../localtime.c
+	$(CC) $(SCC_CFLAGS) ../../localtime.c -c
+
 malloc.o: ../../malloc.c
 	$(CC) $(SCC_CFLAGS) ../../malloc.c -c
 
@@ -196,6 +216,9 @@ memmove.o: ../../memmove.c
 
 memset.o: ../../memset.c
 	$(CC) $(SCC_CFLAGS) ../../memset.c -c
+
+mktime.o: ../../mktime.c
+	$(CC) $(SCC_CFLAGS) ../../mktime.c -c
 
 perror.o: ../../perror.c
 	$(CC) $(SCC_CFLAGS) ../../perror.c -c
@@ -262,6 +285,9 @@ strcspn.o: ../../strcspn.c
 
 strerror.o: ../../strerror.c
 	$(CC) $(SCC_CFLAGS) ../../strerror.c -c
+
+strftime.o: ../../strftime.c
+	$(CC) $(SCC_CFLAGS) ../../strftime.c -c
 
 strlen.o: ../../strlen.c
 	$(CC) $(SCC_CFLAGS) ../../strlen.c -c

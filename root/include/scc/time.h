@@ -21,6 +21,11 @@ struct tm {
 	int tm_wday;
 	int tm_yday;
 	int tm_isdst;
+
+	/* fields used internally */
+
+	char *tm_zone;
+	long tm_gmtoff;
 };
 
 extern clock_t clock(void);

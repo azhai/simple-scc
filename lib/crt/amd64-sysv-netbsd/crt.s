@@ -9,6 +9,7 @@
 	.long      200000000
 
 	.bss
+	.globl	_environ
 _environ:
 	.quad	0
 
@@ -18,8 +19,12 @@ _environ:
 _start:
 	movq	%rsp,%rbp
 	andq	$-16,%rsp
-	movq	16(%rbp),%rbx
-	movq	%rbx,_environ
+
+	movq	(%rbp),%rdi             # rdi = argc
+	leaq	8(%rbp),%rsi            # rsi = argv
+	leaq	16(%rbp,%rdi,8),%rdx    # rdx = envp = argv +8*argc + 8
+	movq	%rdx,_environ
+
 	call	main
 	movl    %eax,%edi
 	jmp	exit
