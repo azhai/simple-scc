@@ -26,6 +26,8 @@ FILE __iob[FOPEN_MAX] = {
 		.fd = 2,
 		.buf = stderr->unbuf,
 		.len = sizeof(stderr->unbuf),
-		.flags = _IOWRITE
+		.flags = _IOWRITE | _IONBF,
+		.rp = stderr->unbuf,
+		.wp = stderr->unbuf,
 	},
 };

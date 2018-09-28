@@ -60,10 +60,14 @@ __putc(int ch, FILE *fp)
 		*fp->lp++ = ch;
 		if (ch == '\n' && _flsbuf(fp))
 			return EOF;
-	} else {
+	} else if (fp->flags & _IOFBF) {
 		if (fp->wp == fp->rp && _flsbuf(fp))
 			return EOF;
 		*fp->wp++ = ch;
+	} else {
+		*fp->wp++ = ch;
+		if (_flsbuf(fp))
+			return EOF;
 	}
 
 done:
