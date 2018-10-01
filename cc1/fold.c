@@ -9,11 +9,7 @@ static char sccsid[] = "@(#) ./cc1/fold.c";
 TUINT
 ones(int nbytes)
 {
-	TUINT v;
-
-	for (v = 0; nbytes--; v |= 255)
-		v <<= 8;
-	return v;
+	return (nbytes == 8) ? -1 : ~(-1ull << nbytes * 8);
 }
 
 static int
