@@ -2,7 +2,7 @@
 #undef rand
 #undef srand
 
-static int next;
+static unsigned long next;
 
 void
 srand(unsigned seed)
