@@ -38,32 +38,32 @@ struct conv {
 };
 
 static uintmax_t
-getnum(va_list va, int flags, int *sign)
+getnum(va_list *va, int flags, int *sign)
 {
 	uintmax_t uval;
 	intmax_t val;
 
 	if (flags & CHAR) {
-		val = va_arg(va, int);
+		val = va_arg(*va, int);
 		uval = (unsigned char) uval;
 	} else if (flags & SHORT) {
-		val = va_arg(va, int);
+		val = va_arg(*va, int);
 		uval = (unsigned short) val;
 	} else if (flags & LONG) {
-		val = va_arg(va, long);
+		val = va_arg(*va, long);
 		uval = (unsigned long) val;
 	} else if (flags & LLONG) {
-		val = va_arg(va, long long);
+		val = va_arg(*va, long long);
 		uval = (unsigned long long) val;
 	} else if (flags & SIZET) {
-		uval = va_arg(va, size_t);
+		uval = va_arg(*va, size_t);
 	} else if (flags & INTMAX) {
-		val = va_arg(va, intmax_t);
+		val = va_arg(*va, intmax_t);
 		uval = (uintmax_t) val;
 	} else if (flags & VOIDPTR) {
-		uval = (uintmax_t) va_arg(va, void *);
+		uval = (uintmax_t) va_arg(*va, void *);
 	} else {
-		val = va_arg(va, int);
+		val = va_arg(*va, int);
 		uval = (unsigned) val;
 	}
 
@@ -104,22 +104,22 @@ numtostr(uintmax_t val, int flags, struct conv *conv, char *buf)
 }
 
 static void
-savecnt(va_list va, int flags, int cnt)
+savecnt(va_list *va, int flags, int cnt)
 {
 	if (flags & CHAR)
-		*va_arg(va, char*) = cnt;
+		*va_arg(*va, char*) = cnt;
 	else if (flags & SHORT)
-		*va_arg(va, short*) = cnt;
+		*va_arg(*va, short*) = cnt;
 	else if (flags & LONG)
-		*va_arg(va, long*) = cnt;
+		*va_arg(*va, long*) = cnt;
 	else if (flags & LLONG)
-		*va_arg(va, long long*) = cnt;
+		*va_arg(*va, long long*) = cnt;
 	else if (flags & SIZET)
-		*va_arg(va, size_t*) = cnt;
+		*va_arg(*va, size_t*) = cnt;
 	else if (flags & INTMAX)
-		*va_arg(va, intmax_t*) = cnt;
+		*va_arg(*va, intmax_t*) = cnt;
 	else
-		*va_arg(va, int*) = cnt;
+		*va_arg(*va, int*) = cnt;
 }
 
 static size_t
@@ -325,7 +325,7 @@ flags:
 		numeric:
 			if (conv.prec != -1)
 				fill = ' ';
-			s = numtostr(getnum(va, flags, &conv.sign),
+			s = numtostr(getnum(&va, flags, &conv.sign),
 			             flags,
 			             &conv,
 			             &buf[MAXPREC]);
@@ -357,7 +357,7 @@ flags:
 			inc = strout(s, len, width, fill, fp);
 			break;
 		case 'n':
-			savecnt(va, flags, cnt);
+			savecnt(&va, flags, cnt);
 			break;
 		case '\0':
 			goto out_loop;
