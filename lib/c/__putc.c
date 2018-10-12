@@ -70,7 +70,6 @@ __putc(int ch, FILE *fp)
 			return EOF;
 	}
 
-done:
 	fp->flags |= _IOWRITE;
 	return ch & 0xFF;
 }
