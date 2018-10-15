@@ -56,14 +56,7 @@ _fpopen(const char * restrict fname,
 	if ((fd = _open(fname, flags)) < 0)
 		return NULL;
 
-	if (fp->buf == NULL) {
-		if ((fp->buf = malloc(BUFSIZ)) == NULL) {
-			_close(fd);
-			errno = ENOMEM;
-			return NULL;
-		}
-		fp->flags |= _IOALLOC;
-	}
+	fp->buf = NULL;
 	fp->fd = fd;
 
 	if (!bin)

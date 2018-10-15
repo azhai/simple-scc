@@ -1,12 +1,9 @@
 #include <stdio.h>
 
-static unsigned char inbuf[BUFSIZ];
-static unsigned char outbuf[BUFSIZ];
-
 FILE __iob[FOPEN_MAX] = {
 	{
 		.fd = 0,
-		.buf = inbuf,
+		.buf = NULL,
 		.len = BUFSIZ,
 		.flags = _IOREAD,
 		.lp = inbuf,
@@ -15,7 +12,7 @@ FILE __iob[FOPEN_MAX] = {
 	},
 	{
 		.fd = 1,
-		.buf = outbuf,
+		.buf = NULL,
 		.len = BUFSIZ,
 		.flags = _IOWRITE | _IOLBF,
 		.lp = outbuf,

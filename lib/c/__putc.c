@@ -45,6 +45,14 @@ __putc(int ch, FILE *fp)
 		return EOF;
 	}
 
+	if (fp->buf == NULL) {
+		if ((fp->buf = malloc(BUFSIZ)) == NULL) {
+			errno = ENOMEM;
+			return NULL;
+		}
+		fp->flags |= _IOALLOC;
+	}
+
 	if (first) {
 		if (atexit(cleanup)) {
 			fp->flags |= _IOERR;

@@ -22,6 +22,14 @@ __getc(FILE *fp)
 		return EOF;
 	}
 
+	if (fp->buf == NULL) {
+		if ((fp->buf = malloc(BUFSIZ)) == NULL) {
+			errno = ENOMEM;
+			return NULL;
+		}
+		fp->flags |= _IOALLOC;
+	}
+
 	if ((cnt = _read(fp->fd, fp->buf, fp->len)) <= 0) {
 		fp->flags |= (cnt == 0) ? _IOEOF : _IOERR;
 		return EOF;
