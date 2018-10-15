@@ -8,7 +8,7 @@ LIBOBJ = bsearch.o qsort.o \
          fgets.o gets.o fgetc.o fputc.o getchar.o putchar.o \
          fputs.o puts.o fread.o fwrite.o \
          getc.o putc.o __putc.o __getc.o \
-         rewind.o fseek.o ferror.o feof.o clearerr.o \
+         ftell.o rewind.o fseek.o ferror.o feof.o clearerr.o \
          setbuf.o setvbuf.o \
          fclose.o fopen.o freopen.o _fpopen.o _flsbuf.o stdio.o \
          realloc.o calloc.o malloc.o \
@@ -132,6 +132,9 @@ freopen.o: ../../freopen.c
 
 fseek.o: ../../fseek.c
 	$(CC) $(SCC_CFLAGS) ../../fseek.c -c
+
+ftell.o: ../../ftell.c
+	$(CC) $(SCC_CFLAGS) ../../ftell.c -c
 
 fwrite.o: ../../fwrite.c
 	$(CC) $(SCC_CFLAGS) ../../fwrite.c -c

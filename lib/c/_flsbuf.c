@@ -5,11 +5,10 @@
 int
 _flsbuf(FILE *fp)
 {
-	int lnbuf = fp->flags & _IOLBF;
 	unsigned char *p;
 	size_t cnt;
 
-	p = (lnbuf) ? fp->lp : fp->wp;
+	p = (fp->flags & _IOLBF) ? fp->lp : fp->wp;
 	cnt = p - fp->buf;
 
 	if (_write(fp->fd, fp->buf, cnt) != cnt) {
