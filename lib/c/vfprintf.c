@@ -45,7 +45,7 @@ getnum(va_list *va, int flags, int *sign)
 
 	if (flags & CHAR) {
 		val = va_arg(*va, int);
-		uval = (unsigned char) uval;
+		uval = (unsigned char) val;
 	} else if (flags & SHORT) {
 		val = va_arg(*va, int);
 		uval = (unsigned short) val;
@@ -78,7 +78,7 @@ static char *
 numtostr(uintmax_t val, int flags, struct conv *conv, char *buf)
 {
 	char *buf0 = buf;
-	int len, base = conv->base, prec = conv->prec;
+	int base = conv->base, prec = conv->prec;
 	uintmax_t oval = val;
 
 	if (prec == -1)
@@ -197,7 +197,7 @@ strout(char *s, size_t len, int width, int fill, FILE * restrict fp)
 int
 vfprintf(FILE * restrict fp, const char *fmt, va_list va)
 {
-	int *p, ch, n, flags, width, left, fill, cnt = 0;
+	int ch, n, flags, width, left, fill, cnt = 0;
 	size_t inc, len;
 	char *s;
 	wchar_t *ws;
