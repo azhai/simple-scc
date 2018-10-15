@@ -8,7 +8,7 @@ extern int _flsbuf(FILE *fp);
 int
 setvbuf(FILE * restrict fp, char * restrict buf, int mode, size_t size)
 {
-	int flags, r;
+	int flags;
 
 	if (_flsbuf(fp) == EOF)
 		return EOF;
