@@ -8,3 +8,4 @@ _open.s
 _read.s
 _write.s
 _sigaction.s
+_gettimeofday.s
