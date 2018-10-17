@@ -27,7 +27,9 @@ __getc(FILE *fp)
 			errno = ENOMEM;
 			return EOF;
 		}
+		fp->len = BUFSIZ;
 		fp->flags |= _IOALLOC;
+		fp->lp = fp->rp = fp->wp = fp->buf;
 	}
 
 	if ((cnt = _read(fp->fd, fp->buf, fp->len)) <= 0) {
