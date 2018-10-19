@@ -4,6 +4,9 @@ ROOT   = ../../../root
 CFLAGS =
 CC     = SCCPREFIX=$(ROOT) ./cc.sh
 
+.c:
+	$(CC) $(CFLAGS) -o $@ $<
+
 all: tests
 
 tests:
