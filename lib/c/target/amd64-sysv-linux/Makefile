@@ -7,7 +7,7 @@ SYS        = linux
 ARCH       = amd64
 ABI        = sysv
 SYSERRTBL  = ../posix/linux.e
-MORECFLAGS = -std=c99 -g -static -nostdinc
+MORECFLAGS = -std=c99 -g -static -nostdinc -ffreestanding -fno-stack-protector
 SYSOBJ     = raise.o signal.o
 
 include syscall.mk

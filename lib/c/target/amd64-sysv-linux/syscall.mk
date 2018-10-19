@@ -1,1 +1,1 @@
-SYSCALL = _Exit.o _read.o _write.o _open.o _close.o _brk.o _getpid.o _kill.o _sigaction.o _lseek.o 
+SYSCALL = _read.o _write.o _open.o _close.o _lseek.o _brk.o _sigaction.o _getpid.o _Exit.o _kill.o 
