@@ -2,7 +2,7 @@
 LIBOBJ = bsearch.o qsort.o \
          abs.o __abs.o labs.o __labs.o llabs.o __llabs.o \
          perror.o strerror.o \
-         tmpnam.o \
+         rand.o tmpnam.o \
          sprintf.o snprintf.o vsprintf.o vsnprintf.o \
          printf.o fprintf.o vfprintf.o \
          fgets.o gets.o fgetc.o fputc.o getchar.o putchar.o \
