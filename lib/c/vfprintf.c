@@ -1,11 +1,3 @@
-/*
- * This file is covered by the license that you can find in the file
- * LICENSE, but for this file, vfprintf.c, an additional clause is
- * added:
- *     - Christopher M. Graff (<cm0graff@gmail.com>) is forbidden to
- *       use, copy, modify and/or distribute this file. He is forbidden
- *       even to read this file.
- */ 
 #include <ctype.h>
 #include <limits.h>
 #include <stdarg.h>
