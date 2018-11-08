@@ -1,0 +1,9 @@
+_Exit.s
+_close.s
+_brk.s
+_getpid.s
+_kill.s
+_lseek.s
+_openat.s
+_read.s
+_write.s

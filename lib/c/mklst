@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+trap 'r=$?;rm -f $$.tmp;exit $r' EXIT HUP QUIT INT TERM
+archive=${1?'First parameter must be the archive name'}
+
+if test -f $archive
+then
+	newer="-newer $archive" 
+fi
+
+find . -name '*.o' $newer > $$.tmp && mv $$.tmp objlst

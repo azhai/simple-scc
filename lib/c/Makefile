@@ -1,9 +1,29 @@
 .POSIX:
+PROJECTDIR =../..
+include $(PROJECTDIR)/scripts/rules.mk
 
-PROJECTDIR = ../..
-include $(PROJECTDIR)/rules.mk
+TARGET = $(PROJECTDIR)/lib/libc.a
+DIRS = arch\
+       assert\
+       ctype\
+       locale\
+       stdio\
+       stdlib\
+       string\
+       time\
 
-DIRS = target
+all: $(DIRS)
+	+@$(MAKE) $(TARGET)
 
-all dep clean distclean:
+$(DIRS): FORCE
+	+@cd $@ && $(MAKE)
+
+objlst: FORCE
+	./mklst $(TARGET)
+
+$(TARGET): objlst
+	xargs $(AR) $(ARFLAGS) $@ < objlst
+
+clean:
 	$(FORALL)
+	rm -f objlst

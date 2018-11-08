@@ -110,11 +110,8 @@ extern void perror(const char *s);
 extern int __getc(FILE *fp);
 extern int __putc(int, FILE *fp);
 
-#ifdef __USE_MACROS
-#ifdef __UNIX_FILES
-#define getc(fp)     ((fp)->rp >= (fp)->wp ?  __getc(fp) : *(fp)->rp++)
-#define putc(c, fp)  ((fp)->wp >= (fp)->rp ? __putc(c,fp) : (*(fp)->wp++ = c))
-#endif
+#define getc(fp)            ((fp)->rp >= (fp)->wp ? __getc(fp) : *(fp)->rp++)
+#define putc(c, fp)         ((fp)->wp >= (fp)->rp ? __putc(c,fp) : (*(fp)->wp++ = c))
 
 #define ferror(fp)          ((fp)->flags & _IOERR)
 #define feof(fp)            ((fp)->flags & _IOEOF)
@@ -122,6 +119,5 @@ extern int __putc(int, FILE *fp);
 #define getchar()           getc(stdin)
 #define putchar(c)          putc((c), stdout)
 #define setbuf(fp, b)       (void) setvbuf(fp, b, b ? _IOFBF:_IONBF, BUFSIZ)
-#endif
 
 #endif

@@ -1,0 +1,33 @@
+.POSIX:
+PROJECTDIR =../../../../..
+include $(PROJECTDIR)/scripts/rules.mk
+
+OBJS  = _Exit.o \
+        _close.o \
+        _getpid.o \
+        _kill.o \
+        _lseek.o \
+        _open.o \
+        _read.o \
+        _write.o \
+        _brk.o \
+        _getheap.o \
+        _sigaction.o\
+        _tzone.o\
+        getenv.o\
+        raise.o\
+        signal.o\
+        time.o\
+
+all: syscall
+	$(MAKE) objs
+
+objs: $(OBJS)
+
+syscall: syscall.lst
+	./gensys.sh syscall.lst
+	touch syscall
+
+clean:
+	rm -f `awk '/[0-9]*	_/ {print $$2".s"}' syscall.lst`
+	rm -f syscall
