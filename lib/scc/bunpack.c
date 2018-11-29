@@ -1,4 +1,4 @@
-static char sccsid[] = "@(#) ./lib/scc/lunpack.c";
+static char sccsid[] = "@(#) ./lib/scc/bunpack.c";
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -6,7 +6,7 @@ static char sccsid[] = "@(#) ./lib/scc/lunpack.c";
 #include "../../inc/scc.h"
 
 int
-lunpack(unsigned char *src, char *fmt, ...)
+bunpack(unsigned char *src, char *fmt, ...)
 {
 	unsigned char *bp, *cp;
 	unsigned short *sp;
