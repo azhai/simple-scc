@@ -8,6 +8,6 @@ _cerrno:
 
 1:	neg	x0,x0
 	adr	x1,errno
-	str	w1,[x0]
+	str	w0,[x1]
 	mov	x0,#-1
 	ret

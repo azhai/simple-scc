@@ -7,16 +7,12 @@ extern char **_environ;
 char *
 getenv(const char *name)
 {
-	char **p;
+	char **p, *s;
 	size_t len = strlen(name);
 
-	for (p = _environ; *p; ++p) {
-		if (!memcmp(name, *p, len) && (*p)[len] == '=')
-			break;
+	for (p = _environ; s = *p; ++p) {
+		if (!strncmp(name, s, len) && s[len] == '=')
+			return s + len + 1;
 	}
-
-	if (!*p) 
-		return NULL;
-
-	return &(*p)[len];
+	return NULL;
 }

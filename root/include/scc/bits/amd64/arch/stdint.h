@@ -65,19 +65,6 @@
 #define WCHAR_MIN INT32_MIN
 #define WCHAR_MAX INT32_MAX
 
-#define INT8_C(x)  x
-#define INT16_C(x) x
-#define INT32_C(x) x
-#define INT64_C(x) x ## L
-
-#define UINT8_C(x)  x
-#define UINT16_C(x) x
-#define UINT32_C(x) x ## U
-#define UINT64_C(x) x ## UL
-
-#define INTMAX_C(x)  x ## L
-#define UINTMAX_C(x) x ## UL
-
 typedef signed char int8_t;
 typedef short int16_t;
 typedef int int32_t;

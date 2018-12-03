@@ -8,11 +8,11 @@
 
 #define INT32_MAX  0x7FFFFFFF
 #define INT32_MIN  (-INT32_MAX - 1)
-#define UINT32_MAX 0xFFFFFFFFU
+#define UINT32_MAX 0xFFFFFFFF
 
-#define INT64_MAX  0x7FFFFFFFFFFFFFFFLL
-#define INT64_MIN  (-INT64_MAX - 1LL)
-#define UINT64_MAX 0xFFFFFFFFFFFFFFFFULL
+#define INT64_MAX  0x7FFFFFFFFFFFFFFF
+#define INT64_MIN  (-INT64_MAX - 1)
+#define UINT64_MAX 0xFFFFFFFFFFFFFFFF
 
 #define INT_LEAST8_MIN  INT8_MIN
 #define INT_LEAST8_MAX  INT8_MAX
@@ -58,19 +58,6 @@
 #define PTRDIFF_MAX INT64_MAX
 
 #define SIZE_MAX UINT64_MAX
-
-#define INT8_C(x)  x
-#define INT16_C(x) x
-#define INT32_C(x) x
-#define INT64_C(x) x ## LL
-
-#define UINT8_C(x)  x
-#define UINT16_C(x) x
-#define UINT32_C(x) x ## U
-#define UINT64_C(x) x ## ULL
-
-#define INTMAX_C(x)  x ## L
-#define UINTMAX_C(x) x ## ULL
 
 typedef signed char int8_t;
 typedef short int16_t;

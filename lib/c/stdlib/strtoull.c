@@ -11,7 +11,7 @@ strtoull(const char *s, char **end, int base)
 {
 	int d, sign = 1;
 	unsigned long long n;
-	static char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	static const char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	const char *t, *p;
 
 	while (isspace(*s))

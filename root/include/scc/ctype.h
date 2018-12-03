@@ -26,7 +26,7 @@ extern int toupper(int c);
 #define _X	0x40	/* hex char */
 #define _SP	0x80	/* hard space (0x20) */
 
-extern unsigned char __ctype[];
+extern const unsigned char __ctype[];
 
 #define isalnum(c)  ((__ctype+1)[c] & (_U|_L|_D))
 #define isalpha(c)  ((__ctype+1)[c] & (_U|_L))

@@ -1,6 +1,7 @@
 .POSIX:
 PROJECTDIR =../../../../..
 include $(PROJECTDIR)/scripts/rules.mk
+include ../../rules.mk
 
 OBJS  = _Exit.o \
         _close.o \
@@ -13,11 +14,12 @@ OBJS  = _Exit.o \
         _brk.o \
         _getheap.o \
         _sigaction.o\
-        _tzone.o\
-        getenv.o\
-        raise.o\
-        signal.o\
-        time.o\
+        _tzone.o \
+        getenv.o \
+        raise.o \
+        signal.o \
+        time.o \
+        _sys_errlist.o \
 
 all: syscall
 	$(MAKE) objs
@@ -30,4 +32,4 @@ syscall: syscall.lst
 
 clean:
 	rm -f `awk '/[0-9]*	_/ {print $$2".s"}' syscall.lst`
-	rm -f syscall
+	rm -f syscall _sys_errlist.c
