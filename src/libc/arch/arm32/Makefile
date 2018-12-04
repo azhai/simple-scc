@@ -1,6 +1,7 @@
 .POSIX:
 PROJECTDIR =../../../..
 include $(PROJECTDIR)/scripts/rules.mk
+include ../../rules.mk
 
 OBJS = longjmp.o setjmp.o
 DIRS = linux

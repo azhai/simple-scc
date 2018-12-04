@@ -1,8 +1,9 @@
 .POSIX:
+
 PROJECTDIR =../..
 include $(PROJECTDIR)/scripts/rules.mk
+include rules.mk
 
-MORECFLAGS = -I$(INCDIR) -I$(INCDIR)/bits/$(SYS) -I$(INCDIR)/bits/$(ARCH)
 TARGET = $(CRTDIR)/$(ARCH)-$(SYS)/libc.a
 DIRS = arch\
        assert\

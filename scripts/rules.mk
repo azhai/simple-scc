@@ -9,9 +9,11 @@ BINDIR     = $(PROJECTDIR)/bin
 LIBEXEC    = $(PROJECTDIR)/libexec/scc
 CRTDIR     = $(PROJECTDIR)/lib/scc
 
+INCLUDE    = -I$(INCDIR)/scc \
+
 SCC_CFLAGS = $(MORECFLAGS) \
              $(SYSCFLAGS) \
-             -I$(INCDIR)/scc \
+             $(INCLUDE) \
              -g \
              $(CFLAGS)
 

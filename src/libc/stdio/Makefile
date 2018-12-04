@@ -1,8 +1,7 @@
 .POSIX:
 PROJECTDIR =../../..
 include $(PROJECTDIR)/scripts/rules.mk
-
-MORECFLAGS = -w -I$(INCDIR) -I$(INCDIR)/bits/$(SYS) -I$(INCDIR)/bits/$(ARCH)
+include ../rules.mk
 
 OBJS = __getc.o\
        __putc.o\
