@@ -1,7 +1,7 @@
 .POSIX:
 
 PROJECTDIR = ..
-include $(PROJECTDIR)/rules.mk
+include $(PROJECTDIR)/scripts/rules.mk
 
 DIRS=ar/execute \
      nm/execute \

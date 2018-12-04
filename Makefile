@@ -1,34 +1,32 @@
-# scc - Suckless C Compiler
 .POSIX:
 
 PROJECTDIR = .
+include $(PROJECTDIR)/scripts/rules.mk
 
-include rules.mk
+DIRS  = src include/scc/scc tests
 
-DIRS  = inc cc1 cc2 driver lib as ar nm objdump ld
+all: src
 
-all: $(DIRS)
+src: dirs include/scc/scc
 
-$(DIRS): config FORCE 
-	+@cd $@ && $(MAKE) all
+dirs: $(SCRIPTDIR)/libc-proto
+	xargs mkdir -p < $(SCRIPTDIR)/libc-proto
+	touch dirs
 
-clean dep:
+$(DIRS): FORCE 
+	+@cd $@ && $(MAKE)
+
+dep:
 	$(FORALL)
 
-distclean: unconfig
+clean:
 	$(FORALL)
-	rm -f config
+	rm -rf lib bin libexec dirs
+
+distclean: clean
+	+@cd include/scc/scc && $(MAKE) distclean
 
 tests: all
-	+@cd tests && $(MAKE) -e all
-
-unconfig:
-	(echo '/^### Systems/,$$ v/^#/ s/^/#/' ; echo w) | ed -s config.mk
-	rm -f config
-
-config:
-	./config.sh
-	touch $@
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/

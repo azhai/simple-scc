@@ -1,0 +1,10 @@
+bin
+include/scc
+libexec/scc
+lib
+lib/scc
+lib/scc/i386-linux
+lib/scc/amd64-netbsd
+lib/scc/amd64-linux
+lib/scc/amd64-openbsd
+lib/scc/i386-openbsd

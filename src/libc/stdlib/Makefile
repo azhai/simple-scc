@@ -1,0 +1,25 @@
+.POSIX:
+PROJECTDIR =../../..
+include $(PROJECTDIR)/scripts/rules.mk
+
+MORECFLAGS = -w -I$(INCDIR) -I$(INCDIR)/bits/$(SYS) -I$(INCDIR)/bits/$(ARCH)
+
+OBJS = abort.o\
+       abs.o\
+       atexit.o\
+       atoi.o\
+       atol.o\
+       atoll.o\
+       bsearch.o\
+       calloc.o\
+       errno.o\
+       exit.o\
+       labs.o\
+       llabs.o\
+       malloc.o\
+       qsort.o\
+       rand.o\
+       realloc.o\
+       strtoull.o\
+
+all: $(OBJS)
