@@ -1,5 +1,4 @@
 .POSIX:
-
 PROJECTDIR =../..
 include $(PROJECTDIR)/scripts/rules.mk
 include rules.mk
@@ -25,6 +24,7 @@ objlst: FORCE
 
 $(TARGET): objlst
 	xargs $(AR) $(ARFLAGS) $@ < objlst
+	$(RL) $(RANLIBFLAGS) $@
 
 clean:
 	$(FORALL)

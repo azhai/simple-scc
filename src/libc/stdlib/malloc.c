@@ -81,7 +81,7 @@ sbrk(uintptr_t inc)
 		return ERRADDR;
 	new = old + inc;
 	p = _brk(new);
-	if (p == old || p < 0)
+	if (p == old || p == ERRADDR)
 		return ERRADDR;
 	heap = new;
 

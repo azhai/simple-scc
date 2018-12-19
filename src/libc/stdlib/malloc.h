@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 /* minimum amount of required units */
-#define NALLOC 10000
+#define NALLOC 16
 
 typedef union header Header;
 union header {
