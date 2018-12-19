@@ -11,6 +11,8 @@ CRTDIR     = $(PROJECTDIR)/lib/scc
 
 INCLUDE    = -I$(INCDIR)/scc \
 
+RL	   = $(RANLIB)
+
 SCC_CFLAGS = $(MORECFLAGS) \
              $(SYSCFLAGS) \
              $(INCLUDE) \
