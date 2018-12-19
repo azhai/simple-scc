@@ -19,8 +19,8 @@ $name:
 	jb	1f
 	retq
 
-1:	movl	%eax,(errno)
-	movl	\$-1,%eax
+1:	movq	%rax,(errno)
+	movq	\$-1,%rax
 	retq
 EOF
 done

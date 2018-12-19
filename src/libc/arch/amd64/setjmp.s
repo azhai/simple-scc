@@ -1,7 +1,8 @@
 	.file	"setjmp.s"
 
 	.text
-	.globl	setjmp
+	.globl	setjmp,_setjmp
+_setjmp:
 setjmp:
 	mov	%rbx,(%rdi)
 	mov	%rbp,8(%rdi)

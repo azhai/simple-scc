@@ -1,7 +1,8 @@
 	.file	"longjmp"
 
 	.text
-	.globl	longjmp
+	.globl	longjmp,_longjmp
+_longjmp:
 longjmp:
 	mov	%rsi,%rax
 	test	%rax,%rax

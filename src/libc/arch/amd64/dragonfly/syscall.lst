@@ -4,7 +4,7 @@
 4	_write
 5	_open
 6	_close
-17      _brk
+17	_brk
 20	_getpid
 37	_kill
 199	_lseek
