@@ -32,7 +32,7 @@ install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/
 	cp -r root/* $(DESTDIR)$(PREFIX)/
 	cd $(DESTDIR)$(PREFIX)/libexec/scc/ && chmod 755 cc*
-	cd $(DESTDIR)$(PREFIX)/bin && chmod 755 scc cpp
+	cd $(DESTDIR)$(PREFIX)/bin && chmod 755 scc scpp
 	mkdir -p $(DESTDIR)$(MANPREFIX)/man1
 	sed "s/VERSION/$(VERSION)/g" < doc/scc.1 > $(DESTDIR)$(MANPREFIX)/man1/scc.1
 	chmod 644 $(DESTDIR)$(MANPREFIX)/man1/scc.1
