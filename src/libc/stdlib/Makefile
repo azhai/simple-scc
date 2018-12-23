@@ -19,6 +19,7 @@ OBJS = abort.o\
        qsort.o\
        rand.o\
        realloc.o\
+       strtoul.o\
        strtoull.o\
 
 all: $(OBJS)
