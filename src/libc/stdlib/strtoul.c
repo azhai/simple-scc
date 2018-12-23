@@ -14,6 +14,9 @@ strtoul(const char *s, char **end, int base)
 	static const char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	const char *t, *p;
 
+	if (end)
+		*end = s;
+
 	while (isspace(*s))
 		++s;
 
@@ -25,14 +28,11 @@ strtoul(const char *s, char **end, int base)
 	}
 
 	if (base == 0) {
-		if (*s == '0' && toupper(s[1]) == 'X')
-			base = 16;
-		else if (*s == '0')
-			base = 8;
+		if (*s == '0')
+			base = toupper(s[1]) == 'X' ? 16 : 8;
 		else
 			base = 10;
 	}
-
 	if (base == 16 && *s == '0' && toupper(s[1]) == 'X')
 		s += 2;
 
@@ -48,11 +48,9 @@ strtoul(const char *s, char **end, int base)
 		n += d;
 	}
 
-
-	if (end)
+	if (end && t != s)
 		*end = t;
-	if (n == 0 && s == t)
-		errno = EINVAL;
+
 	return n*sign;
 
 overflow:
