@@ -1,3 +1,4 @@
+.POSIX:
 
 PROJECTDIR = ../..
 include $(PROJECTDIR)/scripts/rules.mk
