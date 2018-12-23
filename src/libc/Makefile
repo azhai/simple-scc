@@ -3,7 +3,7 @@ PROJECTDIR =../..
 include $(PROJECTDIR)/scripts/rules.mk
 include rules.mk
 
-TARGET = $(CRTDIR)/$(ARCH)-$(SYS)/libc.a
+TARGET = $(LIBCDIR)/libc.a
 DIRS = arch\
        assert\
        ctype\

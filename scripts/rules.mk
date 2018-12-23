@@ -8,6 +8,7 @@ INCDIR     = $(PROJECTDIR)/include
 BINDIR     = $(PROJECTDIR)/bin
 LIBEXEC    = $(PROJECTDIR)/libexec/scc
 CRTDIR     = $(PROJECTDIR)/lib/scc
+LIBCDIR    = $(CRTDIR)/$(ARCH)-$(SYS)/
 
 INCLUDE    = -I$(INCDIR)/scc \
 
