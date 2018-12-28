@@ -17,6 +17,7 @@ OBJS = ctype.o\
        isspace.o\
        isupper.o\
        isxdigit.o\
+       toascii.o\
        tolower.o\
        toupper.o\
 

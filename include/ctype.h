@@ -41,5 +41,6 @@ extern const unsigned char __ctype[];
 #define isxdigit(c) ((__ctype+1)[c] & (_D|_X))
 
 #define isascii(c) ((unsigned)(c)<=0x7f)
+#define toascii(c) ((unsigned)(c)&0x7f)
 
 #endif
