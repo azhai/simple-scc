@@ -34,6 +34,7 @@ extern struct tzone *_tzone(struct tm *tm);
 extern int _daysyear(int year);
 extern int _newyear(int year);
 extern void *_getheap(void);
+extern int _dtoi(char);
 #ifdef FILE
 extern int _flsbuf(FILE *fp);
 extern void _allocbuf(FILE *fp);

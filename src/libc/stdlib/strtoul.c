@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../libc.h"
+
 #undef strtoul
 
 unsigned long
@@ -11,8 +13,7 @@ strtoul(const char *s, char **end, int base)
 {
 	int d, sign = 1;
 	unsigned long n;
-	static const char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	const char *t, *p;
+	const char *t;
 
 	if (end)
 		*end = s;
@@ -37,9 +38,7 @@ strtoul(const char *s, char **end, int base)
 		s += 2;
 
 	n = 0;
-	for (t = s; p = strchr(digits, toupper(*t)); ++t) {
-		if ((d = p - digits) >= base)
-			break;
+	for (t = s; (d = _dtoi(*t)) < base; ++t) {
 		if (n > ULONG_MAX/base)
 			goto overflow;
 		n *= base;

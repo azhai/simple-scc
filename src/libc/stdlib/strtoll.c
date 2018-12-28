@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../libc.h"
+
 #undef strtoll
 
 long long
@@ -11,8 +13,7 @@ strtoll(const char *s, char **end, int base)
 {
 	int d, sign = -1;
 	long long n;
-	static const char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	const char *t, *p;
+	const char *t;
 
 	if (end)
 		*end = s;
@@ -38,9 +39,7 @@ strtoll(const char *s, char **end, int base)
 
 	n = 0;
 	/* Compute n as a negative number to avoid overflow on LLONG_MIN */
-	for (t = s; p = strchr(digits, toupper(*t)); ++t) {
-		if ((d = p - digits) >= base)
-			break;
+	for (t = s; (d = _dtoi(*t)) < base; ++t) {
 		if (n < LLONG_MIN/base)
 			goto overflow;
 		n *= base;

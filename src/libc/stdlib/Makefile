@@ -3,7 +3,8 @@ PROJECTDIR =../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
-OBJS = abort.o\
+OBJS = _dtoi.o\
+       abort.o\
        abs.o\
        atexit.o\
        atoi.o\
