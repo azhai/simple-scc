@@ -19,6 +19,8 @@ OBJS = abort.o\
        qsort.o\
        rand.o\
        realloc.o\
+       strtol.o\
+       strtoll.o\
        strtoul.o\
        strtoull.o\
 
