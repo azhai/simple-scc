@@ -5,7 +5,7 @@
 long long
 atoll(const char *s)
 {
-	int sign = -1;
+	int d, sign = -1;
 	long long n;
 
 	while (isspace(*s))
@@ -19,8 +19,8 @@ atoll(const char *s)
 	}
 
 	/* Compute n as a negative number to avoid overflow on LLONG_MIN */
-	for (n = 0; isdigit(*s); ++s)
-		n = 10*n - (*s - '0');
+	for (n = 0; (d = _dtoi(*s)) < 10; ++s)
+		n = n*10 - d;
 
 	return sign * n;
 }
