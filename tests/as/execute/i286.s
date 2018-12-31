@@ -2,7 +2,6 @@
 / Look in http://www.srmuniv.ac.in/sites/default/files/2017/15CS205J-unitII.pdf
 / Look in http://www.c-jump.com/CIS77/reference/Instructions_by_Opcode.html
 / Look in http://www.c-jump.com/CIS77/CPU/x86/lecture.html#X77_0020_encoding_overview
-/ Look in http://www.c-jump.com/CIS77/reference/Instructions_by_Opcode.html
 / Look in https://www.felixcloutier.com/x86/index.html
 
 	ADDB	AL,AL			/ 00 C0
