@@ -46,11 +46,8 @@ strtol(const char *s, char **end, int base)
 		if (-d < LONG_MIN - n)
 			goto overflow;
 		n -= d;
-	}
-
-	if (n == LONG_MIN && sign < 0) {
-		--t;
-		goto overflow;
+		if (n == LONG_MIN && sign < 0)
+			goto overflow;
 	}
 
 	if (end && t != s)
