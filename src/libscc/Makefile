@@ -24,8 +24,7 @@ TARGET = $(LIBDIR)/libscc.a
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(AR) $(ARFLAGS) $@ $?
-	ranlib $@
+	mklib -o $@ $(OBJS)
 
 dep: inc-dep
 

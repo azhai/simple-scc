@@ -26,7 +26,7 @@ all: syscall
 objs: $(OBJS)
 
 syscall: syscall.lst
-	./gensys.sh syscall.lst
+	gensys.sh syscall.lst
 	touch syscall
 
 clean:

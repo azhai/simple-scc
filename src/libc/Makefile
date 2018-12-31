@@ -19,12 +19,11 @@ all: $(DIRS)
 $(DIRS): FORCE
 	+@cd $@ && $(MAKE)
 
-objlst: FORCE
-	./mklst $(TARGET)
+objlst:
+	find . -name '*.o' > $@
 
-$(TARGET): objlst
-	xargs $(AR) $(ARFLAGS) $@ < objlst
-	$(RL) $(RANLIBFLAGS) $@
+$(TARGET): objlst FORCE
+	mklib -o $@ `cat objlst`
 
 clean:
 	$(FORALL)

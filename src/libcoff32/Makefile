@@ -17,8 +17,7 @@ TARGET = $(LIBDIR)/libcoff32.a
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(AR) $(ARFLAGS) $@ $?
-	ranlib $@
+	mklib -o $@ $?
 
 dep: inc-dep
 

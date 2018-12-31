@@ -27,10 +27,9 @@ $(BINDIR)/scpp: cpp.sh config.h
 	mv $$$$.sh $@
 
 config.h:
-	PREFIX=$(PREFIX) ./config.sh $(SYSLST)
+	PREFIX=$(PREFIX) config.sh $(SYSLST)
 
-dep:
-	$(PROJECTDIR)/mkdep.sh
+dep: inc-dep
 
 clean:
 	rm -f scc scpp *.o

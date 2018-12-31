@@ -7,3 +7,4 @@ PREFIX    = $(PWD)/$(PROJECTDIR)/root
 MANPREFIX = $(PREFIX)/share/man
 AS = as
 RANLIB = ranlib
+NM = nm

@@ -16,12 +16,6 @@
 #define SECHOUR    (60 * SECMIN)    /* 3600 */
 #define SECDAY     (24 * SECHOUR)   /* 86400 */
 
-#ifdef stdin
-extern FILE *_fpopen(const char * restrict fname,
-                     const char * restrict mode,
-                     FILE * restrict fp);
-#endif
-
 struct tzone {
 	char *name;
 	int gmtoff;
@@ -35,9 +29,13 @@ extern int _daysyear(int year);
 extern int _newyear(int year);
 extern void *_getheap(void);
 extern int _dtoi(char);
-#ifdef FILE
+
+#ifdef stdin
 extern int _flsbuf(FILE *fp);
-extern void _allocbuf(FILE *fp);
+extern int _allocbuf(FILE *fp);
+extern FILE *_fpopen(const char * restrict fname,
+                     const char * restrict mode,
+                     FILE * restrict fp);
 #endif
 
 extern int _daysmon[12];
