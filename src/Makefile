@@ -4,12 +4,10 @@ PROJECTDIR = ..
 include $(PROJECTDIR)/scripts/rules.mk
 
 TOOLS = cc1 cc2 ld as nm objdump
-LIBS  = libscc libcoff32
-DIRS  = $(TOOLS) $(LIBS) libc libcrt
+LIBS  = libscc libcoff32 libc libcrt
+DIRS  = $(TOOLS) $(LIBS) 
 
-all: $(TOOLS) crt
-
-crt: libcrt libc $(TOOLS)
+all: $(TOOLS)
 
 $(TOOLS): $(LIBS)
 
