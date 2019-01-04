@@ -12,7 +12,7 @@ static char sccsid[] = "@(#) ./nm/main.c";
 #include <scc/mach.h>
 
 char *argv0;
-static int status;
+static int status, multi;
 static int radix = 16;
 static int Pflag;
 static int Aflag;
@@ -71,6 +71,9 @@ printsyms(Obj *obj)
 	nsym = obj->nsym;
 
 	qsort(sym, nsym, sizeof(*sym), cmp);
+
+	if (multi)
+		printf("%s:\n", (membname) ? membname : filename);
 
 	for (sym = obj->symtbl; nsym--; sym++) {
 		int type = sym->type;
@@ -151,6 +154,7 @@ newmember(FILE *fp, char *name, void *data)
 {
 	int t;
 
+	multi = 1;
 	membname = name;
 	if ((t = objtest(fp, NULL)) != -1)
 		newobject(fp, t);
@@ -231,6 +235,8 @@ main(int argc, char *argv[])
 	if (argc == 0) {
 		nm("a.out");
 	} else {
+		if (argc > 1)
+			multi = 1;
 		for ( ; *argv; ++argv)
 			nm(*argv);
 	}
