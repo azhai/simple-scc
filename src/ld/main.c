@@ -23,6 +23,21 @@ int gflag;              /* preserve debug symbols */
 
 static int done;
 
+Obj *
+probe(char *fname, char *member, FILE *fp)
+{
+}
+
+Obj *
+load(Obj *obj)
+{
+}
+
+void
+writeout(FILE *fp)
+{
+}
+
 void
 redefined(Obj *obj, Symbol *sym)
 {

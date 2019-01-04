@@ -12,12 +12,6 @@ OBJS = debug.o \
        xstrdup.o \
        alloc.o \
        casecmp.o \
-       lunpack.o \
-       lpack.o \
-       bunpack.o \
-       bpack.o \
-       wmyro.o \
-       rmyro.o \
 
 TARGET = $(LIBDIR)/libscc.a
 
