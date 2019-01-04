@@ -6,9 +6,6 @@ ins.o: as.h
 main.o: $(INCDIR)/scc/scc/arg.h
 main.o: $(INCDIR)/scc/scc/scc.h
 main.o: as.h
-myro.o: $(INCDIR)/scc/scc/myro.h
-myro.o: $(INCDIR)/scc/scc/scc.h
-myro.o: as.h
 parser.o: $(INCDIR)/scc/scc/cstd.h
 parser.o: $(INCDIR)/scc/scc/scc.h
 parser.o: as.h

@@ -16,6 +16,15 @@ enum {
 	TYPE,
 };
 
+static void
+reloc(Symbol *sym,
+       unsigned flags,
+       unsigned size,
+       unsigned nbits,
+       unsigned shift)
+{
+}
+
 char *
 tobytes(TUINT v, int nbytes, int inc)
 {

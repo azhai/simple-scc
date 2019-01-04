@@ -188,15 +188,6 @@ extern Node *moperand(void);
 /* ins.c */
 extern char *tobytes(TUINT v, int n, int inc);
 
-/* format.c */
-extern void writeout(char *name);
-extern void reloc(Symbol *sym,
-                  unsigned flags,
-                  unsigned size,
-                  unsigned nbits,
-                  unsigned shift);
-
-
 /*
  * Definition of global variables
  */

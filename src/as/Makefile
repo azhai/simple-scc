@@ -10,7 +10,6 @@ OBJS = main.o \
        ins.o \
        parser.o \
        expr.o \
-       myro.o \
 
 TARGET = $(LIBEXEC)/as-amd64 \
          $(LIBEXEC)/as-i386 \

@@ -1,5 +1,6 @@
 static char sccsid[] = "@(#) ./as/main.c";
 
+#include <errno.h>
 #include <ctype.h>
 #include <setjmp.h>
 #include <stdio.h>
@@ -14,6 +15,29 @@ char *argv0;
 char *outfile, *infile;
 int endpass;
 
+static void
+writeout(char *fname)
+{
+	Section *sp;
+	FILE *fp;
+
+	if ((fp = fopen(fname, "wb")) == NULL)
+		goto error;
+
+	for (sp = seclist; sp; sp = sp->next) {
+		if (!sp->mem)
+			continue;
+		fwrite(sp->mem, sp->max - sp->base, 1, fp);
+	}
+
+	if (fclose(fp))
+		goto error;
+	return;
+
+error:
+	fprintf(stderr, "as: %s: %s\n", fname, strerror(errno));
+	exit(EXIT_FAILURE);
+}
 
 static void
 cleanup(void)
