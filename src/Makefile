@@ -4,7 +4,7 @@ PROJECTDIR = ..
 include $(PROJECTDIR)/scripts/rules.mk
 
 TOOLS = cc1 cc2 ld as nm objdump
-LIBS  = libscc libcoff32 libc libcrt
+LIBS  = libscc libcoff32 libc libcrt libmach
 DIRS  = $(TOOLS) $(LIBS)
 
 all: $(TOOLS)

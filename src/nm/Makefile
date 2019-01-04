@@ -4,17 +4,15 @@ PROJECTDIR = ../..
 include $(PROJECTDIR)/scripts/rules.mk
 
 OBJS  = main.o \
-        coff32.o \
-        formats.o \
 
 TARGET = $(BINDIR)/nm
 
 all: $(TARGET)
 
-$(TARGET): $(LIBDIR)/libscc.a
+$(TARGET): $(LIBDIR)/libscc.a $(LIBDIR)/libmach.a
 
 $(TARGET): $(OBJS)
-	$(CC) $(SCC_LDFLAGS) $(OBJS) -lscc -o $@
+	$(CC) $(SCC_LDFLAGS) $(OBJS) -lmach -lscc -o $@
 
 dep: inc-dep
 
