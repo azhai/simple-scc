@@ -3,12 +3,12 @@
 PROJECTDIR = ../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-OBJS = main.o 
+OBJS = objdump.o 
 TARGET = $(BINDIR)/objdump
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS) $(LIBDIR)/libscc.a
+$(TARGET): $(OBJS) $(LIBDIR)/libmach.a
 	$(CC) $(SCC_LDFLAGS) $(OBJS) -lscc -o $@
 
 dep: inc-dep

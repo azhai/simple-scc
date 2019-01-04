@@ -1,4 +1,3 @@
 #deps
-main.o: $(INCDIR)/scc/scc/arg.h
-main.o: $(INCDIR)/scc/scc/myro.h
-main.o: $(INCDIR)/scc/scc/scc.h
+objdump.o: $(INCDIR)/scc/scc/arg.h
+objdump.o: $(INCDIR)/scc/scc/mach.h
