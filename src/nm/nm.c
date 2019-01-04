@@ -34,7 +34,7 @@ error(char *fmt, ...)
 	putc('\n', stderr);
 	va_end(va);
 
-	status = 1;
+	status = EXIT_FAILURE;
 }
 
 static int
