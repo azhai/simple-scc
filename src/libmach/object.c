@@ -9,16 +9,9 @@ static char sccsid[] = "@(#) ./libmach/object.c";
 
 #include "libmach.h"
 
-struct format {
-	int (*probe)(unsigned char *buf, char **name);
-	int (*open)(FILE *fp, int type, Obj *obj);
-	int (*read)(Obj *obj, Symbol *sym);
-	void (*close)(Obj *obj);
-};
-
-static struct format fmts[] = {
-	[COFF32] = {coff32probe, coff32open, coff32read, coff32close},
-	[NFORMATS] = {NULL},
+static struct format *fmts[] = {
+	[COFF32] = &objcoff32,
+	[NFORMATS] = NULL,
 };
 
 int
@@ -26,6 +19,7 @@ objtest(FILE *fp, char **name)
 {
 	int n, i;
 	int (*fn)(unsigned char *, char **);
+	struct format **bp, *op;
 	fpos_t pos;
 	unsigned char buf[NBYTES];
 
@@ -36,11 +30,11 @@ objtest(FILE *fp, char **name)
 	if (n != 1 || ferror(fp))
 		return -1;
 
-	for (i = 0; i < NFORMATS; i++) {
-		fn = fmts[i].probe;
-		if (!fn)
+	for (bp = fmts; bp < &fmts[NFORMATS]; ++bp) {
+		op = *bp;
+		if (!op || !op->probe)
 			continue;
-		n = (*fn)(buf, name);
+		n = (*op->probe)(buf, name);
 		if (n == -1)
 			continue;
 		return n;
@@ -58,7 +52,7 @@ objopen(FILE *fp, int type, Obj *obj)
 	obj->symtbl = NULL;
 	obj->data = NULL;
 	obj->nsym = obj->cursym = 0;
-	op = &fmts[FORMAT(type)];
+	op = fmts[FORMAT(type)];
 	if ((*op->open)(fp, type, obj) < 0)
 		return -1;
 	return 0;
@@ -98,7 +92,7 @@ objread(FILE *fp, Obj *obj, int (*filter)(Symbol *))
 	Symbol sym, *p;
 	struct format *op;
 
-	op = &fmts[FORMAT(obj->type)];
+	op = fmts[FORMAT(obj->type)];
 	while ((r = (*op->read)(obj, &sym)) > 0) {
 		if (filter && (*filter)(&sym))
 			continue;
@@ -113,6 +107,6 @@ objclose(Obj *obj)
 {
 	struct format *op;
 
-	op = &fmts[FORMAT(obj->type)];
+	op = fmts[FORMAT(obj->type)];
 	(*op->close)(obj);
 }

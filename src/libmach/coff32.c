@@ -94,8 +94,8 @@ unpack_ent(int order, unsigned char *buf, SYMENT *ent)
 		unpack(order, "ll", buf, &ent->n_zeroes, &ent->n_offset);
 }
 
-int
-coff32probe(unsigned char *buf, char **name)
+static int
+probe(unsigned char *buf, char **name)
 {
 	struct arch *ap;
 
@@ -109,8 +109,8 @@ coff32probe(unsigned char *buf, char **name)
 	return -1;
 }
 
-int
-coff32open(FILE *fp, int type, Obj *obj)
+static int
+open(FILE *fp, int type, Obj *obj)
 {
 	int order;
 	long i, siz;
@@ -249,8 +249,8 @@ typeof(Coff32 *coff, SYMENT *ent)
 	return c;
 }
 
-int
-coff32read(Obj *obj, Symbol *sym)
+static int
+read(Obj *obj, Symbol *sym)
 {
 	int t;
 	char *s;
@@ -275,8 +275,8 @@ coff32read(Obj *obj, Symbol *sym)
 	return 1;
 }
 
-void
-coff32close(Obj *obj)
+static void
+close(Obj *obj)
 {
 	struct coff32 *coff = obj->data;
 
@@ -285,3 +285,10 @@ coff32close(Obj *obj)
 	free(coff->strtbl);
 	free(obj->data);
 }
+
+struct format objcoff32 = {
+	.probe = probe,
+	.open = open,
+	.read = read,
+	.close = close,
+};

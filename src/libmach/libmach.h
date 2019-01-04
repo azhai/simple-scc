@@ -26,11 +26,15 @@ enum order {
 	BIG_ENDIAN,
 };
 
+struct format {
+	int (*probe)(unsigned char *buf, char **name);
+	int (*open)(FILE *fp, int type, Obj *obj);
+	int (*read)(Obj *obj, Symbol *sym);
+	void (*close)(Obj *obj);
+};
+
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);
 
 /* coff32.c */
-int coff32probe(unsigned char *buf, char **name);
-int coff32open(FILE *fp, int type, Obj *obj);
-int coff32read(Obj *obj, Symbol *sym);
-void coff32close(Obj *obj);
+extern struct format objcoff32;
