@@ -9,8 +9,6 @@ static char sccsid[] = "@(#) ./nm/main.c";
 #include <string.h>
 
 #include <scc/arg.h>
-#include <scc/scc.h>
-#include <scc/ar.h>
 #include <scc/mach.h>
 
 char *argv0;

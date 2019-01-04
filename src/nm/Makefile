@@ -3,16 +3,16 @@
 PROJECTDIR = ../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-OBJS  = main.o \
+OBJS  = nm.o \
 
 TARGET = $(BINDIR)/nm
 
 all: $(TARGET)
 
-$(TARGET): $(LIBDIR)/libscc.a $(LIBDIR)/libmach.a
+$(TARGET): $(LIBDIR)/libmach.a
 
 $(TARGET): $(OBJS)
-	$(CC) $(SCC_LDFLAGS) $(OBJS) -lmach -lscc -o $@
+	$(CC) $(SCC_LDFLAGS) $(OBJS) -lmach -o $@
 
 dep: inc-dep
 
