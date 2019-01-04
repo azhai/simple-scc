@@ -159,7 +159,7 @@ newmember(FILE *fp, char *name, void *data)
 	if ((t = objtest(fp, NULL)) != -1)
 		newobject(fp, t);
 
-	return 0;
+	return 1;
 }
 
 static void

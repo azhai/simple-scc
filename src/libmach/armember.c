@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <scc/ar.h>
@@ -21,20 +22,19 @@ getfname(struct ar_hdr *hdr, char *dst)
         return dst;
 }
 
-int
+long
 armember(FILE *fp, char *member)
 {
-        struct ar_hdr hdr;
-        long siz;
+	struct ar_hdr hdr;
+	long siz;
 
-        if (fread(&hdr, sizeof(hdr), 1, fp) != 1)
+	if (fread(&hdr, sizeof(hdr), 1, fp) != 1)
 		return (feof(fp)) ? 0 : -1;
 
 	if (strncmp(hdr.ar_fmag, ARFMAG, sizeof(hdr.ar_fmag)))
 		return -1;
 
-	siz = 0;
-	sscanf(hdr.ar_size, "%10ld", &siz);
+	siz = strtol(hdr.ar_size, NULL, 0);
 	if (siz & 1)
 		siz++;
 	if (siz == 0)
@@ -42,5 +42,5 @@ armember(FILE *fp, char *member)
 
 	getfname(&hdr, member);
 
-	return 0;
+	return sizeof(hdr) + siz;
 }

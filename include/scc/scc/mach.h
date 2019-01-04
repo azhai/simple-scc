@@ -18,7 +18,7 @@ struct object {
 };
 
 extern int archive(FILE *fp);
-extern int armember(FILE *fp, char *member);
+extern long armember(FILE *fp, char *member);
 
 extern int artraverse(FILE *fp,
                       int (*fn)(FILE *, char *, void *),
