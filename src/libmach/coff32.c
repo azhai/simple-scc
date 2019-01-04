@@ -247,7 +247,6 @@ typeof(Coff32 *coff, SYMENT *ent)
 		c = toupper(c);
 
 	return c;
-
 }
 
 int
@@ -282,5 +281,7 @@ coff32close(Obj *obj)
 	struct coff32 *coff = obj->data;
 
 	free(coff->scns);
+	free(coff->ents);
+	free(coff->strtbl);
 	free(obj->data);
 }
