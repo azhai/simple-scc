@@ -146,11 +146,13 @@ enum args {
 
 	AREG_MXCSR,
 
-	AREG_R8CLASS,   /* register class for 8 bit registers in i286 */
-	AREG_R16CLASS,   /* register class for 16 bit registers in i286 */
+	AREG_R8CLASS,	/* register class for 8 bit registers in i286 */
+	AREG_R16CLASS,	/* register class for 16 bit registers in i286,i386,amd64 */
+	AREG_R32CLASS,  /* register class for 32 bit registers in i386,amd64 */
 };
 
 enum class {
 	R8CLASS  = 1 << 0,
 	R16CLASS = 1 << 1,
+	R32CLASS = 1 << 2,
 };

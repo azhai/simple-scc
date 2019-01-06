@@ -259,19 +259,6 @@ reg8toint(Node *np)
 	}
 }
 
-void
-reg8_reg8(Op *op, Node **args)
-{
-	int src, dst;
-	char buf[2];
-
-	src = reg8toint(args[0]);
-	dst = reg8toint(args[1]);
-	buf[0] = op->bytes[0];
-	buf[1] = addrbyte(REG_MODE, src, dst);
-	emit(buf, 2);
-}
-
 static int
 reg16toint(Node *np)
 {
@@ -288,15 +275,73 @@ reg16toint(Node *np)
 	}
 }
 
+static int
+reg32toint(Node *np)
+{
+	switch (np->sym->value) {
+	case AREG_EAX: return 0;
+	case AREG_ECX: return 1;
+	case AREG_EDX: return 2;
+	case AREG_EBX: return 3;
+	case AREG_ESP: return 4;
+	case AREG_EBP: return 5;
+	case AREG_ESI: return 6;
+	case AREG_EDI: return 7;
+	default:	abort();
+	}
+}
+
+void
+reg8_reg8(Op *op, Node **args)
+{
+	int src, dst;
+	char buf[op->size];
+
+	src = reg8toint(args[0]);
+	dst = reg8toint(args[1]);
+	memcpy(buf, op->bytes, op->size - 1);
+	buf[op->size - 1] = addrbyte(REG_MODE, src, dst);
+	emit(buf, op->size);
+}
+
+void
+imm8_reg8(Op *op, Node **args)
+{
+	int src, dst;
+	char buf[op->size];
+
+	src = (*args)->sym->value;
+	dst = reg8toint(args[1]);
+	memcpy(buf, op->bytes, op->size - 2);
+	buf[op->size - 2] = addrbyte(REG_MODE, 0, dst);
+	buf[op->size - 1] = src;
+	emit(buf, op->size);
+}
+
+
 void
 reg16_reg16(Op *op, Node **args)
 {
 	int src, dst;
-	char buf[2];
+	char buf[op->size];
 
 	src = reg16toint(args[0]);
 	dst = reg16toint(args[1]);
-	buf[0] = op->bytes[0];
-	buf[1] = addrbyte(REG_MODE, src, dst);
-	emit(buf, 2);
+	memcpy(buf, op->bytes, op->size - 1);
+	buf[op->size - 1] = addrbyte(REG_MODE, src, dst);
+	emit(buf, op->size);
+}
+
+
+void
+reg32_reg32(Op *op, Node **args)
+{
+	int src, dst;
+	char buf[op->size];
+
+	src = reg32toint(args[0]);
+	dst = reg32toint(args[1]);
+	memcpy(buf, op->bytes, op->size - 1);
+	buf[op->size - 1] = addrbyte(REG_MODE, src, dst);
+	emit(buf, op->size);
 }
