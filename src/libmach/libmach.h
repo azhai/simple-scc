@@ -28,13 +28,15 @@ enum order {
 
 struct format {
 	int (*probe)(unsigned char *buf, char **name);
-	int (*open)(FILE *fp, int type, Obj *obj);
-	int (*read)(Obj *obj, Symbol *sym);
-	void (*close)(Obj *obj);
+	int (*new)(Obj *obj);
+	int (*read)(Obj *obj, FILE *fp);
+	int (*write)(Obj *obj, FILE *fp);
+	void (*del)(Obj *obj);
 };
 
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);
 
-/* coff32.c */
-extern struct format objcoff32;
+
+/* globals */
+extern struct format *objfmt[];

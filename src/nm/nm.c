@@ -11,6 +11,12 @@ static char sccsid[] = "@(#) ./nm/main.c";
 #include <scc/arg.h>
 #include <scc/mach.h>
 
+
+struct symtbl {
+	Symbol **buf;
+	size_t nsyms;
+};
+
 char *argv0;
 static int status, multi;
 static int radix = 16;
@@ -40,42 +46,38 @@ error(char *fmt, ...)
 static int
 cmp(const void *p1, const void *p2)
 {
-	const Symbol *s1 = p1, *s2 = p2;
+	Symbol **s1 = (Symbol **) p1, **s2 = (Symbol **) p2;
+	Symbol *sym1 = *s1, *sym2 = *s2;
 
 	if (vflag) {
-		if (s1->value > s2->value)
+		if (sym1->value > sym2->value)
 			return 1;
-		if (s1->value < s2->value)
+		if (sym1->value < sym2->value)
 			return -1;
-		if (s1->type == 'U' && s2->type == 'U')
+		if (sym1->type == 'U' && sym2->type == 'U')
 			return 0;
-		if (s1->type == 'U')
+		if (sym1->type == 'U')
 			return -1;
-		if (s2->type == 'U')
+		if (sym2->type == 'U')
 			return 1;
 		return 0;
 	} else {
-		return strcmp(s1->name, s2->name);
+		return strcmp(sym1->name, sym2->name);
 	}
 }
 
 static void
-printsyms(Obj *obj)
+printsyms(Symbol **syms, size_t nsym)
 {
-	unsigned long nsym;
-	Symbol *sym;
+	size_t i;
 
-	if (!obj->symtbl)
-		return;
-	sym = obj->symtbl;
-	nsym = obj->nsym;
-
-	qsort(sym, nsym, sizeof(*sym), cmp);
+	qsort(syms, nsym, sizeof(syms), cmp);
 
 	if (multi)
 		printf("%s:\n", (membname) ? membname : filename);
 
-	for (sym = obj->symtbl; nsym--; sym++) {
+	for (i = 0; i < nsym; i++) {
+		Symbol *sym = syms[i];
 		int type = sym->type;
 		char *fmt;
 
@@ -112,41 +114,51 @@ printsyms(Obj *obj)
 }
 
 static int
-filter(Symbol *sym)
+newsym(Symbol *sym, void *data)
 {
-	int type = sym->type;
+	struct symtbl *tbl = data;
+	Symbol **p;
+	size_t n, size;
 
-	if (type == '?' || type == 'N')
-		return 1;
+	n = tbl->nsyms+1;
+	if (n == 0 || n > SIZE_MAX / sizeof(*p))
+		return 0;
+	size = n *sizeof(*p);
 
-	if (uflag && type != 'U')
-		return 1;
+	if ((p = realloc(tbl->buf, size)) == NULL)
+		return 0;
+	tbl->buf = p;
+	p[tbl->nsyms++] = sym;
 
-	if (gflag && !isupper(type))
-		return 1;
-
-	return 0;
+	return 1;
 }
 
 static void
 newobject(FILE *fp, int type)
 {
-	Obj obj;
+	int err = 1;
+	Obj *obj;
+	struct symtbl tbl = {NULL, 0};
 
-	if (objopen(fp, type, &obj) < 0)
-		goto err1;
+	if ((obj = objnew(type)) == NULL) {
+		error("out of memory");
+		return;
+	}
 
-	if (objread(fp, &obj, filter) < 0)
-		goto err2;
+	if (objread(obj, fp) < 0)
+		goto error;
 
-	printsyms(&obj);
-	objclose(&obj);
-	return;
+	if (!objtraverse(obj, newsym, &tbl))
+		goto error;
 
-err2:
-	objclose(&obj);
-err1:
-	error("object file corrupted");
+	printsyms(tbl.buf, tbl.nsyms);
+	err = 0;
+
+error:
+	free(tbl.buf);
+	objdel(obj);
+	if (err)
+		error("object file corrupted");
 }
 
 static int
@@ -156,7 +168,7 @@ newmember(FILE *fp, char *name, void *data)
 
 	multi = 1;
 	membname = name;
-	if ((t = objtest(fp, NULL)) != -1)
+	if ((t = objtype(fp, NULL)) != -1)
 		newobject(fp, t);
 
 	return 1;
@@ -176,7 +188,7 @@ nm(char *fname)
 		return;
 	}
 
-	if ((t = objtest(fp, NULL)) != -1)
+	if ((t = objtype(fp, NULL)) != -1)
 		newobject(fp, t);
 	else if (archive(fp))
 		artraverse(fp, newmember, NULL);

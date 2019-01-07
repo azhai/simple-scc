@@ -9,13 +9,8 @@ static char sccsid[] = "@(#) ./libmach/object.c";
 
 #include "libmach.h"
 
-static struct format *fmts[] = {
-	[COFF32] = &objcoff32,
-	[NFORMATS] = NULL,
-};
-
 int
-objtest(FILE *fp, char **name)
+objtype(FILE *fp, char **name)
 {
 	int n, i;
 	int (*fn)(unsigned char *, char **);
@@ -30,7 +25,7 @@ objtest(FILE *fp, char **name)
 	if (n != 1 || ferror(fp))
 		return -1;
 
-	for (bp = fmts; bp < &fmts[NFORMATS]; ++bp) {
+	for (bp = objfmt; bp < &objfmt[NFORMATS]; ++bp) {
 		op = *bp;
 		if (!op || !op->probe)
 			continue;
@@ -43,70 +38,138 @@ objtest(FILE *fp, char **name)
 	return -1;
 }
 
-int
-objopen(FILE *fp, int type, Obj *obj)
+Symbol *
+objlookup(Obj *obj, char *name)
 {
-	struct format *op;
-
-	obj->type = type;
-	obj->symtbl = NULL;
-	obj->data = NULL;
-	obj->nsym = obj->cursym = 0;
-	op = fmts[FORMAT(type)];
-	if ((*op->open)(fp, type, obj) < 0)
-		return -1;
-	return 0;
-}
-
-static int
-addsym(Obj *obj, Symbol *sym)
-{
-	Symbol *p, *new;
+	unsigned h;
+	size_t len;
 	char *s;
-	size_t len, siz = obj->nsym * sizeof(*sym);
+	Symbol *sym;
 
-	if (siz > SIZE_MAX - sizeof(*sym))
-		return -1;
-	siz += sizeof(*sym);
-	if ((p = realloc(obj->symtbl, siz)) == NULL)
-		return -1;
-	obj->symtbl = p;
+	h = 0;
+	for (s = name; *s; s++)
+		h += *s;
+	h %= NR_SYMHASH;
 
-	new = &p[obj->nsym];
-	new->type = sym->type;
-	len = strlen(sym->name) + 1;
-	if ((new->name = malloc(len)) == NULL)
-		return -1;
-	memcpy(new->name, sym->name, len);
-	new->size = sym->size;
-	new->value = sym->value;
-	obj->nsym++;
-
-	return 0;
-}
-
-int
-objread(FILE *fp, Obj *obj, int (*filter)(Symbol *))
-{
-	int r;
-	Symbol sym, *p;
-	struct format *op;
-
-	op = fmts[FORMAT(obj->type)];
-	while ((r = (*op->read)(obj, &sym)) > 0) {
-		if (filter && (*filter)(&sym))
-			continue;
-		addsym(obj, &sym);
+	for (sym = obj->htab[h]; sym; sym = sym->hash) {
+		if (!strcmp(name, sym->name))
+			return sym;
 	}
 
-	return r;
+	if ((sym = malloc(sizeof(*sym))) == NULL)
+		return NULL;
+	len = strlen(name) + 1;
+	if ((s = malloc(len)) == NULL) {
+		free(sym);
+		return NULL;
+	}
+	sym->name = memcpy(s, name, len);
+	sym->type = 'U';
+	sym->size = 0;
+	sym->value = 0;
+	sym->hash = obj->htab[h];
+	obj->htab[h] = sym;
+	sym->next = obj->head;
+	obj->head = sym;
+
+	return sym;
+}
+
+int
+objwrite(Obj *obj, FILE *fp)
+{
+	int fmt;
+	struct format *op;
+
+	fmt = FORMAT(obj->type);
+	if (fmt >= NFORMATS)
+		return -1;
+	op = objfmt[fmt];
+	if ((*op->write)(obj, fp) < 0)
+		return -1;
+	return 0;
+}
+
+int
+objread(Obj *obj, FILE *fp)
+{
+	int fmt;
+	struct format *op;
+
+	fmt = FORMAT(obj->type);
+	if (fmt >= NFORMATS)
+		return -1;
+	op = objfmt[fmt];
+	if ((*op->read)(obj, fp) < 0)
+		return -1;
+	return 0;
+}
+
+Obj *
+objnew(int type)
+{
+	Obj *obj;
+	int fmt;
+	struct format *op;
+
+	fmt = FORMAT(type);
+	if (fmt >= NFORMATS)
+		return NULL;
+
+	if ((obj = malloc(sizeof(*obj))) == NULL)
+		return NULL;
+
+	obj->type = type;
+	obj->head = NULL;
+	memset(obj->htab, 0, sizeof(obj->htab));
+
+	op = objfmt[fmt];
+	if ((*op->new)(obj) < 0) {
+		free(obj);
+		return NULL;
+	}
+
+	return obj;
+}
+
+int
+objtraverse(Obj *obj, int (*fn)(Symbol *, void *), void *data)
+{
+	Symbol *sym;
+
+	for (sym = obj->head; sym; sym = sym->next) {
+		 if (!(*fn)(sym, data))
+			return 0;
+	}
+	return 1;
 }
 
 void
-objclose(Obj *obj)
+objreset(Obj *obj)
 {
+	int fmt;
+	Symbol *sym, *next;
 	struct format *op;
 
-	op = fmts[FORMAT(obj->type)];
-	(*op->close)(obj);
+	fmt = FORMAT(obj->type);
+	if (fmt < NFORMATS) {
+		op = objfmt[fmt];
+		(*op->del)(obj);
+	}
+
+	for (sym = obj->head; sym; sym = next) {
+		next = sym->next;
+		free(sym->name);
+		free(sym);
+	}
+
+	obj->head = NULL;
+	memset(obj->htab, 0, sizeof(obj->htab));
+}
+
+void
+objdel(Obj *obj)
+{
+	objreset(obj);
+	free(obj);
 }

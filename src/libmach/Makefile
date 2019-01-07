@@ -9,6 +9,7 @@ OBJS = object.o \
        unpack.o \
        artraverse.o \
        armember.o \
+       objfmt.o \
        coff32.o \
 
 all: $(TARGET)
