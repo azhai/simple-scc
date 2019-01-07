@@ -176,104 +176,148 @@ mkindex(Obj *obj)
 		ent = &coff->ents[i];
 
 		if ((t = typeof(coff, ent)) < 0)
-			return -1;
+			return 0;
 
 		if ((s = symname(coff, ent)) == NULL)
-			return -1;
+			return 0;
 
 		if ((sym = objlookup(obj, s)) == NULL)
-			return -1;
+			return 0;
 
 		sym->type = t;
 		sym->value = ent->n_value;
 		sym->size = (sym->type == 'C') ? ent->n_value : 0;
 	}
 
-	return 0;
+	return 1;
+}
+
+static int
+readscns(Obj *obj, FILE *fp)
+{
+	FILHDR *hdr;
+	struct coff32 *coff;
+	SCNHDR *scn;
+	long i;
+	unsigned char buf[SCNHSZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	if (hdr->f_nscns > 0) {
+		scn = calloc(hdr->f_nscns, sizeof(*scn));
+		if (!scn)
+			return 0;
+		coff->scns = scn;
+	}
+	if (fseek(fp, hdr->f_opthdr, SEEK_CUR) < 0)
+		return 0;
+	for (i = 0; i < hdr->f_nscns; i++) {
+		if (fread(buf, SCNHSZ, 1, fp) < 0)
+			return 0;
+		unpack_scn(ORDER(obj->type), buf, &scn[i]);
+	}
+
+	return 1;
+}
+
+static int
+readents(Obj *obj, FILE *fp)
+{
+	FILHDR *hdr;
+	struct coff32 *coff;
+	SYMENT *ent;
+	long i;
+	unsigned char buf[SYMESZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	if (hdr->f_nsyms > 0) {
+		ent = calloc(hdr->f_nsyms, sizeof(*ent));
+		if (!ent)
+			return 0;
+		coff->ents = ent;
+	}
+	if (fsetpos(fp, &obj->pos))
+		return 0;
+	if (fseek(fp, hdr->f_symptr, SEEK_CUR) < 0)
+		return 0;
+	for (i = 0; i < hdr->f_nsyms; i++) {
+		if (fread(buf, SYMESZ, 1, fp) != 1)
+			return 0;
+		unpack_ent(ORDER(obj->type), buf, &ent[i]);
+	}
+
+	return 1;
+}
+
+static int
+readstr(Obj *obj, FILE *fp)
+{
+	FILHDR *hdr;
+	struct coff32 *coff;
+	long siz;
+	char *str;
+	unsigned char buf[10];
+
+	if (fread(buf, 4, 1, fp) != 1)
+		return 0;
+	unpack(ORDER(obj->type), buf, "l", &siz);
+	siz -= 4;
+	if (siz < 0)
+		return 0;
+	if (siz > 0) {
+		if (siz > SIZE_MAX)
+			return 0;
+		str = malloc(siz);
+		if (!str)
+			return 0;
+		coff->strtbl = str;
+		coff->strsiz = siz;
+
+		if (fread(str, siz, 1, fp) != 1)
+			return 0;
+	}
+	return 1;
+}
+
+static int
+readhdr(Obj *obj, FILE *fp)
+{
+	FILHDR *hdr;
+	struct coff32 *coff;
+	unsigned char buf[FILHSZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	if (fread(buf, FILHSZ, 1, fp) != 1)
+		return 0;
+	unpack_hdr(ORDER(obj->type), buf, hdr);
+
+	return 1;
 }
 
 static int
 read(Obj *obj, FILE *fp)
 {
-	int order;
-	long i, siz;
-	FILHDR *hdr;
-	SCNHDR *scn;
-	SYMENT *ent;
-	char *str = NULL;
-	struct coff32 *coff;
-	unsigned char buf[100];
-
-	assert(FILHSZ < sizeof(buf));
-	assert(SCNHSZ < sizeof(buf));
-	assert(SYMESZ < sizeof(buf));
-
-	coff  = obj->data;
-	hdr = &coff->hdr;
-
-	order = ORDER(obj->type);
 	if (fgetpos(fp, &obj->pos))
 		goto error;
-	if (fread(buf, FILHSZ, 1, fp) != 1)
+	if (!readhdr(obj, fp))
 		goto error;
-	unpack_hdr(order, buf, hdr);
-
-	if (hdr->f_nscns > 0) {
-		scn = calloc(hdr->f_nscns, sizeof(*scn));
-		if (!scn)
-			goto error;
-		coff->scns = scn;
-	}
-	if (hdr->f_nsyms > 0) {
-		ent = calloc(hdr->f_nsyms, sizeof(*ent));
-		if (!ent)
-			goto error;
-		coff->ents = ent;
-	}
-
-	if (fseek(fp, hdr->f_opthdr, SEEK_CUR) < 0)
+	if (!readscns(obj, fp))
 		goto error;
-	for (i = 0; i < hdr->f_nscns; i++) {
-		if (fread(buf, SCNHSZ, 1, fp) < 0)
-			goto error;
-		unpack_scn(order, buf, &scn[i]);
-	}
-
-	if (fsetpos(fp, &obj->pos))
-		return -1;
-	if (fseek(fp, hdr->f_symptr, SEEK_CUR) < 0)
-		return -1;
-	for (i = 0; i < hdr->f_nsyms; i++) {
-		if (fread(buf, SYMESZ, 1, fp) != 1)
-			goto error;
-		unpack_ent(order, buf, &ent[i]);
-	}
-
-	if (fread(buf, 4, 1, fp) != 1)
+	if (!readents(obj, fp))
 		goto error;
-	unpack(order, buf, "l", &siz);
-	siz -= 4;
-	if (siz > 0) {
-		if (siz > SIZE_MAX)
-			goto error;
-		str = malloc(siz);
-		if (!str)
-			goto error;
-		if (fread(str, siz, 1, fp) != 1)
-			goto error;
-		coff->strtbl = str;
-		coff->strsiz = siz;
-	}
-	obj->data = coff;
-
-	if (mkindex(obj) < 0)
+	if (!readstr(obj, fp))
 		goto error;
-
+	if (!mkindex(obj))
+		goto error;
 	return 0;
 
 error:
 	objreset(obj);
-
 	return -1;
 }
 
