@@ -233,12 +233,14 @@ readents(Obj *obj, FILE *fp)
 	coff  = obj->data;
 	hdr = &coff->hdr;
 
-	if (hdr->f_nsyms > 0) {
-		ent = calloc(hdr->f_nsyms, sizeof(*ent));
-		if (!ent)
-			return 0;
-		coff->ents = ent;
-	}
+	if (hdr->f_nsyms == 0)
+		return 1;
+
+	ent = calloc(hdr->f_nsyms, sizeof(*ent));
+	if (!ent)
+		return 0;
+	coff->ents = ent;
+
 	if (fsetpos(fp, &obj->pos))
 		return 0;
 	if (fseek(fp, hdr->f_symptr, SEEK_CUR) < 0)
@@ -260,6 +262,12 @@ readstr(Obj *obj, FILE *fp)
 	long siz;
 	char *str;
 	unsigned char buf[10];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	if (hdr->f_nsyms == 0)
+		return 1;
 
 	if (fread(buf, 4, 1, fp) != 1)
 		return 0;
@@ -332,10 +340,13 @@ del(Obj *obj)
 {
 	struct coff32 *coff = obj->data;
 
-	free(coff->scns);
-	free(coff->ents);
-	free(coff->strtbl);
+	if (coff) {
+		free(coff->scns);
+		free(coff->ents);
+		free(coff->strtbl);
+	}
 	free(obj->data);
+	obj->data = NULL;
 }
 
 static int

@@ -36,6 +36,9 @@ FORALL = +@set -e ;\
 		cd $$pwd; \
 	done
 
+.o:
+	$(CC) $(SCC_LDFLAGS) -o $@ $< $(LIBS)
+
 .s.o:
 	$(AS) $< -o $@
 

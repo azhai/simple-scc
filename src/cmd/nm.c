@@ -263,8 +263,7 @@ main(int argc, char *argv[])
 			nm(*argv);
 	}
 
-	fflush(stdout);
-	if (ferror(stdout)) {
+	if (fflush(stdout)) {
 		fprintf(stderr, "nm: error writing in output");
 		status = 1;
 	}
