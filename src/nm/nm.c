@@ -119,6 +119,16 @@ newsym(Symbol *sym, void *data)
 	struct symtbl *tbl = data;
 	Symbol **p;
 	size_t n, size;
+	int type = sym->type;
+
+	if (type == '?' || type == 'N')
+		return 1;
+
+	if (uflag && type != 'U')
+		return 1;
+
+	if (gflag && !isupper(type))
+		return 1;
 
 	n = tbl->nsyms+1;
 	if (n == 0 || n > SIZE_MAX / sizeof(*p))
