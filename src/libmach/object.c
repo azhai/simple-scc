@@ -144,18 +144,10 @@ objtraverse(Obj *obj, int (*fn)(Symbol *, void *), void *data)
 	return 1;
 }
 
-void
-objreset(Obj *obj)
+static void
+delsyms(Obj *obj)
 {
-	int fmt;
 	Symbol *sym, *next;
-	struct format *op;
-
-	fmt = FORMAT(obj->type);
-	if (fmt < NFORMATS) {
-		op = objfmt[fmt];
-		(*op->del)(obj);
-	}
 
 	for (sym = obj->head; sym; sym = next) {
 		next = sym->next;
@@ -168,8 +160,36 @@ objreset(Obj *obj)
 }
 
 void
+objreset(Obj *obj)
+{
+	int fmt;
+	struct format *op;
+
+	fmt = FORMAT(obj->type);
+	if (fmt < NFORMATS) {
+		op = objfmt[fmt];
+		(*op->del)(obj);
+	}
+	delsyms(obj);
+}
+
+void
 objdel(Obj *obj)
 {
 	objreset(obj);
 	free(obj);
+}
+
+void
+objstrip(Obj *obj)
+{
+	int fmt;
+	struct format *op;
+
+	fmt = FORMAT(obj->type);
+	if (fmt >= NFORMATS)
+		return -1;
+	op = objfmt[fmt];
+	(*op->strip)(obj);
+	delsyms(obj);
 }

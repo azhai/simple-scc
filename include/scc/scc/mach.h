@@ -50,6 +50,7 @@ extern void objreset(Obj *obj);
 extern int objread(Obj *obj, FILE *fp);
 extern Symbol *objlookup(Obj *obj, char *name);
 extern int objtraverse(Obj *obj, int (*fn)(Symbol *sym, void *data), void *data);
+extern void objstrip(Obj *obj);
 
 /* TODO */
 extern int objload(Obj *obj, Obj *to);

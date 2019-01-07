@@ -28,6 +28,7 @@ enum order {
 
 struct format {
 	int (*probe)(unsigned char *buf, char **name);
+	void (*strip)(Obj *obj);
 	int (*new)(Obj *obj);
 	int (*read)(Obj *obj, FILE *fp);
 	int (*write)(Obj *obj, FILE *fp);

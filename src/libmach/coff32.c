@@ -360,10 +360,26 @@ new(Obj *obj)
 	return 0;
 }
 
+static void
+strip(Obj *obj)
+{
+	struct coff32 *coff = obj->data;
+	FILHDR *hdr;
+
+	if (coff) {
+		hdr = &coff->hdr;
+		free(coff->ents);
+		coff->ents = NULL;
+		hdr->f_nsyms = 0;
+		hdr->f_symptr = 0;
+	}
+}
+
 struct format objcoff32 = {
 	.probe = probe,
 	.new = new,
 	.del = del,
 	.read = read,
 	.write = write,
+	.strip = strip,
 };
