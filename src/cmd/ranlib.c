@@ -19,7 +19,7 @@ struct name {
 	Name *hash, *next;
 };
 
-static int status;
+static int status, tflag;
 static char *filename, *membname;
 static Name *htab[NR_NAMES], *head;
 static long offset;
@@ -253,7 +253,7 @@ ranlib(char *fname)
 static void
 usage(void)
 {
-	fputs("usage: ranlib [file...]\n", stderr);
+	fputs("usage: ranlib [-t] [file...]\n", stderr);
 	exit(EXIT_FAILURE);
 }
 
@@ -261,6 +261,9 @@ int
 main(int argc, char *argv[])
 {
 	ARGBEGIN {
+	case 't':
+		tflag = 1; /* TODO */
+		break;
 	default:
 		usage();
 	} ARGEND
