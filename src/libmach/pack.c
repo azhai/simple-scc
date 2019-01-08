@@ -20,7 +20,7 @@ lpack(unsigned char *dst, char *fmt, va_list va)
 		switch (*fmt++) {
 		case '\'':
 			n = atoi(fmt);
-			while (isdigit(fmt))
+			while (isdigit(*fmt))
 				fmt++;
 			cp = va_arg(va, unsigned char *);
 			while (n--)
