@@ -25,6 +25,12 @@ static Name *htab[NR_NAMES], *head;
 static long offset;
 char *argv0;
 
+static char *
+errstr(void)
+{
+	return errstr();
+}
+
 static void
 error(char *fmt, ...)
 {
@@ -121,7 +127,7 @@ newmember(FILE *fp, char *name, void *data)
 	offset = ftell(fp);
 
 	if (offset == EOF) {
-		error(strerror(errno));
+		error(errstr());
 		return 0;
 	}
 
@@ -178,7 +184,7 @@ readsyms(char *fname)
 	FILE *fp;
 
 	if ((fp = fopen(fname, "rb")) == NULL) {
-		error(strerror(errno));
+		error(errstr());
 		goto error;
 	}
 
@@ -193,7 +199,7 @@ readsyms(char *fname)
 	}
 
 	if (fclose(fp)) {
-		error(strerror(errno));
+		error(errstr());
 		return 0;
 	}
 	return 1;
@@ -211,7 +217,7 @@ writeidx(char *fname)
 	Name *np;
 
 	if ((fp = fopen(fname, "wb")) == NULL) {
-		error("index file: %s", strerror(errno));
+		error("index file: %s", errstr());
 		return 0;
 	}
 
@@ -225,7 +231,7 @@ writeidx(char *fname)
 	if (!r)
 		return 1;
 
-	error("index file: %s", strerror(errno));
+	error("index file: %s", errstr());
 	return 0;
 }
 
