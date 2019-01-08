@@ -150,7 +150,7 @@ main(int argc, char *argv[])
 	for (pass = 1; pass <= 2; pass++) {
 		for (p = argv; infile = *p; ++p) {
 			if (!dopass(infile))
-				return 1;
+				return EXIT_FAILURE;
 		}
 		if (pass == 1)
 			killtmp();
