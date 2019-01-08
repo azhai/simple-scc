@@ -3,7 +3,7 @@
 PROJECTDIR = ..
 include $(PROJECTDIR)/scripts/rules.mk
 
-TOOLS = cc1 cc2 ld as objdump cmd
+TOOLS = cc1 cc2 ld as cmd
 LIBS  = libscc libc libcrt libmach
 DIRS  = $(TOOLS) $(LIBS)
 

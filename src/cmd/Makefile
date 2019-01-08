@@ -8,6 +8,7 @@ TARGET = $(BINDIR)/nm \
          $(BINDIR)/size \
          $(BINDIR)/ar \
          $(BINDIR)/ranlib \
+         $(BINDIR)/objdump \
 
 LIBS   = -lmach
 
@@ -26,6 +27,9 @@ $(BINDIR)/size: size.o
 
 $(BINDIR)/ranlib: ranlib.o
 	$(CC) $(SCC_LDFLAGS) ranlib.o -lmach -o $@
+
+$(BINDIR)/objdump: objdump.o
+	$(CC) $(SCC_LDFLAGS) objdump.o -lmach -o $@
 
 $(BINDIR)/ar: ar.o ar-$(DRIVER).o
 	$(CC) $(SCC_LDFLAGS) ar.o ar-$(DRIVER).o -o $@
