@@ -2,6 +2,7 @@ static char sccsid[] = "@(#) ./ar/main.c";
 
 #include <errno.h>
 #include <signal.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,6 +50,26 @@ cleanup(void)
 	}
 }
 
+static char *
+errstr(void)
+{
+	return strerror(errno);
+}
+
+static void
+error(char *fmt, ...)
+{
+	va_list va;
+
+	va_start(va, fmt);
+	fprintf(stderr, "ar: %s: ", arfile);
+	vfprintf(stderr, fmt, va);
+	putc('\n', stderr);
+	va_end(va);
+
+	exit(EXIT_FAILURE);
+}
+
 /*
  * I do know that you cannot call remove from a signal handler
  * but we only can use stdio function to deal with files
@@ -71,27 +92,16 @@ openar(void)
 	if ((fp = fopen(arfile,"r+b")) == NULL) {
 		if (!cflag)
 			fprintf(stderr, "ar: creating %s\n", arfile);
-		if ((fp = fopen(arfile, "w+b")) == NULL) {
-			perror("ar:opening archive");
-			exit(1);
-		}
+		if ((fp = fopen(arfile, "w+b")) == NULL)
+			error("opening archive: %s", errstr());
 		fputs(ARMAG, fp);
-		if (fflush(fp) == EOF) {
-			perror("ar:writing magic number");
-			exit(1);
-		}
+		if (fflush(fp) == EOF)
+			error("writing magic number: %s", errstr());
 	} else {
-		if (fgets(magic, sizeof(magic), fp) == NULL) {
-			perror("ar:error reading magic number");
-			exit(1);
-		}
-		if (strcmp(magic, ARMAG)) {
-			fprintf(stderr,
-			        "ar:%s:invalid magic number '%s'\n",
-			        arfile,
-			        magic);
-			exit(1);
-		}
+		if (fgets(magic, sizeof(magic), fp) == NULL)
+			error("error reading magic number: %s", errstr());
+		if (strcmp(magic, ARMAG))
+			error("invalid magic number '%s'", magic);
 	}
 	return fp;
 }
@@ -109,17 +119,10 @@ archive(char *fname, FILE *to, char letter)
 		printf("%c - %s\n", letter, fname);
 	if (strlen(fname) > 16)
 		fprintf(stderr, "ar:%s: too long name\n", fname);
-	if ((from = fopen(fname, "rb")) == NULL) {
-		fprintf(stderr,
-		        "ar:opening member '%s':%s\n",
-		        fname,
-		        strerror(errno));
-		exit(1);
-	}
-	if (stat(fname, &st) < 0) {
-		fprintf(stderr, "ar:error getting '%s' attributes\n", fname);
-		exit(1);
-	}
+	if ((from = fopen(fname, "rb")) == NULL)
+		error("opening member '%s':%s\n", fname, errstr());
+	if (stat(fname, &st) < 0)
+		error("error getting '%s' attributes", fname);
 	strftime(mtime, sizeof(mtime), "%s", gmtime(&st.st_mtime));
 	fprintf(to,
 	        "%-16.16s%-12s%-6u%-6u%-8o%-10llu`\n",
@@ -133,12 +136,8 @@ archive(char *fname, FILE *to, char letter)
 		putc(c, to);
 	if (n & 1)
 		putc('\n', to);
-	if (ferror(from)) {
-		fprintf(stderr,
-		        "ar:reading input '%s':%s\n",
-		        fname, strerror(errno));
-		exit(1);
-	}
+	if (ferror(from))
+		error("reading input '%s':%s", fname, errstr());
 	fclose(from);
 }
 
@@ -147,20 +146,16 @@ append(FILE *fp, char *argv[])
 {
 	char *fname;
 
-	if (fseek(fp, 0, SEEK_END) == EOF) {
-		perror("ar:seeking archive");
-		exit(1);
-	}
+	if (fseek(fp, 0, SEEK_END) == EOF)
+		error("seeking archive: %s", errstr());
 
 	for ( ; fname = *argv; ++argv) {
 		*argv = NULL;
 		archive(fname, fp, 'a');
 	}
 
-	if (fclose(fp) == EOF) {
-		perror("ar:error writing archive");
-		exit(1);
-	}
+	if (fclose(fp) == EOF)
+		error("error writing archive: %s", errstr());
 }
 
 static void
@@ -409,21 +404,16 @@ run(FILE *fp, int argc, char *argv[],
 	while (fread(&m.hdr, sizeof(m.hdr), 1, fp) == 1) {
 		fpos_t pos;
 
-		if (!valid(&m)) {
-			fprintf(stderr,
-			        "ar:corrupted member '%s'\n",
-			        m.fname);
-			exit(1);
-		}
+		if (!valid(&m))
+			error("corrupted member '%s'", m.fname);
 		fgetpos(fp, &pos);
 		(*fun)(&m, argc, argv);
 		fsetpos(fp, &pos);
 		fseek(fp, m.size+1 & ~1, SEEK_CUR);
 	}
-	if (ferror(fp) || fclose(fp) == EOF) {
-		perror("ar:reading members");
-		exit(1);
-	}
+	if (ferror(fp))
+		error("reading members: %s", errstr());
+	fclose(fp);
 }
 
 static void
@@ -432,11 +422,8 @@ merge(void)
 	FILE *fp, *fi;
 	int c, i;
 
-
-	if ((fp = fopen(arfile, "wb")) == NULL) {
-		perror("ar:reopening archive");
-		exit(1);
-	}
+	if ((fp = fopen(arfile, "wb")) == NULL)
+		error("reopening archive: %s", errstr());
 
 	fputs(ARMAG, fp);
 
@@ -446,16 +433,12 @@ merge(void)
 		fseek(fi, 0, SEEK_SET);
 		while ((c = getc(fi)) != EOF)
 			putc(c, fp);
-		if (ferror(fi)) {
-			perror("ar:error in temporary");
-			exit(1);
-		}
+		if (ferror(fi))
+			error("error in temporary: %s", errstr());
 	}
 
-	if (fclose(fp) == EOF) {
-		perror("ar:writing archive file");
-		exit(1);
-	}
+	if (fclose(fp) == EOF)
+		error("writing archive file: %s", errstr());
 }
 
 static void
@@ -483,24 +466,20 @@ opentmp(char *fname, int which)
 		tmp->fp = tmpfile();
 	}
 
-	if (tmp->fp == NULL) {
-		perror("ar:creating temporary");
-		exit(1);
-	}
+	if (tmp->fp == NULL)
+		error("creating temporary: %s", errstr());
 }
 
 static void
-doit(int key, char *argv[], int argc)
+ar(int key, char *argv[], int argc)
 {
 	FILE *fp;
 
 	fp = openar();
 	if (argc == 0 &&
 	    (key == 'r' || key == 'd' || key == 'm' || key == 'q')) {
-		if (fclose(fp) == EOF) {
-			perror("ar:early close of archive file");
-			exit(-1);
-		}
+		if (fclose(fp) == EOF)
+			error("early close of archive file: %s", errstr());
 		return;
 	}
 
@@ -544,10 +523,8 @@ doit(int key, char *argv[], int argc)
 	closetmp(AFTER);
 
 	for ( ; argc-- > 0; ++argv) {
-		if (*argv) {
-			fprintf(stderr, "ar: No member named '%s'\n", *argv);
-			exit(1);
-		}
+		if (*argv)
+			error("No member named '%s'", *argv);
 	}
 }
 
@@ -631,12 +608,11 @@ main(int argc, char *argv[])
 	signal(SIGTERM, sigfun);
 
 	arfile = *argv;
-	doit(key, ++argv, --argc);
+	ar(key, ++argv, --argc);
 
-	if (fflush(stdout) == EOF) {
-		perror("ar:error writing to stdout");
-		exit(1);
-	}
+	fflush(stdout);
+	if (ferror(stdout))
+		error("error writing to stdout: %s", errstr());
 
 	return 0;
 }
