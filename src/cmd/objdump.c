@@ -28,6 +28,7 @@ error(char *fmt, ...)
 static void
 dump(char *fname)
 {
+	/* TODO */
 }
 
 static void

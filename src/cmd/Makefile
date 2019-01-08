@@ -9,6 +9,8 @@ TARGET = $(BINDIR)/nm \
          $(BINDIR)/ar \
          $(BINDIR)/ranlib \
          $(BINDIR)/objdump \
+         $(BINDIR)/objcopy \
+         $(BINDIR)/addr2line \
 
 LIBS   = -lmach
 
@@ -30,6 +32,12 @@ $(BINDIR)/ranlib: ranlib.o
 
 $(BINDIR)/objdump: objdump.o
 	$(CC) $(SCC_LDFLAGS) objdump.o -lmach -o $@
+
+$(BINDIR)/objcopy: objcopy.o
+	$(CC) $(SCC_LDFLAGS) objcopy.o -lmach -o $@
+
+$(BINDIR)/addr2line: addr2line.o
+	$(CC) $(SCC_LDFLAGS) addr2line.o -lmach -o $@
 
 $(BINDIR)/ar: ar.o ar-$(DRIVER).o
 	$(CC) $(SCC_LDFLAGS) ar.o ar-$(DRIVER).o -o $@
