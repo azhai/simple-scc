@@ -34,11 +34,11 @@ strip(char *fname)
 
 	filename = fname;
 	if ((tmp = fopen("strip.tmp", "wb")) == NULL) {
-		error("%s", strerror(errno));
+		error(strerror(errno));
 		goto err;
 	}
 	if ((fp = fopen(fname, "rb")) == NULL) {
-		error("%s", strerror(errno));
+		error(strerror(errno));
 		goto err1;
 	}
 	if ((type = objtype(fp, NULL)) < 0) {
