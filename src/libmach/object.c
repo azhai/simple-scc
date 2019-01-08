@@ -180,7 +180,7 @@ objdel(Obj *obj)
 	free(obj);
 }
 
-void
+int
 objstrip(Obj *obj)
 {
 	int fmt;
@@ -192,4 +192,20 @@ objstrip(Obj *obj)
 	op = objfmt[fmt];
 	(*op->strip)(obj);
 	delsyms(obj);
+}
+
+void
+objsize(Obj *obj,
+        unsigned long long *text,
+        unsigned long long *data,
+        unsigned long long *bss)
+{
+	int fmt;
+	struct format *op;
+
+	fmt = FORMAT(obj->type);
+	if (fmt >= NFORMATS)
+		return -1;
+	op = objfmt[fmt];
+	(*op->size)(obj, text, data, bss);
 }

@@ -5,6 +5,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 
 TARGET = $(BINDIR)/nm \
          $(BINDIR)/strip \
+         $(BINDIR)/size \
 
 LIBS   = -lmach
 
@@ -18,8 +19,11 @@ $(BINDIR)/nm: nm
 $(BINDIR)/strip: strip
 	cp strip $@
 
+$(BINDIR)/size: size
+	cp size $@
+
 clean:
-	rm -f nm strip
+	rm -f nm strip size
 
 dep: inc-dep
 

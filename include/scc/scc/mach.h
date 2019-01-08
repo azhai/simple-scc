@@ -56,3 +56,7 @@ extern void objstrip(Obj *obj);
 extern int objload(Obj *obj, Obj *to);
 extern int objreloc(Obj *obj, char *sect, void *rel);
 extern int objwrite(Obj *obj, FILE *fp);
+extern void objsize(Obj *obj,
+                    unsigned long long *text,
+                    unsigned long long *data,
+                    unsigned long long *bss);
