@@ -51,12 +51,13 @@ extern int objread(Obj *obj, FILE *fp);
 extern Symbol *objlookup(Obj *obj, char *name);
 extern int objtraverse(Obj *obj, int (*fn)(Symbol *sym, void *data), void *data);
 extern int objstrip(Obj *obj);
+extern int objsize(Obj *obj,
+                   unsigned long long *text,
+                   unsigned long long *data,
+                   unsigned long long *bss);
 
 /* TODO */
 extern int objload(Obj *obj, Obj *to);
 extern int objreloc(Obj *obj, char *sect, void *rel);
 extern int objwrite(Obj *obj, FILE *fp);
-extern int objsize(Obj *obj,
-                   unsigned long long *text,
-                   unsigned long long *data,
-                   unsigned long long *bss);
+extern int addr2line(Obj *obj, unsigned long long addr, char *fname, int *line);

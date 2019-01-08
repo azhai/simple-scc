@@ -212,3 +212,10 @@ objsize(Obj *obj,
 	op = objfmt[fmt];
 	return (*op->size)(obj, text, data, bss);
 }
+
+int
+addr2line(Obj *obj, unsigned long long addr, char *fname, int *line)
+{
+	/* TODO */
+	return -1;
+}
