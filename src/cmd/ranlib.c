@@ -19,7 +19,7 @@ struct name {
 	Name *hash, *next;
 };
 
-static int status, tflag;
+static int status, tflag, artype, nolib;
 static char *filename, *membname;
 static Name *htab[NR_NAMES], *head;
 static long offset;
@@ -125,8 +125,13 @@ newmember(FILE *fp, char *name, void *data)
 		return 0;
 	}
 
-	if ((t = objtype(fp, NULL)) == -1)
-		return 1;
+	t = objtype(fp, NULL);
+
+	if(t == -1 || artype != -1 && artype != t) {
+		nolib = 1;
+		return 0;
+	}
+	artype = t;
 
 	if ((obj = objnew(t)) == NULL) {
 		error("out of memory");
@@ -235,10 +240,15 @@ ranlib(char *fname)
 {
 	static char symdef[] = "__.SYMDEF";
 
+	nolib = 0;
+	artype = -1;
 	filename = fname;
 	freenames();
 
 	if (!readsyms(fname))
+		return;
+
+	if (nolib)
 		return;
 
 	if (!writeidx(symdef))
