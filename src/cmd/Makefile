@@ -7,6 +7,7 @@ TARGET = $(BINDIR)/nm \
          $(BINDIR)/strip \
          $(BINDIR)/size \
          $(BINDIR)/ar \
+         $(BINDIR)/ranlib \
 
 LIBS   = -lmach
 
@@ -22,6 +23,9 @@ $(BINDIR)/strip: strip.o
 
 $(BINDIR)/size: size.o
 	$(CC) $(SCC_LDFLAGS) size.o -lmach -o $@
+
+$(BINDIR)/ranlib: ranlib.o
+	$(CC) $(SCC_LDFLAGS) ranlib.o -lmach -o $@
 
 $(BINDIR)/ar: ar.o ar-$(DRIVER).o
 	$(CC) $(SCC_LDFLAGS) ar.o ar-$(DRIVER).o -o $@
