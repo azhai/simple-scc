@@ -45,18 +45,18 @@ extern int artraverse(FILE *fp,
 
 extern int objtype(FILE *fp, char **name);
 extern Obj *objnew(int type);
-extern void objdel(Obj *obj);
-extern void objreset(Obj *obj);
+extern int objdel(Obj *obj);
+extern int objreset(Obj *obj);
 extern int objread(Obj *obj, FILE *fp);
 extern Symbol *objlookup(Obj *obj, char *name);
 extern int objtraverse(Obj *obj, int (*fn)(Symbol *sym, void *data), void *data);
-extern void objstrip(Obj *obj);
+extern int objstrip(Obj *obj);
 
 /* TODO */
 extern int objload(Obj *obj, Obj *to);
 extern int objreloc(Obj *obj, char *sect, void *rel);
 extern int objwrite(Obj *obj, FILE *fp);
-extern void objsize(Obj *obj,
-                    unsigned long long *text,
-                    unsigned long long *data,
-                    unsigned long long *bss);
+extern int objsize(Obj *obj,
+                   unsigned long long *text,
+                   unsigned long long *data,
+                   unsigned long long *bss);

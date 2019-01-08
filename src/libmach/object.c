@@ -159,24 +159,26 @@ delsyms(Obj *obj)
 	memset(obj->htab, 0, sizeof(obj->htab));
 }
 
-void
+int
 objreset(Obj *obj)
 {
 	int fmt;
 	struct format *op;
 
 	fmt = FORMAT(obj->type);
-	if (fmt < NFORMATS) {
-		op = objfmt[fmt];
-		(*op->del)(obj);
-	}
+	if (fmt < NFORMATS)
+		return -1;
+	op = objfmt[fmt];
+	(*op->del)(obj);
 	delsyms(obj);
+	return 0;
 }
 
-void
+int
 objdel(Obj *obj)
 {
-	objreset(obj);
+	if (objreset(obj) < 0)
+		return -1;
 	free(obj);
 }
 
@@ -192,9 +194,10 @@ objstrip(Obj *obj)
 	op = objfmt[fmt];
 	(*op->strip)(obj);
 	delsyms(obj);
+	return 0;
 }
 
-void
+int
 objsize(Obj *obj,
         unsigned long long *text,
         unsigned long long *data,
@@ -208,4 +211,5 @@ objsize(Obj *obj,
 		return -1;
 	op = objfmt[fmt];
 	(*op->size)(obj, text, data, bss);
+	return 0;
 }

@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <scc/coff32/filehdr.h>
 #include <scc/coff32/scnhdr.h>
@@ -360,7 +361,7 @@ new(Obj *obj)
 	return 0;
 }
 
-static void
+static int
 strip(Obj *obj)
 {
 	struct coff32 *coff = obj->data;
