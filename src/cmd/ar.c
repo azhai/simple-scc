@@ -8,7 +8,7 @@ static char sccsid[] = "@(#) ./ar/main.c";
 #include <string.h>
 #include <time.h>
 
-#include "ar.h"
+#include "sys.h"
 
 #include <scc/ar.h>
 #include <scc/arg.h>
@@ -113,7 +113,7 @@ archive(char *fname, FILE *to, char letter)
 	size_t n;
 	FILE *from;
 	char mtime[13];
-	struct stat st;
+	struct fprop prop;
 
 	if (vflag)
 		printf("%c - %s\n", letter, fname);
@@ -121,17 +121,17 @@ archive(char *fname, FILE *to, char letter)
 		fprintf(stderr, "ar:%s: too long name\n", fname);
 	if ((from = fopen(fname, "rb")) == NULL)
 		error("opening member '%s':%s\n", fname, errstr());
-	if (stat(fname, &st) < 0)
+	if (getstat(fname, &prop) < 0)
 		error("error getting '%s' attributes", fname);
-	strftime(mtime, sizeof(mtime), "%s", gmtime(&st.st_mtime));
+	strftime(mtime, sizeof(mtime), "%s", gmtime(&prop.time));
 	fprintf(to,
 	        "%-16.16s%-12s%-6u%-6u%-8o%-10llu`\n",
 	        fname,
 	        mtime,
-	        st.st_uid,
-	        st.st_gid,
-	        st.st_mode,
-	        (unsigned long long) st.st_size);
+	        prop.uid,
+	        prop.gid,
+	        prop.mode,
+	        (unsigned long long) prop.size);
 	for (n = 0; (c = getc(from)) != EOF; n++)
 		putc(c, to);
 	if (n & 1)

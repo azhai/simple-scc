@@ -39,8 +39,8 @@ $(BINDIR)/objcopy: objcopy.o
 $(BINDIR)/addr2line: addr2line.o
 	$(CC) $(SCC_LDFLAGS) addr2line.o -lmach -o $@
 
-$(BINDIR)/ar: ar.o ar-$(DRIVER).o
-	$(CC) $(SCC_LDFLAGS) ar.o ar-$(DRIVER).o -o $@
+$(BINDIR)/ar: ar.o $(DRIVER).o
+	$(CC) $(SCC_LDFLAGS) ar.o $(DRIVER).o -o $@
 
 dep: inc-dep
 
