@@ -85,7 +85,7 @@ err:
 static void
 usage(void)
 {
-	fputs("usage: strip file ...\n", stderr);
+	fputs("usage: strip [file...]\n", stderr);
 	exit(EXIT_FAILURE);
 }
 
@@ -97,10 +97,12 @@ main(int argc, char *argv[])
 		usage();
 	} ARGEND
 
-	if (argc == 1)
-		usage;
+	if (argc == 0) {
+		strip("a.out");
+	} else {
+		for (; *argv; ++argv)
+			strip(*argv);
+	}
 
-	for (argc--; argc > 0; argc--)
-		strip(*argv++);
 	return status;
 }

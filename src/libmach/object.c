@@ -210,6 +210,5 @@ objsize(Obj *obj,
 	if (fmt >= NFORMATS)
 		return -1;
 	op = objfmt[fmt];
-	(*op->size)(obj, text, data, bss);
-	return 0;
+	return (*op->size)(obj, text, data, bss);
 }

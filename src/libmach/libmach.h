@@ -28,15 +28,15 @@ enum order {
 
 struct format {
 	int (*probe)(unsigned char *buf, char **name);
-	int (*strip)(Obj *obj);
+	void (*strip)(Obj *obj);
 	int (*new)(Obj *obj);
 	int (*read)(Obj *obj, FILE *fp);
 	int (*write)(Obj *obj, FILE *fp);
 	void (*del)(Obj *obj);
-	void (*size)(Obj *obj,
-                 unsigned long long *,
-                 unsigned long long *,
-                 unsigned long long *);
+	int (*size)(Obj *obj,
+                unsigned long long *,
+                unsigned long long *,
+                unsigned long long *);
 };
 
 extern int pack(int order, unsigned char *dst, char *fmt, ...);

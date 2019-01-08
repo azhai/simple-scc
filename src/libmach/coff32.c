@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <ctype.h>
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -361,19 +362,55 @@ new(Obj *obj)
 	return 0;
 }
 
-static int
+static void
 strip(Obj *obj)
 {
 	struct coff32 *coff = obj->data;
 	FILHDR *hdr;
 
-	if (coff) {
-		hdr = &coff->hdr;
-		free(coff->ents);
-		coff->ents = NULL;
-		hdr->f_nsyms = 0;
-		hdr->f_symptr = 0;
+	hdr = &coff->hdr;
+	free(coff->ents);
+	coff->ents = NULL;
+	hdr->f_nsyms = 0;
+	hdr->f_symptr = 0;
+}
+
+static int
+size(Obj *obj,
+     unsigned long long *text,
+     unsigned long long *data,
+     unsigned long long *bss)
+{
+	int i;
+	long flags;
+	FILHDR *hdr;
+	struct coff32 *coff;
+	SCNHDR *scn, *lim;
+	unsigned long long *p;
+
+	*text = 0;
+	*data = 0;
+	*bss = 0;
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	lim = &coff->scns[hdr->f_nscns];
+	for (scn = coff->scns; scn < lim; scn++) {
+		flags = scn->s_flags;
+		if (flags & STYP_TEXT)
+			p = text;
+		else if (flags & STYP_DATA)
+			p = data;
+		else if (flags & STYP_BSS)
+			p = bss;
+		else
+			continue;
+		if (*p > ULONG_MAX - scn->s_size)
+			return -1;
+		*p += scn->s_size;
 	}
+	return 0;
 }
 
 struct format objcoff32 = {
@@ -383,4 +420,5 @@ struct format objcoff32 = {
 	.read = read,
 	.write = write,
 	.strip = strip,
+	.size = size,
 };

@@ -39,11 +39,11 @@ newobject(FILE *fp, int type)
 		error("out of memory");
 		goto error;
 	}
-	if (objread(obj, fp) < 0) {
+	if (objread(obj, fp) < 0 || objsize(obj, &text, &data, &bss) < 0) {
 		error("file corrupted");
 		goto error;
 	}
-	objsize(obj, &text, &data, &bss);
+
 	total = text + data + bss;
 	printf("%llu\t%llu\t%llu\t%llu\t%llx\t%s\n",
 	       text, data, bss, total, total, filename);
@@ -98,7 +98,7 @@ size(char *fname)
 static void
 usage(void)
 {
-	fputs("usage: size [-t] file ...\n", stderr);
+	fputs("usage: size [-t] [file...]\n", stderr);
 	exit(EXIT_FAILURE);
 }
 
@@ -115,12 +115,14 @@ main(int argc, char *argv[])
 		usage();
 	} ARGEND
 
-	if (argc == 1)
-		usage;
-
 	puts("text\tdata\tbss\tdec\thex\tfilename");
-	for (argc--; argc > 0; argc--)
-		size(*argv++);
+
+	if (argc == 0) {
+		size("a.out");
+	} else {
+		for (; *argv; ++argv)
+			size(*argv);
+	}
 
 	if (tflag) {
 		total = ttext + tdata + tbss;
