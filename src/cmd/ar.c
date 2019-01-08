@@ -7,11 +7,10 @@ static char sccsid[] = "@(#) ./ar/main.c";
 #include <string.h>
 #include <time.h>
 
-#include <driver.h>
+#include "ar.h"
 
 #include <scc/ar.h>
 #include <scc/arg.h>
-#include <scc/scc.h>
 
 enum {
 	BEFORE,

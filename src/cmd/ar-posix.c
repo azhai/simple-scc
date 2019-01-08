@@ -1,6 +1,6 @@
 static char sccsid[] = "@(#) ./ar/posix/driver.c";
 
-#include "driver.h"
+#include "ar.h"
 
 time_t
 totime(long long t)

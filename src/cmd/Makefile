@@ -6,24 +6,25 @@ include $(PROJECTDIR)/scripts/rules.mk
 TARGET = $(BINDIR)/nm \
          $(BINDIR)/strip \
          $(BINDIR)/size \
+         $(BINDIR)/ar \
 
 LIBS   = -lmach
 
 all: $(TARGET)
 
-nm strip: $(LIBDIR)/libmach.a
+$(TARGET): $(LIBDIR)/libmach.a
 
-$(BINDIR)/nm: nm
-	cp nm $@
+$(BINDIR)/nm: nm.o
+	$(CC) $(SCC_LDFLAGS) nm.o -lmach -o $@
 
-$(BINDIR)/strip: strip
-	cp strip $@
+$(BINDIR)/strip: strip.o
+	$(CC) $(SCC_LDFLAGS) strip.o -lmach -o $@
 
-$(BINDIR)/size: size
-	cp size $@
+$(BINDIR)/size: size.o
+	$(CC) $(SCC_LDFLAGS) size.o -lmach -o $@
 
-clean:
-	rm -f nm strip size
+$(BINDIR)/ar: ar.o ar-$(DRIVER).o
+	$(CC) $(SCC_LDFLAGS) ar.o ar-$(DRIVER).o -o $@
 
 dep: inc-dep
 
