@@ -1,7 +1,7 @@
 struct fprop {
 	unsigned uid;
 	unsigned gid;
-	unsigned mode;
+	unsigned long mode;
 	long size;
 	time_t time;
 };

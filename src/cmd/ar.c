@@ -125,7 +125,7 @@ archive(char *fname, FILE *to, char letter)
 		error("error getting '%s' attributes", fname);
 	strftime(mtime, sizeof(mtime), "%s", gmtime(&prop.time));
 	fprintf(to,
-	        "%-16.16s%-12s%-6u%-6u%-8o%-10llu`\n",
+	        "%-16.16s%-12s%-6u%-6u%-8lo%-10llu`\n",
 	        fname,
 	        mtime,
 	        prop.uid,
@@ -261,6 +261,8 @@ extract(struct member *m, int argc, char *argv[])
 	int c;
 	long siz;
 	FILE *fp;
+	struct fprop prop;
+	struct ar_hdr *hdr = &m->hdr;
 
 	if (argc > 0 && !inlist(m->fname, argc, argv))
 		return;
@@ -276,13 +278,16 @@ extract(struct member *m, int argc, char *argv[])
 	if (fclose(fp) == EOF)
 		goto error_file;
 
-	/* TODO: set attributes */
+	prop.uid = atol(hdr->ar_uid);
+	prop.gid = atol(hdr->ar_gid);
+	prop.mode = m->mode;
+	prop.time = totime(m->date);
+	if (setstat(m->fname, &prop) < 0)
+		error("%s: setting file attributes", m->fname);
 	return;
 
-
 error_file:
-	perror("ar:error extracting file");
-	exit(1);
+	error("error extracting file: %s", errstr());
 }
 
 static void
@@ -448,10 +453,8 @@ closetmp(int which)
 
 	if (!tmp->fp)
 		return;
-	if (fclose(tmp->fp) == EOF) {
-		perror("ar:closing temporaries");
-		exit(1);
-	}
+	if (fclose(tmp->fp) == EOF)
+		error("closing temporaries: %s", errstr());
 }
 
 static void

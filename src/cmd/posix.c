@@ -1,8 +1,10 @@
 static char sccsid[] = "@(#) ./ar/posix/driver.c";
 
 #include <sys/types.h>
+#include <sys/time.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <utime.h>
 
 #include "sys.h"
 
@@ -30,4 +32,19 @@ getstat(char *fname, struct fprop *prop)
 int
 setstat(char *fname, struct fprop *prop)
 {
+	struct utimbuf ut = {prop->time, prop->time};
+	uid_t uid;
+	gid_t gid;
+
+	
+
+	if (chown(fname, prop->uid, prop->gid) < 0) {
+		if (chown(fname, getuid(), getgid()) < 0)
+			return -1;
+	}
+	if (chmod(fname, prop->mode) < 0)
+		return -1;
+	if (utime(fname, &ut) < 0)
+		return -1;
+	return 0;
 }
