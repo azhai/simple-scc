@@ -208,6 +208,16 @@ inlist(char *fname, int argc, char *argv[])
 	return 0;
 }
 
+static int
+older(struct member *m)
+{
+	struct fprop prop;
+
+	if (getstat(m->fname, &prop) < 0)
+		error("error getting '%s' attributes", m->fname);
+	return prop.time > m->date;
+}
+
 static void
 move(struct member *m, int argc, char *argv[])
 {
@@ -244,7 +254,8 @@ update(struct member *m, int argc, char *argv[])
 	FILE *fp = tmps[BEFORE].fp;
 
 	if (inlist(m->fname, argc, argv)) {
-		archive(m->fname, tmps[m->cur].fp, 'r');
+		if (uflag && older(m))
+			archive(m->fname, tmps[m->cur].fp, 'r');
 		return;
 	} else if (posname && !strcmp(posname, m->fname)) {
 		where = (bflag) ? AFTER : BEFORE;
@@ -595,8 +606,6 @@ main(int argc, char *argv[])
 		lflag = 1;
 		break;
 	case 'u':
-		/* TODO */
-		abort();
 		uflag = 1;
 		break;
 	default:
