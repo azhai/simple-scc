@@ -617,7 +617,10 @@ main(int argc, char *argv[])
 		usage();
 	} ARGEND
 
-	if (nkey == 0 || nkey > 1 || pos > 1 || argc == 0)
+	if (nkey == 0 || nkey > 1 || pos > 1 || argc == 0 ||
+	    (aflag || bflag) && !(key == 'm' || key == 'r') ||
+	    cflag && !(key == 'q' || key == 'r') ||
+	    uflag && key != 'r')
 		usage();
 
 	signal(SIGINT, sigfun);
