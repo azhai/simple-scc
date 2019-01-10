@@ -28,7 +28,7 @@ char *argv0;
 static char *
 errstr(void)
 {
-	return errstr();
+	return strerror(errno);
 }
 
 static void
