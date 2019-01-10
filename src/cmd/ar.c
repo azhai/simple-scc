@@ -120,9 +120,9 @@ archive(char *pname, FILE *to, char letter)
 	if (vflag)
 		printf("%c - %s\n", letter, fname);
 	if (strlen(fname) > 16)
-		fprintf(stderr, "ar:%s: too long name\n", fname);
+		fprintf(stderr, "ar: %s: name too long, truncated\n", fname);
 	if ((from = fopen(pname, "rb")) == NULL)
-		error("opening member '%s':%s\n", pname, errstr());
+		error("opening member '%s': %s", pname, errstr());
 	if (getstat(pname, &prop) < 0)
 		error("error getting '%s' attributes", pname);
 	strftime(mtime, sizeof(mtime), "%s", gmtime(&prop.time));
@@ -139,7 +139,7 @@ archive(char *pname, FILE *to, char letter)
 	if (n & 1)
 		putc('\n', to);
 	if (ferror(from))
-		error("reading input '%s':%s", pname, errstr());
+		error("reading input '%s': %s", pname, errstr());
 	fclose(from);
 }
 
