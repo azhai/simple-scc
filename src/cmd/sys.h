@@ -7,5 +7,6 @@ struct fprop {
 };
 
 extern time_t totime(long long t);
+extern char *canonical(char *path);
 extern int getstat(char *fname, struct fprop *prop);
 extern int setstat(char *fname, struct fprop *prop);

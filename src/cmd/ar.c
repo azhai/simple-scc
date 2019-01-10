@@ -107,22 +107,24 @@ openar(void)
 }
 
 static void
-archive(char *fname, FILE *to, char letter)
+archive(char *pname, FILE *to, char letter)
 {
 	int c;
 	size_t n;
 	FILE *from;
-	char mtime[13];
+	char mtime[13], *fname;
 	struct fprop prop;
+
+	fname = canonical(pname);
 
 	if (vflag)
 		printf("%c - %s\n", letter, fname);
 	if (strlen(fname) > 16)
 		fprintf(stderr, "ar:%s: too long name\n", fname);
-	if ((from = fopen(fname, "rb")) == NULL)
-		error("opening member '%s':%s\n", fname, errstr());
-	if (getstat(fname, &prop) < 0)
-		error("error getting '%s' attributes", fname);
+	if ((from = fopen(pname, "rb")) == NULL)
+		error("opening member '%s':%s\n", pname, errstr());
+	if (getstat(pname, &prop) < 0)
+		error("error getting '%s' attributes", pname);
 	strftime(mtime, sizeof(mtime), "%s", gmtime(&prop.time));
 	fprintf(to,
 	        "%-16.16s%-12s%-6u%-6u%-8lo%-10llu`\n",
@@ -137,7 +139,7 @@ archive(char *fname, FILE *to, char letter)
 	if (n & 1)
 		putc('\n', to);
 	if (ferror(from))
-		error("reading input '%s':%s", fname, errstr());
+		error("reading input '%s':%s", pname, errstr());
 	fclose(from);
 }
 
@@ -196,25 +198,28 @@ perms(struct member *m)
 	return buf;
 }
 
-static int
+static char *
 inlist(char *fname, int argc, char *argv[])
 {
-	for (; argc-- > 0; ++argv) {
-		if (*argv && !strcmp(*argv, fname)) {
+	char *p;
+
+	for ( ; argc-- > 0; ++argv) {
+		if (*argv && !strcmp(canonical(*argv), fname)) {
+			p = *argv;
 			*argv = NULL;
-			return 1;
+			return p;
 		}
 	}
-	return 0;
+	return NULL;
 }
 
 static int
-older(struct member *m)
+older(struct member *m, char *pname)
 {
 	struct fprop prop;
 
-	if (getstat(m->fname, &prop) < 0)
-		error("error getting '%s' attributes", m->fname);
+	if (getstat(pname, &prop) < 0)
+		error("error getting '%s' attributes", pname);
 	return prop.time > m->date;
 }
 
@@ -252,10 +257,11 @@ update(struct member *m, int argc, char *argv[])
 {
 	int where;
 	FILE *fp = tmps[BEFORE].fp;
+	char *pname;
 
-	if (inlist(m->fname, argc, argv)) {
-		if (uflag && older(m))
-			archive(m->fname, tmps[m->cur].fp, 'r');
+	if (pname = inlist(m->fname, argc, argv)) {
+		if (uflag && older(m, pname))
+			archive(pname, tmps[m->cur].fp, 'r');
 		return;
 	} else if (posname && !strcmp(posname, m->fname)) {
 		where = (bflag) ? AFTER : BEFORE;
@@ -354,16 +360,15 @@ static char *
 getfname(struct ar_hdr *hdr)
 {
 	static char fname[SARNAM+1];
-	size_t i;
+	char *p;
 
 	memcpy(fname, hdr->ar_name, SARNAM);
-	fname[SARNAM] = '\0';
 
-	for (i = SARNAM-1; i >= 0; --i) {
-		if (fname[i] != ' ' && fname[i] != '/')
-			break;
-		fname[i] = '\0';
-	}
+	if (p = strchr(fname, ' '))
+		*p = '\0';
+	else
+		fname[SARNAM] = '\0';
+
 	return fname;
 }
 

@@ -3,6 +3,7 @@ static char sccsid[] = "@(#) ./ar/posix/driver.c";
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/stat.h>
+#include <string.h>
 #include <unistd.h>
 #include <utime.h>
 
@@ -12,6 +13,13 @@ time_t
 totime(long long t)
 {
 	return t;
+}
+
+char *
+canonical(char *path)
+{
+	char *name = strrchr(path, '/');
+	return (name && name[1]) ? name+1 : path;
 }
 
 int
