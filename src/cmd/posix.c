@@ -9,6 +9,8 @@ static char sccsid[] = "@(#) ./ar/posix/driver.c";
 
 #include "sys.h"
 
+const char invalidchars[] = " ";
+
 time_t
 totime(long long t)
 {

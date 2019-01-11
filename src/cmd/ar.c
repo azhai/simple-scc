@@ -119,8 +119,6 @@ archive(char *pname, FILE *to, char letter)
 
 	if (vflag)
 		printf("%c - %s\n", letter, fname);
-	if (strlen(fname) > 16)
-		fprintf(stderr, "ar: %s: name too long, truncated\n", fname);
 	if ((from = fopen(pname, "rb")) == NULL)
 		error("opening member '%s': %s", pname, errstr());
 	if (getstat(pname, &prop) < 0)
@@ -548,6 +546,22 @@ ar(int key, char *argv[], int argc)
 }
 
 static void
+checkfnames(int argc, char *argv[])
+{
+	size_t l;
+	char *p;
+
+	for ( ; argc-- > 0; ++argv) {
+		p = canonical(*argv);
+		l = strcspn(p, invalidchars);
+		if (l > 16)
+			error("file: '%s': name too long", *argv);
+		if (p[l] != '\0')
+			error("file: '%s': name invalid", *argv);
+	}
+}
+
+static void
 usage(void)
 {
 	fputs("ar [-drqtpmx][posname] [-vuaibcl] [posname] arfile name ...\n",
@@ -628,7 +642,8 @@ main(int argc, char *argv[])
 	signal(SIGTERM, sigfun);
 
 	arfile = *argv;
-	ar(key, ++argv, --argc);
+	checkfnames(--argc, ++argv);
+	ar(key, argv, argc);
 
 	fflush(stdout);
 	if (ferror(stdout))
