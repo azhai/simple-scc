@@ -33,6 +33,7 @@ getstat(char *fname, struct fprop *prop)
 	prop->gid = st.st_gid;
 	prop->mode = st.st_mode;
 	prop->time = st.st_mtime;
+	prop->size = st.st_size;
 
 	return 0;
 }
