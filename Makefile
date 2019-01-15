@@ -15,7 +15,7 @@ dirs: $(SCRIPTDIR)/libc-proto
 	touch dirs
 
 $(DIRS): $(ENV) FORCE
-	. $(ENV) && cd $@ && $(MAKE)
+	+@. $(ENV) && cd $@ && $(MAKE)
 
 $(ENV):
 	@rm -f $@; \
