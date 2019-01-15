@@ -20,12 +20,13 @@ $(DIRS): $(ENV) FORCE
 $(ENV):
 	@rm -f $@; \
 	trap 'r=$?;rm -f $$$$.tmp;exit $r' EXIT HUP INT QUIT TERM; \
-	(echo PATH=$$PWD/scripts:$$PATH:.; \
-	 echo NM=\"$(NM)\"; \
-	 echo AR=\"$(AR)\"; \
-	 echo RL=\"$(RL)\"; \
-	 echo RLFLAGS=\"$(RLFLAGS)\"; \
-	 echo export PATH RLFLAGS NM AR RL) > $$$$.tmp && mv $$$$.tmp $@
+	echo PATH=$$PATH:$$PWD/$(SCRIPTDIR):. > $$$$.tmp && \
+	echo NM=\"$(NM)\" >> $$$$.tmp && \
+	echo AR=\"$(AR)\" >> $$$$.tmp && \
+	echo RL=\"$(RL)\" >> $$$$.tmp && \
+	echo RLFLAGS=\"$(RLFLAGS)\" >> $$$$.tmp && \
+	echo export PATH RLFLAGS NM AR RL >> $$$$.tmp && \
+	mv $$$$.tmp $@
 
 dep:
 	$(FORALL)
