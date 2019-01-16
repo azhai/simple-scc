@@ -4,7 +4,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 include rules.mk
 include objlst.mk
 
-TARGET = $(LIBDIR)/libc.a
+TARGET = $(LIBCDIR)/libc.a
 
 all: $(TARGET)
 
