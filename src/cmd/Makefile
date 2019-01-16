@@ -14,7 +14,7 @@ TARGET = $(BINDIR)/nm \
 
 LIBS   = -lmach
 
-all: $(TARGET)
+all: $(TARGET) as ld cc1 cc2
 
 $(TARGET): $(LIBDIR)/libmach.a
 

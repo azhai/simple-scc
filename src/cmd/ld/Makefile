@@ -1,6 +1,6 @@
 .POSIX:
 
-PROJECTDIR = ../..
+PROJECTDIR = ../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
 OBJS = main.o \
