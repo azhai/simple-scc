@@ -1,7 +1,7 @@
 .POSIX:
 
-PROJECTDIR = ../..
-include $(PROJECTDIR)/rules.mk
+PROJECTDIR = ../../../..
+include $(PROJECTDIR)/scripts/rules.mk
 
 # SYSLST is a list of backend-arch-abi-sys. First
 # element of the list becomes the default target
@@ -18,7 +18,7 @@ all: $(TARGETS)
 $(BINDIR)/scc: scc.o
 	$(CC) $(SCC_LDFLAGS) scc.o -lscc -o $@
 
-$(BINDIR)/scpp: cpp.sh config.h
+$(BINDIR)/scpp: cpp.sh
 	set -x ;\
 	trap "rm -f $$$$.sh" 0 2 3;\
 	rm -f $@ ;\
@@ -27,7 +27,7 @@ $(BINDIR)/scpp: cpp.sh config.h
 	mv $$$$.sh $@
 
 config.h:
-	PREFIX=$(PREFIX) config.sh $(SYSLST)
+	PREFIX=$(PREFIX) mkconf $(SYSLST)
 
 dep: inc-dep
 

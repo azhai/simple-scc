@@ -13,8 +13,12 @@ TARGET = $(BINDIR)/nm \
          $(BINDIR)/addr2line \
 
 LIBS   = -lmach
+DIRS   = as ld scc
 
-all: $(TARGET) as ld cc1 cc2
+all: $(TARGET) $(DIRS)
+
+$(DIRS): FORCE
+	@+cd $@ && $(MAKE)
 
 $(TARGET): $(LIBDIR)/libmach.a
 
@@ -43,5 +47,8 @@ $(BINDIR)/ar: ar.o $(DRIVER).o
 	$(CC) $(SCC_LDFLAGS) ar.o $(DRIVER).o -o $@
 
 dep: inc-dep
+
+clean:
+	$(FORALL)
 
 include deps.mk

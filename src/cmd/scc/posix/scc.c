@@ -14,12 +14,12 @@ static char sccsid[] = "@(#) ./driver/posix/scc.c";
 #include <string.h>
 
 #include "config.h"
-#include "../../inc/arg.h"
-#include "../../inc/scc.h"
-#include "../../inc/syscrts.h"
-#include "../../inc/sysincludes.h"
-#include "../../inc/syslibs.h"
-#include "../../inc/ldflags.h"
+#include <scc/arg.h>
+#include <scc/scc.h>
+#include <scc/syscrts.h>
+#include <scc/sysincludes.h>
+#include <scc/syslibs.h>
+#include <scc/ldflags.h>
 
 enum {
 	CC1,
