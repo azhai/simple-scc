@@ -264,7 +264,7 @@ expand(char *begin, Symbol *sym)
 		return 1;
 
 	n = atoi(s);
-	if (!parsepars(arguments, arglist, atoi(s)))
+	if (!parsepars(arguments, arglist, n))
 		return 0;
 	for (i = 0; i < n; ++i)
 		DBG("MACRO par%d:%s", i, arglist[i]);
