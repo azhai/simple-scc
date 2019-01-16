@@ -6,6 +6,6 @@ LINKER = ld
 RANLIB = ranlib
 ARCHIVE = ar
 
-ARFLAGS = -U
+ARCHIVEFLAGS = -U
 NOPIE_CFLAGS = -nopie
 NOPIE_LDFLAGS = -nopie

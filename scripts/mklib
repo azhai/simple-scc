@@ -35,9 +35,9 @@ lib=${out-a.out}
 
 if ! test -f $lib
 then
-	${AR:-ar} $ARFLAGS -qv $lib $(lorder $@ | tsort)
+	${AR:-ar} $ARCHIVEFLAGS -qv $lib $(lorder $@ | tsort)
 else
-	${AR:-ar} $ARFLAGS -ruv $lib $(lorder $@ | tsort)
+	${AR:-ar} $ARCHIVEFLAGS -ruv $lib $(lorder $@ | tsort)
 fi
 
 ${RL:-ranlib} $RLFLAGS $lib
