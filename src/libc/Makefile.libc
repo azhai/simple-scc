@@ -1,0 +1,12 @@
+.POSIX:
+PROJECTDIR =../..
+include $(PROJECTDIR)/scripts/rules.mk
+include rules.mk
+include objlst.mk
+
+TARGET = $(LIBDIR)/libc.a
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	mklib -o $@ $?

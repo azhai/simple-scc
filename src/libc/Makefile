@@ -3,7 +3,6 @@ PROJECTDIR =../..
 include $(PROJECTDIR)/scripts/rules.mk
 include rules.mk
 
-TARGET = $(LIBCDIR)/libc.a
 DIRS = arch\
        assert\
        ctype\
@@ -13,18 +12,15 @@ DIRS = arch\
        string\
        time\
 
-all: $(DIRS)
-	+@$(MAKE) $(TARGET)
+all: $(DIRS) objlst.mk
+	+@$(MAKE) -f Makefile.libc
 
 $(DIRS): FORCE
 	+@cd $@ && $(MAKE)
 
-objlst:
-	find . -name '*.o' > $@
-
-$(TARGET): objlst FORCE
-	mklib -o $@ `cat objlst`
+objlst.mk: FORCE
+	mklst $@
 
 clean:
 	$(FORALL)
-	rm -f objlst
+	rm -f objlst.mk
