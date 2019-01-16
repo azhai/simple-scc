@@ -1,1 +1,0 @@
-	.file	"crt-darwin.s"

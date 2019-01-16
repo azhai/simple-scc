@@ -4,9 +4,14 @@ include $(PROJECTDIR)/scripts/rules.mk
 include rules.mk
 include objlst.mk
 
-TARGET = $(LIBCDIR)/libc.a
+LIBC   = $(LIBCDIR)/libc.a
+CRT    = $(LIBCDIR)/crt.o
+TARGET = $(LIBC) $(CRT)
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
+$(LIBC): $(OBJS)
 	mklib -o $@ $?
+
+$(CRT): arch/$(ARCH)/$(SYS)/crt.o
+	cp arch/$(ARCH)/$(SYS)/crt.o $@
