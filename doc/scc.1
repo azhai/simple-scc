@@ -3,7 +3,7 @@
 scc \- simple C compiler with magic
 .SH SYNOPSIS
 .B scc
-.RB [ \-cdgkqQsw ]
+.RB [ \-cdgkqQsWw ]
 .RB [ \-M | \-E | \-S ]
 .RB [ \-D
 .IR def[=val] ] ...
@@ -23,8 +23,6 @@ scc \- simple C compiler with magic
 .IR level ]
 .RB [ \-t
 .IR sys ]
-.RB [ \-W
-.IR warn ]
 .RB sourcefile ...
 .SH DESCRIPTION
 .B scc
@@ -117,12 +115,11 @@ Undefine a previously defined
 .I define
 by the -D parameter.
 .TP
-.B \-w
-Do show warning messages.
+.B \-W
+Show warning messages.
 .TP
-.BI \-W " warnings"
-This option only activates -w and is otherwise ignored for compatibility
-reasons.
+.B \-w
+Do not show warning messages (default).
 .SH ENVIRONMENT VARIABLES
 Certain environment variables control the behaviour of scc.
 .TP
