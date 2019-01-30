@@ -31,8 +31,8 @@ $(BINDIR)/strip: strip.o
 $(BINDIR)/size: size.o
 	$(CC) $(SCC_LDFLAGS) size.o -lmach -o $@
 
-$(BINDIR)/ranlib: ranlib.o
-	$(CC) $(SCC_LDFLAGS) ranlib.o -lmach -o $@
+$(BINDIR)/ranlib: ranlib.o $(DRIVER).o
+	$(CC) $(SCC_LDFLAGS) ranlib.o $(DRIVER).o -lmach -o $@
 
 $(BINDIR)/objdump: objdump.o
 	$(CC) $(SCC_LDFLAGS) objdump.o -lmach -o $@

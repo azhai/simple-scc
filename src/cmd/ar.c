@@ -123,15 +123,16 @@ archive(char *pname, FILE *to, char letter)
 		error("opening member '%s': %s", pname, errstr());
 	if (getstat(pname, &prop) < 0)
 		error("error getting '%s' attributes", pname);
+
 	strftime(mtime, sizeof(mtime), "%s", gmtime(&prop.time));
 	fprintf(to,
-	        "%-16.16s%-12s%-6u%-6u%-8lo%-10llu`\n",
+	        "%-16.16s%-12s%-6u%-6u%-8lo%-10ld`\n",
 	        fname,
 	        mtime,
 	        prop.uid,
 	        prop.gid,
 	        prop.mode,
-	        (unsigned long long) prop.size);
+	        prop.size);
 	for (n = 0; (c = getc(from)) != EOF; n++)
 		putc(c, to);
 	if (n & 1)

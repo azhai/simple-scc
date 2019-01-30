@@ -165,7 +165,7 @@ typeof(Coff32 *coff, SYMENT *ent)
 }
 
 static int
-mkindex(Obj *obj)
+loadsyms(Obj *obj)
 {
 	int t;
 	long i;
@@ -310,6 +310,37 @@ readhdr(Obj *obj, FILE *fp)
 }
 
 static int
+loadsections(Obj *obj, FILE *fp)
+{
+	size_t len;
+	int i;
+	FILHDR *hdr;
+	struct coff32 *coff;
+	SCNHDR *scn;
+	Section *p;
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+	scn = coff->scns;
+	for (i = 0; i < hdr->f_nscns; i++) {
+		if ((p = malloc(sizeof(*p))) == NULL)
+			return 0;
+		len = strlen(scn->s_name) + 1;
+		if ((p->name = malloc(len)) == NULL) {
+			free(p);
+			return 0;
+		}
+		memcpy(p->name, scn->s_name, len);
+		p->fp = fp;
+		p->offset = scn->s_scnptr;
+		p->size = scn->s_size;
+		p->next = obj->sections;
+		obj->sections = p->next;
+	}
+	return 1;
+}
+
+static int
 read(Obj *obj, FILE *fp)
 {
 	if (fgetpos(fp, &obj->pos))
@@ -322,7 +353,9 @@ read(Obj *obj, FILE *fp)
 		goto error;
 	if (!readstr(obj, fp))
 		goto error;
-	if (!mkindex(obj))
+	if (!loadsyms(obj))
+		goto error;
+	if (!loadsections(obj, fp))
 		goto error;
 	return 0;
 
@@ -413,6 +446,12 @@ size(Obj *obj,
 	return 0;
 }
 
+static long
+mkindex(int type, long nsymbols, Symdef *head, FILE *fp)
+{
+	return coff32idx(BIG_ENDIAN, nsymbols, head, fp);
+}
+
 struct format objcoff32 = {
 	.probe = probe,
 	.new = new,
@@ -421,4 +460,5 @@ struct format objcoff32 = {
 	.write = write,
 	.strip = strip,
 	.size = size,
+	.index = mkindex,
 };

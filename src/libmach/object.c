@@ -121,6 +121,7 @@ objnew(int type)
 
 	obj->type = type;
 	obj->head = NULL;
+	obj->sections = NULL;
 	memset(obj->htab, 0, sizeof(obj->htab));
 
 	op = objfmt[fmt];
@@ -211,6 +212,19 @@ objsize(Obj *obj,
 		return -1;
 	op = objfmt[fmt];
 	return (*op->size)(obj, text, data, bss);
+}
+
+long
+arindex(int type, long nsyms, Symdef *head, FILE *fp)
+{
+	int fmt;
+	struct format *op;
+
+	fmt = FORMAT(type);
+	if (fmt >= NFORMATS)
+		return -1;
+	op = objfmt[fmt];
+	return (*op->index)(type, nsyms, head, fp);
 }
 
 int

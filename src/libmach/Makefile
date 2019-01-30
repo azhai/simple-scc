@@ -11,6 +11,7 @@ OBJS = object.o \
        armember.o \
        objfmt.o \
        coff32.o \
+       coffelf32.o \
 
 all: $(TARGET)
 

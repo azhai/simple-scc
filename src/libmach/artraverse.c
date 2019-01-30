@@ -17,7 +17,7 @@ artraverse(FILE *fp, int (*fn)(FILE *, char *, void *), void *data)
 		if ((off = armember(fp, name)) <= 0)
 			return off;
 		r = (*fn)(fp, name, data);
-		if (!r)
+		if (r <= 0)
 			return r;
 
 		fsetpos(fp, &pos);

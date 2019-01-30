@@ -2,6 +2,7 @@
 
 typedef struct section Section;
 typedef struct symbol Symbol;
+typedef struct symdef Symdef;
 typedef struct object Obj;
 
 enum sectype {
@@ -17,6 +18,10 @@ enum sectype {
 struct section {
 	char *name;
 	unsigned flags;
+	FILE *fp;
+	long offset;
+	unsigned long long size;
+	Section *next;
 };
 
 struct symbol {
@@ -28,11 +33,19 @@ struct symbol {
 	Symbol *hash;
 };
 
+struct symdef {
+	char *name;
+	int type;
+	long offset;
+	Symdef *hash, *next;
+};
+
 struct object {
 	int type;
 	Symbol *htab[NR_SYMHASH];
 	Symbol *head;
 	fpos_t pos;
+	Section *sections;
 	void *data;
 };
 
@@ -55,6 +68,7 @@ extern int objsize(Obj *obj,
                    unsigned long long *text,
                    unsigned long long *data,
                    unsigned long long *bss);
+extern long arindex(int type, long nsyms, Symdef *def, FILE *fp);
 
 /* TODO */
 extern int objload(Obj *obj, Obj *to);

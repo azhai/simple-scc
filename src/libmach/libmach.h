@@ -37,10 +37,14 @@ struct format {
                 unsigned long long *,
                 unsigned long long *,
                 unsigned long long *);
+	long (*index)(int type, long nsyms, Symdef *def, FILE *fp);
 };
 
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);
+
+/* idx functions */
+extern long coff32idx(int order, long nsyms, Symdef *def, FILE *fp);
 
 
 /* globals */

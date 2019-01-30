@@ -7,6 +7,8 @@ static char sccsid[] = "@(#) ./ar/posix/driver.c";
 #include <unistd.h>
 #include <utime.h>
 
+#include <limits.h>
+
 #include "sys.h"
 
 const char invalidchars[] = " ";
@@ -30,6 +32,8 @@ getstat(char *fname, struct fprop *prop)
 	struct stat st;
 
 	if (stat(fname, &st) < 0)
+		return -1;
+	if (st.st_size > LONG_MAX)
 		return -1;
 	prop->uid = st.st_uid;
 	prop->gid = st.st_gid;

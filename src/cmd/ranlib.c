@@ -1,27 +1,24 @@
 #include <ctype.h>
 #include <errno.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
+#include <scc/ar.h>
 #include <scc/arg.h>
 #include <scc/mach.h>
 
-#define NR_NAMES 32
+#include "sys.h"
 
-typedef struct name Name;
+#define NR_SYMDEF 32
 
-struct name {
-	char *name;
-	int type;
-	long offset;
-	Name *hash, *next;
-};
-
-static int status, tflag, artype, nolib;
+static long nsymbols;
+static int status, artype, nolib;
 static char *filename, *membname;
-static Name *htab[NR_NAMES], *head;
+static Symdef *htab[NR_SYMDEF], *head;
 static long offset;
 char *argv0;
 
@@ -47,50 +44,52 @@ error(char *fmt, ...)
 	status = EXIT_FAILURE;
 }
 
-Name *
+Symdef *
 lookup(char *name)
 {
 	unsigned h;
-	Name *np;
+	Symdef *dp;
 	char *s;
 	size_t len;
 
 	h = 0;
 	for (s = name; *s; s++)
 		h += *s;
-	h %= NR_NAMES;
+	h %= NR_SYMDEF;
 
-	for (np = htab[h]; np; np = np->next) {
-		if (!strcmp(np->name, name))
-			return np;
+	for (dp = htab[h]; dp; dp = dp->next) {
+		if (!strcmp(dp->name, name))
+			return dp;
 	}
 
 	len = strlen(name) + 1;
-	np = malloc(sizeof(*np));
+	dp = malloc(sizeof(*dp));
 	s = malloc(len);
-	if (!np || !s) {
+	if (!dp || !s) {
 		free(s);
-		free(np);
+		free(dp);
 		return NULL;
 	}
 
-	memcpy(np->name, s, len);
-	np->type = 'U';
-	np->offset = -1;
-	np->hash = htab[h];
-	htab[h] = np;
-	np->next = head;
-	head = np;
+	nsymbols++;
+	dp->name = s;
+	memcpy(dp->name, name, len);
+	dp->type = 'U';
+	dp->offset = -1;
+	dp->hash = htab[h];
+	htab[h] = dp;
+	dp->next = head;
+	head = dp;
 
-	return np;
+	return dp;
 }
 
 static int
 newsymbol(Symbol *sym, void *data)
 {
-	Name *np;
+	Symdef *np;
 
-	if (!isupper(sym->type))
+	if (!isupper(sym->type) || sym->type == 'N')
 		return 1;
 
 	if ((np = lookup(sym->name)) == NULL) {
@@ -117,13 +116,16 @@ newsymbol(Symbol *sym, void *data)
 }
 
 static int
-newmember(FILE *fp, char *name, void *data)
+newmember(FILE *fp, char *nam, void *data)
 {
 
 	int t, ret = 0;
 	Obj *obj;
 
-	membname = name;
+	if (artype == -1 && (!strcmp(nam, "/") || !strcmp(nam, "__.SYMDEF")))
+		return 1;
+
+	membname = nam;
 	offset = ftell(fp);
 
 	if (offset == EOF) {
@@ -132,8 +134,7 @@ newmember(FILE *fp, char *name, void *data)
 	}
 
 	t = objtype(fp, NULL);
-
-	if(t == -1 || artype != -1 && artype != t) {
+	if (t == -1 || artype != -1 && artype != t) {
 		nolib = 1;
 		return 0;
 	}
@@ -162,11 +163,11 @@ error:
 }
 
 static void
-freenames(void)
+freehash(void)
 {
-	Name **npp, *next, *np;
+	Symdef **npp, *next, *np;
 
-	for (npp = htab; npp < &htab[NR_NAMES]; npp++)
+	for (npp = htab; npp < &htab[NR_SYMDEF]; npp++)
 		*npp = NULL;
 
 	for (np = head; np; np = next) {
@@ -179,97 +180,154 @@ freenames(void)
 }
 
 static int
-readsyms(char *fname)
+readsyms(FILE *fp)
 {
-	FILE *fp;
-
-	if ((fp = fopen(fname, "rb")) == NULL) {
-		error(errstr());
-		goto error;
-	}
-
+	/* TODO: Change archive to returns -1 */
 	if (!archive(fp)) {
 		error("file format not recognized");
-		goto error;
+		return 0;
 	}
 
-	if (!artraverse(fp, newmember, NULL)) {
+	if (artraverse(fp, newmember, NULL) < 0) {
 		error("while traversing archive");
-		goto error;
-	}
-
-	if (fclose(fp)) {
-		error(errstr());
 		return 0;
 	}
+
 	return 1;
-
-error:
-	fclose(fp);
-	return 0;
 }
 
 static int
-writeidx(char *fname)
+merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 {
-	int r;
-	FILE *fp;
-	Name *np;
+	int c;
+	char mtime[13];
+	struct ar_hdr first;
 
-	if ((fp = fopen(fname, "wb")) == NULL) {
-		error("index file: %s", errstr());
+	rewind(lib);
+	rewind(idx);
+	fseek(lib, SARMAG, SEEK_SET);
+
+	if (fread(&first, sizeof(first), 1, lib) != 1)
 		return 0;
+
+	if (!strncmp(first.ar_name, "/", SARNAM) ||
+	    !strncmp(first.ar_name, "__.SYMDEF", SARNAM)) {
+		fseek(lib, atol(first.ar_size), SEEK_CUR);
 	}
 
-	for (np = head; np; np = np->next) {
-		/* TODO: write out */
-	}
-	fflush(fp);
-	r = ferror(fp);
-	fclose(fp);
+	fwrite(ARMAG, SARMAG, 1, to);
 
-	if (!r)
-		return 1;
+        strftime(mtime, sizeof(mtime), "%s", gmtime(&prop->time));
+        fprintf(to,
+                "%-16.16s%-12s%-6u%-6u%-8lo%-10ld`\n",
+                "/",
+                mtime,
+                prop->uid,
+                prop->gid,
+                prop->mode,
+                prop->size);
 
-	error("index file: %s", errstr());
-	return 0;
+	while ((c = getc(idx)) != EOF)
+		putc(c, to);
+
+	while ((c = getc(lib)) != EOF)
+		putc(c, to);
+
+	fflush(to);
+
+	if (ferror(to) || ferror(lib) || ferror(idx))
+		return 0;
+
+	return 1;
 }
 
 static int
-insertidx(char *archive, char *idx)
+copy(FILE *from, char *fname)
 {
-	return 0;
+	int c, ret;
+	FILE *fp;
+
+	if ((fp = fopen(fname, "wb")) == NULL)
+		return 0;
+
+	rewind(from);
+	while ((c = getc(from)) != EOF)
+		putc(c, fp);
+	fflush(fp);
+
+	ret = !ferror(fp) && !ferror(from);
+
+	fclose(fp);
+
+	return ret;
 }
 
 static void
 ranlib(char *fname)
 {
-	static char symdef[] = "__.SYMDEF";
+	int c;
+	FILE *fp, *idx, *out;
+	long siz;
+	struct fprop prop;
 
+	errno = 0;
 	nolib = 0;
 	artype = -1;
+	nsymbols = 0;
 	filename = fname;
-	freenames();
+	freehash();
 
-	if (!readsyms(fname))
-		return;
+	fp = fopen(fname, "rb");
+	idx = tmpfile();
+	out = tmpfile();
+	if (!fp || !idx || !out)
+		goto error;
+
+	if (!readsyms(fp))
+		goto error;
 
 	if (nolib)
-		return;
+		goto error;
 
-	if (!writeidx(symdef))
-		return;
+	/* TODO: Change arindex to returns -1 */
+	siz = arindex(artype, nsymbols, head, idx);
+	if (siz <= 0)
+		goto error;
 
-	if (!insertidx(fname, symdef))
-		remove(symdef);
+	if (getstat(fname, &prop) < 0)
+		goto error;
+	prop.size = siz;
+	prop.time = time(NULL);
+
+	if (!merge(out, &prop, fp, idx))
+		goto error;
+
+	fclose(fp);
+	fclose(idx);
+	fp = idx = NULL;
+
+	if (!copy(out, fname))
+		goto error;
+
+	fclose(out);
 
 	return;
+
+error:
+	if (errno)
+		error(errstr());
+	if (idx)
+		fclose(idx);
+	if (out)
+		fclose(out);
+	if (fp)
+		fclose(fp);
 }
 
 static void
 usage(void)
 {
-	fputs("usage: ranlib [-t] [file...]\n", stderr);
+	fputs("usage: ranlib [-t] file...\n", stderr);
 	exit(EXIT_FAILURE);
 }
 
@@ -278,18 +336,16 @@ main(int argc, char *argv[])
 {
 	ARGBEGIN {
 	case 't':
-		tflag = 1; /* TODO */
 		break;
 	default:
 		usage();
 	} ARGEND
 
-	if (argc == 0) {
-		ranlib("a.out");
-	} else {
-		for (; *argv; ++argv)
-			ranlib(*argv);
-	}
+	if (argc == 0)
+		usage();
+
+	for (; *argv; ++argv)
+		ranlib(*argv);
 
 	return status;
 }
