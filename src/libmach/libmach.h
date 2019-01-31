@@ -38,6 +38,7 @@ struct format {
 
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);
+extern int objpos(Obj *obj, FILE *fp, long pos);
 
 /* idx functions */
 extern long coff32idx(int order, long nsyms, Symdef *def, FILE *fp);

@@ -7,8 +7,11 @@
 #include <string.h>
 
 #include <scc/coff32/filehdr.h>
+#include <scc/coff32/aouthdr.h>
 #include <scc/coff32/scnhdr.h>
 #include <scc/coff32/syms.h>
+#include <scc/coff32/reloc.h>
+#include <scc/coff32/linenum.h>
 #include <scc/mach.h>
 
 #include "libmach.h"
@@ -23,8 +26,11 @@ struct arch {
 
 struct coff32 {
 	FILHDR hdr;
+	AOUTHDR *aout;
 	SCNHDR *scns;
 	SYMENT *ents;
+	RELOC **rels;
+	LINENO **lines;
 	char *strtbl;
 	unsigned long strsiz;
 };
@@ -34,6 +40,24 @@ static struct arch archs[] = {
 	"coff32-z80", "\x5a\x80", OBJ(COFF32, ARCHZ80, LITTLE_ENDIAN),
 	NULL,
 };
+
+static void
+pack_hdr(int order, unsigned char *buf, FILHDR *hdr)
+{
+	int n;
+
+	n = pack(order,
+	         buf,
+	         "sslllss",
+	         hdr->f_magic,
+	         hdr->f_nscns,
+	         hdr->f_timdat,
+	         hdr->f_symptr,
+	         hdr->f_nsyms,
+	         hdr->f_opthdr,
+	         hdr->f_flags);
+	assert(n == FILHSZ);
+}
 
 static void
 unpack_hdr(int order, unsigned char *buf, FILHDR *hdr)
@@ -51,6 +75,27 @@ unpack_hdr(int order, unsigned char *buf, FILHDR *hdr)
 	           &hdr->f_opthdr,
 	           &hdr->f_flags);
 	assert(n == FILHSZ);
+}
+
+static void
+pack_scn(int order, unsigned char *buf, SCNHDR *scn)
+{
+	int n;
+
+	n = pack(order,
+	         buf,
+	         "'8llllllssl",
+	         scn->s_name,
+	         scn->s_paddr,
+	         scn->s_vaddr,
+	         scn->s_size,
+	         scn->s_scnptr,
+	         scn->s_relptr,
+	         scn->s_lnnoptr,
+	         scn->s_nrelloc,
+	         scn->s_nlnno,
+	         scn->s_flags);
+	assert(n == SCNHSZ);
 }
 
 static void
@@ -75,13 +120,33 @@ unpack_scn(int order, unsigned char *buf, SCNHDR *scn)
 }
 
 static void
+pack_ent(int order, unsigned char *buf, SYMENT *ent)
+{
+	int n;
+	char *s;
+
+	/* TODO: What happens with the union? */
+
+	n = pack(order,
+	         buf,
+	         "'8lsscc",
+	         ent->n_name,
+	         &ent->n_value,
+	         &ent->n_scnum,
+	         &ent->n_type,
+	         &ent->n_sclass,
+	         &ent->n_numaux);
+	assert(n == SYMESZ);
+}
+
+static void
 unpack_ent(int order, unsigned char *buf, SYMENT *ent)
 {
 	int n;
 	char *s;
 
 	n = unpack(order,
-	          buf,
+	           buf,
 	           "'8lsscc",
 	           ent->n_name,
 	           &ent->n_value,
@@ -94,6 +159,100 @@ unpack_ent(int order, unsigned char *buf, SYMENT *ent)
 	s = ent->n_name;
 	if (!s[0] && !s[1] && !s[2] && !s[3])
 		unpack(order, "ll", buf, &ent->n_zeroes, &ent->n_offset);
+}
+
+static void
+pack_aout(int order, unsigned char *buf, AOUTHDR *aout)
+{
+	int n;
+
+	n = unpack(order,
+	           buf,
+	           "ssllllll",
+	           aout->magic,
+	           aout->vstamp,
+	           aout->tsize,
+	           aout->dsize,
+	           aout->bsize,
+	           aout->entry,
+	           aout->text_start,
+	           aout->data_start);
+	assert(n == AOUTSZ);
+}
+
+static void
+unpack_aout(int order, unsigned char *buf, AOUTHDR *aout)
+{
+	int n;
+
+	n = unpack(order,
+	           buf,
+	           "ssllllll",
+	           &aout->magic,
+	           &aout->vstamp,
+	           &aout->tsize,
+	           &aout->dsize,
+	           &aout->bsize,
+	           &aout->entry,
+	           &aout->text_start,
+	           &aout->data_start);
+	assert(n == AOUTSZ);
+}
+
+static void
+unpack_reloc(int order, unsigned char *buf, RELOC *rel)
+{
+	int n;
+
+	n = unpack(order,
+	           buf,
+	           "lls",
+	           &rel->r_vaddr,
+	           &rel->r_symndx,
+	           &rel->r_type);
+	assert(n == RELSZ);
+}
+
+static void
+pack_reloc(int order, unsigned char *buf, RELOC *rel)
+{
+	int n;
+
+	n = pack(order,
+	         buf,
+	         "lls",
+	         rel->r_vaddr,
+	         rel->r_symndx,
+	         rel->r_type);
+	assert(n == RELSZ);
+}
+
+static void
+unpack_line(int order, unsigned char *buf, LINENO *lp)
+{
+	int n;
+
+	n = unpack(order,
+	           buf,
+	           "lls",
+	           &lp->l_symndx,
+	           &lp->l_paddr,
+	           &lp->l_lnno);
+	assert(n == LINESZ);
+}
+
+static void
+pack_line(int order, unsigned char *buf, LINENO *lp)
+{
+	int n;
+
+	n = pack(order,
+	         buf,
+	         "lls",
+	         lp->l_symndx,
+	         lp->l_paddr,
+	         lp->l_lnno);
+	assert(n == LINESZ);
 }
 
 static int
@@ -243,14 +402,93 @@ readents(Obj *obj, FILE *fp)
 		return 0;
 	coff->ents = ent;
 
-	if (fsetpos(fp, &obj->pos))
-		return 0;
-	if (fseek(fp, hdr->f_symptr, SEEK_CUR) < 0)
+	if (!objpos(obj, fp, hdr->f_symptr))
 		return 0;
 	for (i = 0; i < hdr->f_nsyms; i++) {
 		if (fread(buf, SYMESZ, 1, fp) != 1)
 			return 0;
 		unpack_ent(ORDER(obj->type), buf, &ent[i]);
+	}
+
+	return 1;
+}
+
+static int
+readreloc(Obj *obj, FILE *fp)
+{
+	int i, j;
+	RELOC **rels, *rp;
+	SCNHDR *scn;
+	FILHDR *hdr;
+	struct coff32 *coff;
+	unsigned char buf[RELSZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	rels = calloc(obj->nsecs, sizeof(*rels));
+	if (!rels)
+		return 0;
+	coff->rels = rels;
+
+	for (i = 0; i < hdr->f_nscns; i++) {
+		scn = &coff->scns[i];
+		if (scn->s_nlnno == 0)
+			continue;
+
+		if (!objpos(obj, fp, scn->s_relptr))
+			return 0;
+
+		rp = calloc(scn->s_nrelloc, sizeof(RELOC));
+		if (!rp)
+			return 0;
+		rels[i] = rp;
+
+		for (j = 0; j < scn->s_nrelloc; j++) {
+			if (fread(buf, RELSZ, 1, fp) != 1)
+				return 0;
+			unpack_reloc(ORDER(obj->type), buf, &rp[i]);
+		}
+	}
+
+	return 1;
+}
+
+static int
+readlines(Obj *obj, FILE *fp)
+{
+	int i,j;
+	LINENO **lines, *lp;
+	FILHDR *hdr;
+	SCNHDR *scn;
+	struct coff32 *coff;
+	unsigned char buf[LINESZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	lines = calloc(sizeof(lp), hdr->f_nscns);
+	if (!lines)
+		return 0;
+	coff->lines = lines;
+
+	for (i = 0; i < hdr->f_nscns; i++) {
+		scn = &coff->scns[i];
+		if (scn->s_nlnno == 0)
+			continue;
+
+		lp = calloc(sizeof(*lp), scn->s_nlnno);
+		if (!lp)
+			return 0;
+		lines[i] = lp;
+
+		for (j = 0; j < scn->s_nlnno; j++) {
+			if (!objpos(obj, fp, scn->s_lnnoptr))
+				return 0;
+			if (fread(buf, LINESZ, 1, fp) == 1)
+				return 0;
+			unpack_line(ORDER(obj->type), buf, &lp[j]);
+		}
 	}
 
 	return 1;
@@ -380,6 +618,31 @@ loadsections(Obj *obj, FILE *fp)
 }
 
 static int
+readaout(Obj *obj, FILE *fp)
+{
+	FILHDR *hdr;
+	struct coff32 *coff;
+	unsigned char buf[AOUTSZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	if (hdr->f_opthdr == 0)
+		return 1;
+
+	if (fread(buf, AOUTSZ, 1, fp) != 1)
+		return 0;
+
+	coff->aout = malloc(sizeof(AOUTHDR));
+	if (!coff->aout)
+		return 0;
+
+	unpack_aout(ORDER(obj->type), buf, coff->aout);
+
+	return 1;
+}
+
+static int
 read(Obj *obj, FILE *fp)
 {
 	/* TODO: Add validation of the different fields */
@@ -387,11 +650,17 @@ read(Obj *obj, FILE *fp)
 		goto error;
 	if (!readhdr(obj, fp))
 		goto error;
+	if (!readaout(obj, fp))
+		goto error;
 	if (!readscns(obj, fp))
 		goto error;
 	if (!readents(obj, fp))
 		goto error;
 	if (!readstr(obj, fp))
+		goto error;
+	if (!readreloc(obj, fp))
+		goto error;
+	if (!readlines(obj, fp))
 		goto error;
 	if (!loadsyms(obj))
 		goto error;
@@ -405,9 +674,59 @@ error:
 }
 
 static int
+writehdr(Obj *obj, FILE *fp)
+{
+	FILHDR *hdr;
+	struct coff32 *coff;
+	unsigned char buf[FILHSZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	pack_hdr(ORDER(obj->type), buf, hdr);
+	if (fwrite(buf, FILHSZ, 1, fp) != 1)
+		return 0;
+
+	return 1;
+}
+
+static int
+writescns(Obj *obj, FILE *fp)
+{
+	/* TODO */
+}
+
+static int
+writeents(Obj *obj, FILE *fp)
+{
+	/* TODO */
+}
+
+static int
+writestr(Obj *obj, FILE *fp)
+{
+	/* TODO */
+}
+
+static int
 write(Obj *obj, FILE *fp)
 {
-	return -1;
+	struct coff32 *coff;
+
+	coff  = obj->data;
+	coff->strsiz = 0;
+	free(coff->strtbl);
+
+	if (!writehdr(obj, fp))
+		return -1;
+	if (!writescns(obj, fp))
+		return -1;
+	if (!writeents(obj, fp))
+		return -1;
+	if (!writestr(obj, fp))
+		return -1;
+
+	return 0;
 }
 
 static void
