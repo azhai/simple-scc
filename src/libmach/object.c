@@ -1,5 +1,6 @@
 static char sccsid[] = "@(#) ./libmach/object.c";
 
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -160,6 +161,17 @@ delsyms(Obj *obj)
 	memset(obj->htab, 0, sizeof(obj->htab));
 }
 
+static void
+delsecs(Obj *obj)
+{
+	int i;
+
+	for (i = 0; i < obj->nsecs; i++)
+		free(obj->sections[i].name);
+	free(obj->sections);
+	obj->sections = NULL;
+}
+
 int
 objreset(Obj *obj)
 {
@@ -172,6 +184,7 @@ objreset(Obj *obj)
 	op = objfmt[fmt];
 	(*op->del)(obj);
 	delsyms(obj);
+	delsecs(obj);
 	return 0;
 }
 
@@ -204,14 +217,32 @@ objsize(Obj *obj,
         unsigned long long *data,
         unsigned long long *bss)
 {
-	int fmt;
-	struct format *op;
+	Section *sp, *secs = obj->sections;
+	unsigned long long *p;
 
-	fmt = FORMAT(obj->type);
-	if (fmt >= NFORMATS)
-		return -1;
-	op = objfmt[fmt];
-	return (*op->size)(obj, text, data, bss);
+	*text = 0;
+	*data = 0;
+	*bss = 0;
+	for (sp =secs; sp < &secs[obj->nsecs]; sp++) {
+		switch (sp->type) {
+		case 'T':
+			p = text;
+			break;
+		case 'D':
+			p = data;
+			break;
+		case 'B':
+			p = bss;
+			break;
+		default:
+			continue;
+		}
+
+		if (*p > ULLONG_MAX - sp->size)
+			return -1;
+		*p += sp->size;
+	}
+	return 0;
 }
 
 long

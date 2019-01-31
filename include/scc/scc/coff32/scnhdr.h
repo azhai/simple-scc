@@ -30,6 +30,3 @@ struct scnhdr {
 #define STYP_INFO        (1 << 9)
 #define STYP_OVER        (1 << 11)
 #define STYP_LIB         (1 << 12)
-#define STYP_MERGE       (1 << 13)
-#define STYP_REVERSE_PAD (1 << 14)
-#define STYP_LIT	 0x8020

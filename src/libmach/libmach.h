@@ -33,10 +33,6 @@ struct format {
 	int (*read)(Obj *obj, FILE *fp);
 	int (*write)(Obj *obj, FILE *fp);
 	void (*del)(Obj *obj);
-	int (*size)(Obj *obj,
-                unsigned long long *,
-                unsigned long long *,
-                unsigned long long *);
 	long (*index)(int type, long nsyms, Symdef *def, FILE *fp);
 };
 

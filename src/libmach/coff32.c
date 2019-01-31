@@ -313,29 +313,68 @@ static int
 loadsections(Obj *obj, FILE *fp)
 {
 	size_t len;
-	int i;
+	unsigned sflags, type;
+	unsigned long flags;
 	FILHDR *hdr;
 	struct coff32 *coff;
 	SCNHDR *scn;
-	Section *p;
+	Section *secs, *sp;
 
 	coff  = obj->data;
 	hdr = &coff->hdr;
 	scn = coff->scns;
-	for (i = 0; i < hdr->f_nscns; i++) {
-		if ((p = malloc(sizeof(*p))) == NULL)
-			return 0;
-		len = strlen(scn->s_name) + 1;
-		if ((p->name = malloc(len)) == NULL) {
-			free(p);
-			return 0;
+
+	secs = malloc(sizeof(Section) * hdr->f_nscns);
+	if (!secs)
+		return 0;
+	obj->sections = secs;
+
+	for (sp = secs; sp < &secs[hdr->f_nscns]; sp++) {
+		flags = scn->s_flags;
+
+		if (flags & STYP_TEXT) {
+			type = 'T';
+			sflags = SALLOC | SRELOC | SLOAD | SEXEC | SREAD;
+			if (flags & STYP_NOLOAD)
+				sflags |= SSHARED;
+		} else if (flags & STYP_DATA) {
+			type = 'D';
+			sflags = SALLOC | SRELOC | SLOAD | SWRITE | SREAD;
+			if (flags & STYP_NOLOAD)
+				sflags |= SSHARED;
+		} else if (flags & STYP_BSS) {
+			type = 'B';
+			sflags = SALLOC | SREAD | SWRITE;
+		} else if (flags & STYP_INFO) {
+			type = 'N';
+			sflags = 0;
+		} else if (flags & STYP_LIB) {
+			type = 'T';
+			sflags = SRELOC;
+		} else if (flags & STYP_DSECT) {
+			type = 'D';
+			sflags = SRELOC;
+		} else if (flags & STYP_PAD) {
+			type = 'D';
+			sflags = SLOAD;
+		} else {
+			type = 'D';  /* We assume that STYP_REG is data */
+			sflags = SALLOC | SRELOC | SLOAD | SWRITE | SREAD;
 		}
-		memcpy(p->name, scn->s_name, len);
-		p->fp = fp;
-		p->offset = scn->s_scnptr;
-		p->size = scn->s_size;
-		p->next = obj->sections;
-		obj->sections = p->next;
+
+		if (flags & STYP_NOLOAD)
+			sflags &= ~SLOAD;
+
+		len = strlen(scn->s_name) + 1;
+		if ((sp->name = malloc(len)) == NULL)
+			return 0;
+
+		memcpy(sp->name, scn->s_name, len);
+		sp->fp = fp;
+		sp->offset = scn->s_scnptr;
+		sp->size = scn->s_size;
+		sp->type = type;
+		obj->nsecs++;
 	}
 	return 1;
 }
@@ -343,6 +382,7 @@ loadsections(Obj *obj, FILE *fp)
 static int
 read(Obj *obj, FILE *fp)
 {
+	/* TODO: Add validation of the different fields */
 	if (fgetpos(fp, &obj->pos))
 		goto error;
 	if (!readhdr(obj, fp))
@@ -408,44 +448,6 @@ strip(Obj *obj)
 	hdr->f_symptr = 0;
 }
 
-static int
-size(Obj *obj,
-     unsigned long long *text,
-     unsigned long long *data,
-     unsigned long long *bss)
-{
-	int i;
-	long flags;
-	FILHDR *hdr;
-	struct coff32 *coff;
-	SCNHDR *scn, *lim;
-	unsigned long long *p;
-
-	*text = 0;
-	*data = 0;
-	*bss = 0;
-
-	coff  = obj->data;
-	hdr = &coff->hdr;
-
-	lim = &coff->scns[hdr->f_nscns];
-	for (scn = coff->scns; scn < lim; scn++) {
-		flags = scn->s_flags;
-		if (flags & STYP_TEXT)
-			p = text;
-		else if (flags & STYP_DATA)
-			p = data;
-		else if (flags & STYP_BSS)
-			p = bss;
-		else
-			continue;
-		if (*p > ULONG_MAX - scn->s_size)
-			return -1;
-		*p += scn->s_size;
-	}
-	return 0;
-}
-
 static long
 mkindex(int type, long nsymbols, Symdef *head, FILE *fp)
 {
@@ -459,6 +461,5 @@ struct format objcoff32 = {
 	.read = read,
 	.write = write,
 	.strip = strip,
-	.size = size,
 	.index = mkindex,
 };

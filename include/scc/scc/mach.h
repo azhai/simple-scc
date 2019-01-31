@@ -9,19 +9,20 @@ enum sectype {
 	SREAD   = 1 << 0,
 	SWRITE  = 1 << 1,
 	SEXEC   = 1 << 2,
-	SNOLOAD = 1 << 3,
-	SFILE   = 1 << 4,
-	SABS    = 1 << 5,
-	SBLOB   = 1 << 6,
+	SLOAD   = 1 << 3,
+	SALLOC  = 1 << 4,
+	SRELOC  = 1 << 5,
+	SABS    = 1 << 6,
+	SSHARED = 1 << 7,
 };
 
 struct section {
 	char *name;
+	int type;
 	unsigned flags;
 	FILE *fp;
 	long offset;
 	unsigned long long size;
-	Section *next;
 };
 
 struct symbol {
@@ -45,6 +46,7 @@ struct object {
 	Symbol *htab[NR_SYMHASH];
 	Symbol *head;
 	fpos_t pos;
+	int nsecs;
 	Section *sections;
 	void *data;
 };
