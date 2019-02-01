@@ -1,3 +1,33 @@
+Compiling
+=========
+
+SCC is a portable toolchain that can be compiled on any UNIX system
+out of the box. It supports three main configuration options that
+can be passed to the command line:
+
+	- CROSS_COMPILE:
+          Specify a prefix name for the tools called by the Makefile.
+
+	- CONF: Specify which version of libc to build.
+	  Once the build process completes only the target specified in
+          CONF will be built. Supported values are:
+
+		- amd64-linux (default)
+		- amd64-darwin
+		- amd64-openbsd
+		- arm64-linux
+		- amd64-dragonfly
+		- amd64-netbsd
+		- arm32-linux
+
+	- TOOL: Specify the toolchain type to be used.  Possible
+	  supported values are:
+
+		- unix (by default)
+		- gnu
+		- gnu-darwin
+		- clang
+
 Deviations from standard C
 ===========================
 This compiler aims to be fully compatible with the C99 standard, but
@@ -10,7 +40,7 @@ Type qualifiers make the type system ugly, and their uselessness adds
 unnecessary complexity to the compiler (and increased compilation time):
 
 	- const: The definition of const is not clear in the standard.
-	  If a const value is modified the behaviour is undefined
+	  If a const value is modified the behavior is undefined
 	  behaviour. It seems it was defined in order to be able to
 	  allocate variables in ROM rather than error detection. This
 	  implememtation will not warn about these modifications and
@@ -21,7 +51,7 @@ unnecessary complexity to the compiler (and increased compilation time):
 	  to be able to deal with longjmp (local variables that are not
 	  volatile have undefined state) and for memory mapped registers
 	  or variables whose values are modified asynchronously. This can
-	  be achieved with special pragma values though.
+	  be achieved by using special pragma values though.
 	  In the first case, it generates a lot of problems with modern
 	  processors and multithreading, when not holding the value in a
 	  register is not good enough (an explicit memory barrier is needed).
@@ -32,8 +62,8 @@ unnecessary complexity to the compiler (and increased compilation time):
 	  of portable programs that use longjmp, this specifier eventually
 	  will be implemented.
 
-	- restrict: This qualifier can only be applied to pointers to
-	  mark that the pointed object has no other alias. This qualifier
+	- restrict: This qualifier can only be applied to pointers that
+	  mark the pointed object and has no other alias. This qualifier
 	  was introduced to be able to fix some performance problems in
 	  numerical algorithms, where FORTRAN could achieve a better
 	  performance (and in fact even with this specifier FORTRAN has a
@@ -70,7 +100,7 @@ understood as the size of a function), but f(int (int)) is allowed
 because it is understood as a parameter of function pointer type.
 
 This complexity is not needed at all as function pointers fix all these
-problems without this complexity (and they are the more usual
+problems without this complexity (and they are the more common
 way of writing such code).
 
 - Definition of variables with incomplete type
@@ -78,9 +108,9 @@ way of writing such code).
 
 C89 allows the definition of variables with incomplete type that
 have external linkage and file scope. The type of the variable
-is the composition of all the definitions find in the file. The exact
+is the composition of all the definitions found in the file. The exact
 rules are a bit complex (3.7.2) so SCC ignores them at this moment
-and it does not allow any definition of variables with incomplete type.
+by simply not allowing any definition of variables with incomplete type.
 
 If you don't believe me try this code:
 
@@ -93,9 +123,9 @@ struct foo {
 - Variadic function alike macros
   ------------------------------
 
-The standard (C99 6.10.3 c 4) forces to pass more parameters than
+The standard (C99 6.10.3 c 4) forces passing more parameters than
 the number of parameters present in the variadic argument list
-(excluding ...). Scc accepts a parameter list with the same number
+(excluding ...). SCC accepts a parameter list with the same number
 of arguments.
 
 #define P(a, ...) a
