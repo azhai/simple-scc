@@ -3,17 +3,59 @@ PROJECTDIR =../..
 include $(PROJECTDIR)/scripts/rules.mk
 
 TARGET = $(LIBDIR)/libmach.a
-OBJS = object.o \
+
+OBJS = addr2line.o \
        archive.o \
+       arindex.o \
+       armember.o \
+       artraverse.o \
+       coffelf32.o \
+       objdel.o \
+       objlookup.o \
+       objnew.o \
+       objpos.o \
+       objread.o \
+       objreset.o \
+       objsize.o \
+       objstrip.o \
+       objtraverse.o \
+       objtype.o \
+       objwrite.o \
+       objfree.o \
        pack.o \
        unpack.o \
-       artraverse.o \
-       armember.o \
-       objfmt.o \
-       coff32.o \
-       coffelf32.o \
+       index.o \
+       new.o \
+       read.o \
+       del.o \
+       strip.o \
+       probe.o \
+       write.o \
 
-all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	mklib -o $@ $?
+DIRS = coff32
+
+TBLS = index.c \
+       new.c \
+       read.c \
+       del.c \
+       strip.c \
+       probe.c \
+       write.c \
+
+
+all: $(OBJS) $(DIRS) objlst.mk
+	+@$(MAKE) -f Makefile.mach
+
+$(DIRS): FORCE
+	+@cd $@ && $(MAKE)
+
+$(TBLS): formats.lst
+	mktbl -t `echo $@ | sed 's/\.c//'` -o $@
+
+objlst.mk: $(OBJS) $(DIRS)
+	mklst $@
+
+clean:
+	$(FORALL)
+	rm -f $(TBLS) objlst.mk

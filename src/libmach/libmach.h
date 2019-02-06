@@ -5,10 +5,7 @@
 #define ORDER(t) (((t) >> 10) & 0x1f)
 
 enum objformat {
-	COFF16,
 	COFF32,
-	ELF32,
-	ELF64,
 	NFORMATS,
 };
 
@@ -26,23 +23,34 @@ enum order {
 	BIG_ENDIAN,
 };
 
-struct format {
-	int (*probe)(unsigned char *buf, char **name);
-	void (*strip)(Obj *obj);
-	int (*new)(Obj *obj);
-	int (*read)(Obj *obj, FILE *fp);
-	int (*write)(Obj *obj, FILE *fp);
-	void (*del)(Obj *obj);
-	long (*index)(int type, long nsyms, Symdef *def, FILE *fp);
+enum freeflags {
+	FREESYM,
+	FREESECT,
 };
 
+typedef long (*indexfun_t)(int, long, Symdef *, FILE *);
+typedef int (*newfun_t)(Obj *obj);
+typedef int (*readfun_t)(Obj *obj, FILE *fp);
+typedef void (*delfun_t)(Obj *new);
+typedef void (*stripfun_t)(Obj *obj);
+typedef int (*probefun_t)(unsigned char *buf, char **name);
+typedef int (*writefun_t)(Obj *obj, FILE *fp);
+
+/* common functions */
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);
 extern int objpos(Obj *obj, FILE *fp, long pos);
+extern void objfree(Obj *obj, int what);
 
 /* idx functions */
 extern long coff32idx(int order, long nsyms, Symdef *def, FILE *fp);
 
 
-/* globals */
-extern struct format *objfmt[];
+/* coff32 functions */
+extern long coff32index(int type, long nsyms, Symdef *head, FILE *fp);
+extern int coff32new(Obj *obj);
+extern void coff32del(Obj *obj);
+extern int coff32read(Obj *obj, FILE *fp);
+extern int coff32write(Obj *obj, FILE *fp);
+extern void coff32strip(Obj *obj);
+extern int coff32probe(unsigned char *buf, char **name);

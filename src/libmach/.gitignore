@@ -1,0 +1,8 @@
+objlst.mk
+del.c
+index.c
+new.c
+probe.c
+read.c
+strip.c
+write.c

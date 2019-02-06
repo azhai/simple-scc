@@ -18,7 +18,7 @@ all: $(DIRS) objlst.mk
 $(DIRS): FORCE
 	+@cd $@ && $(MAKE)
 
-objlst.mk: FORCE
+objlst.mk: $(DIRS) FORCE
 	mklst $@
 
 clean:
