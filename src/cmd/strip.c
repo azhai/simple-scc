@@ -32,15 +32,14 @@ strip(char *fname)
 	FILE *fp, *tmp;
 	Obj *obj;
 
+	errno = 0;
 	filename = fname;
-	if ((tmp = fopen("strip.tmp", "wb")) == NULL) {
-		error(strerror(errno));
+
+	fp = fopen(fname, "rb");
+	tmp = tmpfile();
+	if (!fp || !tmp)
 		goto err;
-	}
-	if ((fp = fopen(fname, "rb")) == NULL) {
-		error(strerror(errno));
-		goto err1;
-	}
+
 	if ((type = objtype(fp, NULL)) < 0) {
 		error("file format not recognized");
 		goto err2;
@@ -79,6 +78,9 @@ err1:
 	fclose(tmp);
 	remove("strip.tmp");
 err:
+	if (errno)
+		error(strerror(errno));
+
 	return;
 }
 
