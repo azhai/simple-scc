@@ -262,7 +262,7 @@ readreloc(Obj *obj, FILE *fp)
 
 	for (i = 0; i < hdr->f_nscns; i++) {
 		scn = &coff->scns[i];
-		if (scn->s_nlnno == 0)
+		if (scn->s_nrelloc == 0)
 			continue;
 
 		if (!objpos(obj, fp, scn->s_relptr))

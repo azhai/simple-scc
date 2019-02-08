@@ -166,6 +166,10 @@ writeents(Obj *obj, FILE *fp)
 
 	coff  = obj->data;
 	hdr = &coff->hdr;
+
+	if (!coff->ents)
+		return 1;
+
 	strtbl = NULL;
 	strsiz = 0;
 
@@ -212,7 +216,7 @@ writestr(Obj *obj, FILE *fp)
 	fwrite(buf, 4, 1, fp);
 	fwrite(coff->strtbl, coff->strsiz, 1, fp);
 
-	return ferror(fp);
+	return ferror(fp) == 0;
 }
 
 static int
@@ -245,6 +249,9 @@ writereloc(Obj *obj, FILE *fp)
 	coff  = obj->data;
 	hdr = &coff->hdr;
 
+	if (!coff->rels)
+		return 1;
+
 	for (i = 0; i < hdr->f_nscns; i++) {
 		rp = coff->rels[i];
 		if (!rp)
@@ -274,6 +281,9 @@ writelines(Obj *obj, FILE *fp)
 
 	coff  = obj->data;
 	hdr = &coff->hdr;
+
+	if (!coff->lines)
+		return 1;
 
         for (i = 0; i < hdr->f_nscns; i++) {
 		lp = coff->lines[i];

@@ -9,12 +9,29 @@
 void
 coff32strip(Obj *obj)
 {
-	struct coff32 *coff = obj->data;
+	int i;
 	FILHDR *hdr;
+	SCNHDR *scn;
+	struct coff32 *coff = obj->data;
 
 	hdr = &coff->hdr;
-	free(coff->ents);
-	coff->ents = NULL;
+	for (i = 0; i < hdr->f_nscns; i++) {
+		scn = &coff->scns[i];
+		scn->s_nrelloc = 0;
+		scn->s_relptr = 0;
+		scn->s_nlnno = 0;
+		scn->s_lnnoptr = 0;
+	}
+
 	hdr->f_nsyms = 0;
 	hdr->f_symptr = 0;
+	hdr->f_flags |= F_RELFLG | F_LMNO | F_SYMS;
+
+	free(coff->ents);
+	free(coff->rels);
+	free(coff->lines);
+
+	coff->ents = NULL;
+	coff->rels = NULL;
+	coff->lines = NULL;
 }

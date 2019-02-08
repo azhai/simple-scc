@@ -29,16 +29,14 @@ static void
 strip(char *fname)
 {
 	int type;
-	FILE *fp, *tmp;
+	FILE *fp;
 	Obj *obj;
 
 	errno = 0;
 	filename = fname;
 
-	fp = fopen(fname, "rb");
-	tmp = tmpfile();
-	if (!fp || !tmp)
-		goto err;
+	if ((fp = fopen(fname, "rb")) == NULL)
+		goto err1;
 
 	if ((type = objtype(fp, NULL)) < 0) {
 		error("file format not recognized");
@@ -52,21 +50,22 @@ strip(char *fname)
 		error("file corrupted");
 		goto err3;
 	}
+	fclose(fp);
+	fp = NULL;
+
 	objstrip(obj);
 
-	if (objwrite(obj, tmp) < 0) {
+	if ((fp = fopen(fname, "wb")) == NULL)
+		goto err1;
+
+	if (objwrite(obj, fp) < 0) {
 		error("error writing output");
 		goto err3;
 	}
 
 	fclose(fp);
-	fp = NULL;
-
-	if (remove(fname) || rename("strip.tmp", fname)) {
-		error(strerror(errno));
-		goto err3;
-	}
 	objdel(obj);
+
 	return;
 
 err3:
@@ -75,9 +74,6 @@ err2:
 	if (fp)
 		fclose(fp);
 err1:
-	fclose(tmp);
-	remove("strip.tmp");
-err:
 	if (errno)
 		error(strerror(errno));
 
