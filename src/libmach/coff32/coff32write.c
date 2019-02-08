@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,11 +61,11 @@ pack_ent(int order, unsigned char *buf, SYMENT *ent)
 	         buf,
 	         "'8lsscc",
 	         ent->n_name,
-	         &ent->n_value,
-	         &ent->n_scnum,
-	         &ent->n_type,
-	         &ent->n_sclass,
-	         &ent->n_numaux);
+	         ent->n_value,
+	         ent->n_scnum,
+	         ent->n_type,
+	         ent->n_sclass,
+	         ent->n_numaux);
 	assert(n == SYMESZ);
 }
 
@@ -73,17 +74,17 @@ pack_aout(int order, unsigned char *buf, AOUTHDR *aout)
 {
 	int n;
 
-	n = unpack(order,
-	           buf,
-	           "ssllllll",
-	           aout->magic,
-	           aout->vstamp,
-	           aout->tsize,
-	           aout->dsize,
-	           aout->bsize,
-	           aout->entry,
-	           aout->text_start,
-	           aout->data_start);
+	n = pack(order,
+	         buf,
+	         "ssllllll",
+	         aout->magic,
+	         aout->vstamp,
+	         aout->tsize,
+	         aout->dsize,
+	         aout->bsize,
+	         aout->entry,
+	         aout->text_start,
+	         aout->data_start);
 	assert(n == AOUTSZ);
 }
 
@@ -135,33 +136,172 @@ writehdr(Obj *obj, FILE *fp)
 static int
 writescns(Obj *obj, FILE *fp)
 {
-	/* TODO */
+	int i;
+	SCNHDR *scn;
+	FILHDR *hdr;
+	struct coff32 *coff;
+	unsigned char buf[SCNHSZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	for (i = 0; i < hdr->f_nscns; i++) {
+		scn = &coff->scns[i];
+		pack_scn(ORDER(obj->type), buf, scn);
+		if (fwrite(buf, SCNHSZ, 1, fp) != 1)
+			return 0;
+	}
+
+	return 1;
 }
 
 static int
 writeents(Obj *obj, FILE *fp)
 {
-	/* TODO */
+	long i, len, strsiz;
+	char *strtbl, *s;
+	FILHDR *hdr;
+	struct coff32 *coff;
+	unsigned char buf[SYMESZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+	strtbl = NULL;
+	strsiz = 0;
+
+	for (i = 0; i < hdr->f_nsyms; i++) {
+		SYMENT *ent = &coff->ents[i];
+
+		len = strlen(ent->n_name) + 1;
+		if (len > strsiz - LONG_MAX)
+			goto err;
+		s = realloc(strtbl, strsiz + len);
+		if (!s)
+			goto err;
+		memcpy(s + strsiz, ent->n_name, len);
+		strtbl = s;
+		strsiz += len;
+
+		pack_ent(ORDER(obj->type), buf, ent);
+		if (fwrite(buf, SYMESZ, 1, fp) != 1)
+			return 0;
+	}
+
+	free(coff->strtbl);
+	coff->strtbl = strtbl;
+	coff->strsiz = strsiz;
+
+	return 1;
+
+err:
+	free(strtbl);
+	return 0;
 }
 
 static int
 writestr(Obj *obj, FILE *fp)
 {
-	/* TODO */
+	struct coff32 *coff;
+	unsigned char buf[4];
+
+	coff = obj->data;
+	if ((coff->strsiz & 0xffff) != coff->strsiz)
+		return 0;
+
+	pack(ORDER(obj->type), buf, "l", coff->strsiz);
+	fwrite(buf, 4, 1, fp);
+	fwrite(coff->strtbl, coff->strsiz, 1, fp);
+
+	return ferror(fp);
+}
+
+static int
+writeaout(Obj *obj, FILE *fp)
+{
+	FILHDR *hdr;
+	struct coff32 *coff;
+	unsigned char buf[AOUTSZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	if (hdr->f_opthdr == 0)
+		return 1;
+	pack_aout(ORDER(obj->type), buf, coff->aout);
+
+	return fread(buf, AOUTSZ, 1, fp) != 1;
+}
+
+static int
+writereloc(Obj *obj, FILE *fp)
+{
+	int i, j;
+	RELOC *rp;
+	SCNHDR *scn;
+	FILHDR *hdr;
+	struct coff32 *coff;
+	unsigned char buf[RELSZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+	for (i = 0; i < hdr->f_nscns; i++) {
+		rp = coff->rels[i];
+		if (!rp)
+			continue;
+		scn = &coff->scns[i];
+
+		for (j = 0; j < scn->s_nrelloc; j++) {
+			pack_reloc(ORDER(obj->type), buf, &rp[i]);
+			if (fwrite(buf, RELSZ, 1, fp) != 1)
+				return 0;
+		}
+	}
+
+	return 1;
+}
+
+static int
+writelines(Obj *obj, FILE *fp)
+{
+	int i;
+	long j;
+	FILHDR *hdr;
+	LINENO *lp;
+	SCNHDR *scn;
+	struct coff32 *coff;
+	unsigned char buf[LINESZ];
+
+	coff  = obj->data;
+	hdr = &coff->hdr;
+
+        for (i = 0; i < hdr->f_nscns; i++) {
+		lp = coff->lines[i];
+		if (!lp)
+			continue;
+		scn = &coff->scns[i];
+		for (j = 0; j < scn->s_nlnno; j++) {
+			pack_line(ORDER(obj->type), buf, &lp[j]);
+			if (fwrite(buf, LINESZ, 1, fp) == 1)
+				return 0;
+		}
+	}
+
+	return 1;
 }
 
 int
 coff32write(Obj *obj, FILE *fp)
 {
-	struct coff32 *coff;
-
-	coff  = obj->data;
-	coff->strsiz = 0;
-	free(coff->strtbl);
-
 	if (!writehdr(obj, fp))
 		return -1;
+	if (!writeaout(obj, fp))
+		return -1;
 	if (!writescns(obj, fp))
+		return -1;
+	if (!writereloc(obj, fp))
+		return -1;
+	if (!writelines(obj, fp))
 		return -1;
 	if (!writeents(obj, fp))
 		return -1;

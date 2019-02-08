@@ -244,7 +244,8 @@ readstr(Obj *obj, FILE *fp)
 static int
 readreloc(Obj *obj, FILE *fp)
 {
-	int i, j;
+	int i;
+	long j;
 	RELOC **rels, *rp;
 	SCNHDR *scn;
 	FILHDR *hdr;
@@ -414,8 +415,7 @@ readscns(Obj *obj, FILE *fp)
 			return 0;
 		coff->scns = scn;
 	}
-	if (fseek(fp, hdr->f_opthdr, SEEK_CUR) < 0)
-		return 0;
+
 	for (i = 0; i < hdr->f_nscns; i++) {
 		if (fread(buf, SCNHSZ, 1, fp) < 0)
 			return 0;

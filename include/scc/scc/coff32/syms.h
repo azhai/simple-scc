@@ -1,10 +1,10 @@
 /* This file is inspired in the book "Understanding and using COFF" */
 
-#define E_SYMNMLEN   8
+#define SYMNMLEN   8
 
 struct syment {
 	union {
-		char _n_name[8];          /* symbol name */
+		char _n_name[SYMNMLEN];  /* symbol name */
 		struct {
 			long _n_zeroes;  /* if _n_name[0-3] == 0 */
 			long _n_offset;  /* offset into string table */
