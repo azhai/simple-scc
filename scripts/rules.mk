@@ -65,7 +65,7 @@ all:
 dep:
 
 inc-dep: FORCE
-	$(SCRIPTDIR)/mkdep
+	mkdep
 
 clean: clean-helper
 

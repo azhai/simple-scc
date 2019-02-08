@@ -11,3 +11,7 @@ OBJS = coff32del.o \
        coff32write.o \
 
 all: $(OBJS)
+
+dep: inc-dep
+
+include deps.mk
