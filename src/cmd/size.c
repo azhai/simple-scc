@@ -127,7 +127,7 @@ size(char *fname)
 	if ((t = objtype(fp, NULL)) != -1)
 		newobject(fp, t);
 	else if (archive(fp))
-		artraverse(fp, newmember, NULL);
+		formember(fp, newmember, NULL);
 	else
 		error("bad format");
 

@@ -51,9 +51,9 @@ struct object {
 };
 
 
-extern int artraverse(FILE *fp,
-                      int (*fn)(FILE *, char *, void *),
-                      void *data);
+extern int formember(FILE *fp,
+                     int (*fn)(FILE *, char *, void *),
+                     void *data);
 
 extern int forsym(Obj *obj,
                   int (*fn)(Objsym *sym, void *data),

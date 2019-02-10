@@ -8,7 +8,6 @@ OBJS = addr2line.o \
        archive.o \
        arindex.o \
        armember.o \
-       artraverse.o \
        coffelf32.o \
        objdel.o \
        objlookup.o \
@@ -20,6 +19,7 @@ OBJS = addr2line.o \
        forsym.o \
        forsect.o \
        foridx.o \
+       formember.o \
        objtype.o \
        objwrite.o \
        objfree.o \

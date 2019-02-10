@@ -188,7 +188,7 @@ readsyms(FILE *fp)
 		return 0;
 	}
 
-	if (artraverse(fp, newmember, NULL) < 0) {
+	if (formember(fp, newmember, NULL) < 0) {
 		error("while traversing archive");
 		return 0;
 	}

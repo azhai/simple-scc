@@ -4,7 +4,7 @@
 #include <scc/mach.h>
 
 int
-artraverse(FILE *fp, int (*fn)(FILE *, char *, void *), void *data)
+formember(FILE *fp, int (*fn)(FILE *, char *, void *), void *data)
 {
 	int r;
 	long off;

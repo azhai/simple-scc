@@ -264,7 +264,7 @@ newlibrary(FILE *fp)
 {
 	if (foridx(fp, newidx, NULL))
 		return 1;
-	return artraverse(fp, newmember, NULL);
+	return formember(fp, newmember, NULL);
 }
 
 static FILE *
