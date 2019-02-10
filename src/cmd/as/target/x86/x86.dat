@@ -1,4 +1,6 @@
 # Tab 16, tabs 16, :set ts=16
+# -*- default-tab-width=16 -*-
+
 # op	args	size	bytes	format	cpu
 .DB	imm8+	0	none	defb	I286,I386,AMD64
 .DEFB	imm8+	0	none	defb	I286,I386,AMD64
@@ -24,8 +26,8 @@ RET	none	1	0xc3	noargs	I286,I386,AMD64
 
 
 # 8 bit arithmetic operations
-ADDB	reg8,reg8	2	0x00		reg8_reg8	I286,I386,AMD64
-ADDB	imm8,reg8	3	0x80		imm8_reg8	I286,I386,AMD64
-ADDW	reg16,reg16	2	0x01		reg16_reg16	I286
+ADDB	reg8,reg8	2	0x00	reg8_reg8	I286,I386,AMD64
+ADDB	imm8,reg8	3	0x80	imm8_reg8	I286,I386,AMD64
+ADDW	reg16,reg16	2	0x01	reg16_reg16	I286
 ADDW	reg16,reg16	3	0x66,0x01	reg16_reg16	I386,AMD64
-ADDL	reg32,reg32	2	0x01		reg32_reg32	I386,AMD64
+ADDL	reg32,reg32	2	0x01	reg32_reg32	I386,AMD64
