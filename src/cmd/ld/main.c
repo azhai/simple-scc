@@ -199,6 +199,14 @@ newobject(FILE *fp, int type, int inlib)
 		return;
 	}
 
+	if (bintype == -1) {
+		bintype = type;
+	} else if (bintype != type) {
+		error("not compatible object file");
+		return;
+	}
+	bintype = type;
+
 	if (objread(obj, fp) < 0) {
 		error("object file corrupted");
 		goto delete;
@@ -225,7 +233,7 @@ delete:
 static void
 loadlib(FILE *fp)
 {
-	int t;
+	int t, loaded;
 	long n;
 	Objsymdef *def, *dp;
 	Symbol *sym, *p;
@@ -235,39 +243,34 @@ loadlib(FILE *fp)
 		return;
 	}
 
-repeat:
 	p = &refhead;
-	if (p->next == p)
-		goto clean;
+	for (loaded = 0; p->next != p; loaded = 0) {
+		for (dp = def; dp; dp = dp->next) {
+			sym = lookup(dp->name, NOINSTALL);
+			if (!sym || !sym->def)
+				continue;
 
-	for (dp = def; dp; dp = dp->next) {
-		if ((sym = lookup(dp->name, NOINSTALL)) == NULL)
-			continue;
-		if (!sym->def)
+			if (fseek(fp, dp->offset, SEEK_SET) == EOF) {
+				error(errstr());
+				break;
+			}
+
+			if ((t = objtype(fp, NULL)) == -1) {
+				error("library file corrupted");
+				break;
+			}
+
+			if (t != bintype) {
+				error("incompatible library");
+				break;
+			}
+
+			newobject(fp, t, OUTLIB);
+			loaded = 1;
+		}
+		if (!loaded)
 			break;
 	}
-
-	if (!dp)
-		goto clean;
-
-	if (fseek(fp, dp->offset, SEEK_SET) == EOF) {
-		error(errstr());
-		goto clean;
-	}
-
-	if ((t = objtype(fp, NULL)) == -1) {
-		error("library file corrupted");
-		goto clean;
-	}
-
-	if (t != bintype) {
-		error("incompatible library");
-		goto clean;
-	}
-
-	newobject(fp, t, OUTLIB);
-	goto repeat;
-
 clean:
 	free(def);
 }
