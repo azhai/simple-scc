@@ -48,7 +48,7 @@ $(BINDIR)/ar: ar.o $(DRIVER).o
 
 dep: inc-dep
 
-clean:
+dep clean:
 	$(FORALL)
 
 include deps.mk

@@ -10,5 +10,5 @@ all: $(DIRS)
 $(DIRS): FORCE
 	+@cd $@ && $(MAKE)
 
-clean:
+dep clean:
 	$(FORALL)
