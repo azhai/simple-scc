@@ -11,7 +11,7 @@ do
 
 	sed -n "/^#include / {
 		s///
-		s@\"\(.*\)\"@$dir/$file: $dir\1@p
+		s@\"\(.*\)\"@$dir/$file: $dir/\1@p
 		s@<\(scc/.*\)>@$dir/$file: \$(INCDIR)/scc/\1@p
 	}" $i
 done | LC_ALL=C sort -s
