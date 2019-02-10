@@ -144,13 +144,13 @@ loadsections(Obj *obj, FILE *fp)
 	FILHDR *hdr;
 	struct coff32 *coff;
 	SCNHDR *scn;
-	Section *secs, *sp;
+	Objsect *secs, *sp;
 
 	coff  = obj->data;
 	hdr = &coff->hdr;
 	scn = coff->scns;
 
-	secs = malloc(sizeof(Section) * hdr->f_nscns);
+	secs = malloc(sizeof(Objsect) * hdr->f_nscns);
 	if (!secs)
 		return 0;
 	obj->sections = secs;
@@ -373,7 +373,7 @@ loadsyms(Obj *obj)
 	int t;
 	long i;
 	char *s;
-	Symbol *sym;
+	Objsym *sym;
 	SYMENT *ent;
 	Coff32 *coff = obj->data;
 

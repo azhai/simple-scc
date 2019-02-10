@@ -7,7 +7,7 @@
 extern indexfun_t indexv[];
 
 long
-arindex(int type, long nsyms, Symdef *head, FILE *fp)
+arindex(int type, long nsyms, Objsymdef *head, FILE *fp)
 {
 	int fmt;
 	indexfun_t fn;

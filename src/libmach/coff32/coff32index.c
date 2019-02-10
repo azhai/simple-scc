@@ -6,7 +6,7 @@
 #include "coff32.h"
 
 long
-coff32index(int type, long nsymbols, Symdef *head, FILE *fp)
+coff32index(int type, long nsymbols, Objsymdef *head, FILE *fp)
 {
 	return coff32idx(BIG_ENDIAN, nsymbols, head, fp);
 }

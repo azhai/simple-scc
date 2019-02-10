@@ -11,7 +11,7 @@ objsize(Obj *obj,
         unsigned long long *data,
         unsigned long long *bss)
 {
-	Section *sp, *secs = obj->sections;
+	Objsect *sp, *secs = obj->sections;
 	unsigned long long *p;
 
 	*text = 0;

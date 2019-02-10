@@ -6,11 +6,11 @@
 #include "libmach.h"
 
 long
-coff32idx(int order, long nsyms, Symdef *head, FILE *fp)
+coff32idx(int order, long nsyms, Objsymdef *head, FILE *fp)
 {
 	long i, n;
 	size_t len;
-	Symdef *def;
+	Objsymdef *def;
 	unsigned char buff[4];
 
 	pack(order, buff, "l", nsyms);

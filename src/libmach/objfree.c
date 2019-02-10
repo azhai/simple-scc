@@ -9,7 +9,7 @@
 static void
 delsyms(Obj *obj)
 {
-	Symbol *sym, *next;
+	Objsym *sym, *next;
 
 	for (sym = obj->head; sym; sym = next) {
 		next = sym->next;

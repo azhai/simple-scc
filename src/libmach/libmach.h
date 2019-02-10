@@ -28,7 +28,7 @@ enum freeflags {
 	FREESECT,
 };
 
-typedef long (*indexfun_t)(int, long, Symdef *, FILE *);
+typedef long (*indexfun_t)(int, long, Objsymdef *, FILE *);
 typedef int (*newfun_t)(Obj *obj);
 typedef int (*readfun_t)(Obj *obj, FILE *fp);
 typedef void (*delfun_t)(Obj *new);
@@ -43,11 +43,11 @@ extern int objpos(Obj *obj, FILE *fp, long pos);
 extern void objfree(Obj *obj, int what);
 
 /* idx functions */
-extern long coff32idx(int order, long nsyms, Symdef *def, FILE *fp);
+extern long coff32idx(int order, long nsyms, Objsymdef *def, FILE *fp);
 
 
 /* coff32 functions */
-extern long coff32index(int type, long nsyms, Symdef *head, FILE *fp);
+extern long coff32index(int type, long nsyms, Objsymdef *head, FILE *fp);
 extern int coff32new(Obj *obj);
 extern void coff32del(Obj *obj);
 extern int coff32read(Obj *obj, FILE *fp);

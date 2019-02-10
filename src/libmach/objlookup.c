@@ -4,13 +4,13 @@
 
 #include <scc/mach.h>
 
-Symbol *
+Objsym *
 objlookup(Obj *obj, char *name)
 {
 	unsigned h;
 	size_t len;
 	char *s;
-	Symbol *sym;
+	Objsym *sym;
 
 	h = 0;
 	for (s = name; *s; s++)

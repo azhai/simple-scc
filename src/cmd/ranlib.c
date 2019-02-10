@@ -18,7 +18,7 @@
 static long nsymbols;
 static int status, artype, nolib;
 static char *filename, *membname;
-static Symdef *htab[NR_SYMDEF], *head;
+static Objsymdef *htab[NR_SYMDEF], *head;
 static long offset;
 char *argv0;
 
@@ -44,11 +44,11 @@ error(char *fmt, ...)
 	status = EXIT_FAILURE;
 }
 
-Symdef *
+Objsymdef *
 lookup(char *name)
 {
 	unsigned h;
-	Symdef *dp;
+	Objsymdef *dp;
 	char *s;
 	size_t len;
 
@@ -85,9 +85,9 @@ lookup(char *name)
 }
 
 static int
-newsymbol(Symbol *sym, void *data)
+newsymbol(Objsym *sym, void *data)
 {
-	Symdef *np;
+	Objsymdef *np;
 
 	if (!isupper(sym->type) || sym->type == 'N')
 		return 1;
@@ -165,7 +165,7 @@ error:
 static void
 freehash(void)
 {
-	Symdef **npp, *next, *np;
+	Objsymdef **npp, *next, *np;
 
 	for (npp = htab; npp < &htab[NR_SYMDEF]; npp++)
 		*npp = NULL;

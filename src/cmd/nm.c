@@ -13,7 +13,7 @@ static char sccsid[] = "@(#) ./nm/main.c";
 
 
 struct symtbl {
-	Symbol **buf;
+	Objsym **buf;
 	size_t nsyms;
 };
 
@@ -46,8 +46,8 @@ error(char *fmt, ...)
 static int
 cmp(const void *p1, const void *p2)
 {
-	Symbol **s1 = (Symbol **) p1, **s2 = (Symbol **) p2;
-	Symbol *sym1 = *s1, *sym2 = *s2;
+	Objsym **s1 = (Objsym **) p1, **s2 = (Objsym **) p2;
+	Objsym *sym1 = *s1, *sym2 = *s2;
 
 	if (vflag) {
 		if (sym1->value > sym2->value)
@@ -67,7 +67,7 @@ cmp(const void *p1, const void *p2)
 }
 
 static void
-printsyms(Symbol **syms, size_t nsym)
+printsyms(Objsym **syms, size_t nsym)
 {
 	size_t i;
 
@@ -77,7 +77,7 @@ printsyms(Symbol **syms, size_t nsym)
 		printf("%s:\n", (membname) ? membname : filename);
 
 	for (i = 0; i < nsym; i++) {
-		Symbol *sym = syms[i];
+		Objsym *sym = syms[i];
 		int type = sym->type;
 		char *fmt;
 
@@ -114,10 +114,10 @@ printsyms(Symbol **syms, size_t nsym)
 }
 
 static int
-newsym(Symbol *sym, void *data)
+newsym(Objsym *sym, void *data)
 {
 	struct symtbl *tbl = data;
-	Symbol **p;
+	Objsym **p;
 	size_t n, size;
 	int type = sym->type;
 
