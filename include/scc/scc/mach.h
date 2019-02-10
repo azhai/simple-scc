@@ -63,6 +63,10 @@ extern int forsect(Obj *obj,
                    int (*fn)(Objsect *sect, void *data),
                    void *data);
 
+extern int foridx(FILE *fp,
+                  int (*fn)(Objsymdef *def, void *data),
+                  void *data);
+
 extern int archive(FILE *fp);
 extern long armember(FILE *fp, char *member);
 extern int objtype(FILE *fp, char **name);

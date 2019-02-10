@@ -18,6 +18,11 @@ static char sccsid[] = "@(#) ./ld/main.c";
 typedef struct objlst Objlst;
 typedef struct symbol Symbol;
 
+enum {
+	OUTLIB,
+	INLIB,
+};
+
 struct objlst {
 	Obj *obj;
 	struct objlst *next;
@@ -175,9 +180,10 @@ load(Obj *obj)
 }
 
 static void
-newobject(FILE *fp, int type)
+newobject(FILE *fp, int type, int inlib)
 {
 	Obj *obj;
+	Symbol *sym;
 
 	if ((obj = objnew(type)) == NULL) {
 		error("out of memory");
@@ -186,14 +192,22 @@ newobject(FILE *fp, int type)
 
 	if (objread(obj, fp) < 0) {
 		error("object file corrupted");
-		goto error;
+		goto delete;
 	}
 
+	if (inlib) {
+		for (sym = refhead.next; sym != &refhead; sym = sym->next) {
+			if (objlookup(obj, sym->name))
+				break;
+		}
+		if (sym == &refhead)
+			goto  delete;
+	}
 	load(obj);
 
 	return;
 
-error:
+delete:
 	objdel(obj);
 	return;
 }
@@ -201,13 +215,26 @@ error:
 static int
 newmember(FILE *fp, char *name, void *data)
 {
+	int t;
+
+	if ((t = objtype(fp, NULL)) == -1)
+		return 1;
+	newobject(fp, t, INLIB);
 	return 1;
+}
+
+static int
+newidx(Objsymdef *def, void *data)
+{
+	/* TODO */
+	return 0;
 }
 
 static int
 newlibrary(FILE *fp)
 {
-
+	if (foridx(fp, newidx, NULL))
+		return 1;
 	return artraverse(fp, newmember, NULL);
 }
 
@@ -250,7 +277,7 @@ pass1(int argc, char *argv[])
 			continue;
 
 		if ((t = objtype(fp, NULL)) != -1)
-			newobject(fp, t);
+			newobject(fp, t, OUTLIB);
 		else if (archive(fp))
 			newlibrary(fp);
 		else

@@ -19,6 +19,7 @@ OBJS = addr2line.o \
        objstrip.o \
        forsym.o \
        forsect.o \
+       foridx.o \
        objtype.o \
        objwrite.o \
        objfree.o \
