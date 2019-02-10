@@ -73,7 +73,7 @@ error(char *fmt, ...)
 	va_list va;
 
 	va_start(va, fmt);
-	fprintf(stderr, "nm: %s: ", filename);
+	fprintf(stderr, "ld: %s: ", filename);
 	if (membname)
 		fprintf(stderr, "%s: ", membname);
 	vfprintf(stderr, fmt, va);
