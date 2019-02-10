@@ -158,7 +158,7 @@ newobject(FILE *fp, int type)
 	if (objread(obj, fp) < 0)
 		goto error;
 
-	if (!objtraverse(obj, newsym, &tbl))
+	if (!forsym(obj, newsym, &tbl))
 		goto error;
 
 	printsyms(tbl.buf, tbl.nsyms);

@@ -5,7 +5,7 @@
 #include "libmach.h"
 
 int
-objtraverse(Obj *obj, int (*fn)(Objsym *, void *), void *data)
+forsym(Obj *obj, int (*fn)(Objsym *, void *), void *data)
 {
 	Objsym *sym;
 

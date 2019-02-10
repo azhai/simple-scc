@@ -150,7 +150,7 @@ newmember(FILE *fp, char *nam, void *data)
 		goto error;
 	}
 
-	if (!objtraverse(obj, newsymbol, NULL)) {
+	if (!forsym(obj, newsymbol, NULL)) {
 		error("traversing object file");
 		goto error;
 	}

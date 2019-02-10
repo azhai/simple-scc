@@ -16,9 +16,9 @@ OBJS = addr2line.o \
        objpos.o \
        objread.o \
        objreset.o \
-       objsize.o \
        objstrip.o \
-       objtraverse.o \
+       forsym.o \
+       forsect.o \
        objtype.o \
        objwrite.o \
        objfree.o \

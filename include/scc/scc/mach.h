@@ -55,9 +55,13 @@ extern int artraverse(FILE *fp,
                       int (*fn)(FILE *, char *, void *),
                       void *data);
 
-extern int objtraverse(Obj *obj,
-                       int (*fn)(Objsym *sym, void *data),
-                       void *data);
+extern int forsym(Obj *obj,
+                  int (*fn)(Objsym *sym, void *data),
+                  void *data);
+
+extern int forsect(Obj *obj,
+                   int (*fn)(Objsect *sect, void *data),
+                   void *data);
 
 extern int archive(FILE *fp);
 extern long armember(FILE *fp, char *member);
@@ -68,10 +72,6 @@ extern int objreset(Obj *obj);
 extern int objread(Obj *obj, FILE *fp);
 extern Objsym *objlookup(Obj *obj, char *name);
 extern int objstrip(Obj *obj);
-extern int objsize(Obj *obj,
-                   unsigned long long *text,
-                   unsigned long long *data,
-                   unsigned long long *bss);
 extern long arindex(int type, long nsyms, Objsymdef *def, FILE *fp);
 extern int objwrite(Obj *obj, FILE *fp);
 

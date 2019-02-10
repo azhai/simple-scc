@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,6 +7,12 @@
 
 #include <scc/arg.h>
 #include <scc/mach.h>
+
+struct sizes {
+	unsigned long long text;
+	unsigned long long data;
+	unsigned long long bss;
+};
 
 static int status;
 static char *filename, *membname;
@@ -29,28 +36,63 @@ error(char *fmt, ...)
 	status = EXIT_FAILURE;
 }
 
+int
+newsect(Objsect *secp, void *data)
+{
+	unsigned long long *p;
+	struct sizes *sp = data;
+
+	switch (secp->type) {
+	case 'T':
+		p = &sp->text;
+		break;
+	case 'D':
+		p = &sp->data;
+		break;
+	case 'B':
+		p = &sp->bss;
+		break;
+	default:
+		return 1;
+	}
+
+	if (*p > ULLONG_MAX - secp->size)
+		return -1;
+	*p += secp->size;
+
+	return 1;
+}
+
 void
 newobject(FILE *fp, int type)
 {
 	Obj *obj;
-	unsigned long long text, data, bss, total;
+	struct sizes siz;
+	unsigned long long total;
 
 	if ((obj = objnew(type)) == NULL) {
 		error("out of memory");
 		goto error;
 	}
-	if (objread(obj, fp) < 0 || objsize(obj, &text, &data, &bss) < 0) {
+
+	if (objread(obj, fp) < 0) {
 		error("file corrupted");
 		goto error;
 	}
 
-	total = text + data + bss;
-	printf("%llu\t%llu\t%llu\t%llu\t%llx\t%s\n",
-	       text, data, bss, total, total, filename);
+	siz.text = siz.data = siz.bss = 0;
+	forsect(obj, newsect, &siz);
 
-	ttext += text;
-	tdata += data;
-	tbss += bss;
+	total = siz.text + siz.data + siz.bss;
+	printf("%llu\t%llu\t%llu\t%llu\t%llx\t%s\n",
+	       siz.text,
+	       siz.data,
+	       siz.bss,
+	       total, total, filename);
+
+	ttext += siz.text;
+	tdata += siz.data;
+	tbss += siz.bss;
 	ttotal += total;
 
 error:
