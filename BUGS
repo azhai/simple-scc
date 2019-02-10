@@ -1,3 +1,5 @@
+libc: signal functions are known to be broken
+
 # compiling sbase
 logger.c:36: error: bad type conversion requested
 ls.c abort in cc2-qbe, assign to type with size 0?
