@@ -25,7 +25,6 @@ OBJS = addr2line.o \
        objfree.o \
        pack.o \
        unpack.o \
-       index.o \
        new.o \
        read.o \
        del.o \
