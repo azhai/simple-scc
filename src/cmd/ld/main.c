@@ -3,17 +3,44 @@ static char sccsid[] = "@(#) ./ld/main.c";
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <scc/mach.h>
 #include <scc/scc.h>
 #include <scc/ar.h>
 #include <scc/syslibs.h>
-#include "ld.h"
+
+#define NR_SYMBOL 128
+
+typedef struct objlst Objlst;
+typedef struct symbol Symbol;
+
+struct objlst {
+	Obj *obj;
+	struct objlst *next;
+};
+
+struct symbol {
+	char *name;
+	Obj *obj;
+	Objsym *sym;
+	struct symbol *next, *prev;
+	struct symbol *hash;
+};
 
 char *output = "a.out", *entry = "start", *datasiz;
-int pass;
+
+static char *filename, *membname;
+static Objlst *objhead, *objlast;
+static Symbol *symtab[NR_SYMBOL];
+static Symbol refhead = {
+	.next = &refhead,
+	.prev = &refhead,
+};
+
 int sflag;		/* discard all the symbols */
 int xflag;		/* discard local symbols */
 int Xflag;		/* discard locals starting with 'L' */
@@ -21,188 +48,239 @@ int rflag;		/* preserve relocation bits */
 int dflag;		/* define common even with rflag */
 int gflag;              /* preserve debug symbols */
 
-static int done;
+static int status;
 
-Obj *
-probe(char *fname, char *member, FILE *fp)
+static char *
+errstr(void)
 {
+	return strerror(errno);
 }
 
-Obj *
-load(Obj *obj)
+static void
+error(char *fmt, ...)
 {
-}
+	va_list va;
 
-void
-writeout(FILE *fp)
-{
-}
+	va_start(va, fmt);
+	fprintf(stderr, "nm: %s: ", filename);
+	if (membname)
+		fprintf(stderr, "%s: ", membname);
+	vfprintf(stderr, fmt, va);
+	putc('\n', stderr);
+	va_end(va);
 
-void
-redefined(Obj *obj, Symbol *sym)
-{
-	/* TODO: add infotmation about where it is defined */
-	fprintf(stderr,
-		"ld: %s: redifinition of symbol '%s'\n",
-		obj->fname, sym->name);
-}
-
-void
-corrupted(char *fname, char *member)
-{
-	char *fmt;
-
-	fmt = (member) ?
-		"ld: %s(%s): corrupted file\n" : "ld: %s: corrupted file\n";
-	fprintf(stderr, fmt, fname, member);
-	exit(EXIT_FAILURE);
-}
-
-void
-outmem(void)
-{
-	fputs("ld: out of memory\n", stderr);
-	exit(EXIT_FAILURE);
+	status = EXIT_FAILURE;
 }
 
 static void
 cleanup(void)
 {
-	if (!done)
+	if (status != EXIT_FAILURE)
 		remove(output);
 }
 
-static int
-object(char *fname, char *member, FILE *fp)
+static Symbol *
+lookup(Objsym *osym)
 {
-	Obj *obj;
+	char *s;
+	unsigned h;
+	Symbol *sym;
+	char *name = osym->name;
 
-	obj = probe(fname, member, fp);
-	if (!obj)
-		return 0;
-	load(obj);
+	h = 0;
+	for (s = name; *s; s++)
+		h += *s;
+	h %= NR_SYMBOL;
 
-	return 1;
+	for (sym = symtab[h]; sym; sym = sym->hash) {
+		if (!strcmp(name, sym->name))
+			return sym;
+	}
+
+	if ((sym = malloc(sizeof(*sym))) == NULL) {
+		error("out of memory");
+		exit(EXIT_FAILURE);
+	}
+
+	sym->obj = NULL;
+	sym->name = osym->name;
+	sym->hash = symtab[h];
+	symtab[h] = sym;
+
+	refhead.next->prev = sym;
+	sym->next = refhead.next;
+	refhead.next = sym;
+	sym->prev = &refhead;
+
+	return sym;
 }
 
-static char *
-getfname(struct ar_hdr *hdr, char *dst)
+static Symbol *
+define(Objsym *osym, Obj *obj)
 {
-	char *p;
-	int i;
+	Symbol *sym = lookup(osym);
 
-	memcpy(dst, hdr->ar_name, SARNAM);
-	dst[SARNAM] = '\0';
-
-	for (i = SARNAM-1; i >= 0; i--) {
-		if (dst[i] != ' ' && dst[i] != '/')
-			break;
-		dst[i] = '\0';
+	if (sym->obj) {
+		error("%s: symbol redefined", osym->name);
+		return NULL;
 	}
-	return dst;
+
+	sym->obj = obj;
+	sym->sym = osym;
+
+	sym->next->prev = sym->prev;
+	sym->prev->next = sym->next;
+	sym->next = sym->prev = NULL;
+
+	return sym;
+}
+
+static int
+newsym(Objsym *osym, void *obj)
+{
+	switch (osym->type) {
+	case 'U':
+		lookup(osym);
+	case '?':
+	case 'N':
+		break;
+	default:
+		if (isupper(osym->type))
+			define(osym, obj);
+		break;
+	}
+
+	return 1;
 }
 
 static void
-ar(char *fname, FILE *fp)
+load(Obj *obj)
 {
-	struct ar_hdr hdr;
-	long pos, siz;
-	char member[SARNAM+1];
+	Objlst *lst;
 
-	if (fseek(fp, SARMAG, SEEK_SET) == EOF)
-		goto file_error;
-
-	while (fread(&hdr, sizeof(hdr), 1, fp) == 1) {
-		if (strncmp(hdr.ar_fmag, ARFMAG, sizeof(hdr.ar_fmag)))
-			corrupted(fname, NULL);
-
-		siz = 0;
-		sscanf(hdr.ar_size, "%10ld", &siz);
-		if (siz & 1)
-			siz++;
-		if (siz == 0)
-			corrupted(fname, NULL);
-
-		pos = ftell(fp);
-		if (pos == -1 || pos > LONG_MAX - siz) {
-			fprintf(stderr,
-			        "ld: %s(%s): overflow in size of archive",
-			         fname, member);
-			exit(EXIT_FAILURE);
-		}
-		pos += siz;
-
-		getfname(&hdr, member);
-		object(fname, member, fp);
-		if (fseek(fp, pos, SEEK_SET) == EOF)
-			break;
+	if ((lst = malloc(sizeof(*lst))) == NULL) {
+		error("out of memory");
+		return;
 	}
 
-file_error:
-	if (ferror(fp)) {
-		fprintf(stderr, "ld: %s: %s\n", fname, strerror(errno));
-		exit(EXIT_FAILURE);
+	lst->obj = obj;
+	lst->next = NULL;
+
+	if (!objlast)
+		objlast = objhead = lst;
+	else
+		objlast = objlast->next = lst;
+
+	forsym(obj, newsym, obj);
+}
+
+static void
+newobject(FILE *fp, int type)
+{
+	Obj *obj;
+
+	if ((obj = objnew(type)) == NULL) {
+		error("out of memory");
+		return;
 	}
+
+	if (objread(obj, fp) < 0) {
+		error("object file corrupted");
+		goto error;
+	}
+
+	load(obj);
+
+	return;
+
+error:
+	objdel(obj);
+	return;
 }
 
 static int
-archive(char *fname, FILE *fp)
+newmember(FILE *fp, char *name, void *data)
 {
-	char magic[SARMAG];
-	fpos_t pos;
-
-	fgetpos(fp, &pos);
-	fread(magic, SARMAG, 1, fp);
-	fsetpos(fp, &pos);
-
-	if (ferror(fp))
-		return 0;
-	if (strncmp(magic, ARMAG, SARMAG) != 0)
-		return 0;
-
-	ar(fname, fp);
 	return 1;
+}
+
+static int
+newlibrary(FILE *fp)
+{
+
+	return artraverse(fp, newmember, NULL);
+}
+
+static FILE *
+openfile(char *name, char *buffer)
+{
+	size_t len;
+	FILE *fp;
+
+	filename = name;
+	membname = NULL;
+
+	if (name[0] != '-' || name[1] != 'l') {
+		if ((fp = fopen(name, "rb")) == NULL)
+			error(errstr());
+		return fp;
+	}
+
+	len = strlen(name+2);
+	if (len > FILENAME_MAX-4) {
+		error("library name too long");
+		return NULL;
+	}
+
+	strcat(strcpy(buffer, "lib"), name+2);
+	filename = buffer;
+
+	/* TODO: search the library now */
 }
 
 static void
 pass1(int argc, char *argv[])
 {
+	int t;
 	FILE *fp;
-	char *s;
+	char buff[FILENAME_MAX];
 
-	while ((s = *argv++) != NULL) {
-		if ((fp = fopen(s, "rb")) == NULL) {
-			fprintf(stderr, "ld: %s: %s\n", s, strerror(errno));
-			exit(EXIT_FAILURE);
-		}
-		if (!object(s, NULL, fp) && !archive(s, fp)) {
-			fprintf(stderr, "ld: %s: File format not recognized\n", s);
-			exit(EXIT_FAILURE);
-		}
+	for ( ; *argv; ++argv) {
+		if ((fp = openfile(*argv, buff)) == NULL)
+			continue;
+
+		if ((t = objtype(fp, NULL)) != -1)
+			newobject(fp, t);
+		else if (archive(fp))
+			newlibrary(fp);
+		else
+			error("bad format");
+
 		fclose(fp);
+	}
+
+	if (refhead.next != &refhead) {
+		Symbol *sym;
+
+		for (sym = refhead.next; sym != &refhead; sym = sym->next) {
+			fprintf(stderr,
+			        "ld: symbol '%s' not defined\n",
+			        sym->name);
+		}
+		exit(EXIT_FAILURE);
 	}
 }
 
 static void
 pass2(int argc, char *argv[])
 {
-	FILE *fp;
-
-	if ((fp = fopen(output, "wb")) != NULL) {
-		writeout(fp);
-		if (fclose(fp) != EOF)
-			return;
-	}
-
-	fprintf(stderr, "ld: %s: %s\n", output, strerror(errno));
-	exit(EXIT_FAILURE);
 }
 
 static void
 usage(void)
 {
 	fputs("usage: ld [options] file ...\n", stderr);
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 static void
@@ -217,6 +295,24 @@ Lpath(char *path)
 		exit(1);
 	}
 	*bp = path;
+}
+
+static void
+refer(char *name)
+{
+	Objsym *osym;
+
+	if ((osym = malloc(sizeof(*osym))) == NULL) {
+		fputs("ld: out of memory\n", stderr);
+		return;
+	}
+
+	osym->name = name;
+	osym->type = 'U';
+	osym->size = osym->value = 0;
+	osym->next = osym->hash = NULL;
+
+	lookup(osym);
 }
 
 int
@@ -262,7 +358,7 @@ main(int argc, char *argv[])
 				if (argc == 0)
 					goto usage;
 				++argv, --argc;
-				lookup(*argv, INSTALL);
+				refer(*argv);
 				break;
 			case 'o':
 				if (argc == 0)
@@ -297,7 +393,5 @@ main(int argc, char *argv[])
 	pass1(argc, argv);
 	pass2(argc, argv);
 
-	done = 1;
-
-	return 0;
+	return status;
 }
