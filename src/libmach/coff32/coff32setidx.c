@@ -24,8 +24,8 @@ coff32setidx(int order, long nsyms, Objsymdef *head, FILE *fp)
 	}
 
 	for (def = head; def; def = def->next) {
-		len = strlen(def->name);
-		fwrite(def->name, len+1, 1, fp);
+		len = strlen(def->name) + 1;
+		fwrite(def->name, len, 1, fp);
 		n += len;
 	}
 

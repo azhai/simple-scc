@@ -211,6 +211,8 @@ merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 	index = namindex(artype);
 	if (!strncmp(first.ar_name, index, SARNAM))
 		fseek(lib, atol(first.ar_size), SEEK_CUR);
+	else
+		fseek(lib, SARMAG, SEEK_SET);
 
 	fwrite(ARMAG, SARMAG, 1, to);
 
@@ -226,6 +228,8 @@ merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 
 	while ((c = getc(idx)) != EOF)
 		putc(c, to);
+	if (prop->size & 1)
+		putc('\n', to);
 
 	while ((c = getc(lib)) != EOF)
 		putc(c, to);
