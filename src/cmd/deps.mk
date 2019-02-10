@@ -57,6 +57,7 @@
 ./ranlib.o: $(INCDIR)/scc/scc/ar.h
 ./ranlib.o: $(INCDIR)/scc/scc/arg.h
 ./ranlib.o: $(INCDIR)/scc/scc/mach.h
+./ranlib.o: $(INCDIR)/scc/scc/scc.h
 ./ranlib.o: ./sys.h
 ./scc/cc1/builtin.o: $(INCDIR)/scc/scc/scc.h
 ./scc/cc1/builtin.o: ./scc/cc1/cc1.h
