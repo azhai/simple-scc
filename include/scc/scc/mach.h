@@ -75,6 +75,7 @@ extern int objstrip(Obj *obj);
 extern int objwrite(Obj *obj, FILE *fp);
 extern long setindex(int type, long nsyms, Objsymdef *def, FILE *fp);
 extern long getindex(int type, long *nsyms, Objsymdef **def, FILE *fp);
+extern char *namindex(int type);
 
 /* TODO */
 extern int objload(Obj *obj, Obj *to);

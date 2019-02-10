@@ -16,6 +16,7 @@ OBJS = addr2line.o \
        objstrip.o \
        getindex.o \
        setindex.o \
+       namindex.o \
        forsym.o \
        forsect.o \
        formember.o \
@@ -33,12 +34,14 @@ OBJS = addr2line.o \
        write.o \
        getidx.o \
        setidx.o \
+       namidx.o \
 
 
 DIRS = coff32
 
 TBLS = setidx.c \
        getidx.c \
+       namidx.c \
        new.c \
        read.c \
        del.c \

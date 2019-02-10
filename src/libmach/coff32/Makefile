@@ -12,6 +12,7 @@ OBJS = coff32del.o \
        coff32getindex.o \
        coff32setidx.o \
        coff32getidx.o \
+       coff32namidx.o \
 
 all: $(OBJS)
 

@@ -198,7 +198,7 @@ static int
 merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 {
 	int c;
-	char mtime[13];
+	char *index, mtime[13];
 	struct ar_hdr first;
 
 	rewind(lib);
@@ -208,8 +208,8 @@ merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 	if (fread(&first, sizeof(first), 1, lib) != 1)
 		return 0;
 
-	/* TODO: This name depends of the format */
-	if (!strncmp(first.ar_name, "/", SARNAM))
+	index = namindex(artype);
+	if (!strncmp(first.ar_name, index, SARNAM))
 		fseek(lib, atol(first.ar_size), SEEK_CUR);
 
 	fwrite(ARMAG, SARMAG, 1, to);
@@ -217,7 +217,7 @@ merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
         strftime(mtime, sizeof(mtime), "%s", gmtime(&prop->time));
         fprintf(to,
                 "%-16.16s%-12s%-6u%-6u%-8lo%-10ld`\n",
-                "/",      /* TODO: This name depends of the format */
+                index,
                 mtime,
                 prop->uid,
                 prop->gid,

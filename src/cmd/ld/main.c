@@ -275,8 +275,8 @@ clean:
 static int
 newmember(FILE *fp, char *name, void *data)
 {
-	int *nmemb = data;
 	int t;
+	int *nmemb = data;
 
 	membname = data;
 
@@ -285,18 +285,17 @@ newmember(FILE *fp, char *name, void *data)
 		return 0;
 	}
 
-	/* TODO: This name depends of the format */
-	if (*nmemb++ == 0 && !strncmp(name, "/", SARNAM)) {
-		loadlib(fp);
-		return 0;
+	if (*nmemb++ == 0) {
+		if(!strncmp(name, namindex(bintype), SARNAM)) {
+			loadlib(fp);
+			return 0;
+		}
 	}
 
 	if ((t = objtype(fp, NULL)) == -1)
 		return 1;
 
-	if (bintype == -1) {
-		bintype = t;
-	} else if (bintype != t) {
+	if (bintype != t) {
 		error("wrong object file format");
 		return 1;
 	}

@@ -36,6 +36,7 @@ typedef int (*probefun_t)(unsigned char *buf, char **name);
 typedef int (*writefun_t)(Obj *obj, FILE *fp);
 typedef long (*setidxfun_t)(int, long, Objsymdef *, FILE *);
 typedef int (*getidxfun_t)(int t, long *n, Objsymdef **def, FILE *fp);
+typedef char *(*namidxfun_t)(void);
 
 /* common functions */
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
@@ -57,3 +58,5 @@ extern long coff32setidx(int order, long nsyms, Objsymdef *head, FILE *fp);
 
 extern int coff32getindex(int type, long *nsyms, Objsymdef **def, FILE *fp);
 extern int coff32getidx(int order, long *nsyms, Objsymdef **def, FILE *fp);
+
+extern char *coff32namidx(void);

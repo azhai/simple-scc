@@ -8,3 +8,4 @@ strip.c
 write.c
 getidx.c
 setidx.c
+namidx.c
