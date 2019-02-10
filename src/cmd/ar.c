@@ -110,7 +110,6 @@ static void
 archive(char *pname, FILE *to, char letter)
 {
 	int c;
-	size_t n;
 	FILE *from;
 	char mtime[13], *fname;
 	struct fprop prop;
@@ -133,9 +132,10 @@ archive(char *pname, FILE *to, char letter)
 	        prop.gid,
 	        prop.mode,
 	        prop.size);
-	for (n = 0; (c = getc(from)) != EOF; n++)
+
+	while ((c = getc(from)) != EOF)
 		putc(c, to);
-	if (n & 1)
+	if (prop.size & 1)
 		putc('\n', to);
 	if (ferror(from))
 		error("reading input '%s': %s", pname, errstr());
