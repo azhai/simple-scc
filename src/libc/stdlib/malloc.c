@@ -5,6 +5,7 @@
 
 #include "malloc.h"
 #include "../syscall.h"
+#include "../libc.h"
 
 #define MAXADDR ((char *)-1)
 #define ERRADDR ((char *)-1)
