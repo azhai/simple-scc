@@ -183,7 +183,7 @@ static void
 newobject(FILE *fp, int type, int inlib)
 {
 	Obj *obj;
-	Symbol *sym;
+	Symbol *sym, *p;
 
 	if ((obj = objnew(type)) == NULL) {
 		error("out of memory");
@@ -196,11 +196,12 @@ newobject(FILE *fp, int type, int inlib)
 	}
 
 	if (inlib) {
-		for (sym = refhead.next; sym != &refhead; sym = sym->next) {
+		p = &refhead;
+		for (sym = p->next; sym != p; sym = sym->next) {
 			if (objlookup(obj, sym->name, 0))
 				break;
 		}
-		if (sym == &refhead)
+		if (sym == p)
 			goto  delete;
 	}
 	load(obj);
@@ -217,16 +218,44 @@ newmember(FILE *fp, char *name, void *data)
 {
 	int t;
 
+	membname = data;
+
 	if ((t = objtype(fp, NULL)) == -1)
 		return 1;
 	newobject(fp, t, INLIB);
+
 	return 1;
 }
 
 static int
 newidx(Objsymdef *def, void *data)
 {
-	/* TODO */
+	int t;
+	Symbol *sym, *p;
+	FILE *fp = data;
+
+	p = &refhead;
+	if (p->next == p)
+		return 0;
+
+	for (sym = p->next; sym != p; sym = sym->next) {
+		if (strcmp(sym->name, def->name))
+			continue;
+
+		if (fseek(fp, def->offset, SEEK_SET) == EOF) {
+			error(errstr());
+			return 0;
+		}
+
+		if ((t = objtype(fp, NULL)) == -1) {
+			error("library file corrupted");
+			return 0;
+		}
+
+		newobject(fp, t, OUTLIB);
+		return 1;
+	}
+
 	return 0;
 }
 
@@ -287,9 +316,10 @@ pass1(int argc, char *argv[])
 	}
 
 	if (refhead.next != &refhead) {
-		Symbol *sym;
+		Symbol *sym, *p;
 
-		for (sym = refhead.next; sym != &refhead; sym = sym->next) {
+		p = &refhead;
+		for (sym = p->next; sym != p; sym = sym->next) {
 			fprintf(stderr,
 			        "ld: symbol '%s' not defined\n",
 			        sym->name);
@@ -313,11 +343,13 @@ usage(void)
 static void
 Lpath(char *path)
 {
-	char **bp;
+	char **bp, **base, **end;
 
-	for (bp = syslibs; bp < &syslibs[MAX_LIB_PATHS] && *bp; ++bp)
+	base = syslibs;
+	end = &syslibs[MAX_LIB_PATHS];
+	for (bp = base; bp < end && *bp; ++bp)
 		;
-	if (bp == &syslibs[MAX_LIB_PATHS]) {
+	if (bp == end) {
 		fputs("ld: too many -L options\n", stderr);
 		exit(1);
 	}
