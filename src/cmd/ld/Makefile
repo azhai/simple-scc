@@ -9,10 +9,10 @@ TARGET = $(BINDIR)/ld
 
 all: $(TARGET)
 
-$(TARGET): $(LIBDIR)/libscc.a
+$(TARGET): $(LIBDIR)/libscc.a $(LIBDIR)/libscc.a
 
 $(TARGET): $(OBJS)
-	$(CC) $(SCC_LDFLAGS) $(OBJS) -lmach -o $@
+	$(CC) $(SCC_LDFLAGS) $(OBJS) -lmach -lscc -o $@
 
 dep: inc-dep
 

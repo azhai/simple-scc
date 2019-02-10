@@ -92,10 +92,7 @@ lookup(Objsym *osym)
 	Symbol *sym;
 	char *name = osym->name;
 
-	h = 0;
-	for (s = name; *s; s++)
-		h += *s;
-	h %= NR_SYMBOL;
+	h = genhash(name) % NR_SYMBOL;
 
 	for (sym = symtab[h]; sym; sym = sym->hash) {
 		if (!strcmp(name, sym->name))

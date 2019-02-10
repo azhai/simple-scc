@@ -47,12 +47,9 @@ lookup(char *name)
 	unsigned h;
 	Symbol *sym, **list;
 	int c, symtype;
-	char *t, *s;
+	char *t;
 
-	h = 0;
-	for (s = name; c = *s; ++s)
-		h = h*33 ^ c;
-	h &= HASHSIZ-1;
+	h = genhash(name) & HASHSIZ-1;
 
 	c = toupper(*name);
 	list = &hashtbl[h];

@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <scc/mach.h>
+#include <scc/scc.h>
 
 Objsym *
 objlookup(Obj *obj, char *name, int install)
@@ -12,11 +13,7 @@ objlookup(Obj *obj, char *name, int install)
 	char *s;
 	Objsym *sym;
 
-	h = 0;
-	for (s = name; *s; s++)
-		h += *s;
-	h %= NR_SYMHASH;
-
+	h = genhash(name) % NR_SYMHASH;
 	for (sym = obj->htab[h]; sym; sym = sym->hash) {
 		if (!strcmp(name, sym->name))
 			return sym;
