@@ -270,28 +270,46 @@ newlibrary(FILE *fp)
 static FILE *
 openfile(char *name, char *buffer)
 {
-	size_t len;
+	size_t pathlen, len;
 	FILE *fp;
+	char **bp, **base, **end;
+	char libname[FILENAME_MAX];
 
 	filename = name;
 	membname = NULL;
-
 	if (name[0] != '-' || name[1] != 'l') {
 		if ((fp = fopen(name, "rb")) == NULL)
 			error(errstr());
 		return fp;
 	}
 
-	len = strlen(name+2);
-	if (len > FILENAME_MAX-4) {
+	len = strlen(name+2) + 3;
+	if (len > FILENAME_MAX-1) {
 		error("library name too long");
 		return NULL;
 	}
-
 	strcat(strcpy(buffer, "lib"), name+2);
-	filename = buffer;
 
-	/* TODO: search the library now */
+	filename = buffer;
+	if ((fp = fopen(libname, "rb")) != NULL)
+		return fp;
+
+	base = syslibs;
+	end = &syslibs[MAX_LIB_PATHS];
+	for (bp = base; bp < end && *bp; ++bp) {
+		pathlen = strlen(*bp);
+		if (pathlen + len > FILENAME_MAX-1)
+			continue;
+		memcpy(libname, *bp, pathlen);
+		memcpy(libname+pathlen+1, buffer, len);
+		buffer[pathlen] = '/';
+
+		if ((fp = fopen(buffer, "rb")) != NULL)
+			return fp;
+	}
+
+	error("not found");
+	return NULL;
 }
 
 static void
