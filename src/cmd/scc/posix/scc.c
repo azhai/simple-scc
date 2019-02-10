@@ -60,7 +60,8 @@ static char *prefix, *objfile, *outfile;
 static char *tmpdir;
 static size_t tmpdirln;
 static struct items objtmp, objout;
-static int Mflag, Eflag, Sflag, cflag, dflag, kflag, sflag, Qflag = 1; /* TODO: Remove Qflag */
+static int Mflag, Eflag, Sflag, Wflag,
+           cflag, dflag, kflag, sflag, Qflag = 1; /* TODO: Remove Qflag */
 static int devnullfd = -1;
 
 extern int failure;
@@ -120,6 +121,8 @@ inittool(int tool)
 
 	switch (tool) {
 	case CC1:
+		if (Wflag)
+			addarg(tool, "-w");
 		for (n = 0; sysincludes[n]; ++n) {
 			addarg(tool, "-I");
 			addarg(tool, sysincludes[n]);
@@ -554,10 +557,11 @@ main(int argc, char *argv[])
 	case 't':
 		sys = EARGF(usage());
 		break;
-	case 'W':
-		EARGF(usage());
 	case 'w':
-		addarg(CC1, "-w");
+		Wflag = 0;
+		break;
+	case 'W':
+		Wflag = 1;
 		break;
 	case 'q':
 		Qflag = 0;

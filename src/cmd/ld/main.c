@@ -98,10 +98,7 @@ lookup(char *name, int install)
 	unsigned h;
 	Symbol *sym;
 
-	h = 0;
-	for (s = name; *s; s++)
-		h += *s;
-	h %= NR_SYMBOL;
+	h = genhash(name) % NR_SYMBOL;
 
 	for (sym = symtab[h]; sym; sym = sym->hash) {
 		if (!strcmp(name, sym->name))

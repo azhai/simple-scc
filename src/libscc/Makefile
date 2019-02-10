@@ -12,6 +12,7 @@ OBJS = debug.o \
        xstrdup.o \
        alloc.o \
        casecmp.o \
+       genhash.o
 
 TARGET = $(LIBDIR)/libscc.a
 

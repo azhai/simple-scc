@@ -1,5 +1,8 @@
 #include <ctype.h>
 #include <stdlib.h>
+
+#include "../libc.h"
+
 #undef atoll
 
 long long

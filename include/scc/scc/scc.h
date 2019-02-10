@@ -39,3 +39,4 @@ extern int lpack(unsigned char *dst, char *fmt, ...);
 extern int lunpack(unsigned char *src, char *fmt, ...);
 extern int bpack(unsigned char *dst, char *fmt, ...);
 extern int bunpack(unsigned char *src, char *fmt, ...);
+extern unsigned genhash(char *name);

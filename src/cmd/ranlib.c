@@ -10,6 +10,7 @@
 #include <scc/ar.h>
 #include <scc/arg.h>
 #include <scc/mach.h>
+#include <scc/scc.h>
 
 #include "sys.h"
 
@@ -52,10 +53,7 @@ lookup(char *name)
 	char *s;
 	size_t len;
 
-	h = 0;
-	for (s = name; *s; s++)
-		h += *s;
-	h %= NR_SYMDEF;
+	h = genhash(name) % NR_SYMDEF;
 
 	for (dp = htab[h]; dp; dp = dp->next) {
 		if (!strcmp(dp->name, name))

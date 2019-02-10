@@ -66,11 +66,10 @@ dumpstab(Symbol **tbl, char *msg)
 static Symbol **
 hash(char *s, int ns)
 {
-	unsigned c, h, size;
+	unsigned h, size;
 	Symbol **tab;
 
-	for (h = 0; c = *s; ++s)
-		h = h*33 ^ c;
+	h = genhash(s);
 
 	switch (ns) {
 	case NS_CPP:
