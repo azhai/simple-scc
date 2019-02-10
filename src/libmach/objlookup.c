@@ -5,7 +5,7 @@
 #include <scc/mach.h>
 
 Objsym *
-objlookup(Obj *obj, char *name)
+objlookup(Obj *obj, char *name, int install)
 {
 	unsigned h;
 	size_t len;
@@ -21,6 +21,8 @@ objlookup(Obj *obj, char *name)
 		if (!strcmp(name, sym->name))
 			return sym;
 	}
+	if (!install)
+		return NULL;
 
 	if ((sym = malloc(sizeof(*sym))) == NULL)
 		return NULL;

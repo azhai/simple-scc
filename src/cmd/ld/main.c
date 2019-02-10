@@ -197,7 +197,7 @@ newobject(FILE *fp, int type, int inlib)
 
 	if (inlib) {
 		for (sym = refhead.next; sym != &refhead; sym = sym->next) {
-			if (objlookup(obj, sym->name))
+			if (objlookup(obj, sym->name, 0))
 				break;
 		}
 		if (sym == &refhead)

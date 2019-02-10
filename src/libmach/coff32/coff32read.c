@@ -386,7 +386,7 @@ loadsyms(Obj *obj)
 		if ((s = symname(coff, ent)) == NULL)
 			return 0;
 
-		if ((sym = objlookup(obj, s)) == NULL)
+		if ((sym = objlookup(obj, s, 1)) == NULL)
 			return 0;
 
 		sym->type = t;

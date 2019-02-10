@@ -74,7 +74,7 @@ extern Obj *objnew(int type);
 extern int objdel(Obj *obj);
 extern int objreset(Obj *obj);
 extern int objread(Obj *obj, FILE *fp);
-extern Objsym *objlookup(Obj *obj, char *name);
+extern Objsym *objlookup(Obj *obj, char *name, int install);
 extern int objstrip(Obj *obj);
 extern long arindex(int type, long nsyms, Objsymdef *def, FILE *fp);
 extern int objwrite(Obj *obj, FILE *fp);
