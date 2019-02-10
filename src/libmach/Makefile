@@ -6,9 +6,7 @@ TARGET = $(LIBDIR)/libmach.a
 
 OBJS = addr2line.o \
        archive.o \
-       arindex.o \
        armember.o \
-       coffelf32.o \
        objdel.o \
        objlookup.o \
        objnew.o \
@@ -16,9 +14,10 @@ OBJS = addr2line.o \
        objread.o \
        objreset.o \
        objstrip.o \
+       getindex.o \
+       setindex.o \
        forsym.o \
        forsect.o \
-       foridx.o \
        formember.o \
        objtype.o \
        objwrite.o \
@@ -32,11 +31,14 @@ OBJS = addr2line.o \
        strip.o \
        probe.o \
        write.o \
+       getidx.o \
+       setidx.o \
 
 
 DIRS = coff32
 
-TBLS = index.c \
+TBLS = setidx.c \
+       getidx.c \
        new.c \
        read.c \
        del.c \

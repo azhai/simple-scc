@@ -4,17 +4,17 @@
 
 #include "libmach.h"
 
-extern indexfun_t indexv[];
+extern setidxfun_t setidxv[];
 
 long
-arindex(int type, long nsyms, Objsymdef *head, FILE *fp)
+setindex(int type, long nsyms, Objsymdef *head, FILE *fp)
 {
 	int fmt;
-	indexfun_t fn;
+	setidxfun_t fn;
 
 	fmt = FORMAT(type);
 	if (fmt >= NFORMATS)
 		return -1;
-	fn = indexv[fmt];
+	fn = setidxv[fmt];
 	return (*fn)(type, nsyms, head, fp);
 }

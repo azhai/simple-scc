@@ -19,6 +19,11 @@ typedef struct objlst Objlst;
 typedef struct symbol Symbol;
 
 enum {
+	NOINSTALL,
+	INSTALL,
+};
+
+enum {
 	OUTLIB,
 	INLIB,
 };
@@ -31,13 +36,14 @@ struct objlst {
 struct symbol {
 	char *name;
 	Obj *obj;
-	Objsym *sym;
+	Objsym *def;
 	struct symbol *next, *prev;
 	struct symbol *hash;
 };
 
 char *output = "a.out", *entry = "start", *datasiz;
 
+static int bintype = -1;
 static char *filename, *membname;
 static Objlst *objhead, *objlast;
 static Symbol *symtab[NR_SYMBOL];
@@ -85,12 +91,12 @@ cleanup(void)
 }
 
 static Symbol *
-lookup(Objsym *osym)
+lookup(char *name, int install)
 {
+	size_t len;
 	char *s;
 	unsigned h;
 	Symbol *sym;
-	char *name = osym->name;
 
 	h = 0;
 	for (s = name; *s; s++)
@@ -102,13 +108,19 @@ lookup(Objsym *osym)
 			return sym;
 	}
 
-	if ((sym = malloc(sizeof(*sym))) == NULL) {
+	if (!install)
+		return NULL;
+
+	len = strlen(name) + 1;
+	sym = malloc(sizeof(*sym));
+	s = malloc(len);
+	if (!len || !s) {
 		error("out of memory");
 		exit(EXIT_FAILURE);
 	}
 
 	sym->obj = NULL;
-	sym->name = osym->name;
+	sym->name = memcpy(s, name, len);
 	sym->hash = symtab[h];
 	symtab[h] = sym;
 
@@ -123,7 +135,7 @@ lookup(Objsym *osym)
 static Symbol *
 define(Objsym *osym, Obj *obj)
 {
-	Symbol *sym = lookup(osym);
+	Symbol *sym = lookup(osym->name, INSTALL);
 
 	if (sym->obj) {
 		error("%s: symbol redefined", osym->name);
@@ -131,7 +143,7 @@ define(Objsym *osym, Obj *obj)
 	}
 
 	sym->obj = obj;
-	sym->sym = osym;
+	sym->def = osym;
 
 	sym->next->prev = sym->prev;
 	sym->prev->next = sym->next;
@@ -145,7 +157,7 @@ newsym(Objsym *osym, void *obj)
 {
 	switch (osym->type) {
 	case 'U':
-		lookup(osym);
+		lookup(osym->name, INSTALL);
 	case '?':
 	case 'N':
 		break;
@@ -159,7 +171,7 @@ newsym(Objsym *osym, void *obj)
 }
 
 static void
-load(Obj *obj)
+loadobj(Obj *obj)
 {
 	Objlst *lst;
 
@@ -204,7 +216,7 @@ newobject(FILE *fp, int type, int inlib)
 		if (sym == p)
 			goto  delete;
 	}
-	load(obj);
+	loadobj(obj);
 
 	return;
 
@@ -213,58 +225,96 @@ delete:
 	return;
 }
 
+static void
+loadlib(FILE *fp)
+{
+	int t;
+	long n;
+	Objsymdef *def, *dp;
+	Symbol *sym, *p;
+
+	if (getindex(bintype, &n, &def, fp) < 0) {
+		error("corrupted index");
+		return;
+	}
+
+repeat:
+	p = &refhead;
+	if (p->next == p)
+		goto clean;
+
+	for (dp = def; dp; dp = dp->next) {
+		if ((sym = lookup(dp->name, NOINSTALL)) == NULL)
+			continue;
+		if (!sym->def)
+			break;
+	}
+
+	if (!dp)
+		goto clean;
+
+	if (fseek(fp, dp->offset, SEEK_SET) == EOF) {
+		error(errstr());
+		goto clean;
+	}
+
+	if ((t = objtype(fp, NULL)) == -1) {
+		error("library file corrupted");
+		goto clean;
+	}
+
+	if (t != bintype) {
+		error("incompatible library");
+		goto clean;
+	}
+
+	newobject(fp, t, OUTLIB);
+	goto repeat;
+
+clean:
+	free(def);
+}
+
 static int
 newmember(FILE *fp, char *name, void *data)
 {
+	int *nmemb = data;
 	int t;
 
 	membname = data;
 
+	if (bintype == -1) {
+		error("an object file is needed before any library");
+		return 0;
+	}
+
+	/* TODO: This name depends of the format */
+	if (*nmemb++ == 0 && !strncmp(name, "/", SARNAM)) {
+		loadlib(fp);
+		return 0;
+	}
+
 	if ((t = objtype(fp, NULL)) == -1)
 		return 1;
+
+	if (bintype == -1) {
+		bintype = t;
+	} else if (bintype != t) {
+		error("wrong object file format");
+		return 1;
+	}
+
 	newobject(fp, t, INLIB);
 
 	return 1;
 }
 
 static int
-newidx(Objsymdef *def, void *data)
-{
-	int t;
-	Symbol *sym, *p;
-	FILE *fp = data;
-
-	p = &refhead;
-	if (p->next == p)
-		return 0;
-
-	for (sym = p->next; sym != p; sym = sym->next) {
-		if (strcmp(sym->name, def->name))
-			continue;
-
-		if (fseek(fp, def->offset, SEEK_SET) == EOF) {
-			error(errstr());
-			return 0;
-		}
-
-		if ((t = objtype(fp, NULL)) == -1) {
-			error("library file corrupted");
-			return 0;
-		}
-
-		newobject(fp, t, OUTLIB);
-		return 1;
-	}
-
-	return 0;
-}
-
-static int
 newlibrary(FILE *fp)
 {
-	if (foridx(fp, newidx, NULL))
-		return 1;
-	return formember(fp, newmember, NULL);
+	int nmemb = 0;
+
+	return formember(fp, newmember, &nmemb);
 }
 
 static FILE *
@@ -374,24 +424,6 @@ Lpath(char *path)
 	*bp = path;
 }
 
-static void
-refer(char *name)
-{
-	Objsym *osym;
-
-	if ((osym = malloc(sizeof(*osym))) == NULL) {
-		fputs("ld: out of memory\n", stderr);
-		return;
-	}
-
-	osym->name = name;
-	osym->type = 'U';
-	osym->size = osym->value = 0;
-	osym->next = osym->hash = NULL;
-
-	lookup(osym);
-}
-
 int
 main(int argc, char *argv[])
 {
@@ -435,7 +467,7 @@ main(int argc, char *argv[])
 				if (argc == 0)
 					goto usage;
 				++argv, --argc;
-				refer(*argv);
+				lookup(*argv, INSTALL);
 				break;
 			case 'o':
 				if (argc == 0)

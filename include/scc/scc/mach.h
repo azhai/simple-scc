@@ -63,10 +63,6 @@ extern int forsect(Obj *obj,
                    int (*fn)(Objsect *sect, void *data),
                    void *data);
 
-extern int foridx(FILE *fp,
-                  int (*fn)(Objsymdef *def, void *data),
-                  void *data);
-
 extern int archive(FILE *fp);
 extern long armember(FILE *fp, char *member);
 extern int objtype(FILE *fp, char **name);
@@ -76,8 +72,9 @@ extern int objreset(Obj *obj);
 extern int objread(Obj *obj, FILE *fp);
 extern Objsym *objlookup(Obj *obj, char *name, int install);
 extern int objstrip(Obj *obj);
-extern long arindex(int type, long nsyms, Objsymdef *def, FILE *fp);
 extern int objwrite(Obj *obj, FILE *fp);
+extern long setindex(int type, long nsyms, Objsymdef *def, FILE *fp);
+extern long getindex(int type, long *nsyms, Objsymdef **def, FILE *fp);
 
 /* TODO */
 extern int objload(Obj *obj, Obj *to);

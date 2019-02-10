@@ -6,3 +6,5 @@ probe.c
 read.c
 strip.c
 write.c
+getidx.c
+setidx.c

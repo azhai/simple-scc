@@ -3,10 +3,10 @@
 
 #include <scc/mach.h>
 
-#include "libmach.h"
+#include "../libmach.h"
 
 long
-coff32idx(int order, long nsyms, Objsymdef *head, FILE *fp)
+coff32setidx(int order, long nsyms, Objsymdef *head, FILE *fp)
 {
 	long i, n;
 	size_t len;

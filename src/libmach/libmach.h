@@ -28,23 +28,20 @@ enum freeflags {
 	FREESECT,
 };
 
-typedef long (*indexfun_t)(int, long, Objsymdef *, FILE *);
 typedef int (*newfun_t)(Obj *obj);
 typedef int (*readfun_t)(Obj *obj, FILE *fp);
 typedef void (*delfun_t)(Obj *new);
 typedef void (*stripfun_t)(Obj *obj);
 typedef int (*probefun_t)(unsigned char *buf, char **name);
 typedef int (*writefun_t)(Obj *obj, FILE *fp);
+typedef long (*setidxfun_t)(int, long, Objsymdef *, FILE *);
+typedef int (*getidxfun_t)(int t, long *n, Objsymdef **def, FILE *fp);
 
 /* common functions */
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);
 extern int objpos(Obj *obj, FILE *fp, long pos);
 extern void objfree(Obj *obj, int what);
-
-/* idx functions */
-extern long coff32idx(int order, long nsyms, Objsymdef *def, FILE *fp);
-
 
 /* coff32 functions */
 extern long coff32index(int type, long nsyms, Objsymdef *head, FILE *fp);
@@ -54,3 +51,9 @@ extern int coff32read(Obj *obj, FILE *fp);
 extern int coff32write(Obj *obj, FILE *fp);
 extern void coff32strip(Obj *obj);
 extern int coff32probe(unsigned char *buf, char **name);
+
+extern long coff32setindex(int type, long nsymbols, Objsymdef *head, FILE *fp);
+extern long coff32setidx(int order, long nsyms, Objsymdef *head, FILE *fp);
+
+extern int coff32getindex(int type, long *nsyms, Objsymdef **def, FILE *fp);
+extern int coff32getidx(int order, long *nsyms, Objsymdef **def, FILE *fp);

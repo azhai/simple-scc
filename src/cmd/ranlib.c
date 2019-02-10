@@ -210,17 +210,16 @@ merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 	if (fread(&first, sizeof(first), 1, lib) != 1)
 		return 0;
 
-	if (!strncmp(first.ar_name, "/", SARNAM) ||
-	    !strncmp(first.ar_name, "__.SYMDEF", SARNAM)) {
+	/* TODO: This name depends of the format */
+	if (!strncmp(first.ar_name, "/", SARNAM))
 		fseek(lib, atol(first.ar_size), SEEK_CUR);
-	}
 
 	fwrite(ARMAG, SARMAG, 1, to);
 
         strftime(mtime, sizeof(mtime), "%s", gmtime(&prop->time));
         fprintf(to,
                 "%-16.16s%-12s%-6u%-6u%-8lo%-10ld`\n",
-                "/",
+                "/",      /* TODO: This name depends of the format */
                 mtime,
                 prop->uid,
                 prop->gid,
@@ -289,8 +288,7 @@ ranlib(char *fname)
 	if (nolib)
 		goto error;
 
-	/* TODO: Change arindex to returns -1 */
-	siz = arindex(artype, nsymbols, head, idx);
+	siz = setindex(artype, nsymbols, head, idx);
 	if (siz <= 0)
 		goto error;
 
