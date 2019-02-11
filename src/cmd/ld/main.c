@@ -37,6 +37,7 @@ struct symbol {
 	char *name;
 	Obj *obj;
 	Objsym *def;
+	unsigned long long size, value;
 	struct symbol *next, *prev;
 	struct symbol *hash;
 };
@@ -127,6 +128,8 @@ lookup(char *name, int install)
 	sym->name = memcpy(s, name, len);
 	sym->hash = symtab[h];
 	symtab[h] = sym;
+	sym->value = 0;
+	sym->size = 0;
 
 	refhead.next->prev = sym;
 	sym->next = refhead.next;
@@ -141,13 +144,15 @@ define(Objsym *osym, Obj *obj)
 {
 	Symbol *sym = lookup(osym->name, INSTALL);
 
-	if (sym->obj) {
+	if (sym->def && sym->def->type != 'C') {
 		error("%s: symbol redefined", osym->name);
 		return NULL;
 	}
 
 	sym->obj = obj;
 	sym->def = osym;
+	sym->size = osym->size;
+	sym->value = osym->value;
 
 	sym->next->prev = sym->prev;
 	sym->prev->next = sym->next;
@@ -159,11 +164,24 @@ define(Objsym *osym, Obj *obj)
 static int
 newsym(Objsym *osym, void *obj)
 {
+	Symbol *sym;
+
 	switch (osym->type) {
 	case 'U':
 		lookup(osym->name, INSTALL);
 	case '?':
 	case 'N':
+		break;
+	case 'C':
+		sym = lookup(osym->name, NOINSTALL);
+		if (!sym || !sym->def) {
+			define(osym, obj);
+			break;
+		}
+		if (sym->def->type != 'C')
+			break;
+		if (sym->size < osym->size)
+			sym->size = osym->size;
 		break;
 	default:
 		if (isupper(osym->type))
