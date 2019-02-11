@@ -155,7 +155,7 @@ newobject(FILE *fp, int type)
 		return;
 	}
 
-	if (objread(obj, fp) < 0)
+	if (objread(obj, fp) < 0 || objsyms(obj))
 		goto error;
 
 	for (sym = obj->symbols; sym; sym = sym->next)

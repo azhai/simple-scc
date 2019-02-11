@@ -207,10 +207,11 @@ loadobj(Obj *obj)
 		return;
 	}
 
-	if ((n = objsect(obj, &secp)) < 0) {
-		error("out of memory");
+	if ((n = objsect(obj, &secp)) < 0)
 		goto err1;
-	}
+
+	if (objsyms(obj) < 0)
+		goto err2;
 
 	lst->obj = obj;
 	lst->next = NULL;
@@ -227,8 +228,11 @@ loadobj(Obj *obj)
 
 	return;
 
+err2:
+	free(secp);
 err1:
 	free(lst);
+	error("out of memory");
 }
 
 static void

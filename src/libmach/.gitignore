@@ -10,3 +10,4 @@ getidx.c
 setidx.c
 namidx.c
 getsect.c
+getsyms.c

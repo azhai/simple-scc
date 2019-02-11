@@ -53,8 +53,6 @@ extern int formember(FILE *fp,
                      int (*fn)(FILE *, char *, void *),
                      void *data);
 
-extern int archive(FILE *fp);
-extern long armember(FILE *fp, char *member);
 extern int objtype(FILE *fp, char **name);
 extern Obj *objnew(int type);
 extern void objdel(Obj *obj);
@@ -63,6 +61,9 @@ extern Objsym *objlookup(Obj *obj, char *name, int install);
 extern int objstrip(Obj *obj);
 extern int objwrite(Obj *obj, FILE *fp);
 extern int objsect(Obj *obj, Objsect **sect);
+extern int objsyms(Obj *obj);
+extern int archive(FILE *fp);
+extern long armember(FILE *fp, char *member);
 extern long setindex(int type, long nsyms, Objsymdef *def, FILE *fp);
 extern int getindex(int type, long *nsyms, Objsymdef **def, FILE *fp);
 extern char *namindex(int type);

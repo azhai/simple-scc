@@ -4,17 +4,18 @@ include $(PROJECTDIR)/scripts/rules.mk
 
 TARGET = $(LIBDIR)/libmach.a
 
-OBJS = addr2line.o \
-       archive.o \
-       armember.o \
-       objdel.o \
-       objlookup.o \
-       objnew.o \
+OBJS = objnew.o \
        objpos.o \
        objread.o \
        objfree.o \
        objstrip.o \
        objsect.o \
+       objsyms.o \
+       objdel.o \
+       addr2line.o \
+       archive.o \
+       armember.o \
+       objlookup.o \
        getindex.o \
        setindex.o \
        namindex.o \
@@ -33,13 +34,14 @@ OBJS = addr2line.o \
        setidx.o \
        namidx.o \
        getsect.o \
-
+       getsyms.o \
 
 DIRS = coff32
 
 TBLS = setidx.c \
        getidx.c \
        getsect.c \
+       getsyms.c \
        namidx.c \
        new.c \
        read.c \

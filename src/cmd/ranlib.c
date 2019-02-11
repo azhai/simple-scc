@@ -144,7 +144,7 @@ newmember(FILE *fp, char *nam, void *data)
 		return 0;
 	}
 
-	if (objread(obj, fp) < 0) {
+	if (objread(obj, fp) < 0 || objsyms(obj) < 0) {
 		error("file corrupted");
 		goto error;
 	}

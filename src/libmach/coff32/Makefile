@@ -14,6 +14,7 @@ OBJS = coff32del.o \
        coff32getidx.o \
        coff32namidx.o \
        coff32getsect.o \
+       coff32getsyms.o \
 
 all: $(OBJS)
 

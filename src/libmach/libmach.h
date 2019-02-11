@@ -38,6 +38,7 @@ typedef long (*setidxfun_t)(int, long, Objsymdef *, FILE *);
 typedef int (*getidxfun_t)(int t, long *n, Objsymdef **def, FILE *fp);
 typedef int (*getsectfun_t)(Obj *obj, Objsect **secp);
 typedef char *(*namidxfun_t)(void);
+typedef int (*getsymsfun_t)(Obj *obj);
 
 /* common functions */
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
@@ -63,3 +64,4 @@ extern int coff32getidx(int order, long *nsyms, Objsymdef **def, FILE *fp);
 extern int coff32getsect(Obj *obj, Objsect **secp);
 
 extern char *coff32namidx(void);
+extern int coff32getsyms(Obj *obj);
