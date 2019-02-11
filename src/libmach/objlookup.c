@@ -9,8 +9,6 @@ Objsym *
 objlookup(Obj *obj, char *name, int install)
 {
 	unsigned h;
-	size_t len;
-	char *s;
 	Objsym *sym;
 
 	h = genhash(name) % NR_SYMHASH;
@@ -23,19 +21,15 @@ objlookup(Obj *obj, char *name, int install)
 
 	if ((sym = malloc(sizeof(*sym))) == NULL)
 		return NULL;
-	len = strlen(name) + 1;
-	if ((s = malloc(len)) == NULL) {
-		free(sym);
-		return NULL;
-	}
-	sym->name = memcpy(s, name, len);
+
+	sym->name = name;
 	sym->type = 'U';
 	sym->size = 0;
 	sym->value = 0;
 	sym->hash = obj->htab[h];
 	obj->htab[h] = sym;
-	sym->next = obj->head;
-	obj->head = sym;
+	sym->next = obj->symbols;
+	obj->symbols = sym;
 
 	return sym;
 }

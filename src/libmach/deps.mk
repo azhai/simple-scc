@@ -69,8 +69,6 @@
 ./objpos.o: ./libmach.h
 ./objread.o: $(INCDIR)/scc/scc/mach.h
 ./objread.o: ./libmach.h
-./objreset.o: $(INCDIR)/scc/scc/mach.h
-./objreset.o: ./libmach.h
 ./objsect.o: $(INCDIR)/scc/scc/mach.h
 ./objsect.o: ./libmach.h
 ./objstrip.o: $(INCDIR)/scc/scc/mach.h

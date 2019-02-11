@@ -12,7 +12,7 @@ OBJS = addr2line.o \
        objnew.o \
        objpos.o \
        objread.o \
-       objreset.o \
+       objfree.o \
        objstrip.o \
        objsect.o \
        getindex.o \
@@ -22,7 +22,6 @@ OBJS = addr2line.o \
        formember.o \
        objtype.o \
        objwrite.o \
-       objfree.o \
        pack.o \
        unpack.o \
        new.o \

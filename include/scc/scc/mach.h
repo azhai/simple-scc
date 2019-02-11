@@ -42,7 +42,7 @@ struct objsymdef {
 struct object {
 	int type;
 	Objsym *htab[NR_SYMHASH];
-	Objsym *head;
+	Objsym *symbols;
 	fpos_t pos;
 	int nsecs;
 	void *data;
@@ -61,8 +61,7 @@ extern int archive(FILE *fp);
 extern long armember(FILE *fp, char *member);
 extern int objtype(FILE *fp, char **name);
 extern Obj *objnew(int type);
-extern int objdel(Obj *obj);
-extern int objreset(Obj *obj);
+extern void objdel(Obj *obj);
 extern int objread(Obj *obj, FILE *fp);
 extern Objsym *objlookup(Obj *obj, char *name, int install);
 extern int objstrip(Obj *obj);

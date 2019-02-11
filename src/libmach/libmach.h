@@ -23,8 +23,9 @@ enum order {
 	BIG_ENDIAN,
 };
 
-enum freeflags {
-	FREESYM,
+enum deltype {
+	GENERICDEL = 1 << 0,
+	TARGETDEL  = 1 << 1,
 };
 
 typedef int (*newfun_t)(Obj *obj);

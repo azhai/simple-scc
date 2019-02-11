@@ -17,6 +17,8 @@ objstrip(Obj *obj)
 		return -1;
 	fn = stripv[fmt];
 	(*fn)(obj);
-	objfree(obj, FREESYM);
+
+	objfree(obj, GENERICDEL);
+
 	return 0;
 }

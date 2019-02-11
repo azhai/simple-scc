@@ -5,10 +5,9 @@
 
 #include "libmach.h"
 
-int
+void
 objdel(Obj *obj)
 {
-	if (objreset(obj) < 0)
-		return -1;
+	objfree(obj, TARGETDEL | GENERICDEL);
 	free(obj);
 }

@@ -445,6 +445,6 @@ coff32read(Obj *obj, FILE *fp)
 	return 0;
 
 error:
-	objreset(obj);
+	objfree(obj, TARGETDEL);
 	return -1;
 }
