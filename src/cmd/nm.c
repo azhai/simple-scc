@@ -114,9 +114,8 @@ printsyms(Objsym **syms, size_t nsym)
 }
 
 static int
-newsym(Objsym *sym, void *data)
+newsym(Objsym *sym, struct symtbl *tbl)
 {
-	struct symtbl *tbl = data;
 	Objsym **p;
 	size_t n, size;
 	int type = sym->type;
@@ -148,6 +147,7 @@ newobject(FILE *fp, int type)
 {
 	int err = 1;
 	Obj *obj;
+	Objsym *sym;
 	struct symtbl tbl = {NULL, 0};
 
 	if ((obj = objnew(type)) == NULL) {
@@ -158,8 +158,8 @@ newobject(FILE *fp, int type)
 	if (objread(obj, fp) < 0)
 		goto error;
 
-	if (!forsym(obj, newsym, &tbl))
-		goto error;
+	for (sym = obj->symbols; sym; sym = sym->next)
+		newsym(sym, &tbl);
 
 	printsyms(tbl.buf, tbl.nsyms);
 	err = 0;

@@ -53,10 +53,6 @@ extern int formember(FILE *fp,
                      int (*fn)(FILE *, char *, void *),
                      void *data);
 
-extern int forsym(Obj *obj,
-                  int (*fn)(Objsym *sym, void *data),
-                  void *data);
-
 extern int archive(FILE *fp);
 extern long armember(FILE *fp, char *member);
 extern int objtype(FILE *fp, char **name);

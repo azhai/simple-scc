@@ -83,7 +83,7 @@ lookup(char *name)
 }
 
 static int
-newsymbol(Objsym *sym, void *data)
+newsymbol(Objsym *sym)
 {
 	Objsymdef *np;
 
@@ -119,6 +119,7 @@ newmember(FILE *fp, char *nam, void *data)
 
 	int t, ret = 0;
 	Obj *obj;
+	Objsym *sym;
 
 	if (artype == -1 && (!strcmp(nam, "/") || !strcmp(nam, "__.SYMDEF")))
 		return 1;
@@ -148,9 +149,9 @@ newmember(FILE *fp, char *nam, void *data)
 		goto error;
 	}
 
-	if (!forsym(obj, newsymbol, NULL)) {
-		error("traversing object file");
-		goto error;
+	for (sym = obj->symbols; sym; sym = sym->next) {
+		if (!newsymbol(sym))
+			goto error;
 	}
 
 	ret = 1;

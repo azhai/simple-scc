@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <scc/mach.h>
 
@@ -7,7 +8,7 @@
 
 extern delfun_t delv[];
 
-void
+int
 objfree(Obj *obj, int what)
 {
 	int fmt;
@@ -26,4 +27,6 @@ objfree(Obj *obj, int what)
 		obj->symbols = NULL;
 		memset(obj->htab, 0, sizeof(obj->htab));
 	}
+
+	return 0;
 }

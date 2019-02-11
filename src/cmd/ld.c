@@ -164,7 +164,7 @@ define(Objsym *osym, Obj *obj)
 }
 
 static int
-newsym(Objsym *osym, void *obj)
+newsym(Objsym *osym, Obj *obj)
 {
 	Symbol *sym;
 
@@ -199,6 +199,7 @@ loadobj(Obj *obj)
 {
 	int n;
 	Objlst *lst;
+	Objsym *sym;
 	Objsect *secp;
 
 	if ((lst = malloc(sizeof(*lst))) == NULL) {
@@ -221,7 +222,8 @@ loadobj(Obj *obj)
 	else
 		objlast = objlast->next = lst;
 
-	forsym(obj, newsym, obj);
+	for (sym = obj->symbols; sym; sym = sym->next)
+		newsym(sym, obj);
 
 	return;
 

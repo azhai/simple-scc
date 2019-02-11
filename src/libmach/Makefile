@@ -18,7 +18,6 @@ OBJS = addr2line.o \
        getindex.o \
        setindex.o \
        namindex.o \
-       forsym.o \
        formember.o \
        objtype.o \
        objwrite.o \

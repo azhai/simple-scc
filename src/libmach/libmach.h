@@ -43,7 +43,7 @@ typedef char *(*namidxfun_t)(void);
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);
 extern int objpos(Obj *obj, FILE *fp, long pos);
-extern void objfree(Obj *obj, int what);
+extern int objfree(Obj *obj, int what);
 
 /* coff32 functions */
 extern long coff32index(int type, long nsyms, Objsymdef *head, FILE *fp);
