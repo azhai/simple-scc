@@ -45,10 +45,10 @@
 ./as/target/x86/ins.o: $(INCDIR)/scc/scc/scc.h
 ./as/target/x86/ins.o: ./as/target/x86/../../as.h
 ./as/target/x86/ins.o: ./as/target/x86/proc.h
-./ld/main.o: $(INCDIR)/scc/scc/ar.h
-./ld/main.o: $(INCDIR)/scc/scc/mach.h
-./ld/main.o: $(INCDIR)/scc/scc/scc.h
-./ld/main.o: $(INCDIR)/scc/scc/syslibs.h
+./ld.o: $(INCDIR)/scc/scc/ar.h
+./ld.o: $(INCDIR)/scc/scc/mach.h
+./ld.o: $(INCDIR)/scc/scc/scc.h
+./ld.o: $(INCDIR)/scc/scc/syslibs.h
 ./nm.o: $(INCDIR)/scc/scc/arg.h
 ./nm.o: $(INCDIR)/scc/scc/mach.h
 ./objdump.o: $(INCDIR)/scc/scc/arg.h

@@ -12,7 +12,7 @@ TARGET = $(BINDIR)/nm \
          $(BINDIR)/objcopy \
          $(BINDIR)/addr2line \
 
-DIRS   = as ld scc
+DIRS   = as scc
 
 LIBMACH = $(LIBDIR)/libmach.a
 LIBSCC  = $(LIBDIR)/libscc.a
@@ -33,6 +33,9 @@ $(BINDIR)/size: size.o $(LIBMACH) $(LIBSCC)
 
 $(BINDIR)/ranlib: ranlib.o $(DRIVER).o $(LIBMACH) $(LIBSCC)
 	$(CC) $(SCC_LDFLAGS) ranlib.o $(DRIVER).o -lmach -lscc -o $@
+
+$(BINDIR)/ld: ld.o $(LIBMACH) $(LIBSCC)
+	$(CC) $(SCC_LDFLAGS) ld.o -lmach -lscc -o $@
 
 $(BINDIR)/objdump: objdump.o $(LIBMACH)
 	$(CC) $(SCC_LDFLAGS) objdump.o -lmach -o $@
