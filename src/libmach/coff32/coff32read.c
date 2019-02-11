@@ -196,7 +196,6 @@ loadsections(Obj *obj, FILE *fp)
 			return 0;
 
 		memcpy(sp->name, scn->s_name, len);
-		sp->fp = fp;
 		sp->offset = scn->s_scnptr;
 		sp->size = scn->s_size;
 		sp->type = type;

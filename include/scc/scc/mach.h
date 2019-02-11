@@ -20,7 +20,6 @@ struct objsect {
 	char *name;
 	int type;
 	unsigned flags;
-	FILE *fp;
 	long offset;
 	unsigned long long size;
 };
