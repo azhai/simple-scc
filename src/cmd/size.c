@@ -36,7 +36,7 @@ error(char *fmt, ...)
 	status = EXIT_FAILURE;
 }
 
-void
+static void
 newobject(FILE *fp, int type)
 {
 	int n, i;;
