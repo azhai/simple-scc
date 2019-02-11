@@ -180,14 +180,13 @@ freehash(void)
 static int
 readsyms(FILE *fp)
 {
-	/* TODO: Change archive to returns -1 */
 	if (!archive(fp)) {
 		error("file format not recognized");
 		return 0;
 	}
 
 	if (formember(fp, newmember, NULL) < 0) {
-		error("while traversing archive");
+		error("library file corrupted");
 		return 0;
 	}
 

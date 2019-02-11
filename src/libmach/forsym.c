@@ -7,11 +7,13 @@
 int
 forsym(Obj *obj, int (*fn)(Objsym *, void *), void *data)
 {
+	int r;
 	Objsym *sym;
 
 	for (sym = obj->head; sym; sym = sym->next) {
-		 if (!(*fn)(sym, data))
-			return 0;
+		r = (*fn)(sym, data);
+		if (r <= 0)
+			return r;
 	}
 	return 1;
 }

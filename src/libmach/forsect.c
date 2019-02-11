@@ -7,11 +7,12 @@
 int
 forsect(Obj *obj, int (*fn)(Objsect *, void *), void *data)
 {
-	int i;
+	int i, r;
 
 	for (i = 0; i < obj->nsecs; i++) {
-		if ((*fn)(&obj->sections[i], data))
-			return 0;
+		r = (*fn)(&obj->sections[i], data);
+		if (r <= 0)
+			return r;
 	}
 
 	return 1;

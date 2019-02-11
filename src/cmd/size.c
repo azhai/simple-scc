@@ -124,12 +124,14 @@ size(char *fname)
 		return;
 	}
 
-	if ((t = objtype(fp, NULL)) != -1)
+	if ((t = objtype(fp, NULL)) != -1) {
 		newobject(fp, t);
-	else if (archive(fp))
-		formember(fp, newmember, NULL);
-	else
+	} else if (archive(fp)) {
+		if (formember(fp, newmember, NULL) < 0)
+			error("library corrupted");
+	} else {
 		error("bad format");
+	}
 
 	if (ferror(fp))
 		error(strerror(errno));
