@@ -30,7 +30,6 @@ enum {
 
 struct objlst {
 	Obj *obj;
-	int nsect;
 	Objsect *sect;
 	struct objlst *next;
 };
@@ -207,29 +206,22 @@ loadobj(Obj *obj)
 		return;
 	}
 
-	if ((n = objsect(obj, &secp)) < 0)
+	if (objsect(obj) < 0 || objsyms(obj) < 0)
 		goto err1;
-
-	if (objsyms(obj) < 0)
-		goto err2;
 
 	lst->obj = obj;
 	lst->next = NULL;
-	lst->nsect = n;
-	lst->sect = secp;
 
 	if (!objlast)
 		objlast = objhead = lst;
 	else
 		objlast = objlast->next = lst;
 
-	for (sym = obj->symbols; sym; sym = sym->next)
+	for (sym = obj->syms; sym; sym = sym->next)
 		newsym(sym, obj);
 
 	return;
 
-err2:
-	free(secp);
 err1:
 	free(lst);
 	error("out of memory");

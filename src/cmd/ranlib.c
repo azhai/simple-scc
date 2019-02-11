@@ -149,7 +149,7 @@ newmember(FILE *fp, char *nam, void *data)
 		goto error;
 	}
 
-	for (sym = obj->symbols; sym; sym = sym->next) {
+	for (sym = obj->syms; sym; sym = sym->next) {
 		if (!newsymbol(sym))
 			goto error;
 	}

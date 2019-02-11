@@ -36,7 +36,7 @@ typedef int (*probefun_t)(unsigned char *buf, char **name);
 typedef int (*writefun_t)(Obj *obj, FILE *fp);
 typedef long (*setidxfun_t)(int, long, Objsymdef *, FILE *);
 typedef int (*getidxfun_t)(int t, long *n, Objsymdef **def, FILE *fp);
-typedef int (*getsectfun_t)(Obj *obj, Objsect **secp);
+typedef int (*getsectfun_t)(Obj *obj);
 typedef char *(*namidxfun_t)(void);
 typedef int (*getsymsfun_t)(Obj *obj);
 
@@ -61,7 +61,7 @@ extern long coff32setidx(int order, long nsyms, Objsymdef *head, FILE *fp);
 extern int coff32getindex(int type, long *nsyms, Objsymdef **def, FILE *fp);
 extern int coff32getidx(int order, long *nsyms, Objsymdef **def, FILE *fp);
 
-extern int coff32getsect(Obj *obj, Objsect **secp);
+extern int coff32getsect(Obj *obj);
 
 extern char *coff32namidx(void);
 extern int coff32getsyms(Obj *obj);

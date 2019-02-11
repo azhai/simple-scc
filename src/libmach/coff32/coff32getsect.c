@@ -7,7 +7,7 @@
 #include "coff32.h"
 
 int
-coff32getsect(Obj *obj, Objsect **sectp)
+coff32getsect(Obj *obj)
 {
 	int nsecs;
 	unsigned sflags, type;
@@ -68,6 +68,7 @@ coff32getsect(Obj *obj, Objsect **sectp)
 		sp->type = type;
 		nsecs++;
 	}
+	obj->secs = secs;
 
 	return 1;
 }

@@ -39,7 +39,7 @@ error(char *fmt, ...)
 static void
 newobject(FILE *fp, int type)
 {
-	int n, i;;
+	int i;
 	Obj *obj;
 	unsigned long long total, *p;
 	Objsect *secp;
@@ -50,19 +50,15 @@ newobject(FILE *fp, int type)
 		return;
 	}
 
-	if (objread(obj, fp) < 0) {
+	if (objread(obj, fp) < 0 || objsect(obj) < 0) {
 		error("file corrupted");
-		goto err1;
+		goto err;
 	}
 
 	siz.text = siz.data = siz.bss = 0;
-	if ((n = objsect(obj, &secp)) < 0) {
-		error("out of memory");
-		goto err1;
-	}
-
-	for (i = 0; i < n; i++) {
-		switch (secp[i].type) {
+	for (i = 0; i < obj->nsyms; i++) {
+		secp = &obj->secs[i];
+		switch (secp->type) {
 		case 'T':
 			p = &siz.text;
 			break;
@@ -78,7 +74,7 @@ newobject(FILE *fp, int type)
 
 		if (*p > ULLONG_MAX - secp->size) {
 			error("integer overflow");
-			goto err2;
+			goto err;
 		}
 			
 		*p += secp->size;
@@ -96,9 +92,7 @@ newobject(FILE *fp, int type)
 	tbss += siz.bss;
 	ttotal += total;
 
-err2:
-	free(secp);
-err1:
+err:
 	objdel(obj);
 }
 

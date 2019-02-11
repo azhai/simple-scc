@@ -4,18 +4,18 @@
 
 #include "libmach.h"
 
-extern getsectfun_t getsectv[];
+extern getsymsfun_t getsymsv[];
 
 int
-objsect(Obj *obj)
+objsyms(Obj *obj)
 {
 	int fmt;
-	getsectfun_t fn;
+	getsymsfun_t fn;
 
 	fmt = FORMAT(obj->type);
 	if (fmt >= NFORMATS)
 		return -1;
 
-	fn = getsectv[fmt];
+	fn = getsymsv[fmt];
 	return  (*fn)(obj);
 }

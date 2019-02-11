@@ -23,7 +23,10 @@ objnew(int type)
 		return NULL;
 
 	obj->type = type;
-	obj->symbols = NULL;
+	obj->syms = NULL;
+	obj->secs = NULL;
+	obj->nsyms = 0;
+	obj->nsecs = 0;
 	memset(obj->htab, 0, sizeof(obj->htab));
 
 	fn = newv[fmt];

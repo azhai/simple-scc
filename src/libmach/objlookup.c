@@ -28,8 +28,8 @@ objlookup(Obj *obj, char *name, int install)
 	sym->value = 0;
 	sym->hash = obj->htab[h];
 	obj->htab[h] = sym;
-	sym->next = obj->symbols;
-	obj->symbols = sym;
+	sym->next = obj->syms;
+	obj->syms = sym;
 
 	return sym;
 }

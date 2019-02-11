@@ -158,7 +158,7 @@ newobject(FILE *fp, int type)
 	if (objread(obj, fp) < 0 || objsyms(obj))
 		goto error;
 
-	for (sym = obj->symbols; sym; sym = sym->next)
+	for (sym = obj->syms; sym; sym = sym->next)
 		newsym(sym, &tbl);
 
 	printsyms(tbl.buf, tbl.nsyms);

@@ -23,8 +23,9 @@ objfree(Obj *obj, int what)
 	}
 
 	if (what & GENERICDEL) {
-		free(obj->symbols);
-		obj->symbols = NULL;
+		free(obj->secs);
+		free(obj->syms);
+		obj->syms = NULL;
 		memset(obj->htab, 0, sizeof(obj->htab));
 	}
 
