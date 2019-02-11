@@ -53,12 +53,12 @@ static Symbol refhead = {
 	.prev = &refhead,
 };
 
-int sflag;		/* discard all the symbols */
-int xflag;		/* discard local symbols */
-int Xflag;		/* discard locals starting with 'L' */
-int rflag;		/* preserve relocation bits */
-int dflag;		/* define common even with rflag */
-int gflag;              /* preserve debug symbols */
+static int sflag;		/* discard all the symbols */
+static int xflag;		/* discard local symbols */
+static int Xflag;		/* discard locals starting with 'L' */
+static int rflag;		/* preserve relocation bits */
+static int dflag;		/* define common even with rflag */
+static int gflag;              /* preserve debug symbols */
 
 static int status;
 

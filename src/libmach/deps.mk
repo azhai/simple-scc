@@ -15,6 +15,9 @@
 ./coff32/coff32getindex.o: $(INCDIR)/scc/scc/mach.h
 ./coff32/coff32getindex.o: ./coff32/../libmach.h
 ./coff32/coff32getindex.o: ./coff32/coff32.h
+./coff32/coff32getsect.o: $(INCDIR)/scc/scc/mach.h
+./coff32/coff32getsect.o: ./coff32/../libmach.h
+./coff32/coff32getsect.o: ./coff32/coff32.h
 ./coff32/coff32namidx.o: $(INCDIR)/scc/scc/mach.h
 ./coff32/coff32new.o: $(INCDIR)/scc/scc/mach.h
 ./coff32/coff32new.o: ./coff32/../libmach.h
@@ -40,14 +43,14 @@
 ./del.o: ./libmach.h
 ./formember.o: $(INCDIR)/scc/scc/ar.h
 ./formember.o: $(INCDIR)/scc/scc/mach.h
-./forsect.o: $(INCDIR)/scc/scc/mach.h
-./forsect.o: ./libmach.h
 ./forsym.o: $(INCDIR)/scc/scc/mach.h
 ./forsym.o: ./libmach.h
 ./getidx.o: $(INCDIR)/scc/scc/mach.h
 ./getidx.o: ./libmach.h
 ./getindex.o: $(INCDIR)/scc/scc/mach.h
 ./getindex.o: ./libmach.h
+./getsect.o: $(INCDIR)/scc/scc/mach.h
+./getsect.o: ./libmach.h
 ./namidx.o: $(INCDIR)/scc/scc/mach.h
 ./namidx.o: ./libmach.h
 ./namindex.o: $(INCDIR)/scc/scc/mach.h
@@ -68,6 +71,8 @@
 ./objread.o: ./libmach.h
 ./objreset.o: $(INCDIR)/scc/scc/mach.h
 ./objreset.o: ./libmach.h
+./objsect.o: $(INCDIR)/scc/scc/mach.h
+./objsect.o: ./libmach.h
 ./objstrip.o: $(INCDIR)/scc/scc/mach.h
 ./objstrip.o: ./libmach.h
 ./objtype.o: $(INCDIR)/scc/scc/mach.h

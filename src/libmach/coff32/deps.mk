@@ -9,6 +9,9 @@
 ./coff32getindex.o: $(INCDIR)/scc/scc/mach.h
 ./coff32getindex.o: ./../libmach.h
 ./coff32getindex.o: ./coff32.h
+./coff32getsect.o: $(INCDIR)/scc/scc/mach.h
+./coff32getsect.o: ./../libmach.h
+./coff32getsect.o: ./coff32.h
 ./coff32namidx.o: $(INCDIR)/scc/scc/mach.h
 ./coff32new.o: $(INCDIR)/scc/scc/mach.h
 ./coff32new.o: ./../libmach.h

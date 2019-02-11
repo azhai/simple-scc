@@ -24,7 +24,6 @@ objnew(int type)
 
 	obj->type = type;
 	obj->head = NULL;
-	obj->sections = NULL;
 	memset(obj->htab, 0, sizeof(obj->htab));
 
 	fn = newv[fmt];

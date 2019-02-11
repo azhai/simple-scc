@@ -36,52 +36,53 @@ error(char *fmt, ...)
 	status = EXIT_FAILURE;
 }
 
-int
-newsect(Objsect *secp, void *data)
-{
-	unsigned long long *p;
-	struct sizes *sp = data;
-
-	switch (secp->type) {
-	case 'T':
-		p = &sp->text;
-		break;
-	case 'D':
-		p = &sp->data;
-		break;
-	case 'B':
-		p = &sp->bss;
-		break;
-	default:
-		return 1;
-	}
-
-	if (*p > ULLONG_MAX - secp->size)
-		return -1;
-	*p += secp->size;
-
-	return 1;
-}
-
 void
 newobject(FILE *fp, int type)
 {
+	int n, i;;
 	Obj *obj;
+	unsigned long long total, *p;
+	Objsect *secp;
 	struct sizes siz;
-	unsigned long long total;
 
 	if ((obj = objnew(type)) == NULL) {
 		error("out of memory");
-		goto error;
+		return;
 	}
 
 	if (objread(obj, fp) < 0) {
 		error("file corrupted");
-		goto error;
+		goto err1;
 	}
 
 	siz.text = siz.data = siz.bss = 0;
-	forsect(obj, newsect, &siz);
+	if ((n = objsect(obj, &secp)) < 0) {
+		error("out of memory");
+		goto err1;
+	}
+
+	for (i = 0; i < n; i++) {
+		switch (secp[i].type) {
+		case 'T':
+			p = &siz.text;
+			break;
+		case 'D':
+			p = &siz.data;
+			break;
+		case 'B':
+			p = &siz.bss;
+			break;
+		default:
+			continue;
+		}
+
+		if (*p > ULLONG_MAX - secp->size) {
+			error("integer overflow");
+			goto err2;
+		}
+			
+		*p += secp->size;
+	}
 
 	total = siz.text + siz.data + siz.bss;
 	printf("%llu\t%llu\t%llu\t%llu\t%llx\t%s\n",
@@ -95,9 +96,10 @@ newobject(FILE *fp, int type)
 	tbss += siz.bss;
 	ttotal += total;
 
-error:
-	if (obj)
-		objdel(obj);
+err2:
+	free(secp);
+err1:
+	objdel(obj);
 }
 
 static int

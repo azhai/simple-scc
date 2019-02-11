@@ -6,7 +6,7 @@
 
 extern getidxfun_t getidxv[];
 
-long
+int
 getindex(int type, long *nsyms, Objsymdef **head, FILE *fp)
 {
 	int fmt;

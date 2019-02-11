@@ -25,7 +25,6 @@ enum order {
 
 enum freeflags {
 	FREESYM,
-	FREESECT,
 };
 
 typedef int (*newfun_t)(Obj *obj);
@@ -36,6 +35,7 @@ typedef int (*probefun_t)(unsigned char *buf, char **name);
 typedef int (*writefun_t)(Obj *obj, FILE *fp);
 typedef long (*setidxfun_t)(int, long, Objsymdef *, FILE *);
 typedef int (*getidxfun_t)(int t, long *n, Objsymdef **def, FILE *fp);
+typedef int (*getsectfun_t)(Obj *obj, Objsect **secp);
 typedef char *(*namidxfun_t)(void);
 
 /* common functions */
@@ -58,5 +58,7 @@ extern long coff32setidx(int order, long nsyms, Objsymdef *head, FILE *fp);
 
 extern int coff32getindex(int type, long *nsyms, Objsymdef **def, FILE *fp);
 extern int coff32getidx(int order, long *nsyms, Objsymdef **def, FILE *fp);
+
+extern int coff32getsect(Obj *obj, Objsect **secp);
 
 extern char *coff32namidx(void);

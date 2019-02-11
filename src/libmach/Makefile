@@ -14,11 +14,11 @@ OBJS = addr2line.o \
        objread.o \
        objreset.o \
        objstrip.o \
+       objsect.o \
        getindex.o \
        setindex.o \
        namindex.o \
        forsym.o \
-       forsect.o \
        formember.o \
        objtype.o \
        objwrite.o \
@@ -34,12 +34,14 @@ OBJS = addr2line.o \
        getidx.o \
        setidx.o \
        namidx.o \
+       getsect.o \
 
 
 DIRS = coff32
 
 TBLS = setidx.c \
        getidx.c \
+       getsect.c \
        namidx.c \
        new.c \
        read.c \

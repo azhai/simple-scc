@@ -136,75 +136,6 @@ readhdr(Obj *obj, FILE *fp)
 }
 
 static int
-loadsections(Obj *obj, FILE *fp)
-{
-	size_t len;
-	unsigned sflags, type;
-	unsigned long flags;
-	FILHDR *hdr;
-	struct coff32 *coff;
-	SCNHDR *scn;
-	Objsect *secs, *sp;
-
-	coff  = obj->data;
-	hdr = &coff->hdr;
-	scn = coff->scns;
-
-	secs = malloc(sizeof(Objsect) * hdr->f_nscns);
-	if (!secs)
-		return 0;
-	obj->sections = secs;
-
-	for (sp = secs; sp < &secs[hdr->f_nscns]; sp++) {
-		flags = scn->s_flags;
-
-		if (flags & STYP_TEXT) {
-			type = 'T';
-			sflags = SALLOC | SRELOC | SLOAD | SEXEC | SREAD;
-			if (flags & STYP_NOLOAD)
-				sflags |= SSHARED;
-		} else if (flags & STYP_DATA) {
-			type = 'D';
-			sflags = SALLOC | SRELOC | SLOAD | SWRITE | SREAD;
-			if (flags & STYP_NOLOAD)
-				sflags |= SSHARED;
-		} else if (flags & STYP_BSS) {
-			type = 'B';
-			sflags = SALLOC | SREAD | SWRITE;
-		} else if (flags & STYP_INFO) {
-			type = 'N';
-			sflags = 0;
-		} else if (flags & STYP_LIB) {
-			type = 'T';
-			sflags = SRELOC;
-		} else if (flags & STYP_DSECT) {
-			type = 'D';
-			sflags = SRELOC;
-		} else if (flags & STYP_PAD) {
-			type = 'D';
-			sflags = SLOAD;
-		} else {
-			type = 'D';  /* We assume that STYP_REG is data */
-			sflags = SALLOC | SRELOC | SLOAD | SWRITE | SREAD;
-		}
-
-		if (flags & STYP_NOLOAD)
-			sflags &= ~SLOAD;
-
-		len = strlen(scn->s_name) + 1;
-		if ((sp->name = malloc(len)) == NULL)
-			return 0;
-
-		memcpy(sp->name, scn->s_name, len);
-		sp->offset = scn->s_scnptr;
-		sp->size = scn->s_size;
-		sp->type = type;
-		obj->nsecs++;
-	}
-	return 1;
-}
-
-static int
 readstr(Obj *obj, FILE *fp)
 {
 	FILHDR *hdr;
@@ -510,8 +441,6 @@ coff32read(Obj *obj, FILE *fp)
 	if (!readlines(obj, fp))
 		goto error;
 	if (!loadsyms(obj))
-		goto error;
-	if (!loadsections(obj, fp))
 		goto error;
 	return 0;
 

@@ -21,22 +21,9 @@ delsyms(Obj *obj)
 	memset(obj->htab, 0, sizeof(obj->htab));
 }
 
-static void
-delsecs(Obj *obj)
-{
-	int i;
-
-	for (i = 0; i < obj->nsecs; i++)
-		free(obj->sections[i].name);
-	free(obj->sections);
-	obj->sections = NULL;
-}
-
 void
 objfree(Obj *obj, int what)
 {
 	if (what & FREESYM)
 		delsyms(obj);
-	if (what & FREESECT)
-		delsecs(obj);
 }

@@ -17,6 +17,6 @@ objreset(Obj *obj)
 		return -1;
 	fn = delv[fmt];
 	(*fn)(obj);
-	objfree(obj, FREESYM | FREESECT);
+	objfree(obj, FREESYM);
 	return 0;
 }
