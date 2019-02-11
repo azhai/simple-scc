@@ -90,6 +90,13 @@ cleanup(void)
 		remove(output);
 }
 
+static int
+moreundef(void)
+{
+
+	return refhead.next != &refhead;
+}
+
 static Symbol *
 lookup(char *name, int install)
 {
@@ -236,15 +243,14 @@ loadlib(FILE *fp)
 	int t, loaded;
 	long n;
 	Objsymdef *def, *dp;
-	Symbol *sym, *p;
+	Symbol *sym;
 
 	if (getindex(bintype, &n, &def, fp) < 0) {
 		error("corrupted index");
 		return;
 	}
 
-	p = &refhead;
-	for (loaded = 0; p->next != p; loaded = 0) {
+	for (loaded = 0; moreundef(); loaded = 0) {
 		for (dp = def; dp; dp = dp->next) {
 			sym = lookup(dp->name, NOINSTALL);
 			if (!sym || !sym->def)
@@ -382,7 +388,7 @@ pass1(int argc, char *argv[])
 		fclose(fp);
 	}
 
-	if (refhead.next != &refhead) {
+	if (moreundef()) {
 		Symbol *sym, *p;
 
 		p = &refhead;
