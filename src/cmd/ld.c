@@ -30,6 +30,8 @@ enum {
 
 struct objlst {
 	Obj *obj;
+	int nsect;
+	Objsect *sect;
 	struct objlst *next;
 };
 
@@ -195,15 +197,24 @@ newsym(Objsym *osym, void *obj)
 static void
 loadobj(Obj *obj)
 {
+	int n;
 	Objlst *lst;
+	Objsect *secp;
 
 	if ((lst = malloc(sizeof(*lst))) == NULL) {
 		error("out of memory");
 		return;
 	}
 
+	if ((n = objsect(obj, &secp)) < 0) {
+		error("out of memory");
+		goto err1;
+	}
+
 	lst->obj = obj;
 	lst->next = NULL;
+	lst->nsect = n;
+	lst->sect = secp;
 
 	if (!objlast)
 		objlast = objhead = lst;
@@ -211,6 +222,11 @@ loadobj(Obj *obj)
 		objlast = objlast->next = lst;
 
 	forsym(obj, newsym, obj);
+
+	return;
+
+err1:
+	free(lst);
 }
 
 static void
