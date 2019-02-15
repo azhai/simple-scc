@@ -9,7 +9,7 @@
 int
 coff32getsect(Obj *obj)
 {
-	int nsecs;
+	int i;
 	unsigned sflags, type;
 	unsigned long flags;
 	FILHDR *hdr;
@@ -21,13 +21,13 @@ coff32getsect(Obj *obj)
 	hdr = &coff->hdr;
 	scn = coff->scns;
 
-	nsecs = 0;
 	secs = malloc(sizeof(Objsect) * hdr->f_nscns);
 	if (!secs)
 		return -1;
 
-	for (sp = secs; sp < &secs[hdr->f_nscns]; sp++) {
-		flags = scn->s_flags;
+	for (i = 0; i < hdr->f_nscns; i++) {
+		sp = &secs[i];
+		sp->next = (i < hdr->f_nscns-1) ? &secs[i+1] : NULL;
 
 		if (flags & STYP_TEXT) {
 			type = 'T';
@@ -66,9 +66,9 @@ coff32getsect(Obj *obj)
 		sp->offset = scn->s_scnptr;
 		sp->size = scn->s_size;
 		sp->type = type;
-		nsecs++;
 	}
 	obj->secs = secs;
+	obj->nsecs = i;
 
 	return 1;
 }

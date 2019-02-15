@@ -22,6 +22,7 @@ struct objsect {
 	unsigned flags;
 	long offset;
 	unsigned long long size;
+	Objsect *next;
 };
 
 struct objsym {

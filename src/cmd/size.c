@@ -42,7 +42,7 @@ newobject(FILE *fp, int type)
 	int i;
 	Obj *obj;
 	unsigned long long total, *p;
-	Objsect *secp;
+	Objsect *sp;
 	struct sizes siz;
 
 	if ((obj = objnew(type)) == NULL) {
@@ -56,9 +56,8 @@ newobject(FILE *fp, int type)
 	}
 
 	siz.text = siz.data = siz.bss = 0;
-	for (i = 0; i < obj->nsyms; i++) {
-		secp = &obj->secs[i];
-		switch (secp->type) {
+	for (sp = obj->secs; sp; sp = sp->next) {
+		switch (sp->type) {
 		case 'T':
 			p = &siz.text;
 			break;
@@ -72,12 +71,12 @@ newobject(FILE *fp, int type)
 			continue;
 		}
 
-		if (*p > ULLONG_MAX - secp->size) {
+		if (*p > ULLONG_MAX - sp->size) {
 			error("integer overflow");
 			goto err;
 		}
 			
-		*p += secp->size;
+		*p += sp->size;
 	}
 
 	total = siz.text + siz.data + siz.bss;
