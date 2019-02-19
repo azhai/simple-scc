@@ -28,18 +28,6 @@ enum deltype {
 	TARGETDEL  = 1 << 1,
 };
 
-typedef int (*newfun_t)(Obj *obj);
-typedef int (*readfun_t)(Obj *obj, FILE *fp);
-typedef void (*delfun_t)(Obj *new);
-typedef void (*stripfun_t)(Obj *obj);
-typedef int (*probefun_t)(unsigned char *buf, char **name);
-typedef int (*writefun_t)(Obj *obj, FILE *fp);
-typedef long (*setidxfun_t)(int, long, Objsymdef *, FILE *);
-typedef int (*getidxfun_t)(int t, long *n, Objsymdef **def, FILE *fp);
-typedef int (*getsectfun_t)(Obj *obj);
-typedef char *(*namidxfun_t)(void);
-typedef int (*getsymsfun_t)(Obj *obj);
-
 /* common functions */
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);

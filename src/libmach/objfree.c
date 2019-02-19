@@ -6,20 +6,20 @@
 
 #include "libmach.h"
 
-extern delfun_t delv[];
+static void (*funv[])(Obj *) = {
+	[COFF32] = coff32del,
+};
 
 int
 objfree(Obj *obj, int what)
 {
 	int fmt;
-	delfun_t fn;
 
 	if (what & TARGETDEL) {
 		fmt = FORMAT(obj->type);
 		if (fmt < NFORMATS)
 			return -1;
-		fn = delv[fmt];
-		(*fn)(obj);
+		(*funv[fmt])(obj);
 	}
 
 	if (what & GENERICDEL) {

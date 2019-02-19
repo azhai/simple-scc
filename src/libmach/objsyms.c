@@ -4,18 +4,18 @@
 
 #include "libmach.h"
 
-extern getsymsfun_t getsymsv[];
+static int (*funv[])(Obj *) = {
+	[COFF32] = coff32getsyms,
+};
 
 int
 objsyms(Obj *obj)
 {
 	int fmt;
-	getsymsfun_t fn;
 
 	fmt = FORMAT(obj->type);
 	if (fmt >= NFORMATS)
 		return -1;
 
-	fn = getsymsv[fmt];
-	return  (*fn)(obj);
+	return  (*funv[fmt])(obj);
 }

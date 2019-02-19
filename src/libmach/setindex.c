@@ -4,17 +4,18 @@
 
 #include "libmach.h"
 
-extern setidxfun_t setidxv[];
+static long (*funv[])(int, long, Objsymdef *, FILE *) = {
+	[COFF32] = coff32setidx,
+};
 
 long
 setindex(int type, long nsyms, Objsymdef *head, FILE *fp)
 {
 	int fmt;
-	setidxfun_t fn;
 
 	fmt = FORMAT(type);
 	if (fmt >= NFORMATS)
 		return -1;
-	fn = setidxv[fmt];
-	return (*fn)(type, nsyms, head, fp);
+
+	return (*funv[fmt])(type, nsyms, head, fp);
 }

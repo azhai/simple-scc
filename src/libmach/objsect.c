@@ -4,18 +4,18 @@
 
 #include "libmach.h"
 
-extern getsectfun_t getsectv[];
+static int (*funv[])(Obj *) = {
+	[COFF32] = coff32getsect,
+};
 
 int
 objsect(Obj *obj)
 {
 	int fmt;
-	getsectfun_t fn;
 
 	fmt = FORMAT(obj->type);
 	if (fmt >= NFORMATS)
 		return -1;
 
-	fn = getsectv[fmt];
-	return  (*fn)(obj);
+	return  (*funv[fmt])(obj);
 }

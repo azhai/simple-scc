@@ -42,6 +42,7 @@ struct objsymdef {
 
 struct object {
 	int type;
+	char *index;
 	Objsym *htab[NR_SYMHASH];
 	Objsym *syms;;
 	Objsect *secs;
@@ -69,7 +70,6 @@ extern int archive(FILE *fp);
 extern long armember(FILE *fp, char *member);
 extern long setindex(int type, long nsyms, Objsymdef *def, FILE *fp);
 extern int getindex(int type, long *nsyms, Objsymdef **def, FILE *fp);
-extern char *namindex(int type);
 
 /* TODO */
 extern int objload(Obj *obj, Obj *to);

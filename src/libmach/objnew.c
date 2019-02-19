@@ -6,14 +6,15 @@
 
 #include "libmach.h"
 
-extern newfun_t newv[];
+static int (*funv[])(Obj *) = {
+	[COFF32] = coff32new,
+};
 
 Obj *
 objnew(int type)
 {
 	Obj *obj;
 	int fmt;
-	newfun_t fn;
 
 	fmt = FORMAT(type);
 	if (fmt >= NFORMATS)
@@ -29,8 +30,7 @@ objnew(int type)
 	obj->nsecs = 0;
 	memset(obj->htab, 0, sizeof(obj->htab));
 
-	fn = newv[fmt];
-	if ((*fn)(obj) < 0) {
+	if ((*funv[fmt])(obj) < 0) {
 		free(obj);
 		return NULL;
 	}

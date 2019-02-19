@@ -16,6 +16,7 @@
 
 #define NR_SYMDEF 32
 
+static char *namidx;
 static long nsymbols;
 static int status, artype, nolib;
 static char *filename, *membname;
@@ -143,6 +144,7 @@ newmember(FILE *fp, char *nam, void *data)
 		error("out of memory");
 		return 0;
 	}
+	namidx = obj->index;
 
 	if (objread(obj, fp) < 0 || objsyms(obj) < 0) {
 		error("file corrupted");
@@ -198,7 +200,7 @@ static int
 merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 {
 	int c;
-	char *index, mtime[13];
+	char mtime[13];
 	struct ar_hdr first;
 
 	rewind(lib);
@@ -208,8 +210,7 @@ merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 	if (fread(&first, sizeof(first), 1, lib) != 1)
 		return 0;
 
-	index = namindex(artype);
-	if (!strncmp(first.ar_name, index, SARNAM))
+	if (!strncmp(first.ar_name, namidx, SARNAM))
 		fseek(lib, atol(first.ar_size), SEEK_CUR);
 	else
 		fseek(lib, SARMAG, SEEK_SET);
@@ -219,7 +220,7 @@ merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
         strftime(mtime, sizeof(mtime), "%s", gmtime(&prop->time));
         fprintf(to,
                 "%-16.16s%-12s%-6u%-6u%-8lo%-10ld`\n",
-                index,
+                namidx,
                 mtime,
                 prop->uid,
                 prop->gid,

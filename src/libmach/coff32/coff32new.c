@@ -14,5 +14,6 @@ coff32new(Obj *obj)
 	if ((coff = calloc(1, sizeof(*coff))) == NULL)
 		return -1;
 	obj->data = coff;
+	obj->index = "/";
 	return 0;
 }

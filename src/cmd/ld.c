@@ -327,7 +327,8 @@ newmember(FILE *fp, char *name, void *data)
 	}
 
 	if (*nmemb++ == 0) {
-		if(!strncmp(name, namindex(bintype), SARNAM)) {
+		if (!strncmp(name, "/", SARNAM) ||
+		    !strncmp(name, "__.SYMDEF", SARNAM)) {
 			loadlib(fp);
 			return 0;
 		}

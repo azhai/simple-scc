@@ -4,19 +4,19 @@
 
 #include "libmach.h"
 
-extern stripfun_t stripv[];
+static void (*funv[])(Obj *) = {
+	[COFF32] = coff32strip,
+};
 
 int
 objstrip(Obj *obj)
 {
 	int fmt;
-	stripfun_t fn;
 
 	fmt = FORMAT(obj->type);
 	if (fmt >= NFORMATS)
 		return -1;
-	fn = stripv[fmt];
-	(*fn)(obj);
+	(*funv[fmt])(obj);
 
 	objfree(obj, GENERICDEL);
 

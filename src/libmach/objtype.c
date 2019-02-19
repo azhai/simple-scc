@@ -4,13 +4,15 @@
 
 #include "libmach.h"
 
-extern probefun_t probev[];
+static int (*funv[])(unsigned char *, char **) = {
+	[COFF32] = coff32probe,
+};
 
 int
 objtype(FILE *fp, char **name)
 {
 	int n, i;
-	probefun_t *fn;
+	int (**fn)(unsigned char *, char **);
 	fpos_t pos;
 	unsigned char buf[NBYTES];
 
@@ -21,8 +23,8 @@ objtype(FILE *fp, char **name)
 	if (n != 1 || ferror(fp))
 		return -1;
 
-	for (fn = probev; fn < &probev[NFORMATS]; ++fn) {
-		n = (*fn)(buf, name);
+	for (fn = funv; fn < &funv[NFORMATS]; ++fn) {
+		n = (**fn)(buf, name);
 		if (n == -1)
 			continue;
 		return n;
