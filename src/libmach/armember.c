@@ -14,7 +14,7 @@ getfname(struct ar_hdr *hdr, char *dst)
         memcpy(dst, hdr->ar_name, SARNAM);
         dst[SARNAM] = '\0';
 
-        for (i = SARNAM-1; i >= 0; i--) {
+        for (i = SARNAM-1; i > 0; i--) {
                 if (dst[i] != ' ' && dst[i] != '/')
                         break;
                 dst[i] = '\0';

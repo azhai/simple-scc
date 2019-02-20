@@ -73,18 +73,18 @@ coff32getsyms(Obj *obj)
 		ent = &coff->ents[i];
 
 		if ((t = typeof(coff, ent)) < 0)
-			return 0;
+			return -1;
 
 		if ((s = symname(coff, ent)) == NULL)
-			return 0;
+			return -1;
 
 		if ((sym = objlookup(obj, s, 1)) == NULL)
-			return 0;
+			return -1;
 
 		sym->type = t;
 		sym->value = ent->n_value;
 		sym->size = (sym->type == 'C') ? ent->n_value : 0;
 	}
 
-	return 1;
+	return i;
 }
