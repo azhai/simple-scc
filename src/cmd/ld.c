@@ -341,32 +341,31 @@ loadlib(FILE *fp)
 		return;
 	}
 
-	for (loaded = 0; moreundef(); loaded = 0) {
+	for (loaded = 1; moreundef() && loaded; ) {
+		loaded = 0;
 		for (dp = def; dp; dp = dp->next) {
 			sym = lookup(dp->name, NOINSTALL);
-			if (!sym || !sym->def)
+			if (!sym || sym->def)
 				continue;
 
 			if (fseek(fp, dp->offset, SEEK_SET) == EOF) {
 				error(errstr());
-				break;
+				goto clean;
 			}
 
 			if ((t = objtype(fp, NULL)) == -1) {
 				error("library file corrupted");
-				break;
+				goto clean;
 			}
 
 			if (t != bintype) {
 				error("incompatible library");
-				break;
+				goto clean;
 			}
 
 			newobject(fp, t, OUTLIB);
 			loaded = 1;
 		}
-		if (!loaded)
-			break;
 	}
 clean:
 	free(def);
