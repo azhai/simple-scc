@@ -21,6 +21,7 @@ struct objsect {
 	int type;
 	unsigned flags;
 	long offset;
+	int align;
 	unsigned long long size;
 	Objsect *next;
 };

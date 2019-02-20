@@ -66,6 +66,7 @@ coff32getsect(Obj *obj)
 		sp->offset = scn->s_scnptr;
 		sp->size = scn->s_size;
 		sp->type = type;
+		sp->align = 4; /* TODO: Check how align is defined in coff */
 	}
 	obj->secs = secs;
 	obj->nsecs = i;

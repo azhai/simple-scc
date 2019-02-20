@@ -17,6 +17,7 @@ static char sccsid[] = "@(#) ./ld/main.c";
 
 typedef struct objlst Objlst;
 typedef struct symbol Symbol;
+typedef struct section Section;
 
 enum {
 	NOINSTALL,
@@ -28,9 +29,15 @@ enum {
 	INLIB,
 };
 
+struct section {
+	char *name;
+	unsigned long long size;
+	FILE *fp;
+	Section *next;
+};
+
 struct objlst {
 	Obj *obj;
-	Objsect *sect;
 	struct objlst *next;
 };
 
@@ -45,6 +52,7 @@ struct symbol {
 
 char *output = "a.out", *entry = "start", *datasiz;
 
+static Section *sections;
 static int bintype = -1;
 static char *filename, *membname;
 static Objlst *objhead, *objlast;
@@ -59,7 +67,7 @@ static int xflag;		/* discard local symbols */
 static int Xflag;		/* discard locals starting with 'L' */
 static int rflag;		/* preserve relocation bits */
 static int dflag;		/* define common even with rflag */
-static int gflag;              /* preserve debug symbols */
+static int gflag;               /* preserve debug symbols */
 
 static int status;
 
@@ -194,7 +202,55 @@ newsym(Objsym *osym, Obj *obj)
 }
 
 static void
-loadobj(Obj *obj)
+newsect(Objsect *secp, FILE *fp)
+{
+	int c;
+	unsigned long long align, size;
+	Section *sp;
+
+	for (sp = sections; sp; sp = sp->next) {
+		if (!strcmp(sp->name, secp->name))
+			break;
+	}
+
+	if (!sp) {
+		size_t len = strlen(secp->name) + 1;
+		char * s = malloc(len);
+		FILE *fp = tmpfile();
+
+		sp = malloc(sizeof(*sp));
+		if (!s || !sp || !fp)
+			goto err;
+
+		sp->name = memcpy(s, secp->name, len);
+		sp->size = 0;
+		sp->fp = fp;
+		sp->next = sections;
+
+		if (!sections)
+			sections = sp;
+	}
+
+	align = secp->align-1;
+	size = (sp->size + align) & ~align;
+
+	for (; secp->size < size; secp->size++)
+		putc(0, sp->fp);
+
+	fseek(fp, secp->offset, SEEK_SET);
+	while ((c = getc(fp)) != EOF)
+		putc(c, sp->fp);
+	fflush(sp->fp);
+
+	if (!ferror(fp) && !ferror(sp->fp))
+		return;
+
+err:
+	error(errstr());
+}
+
+static void
+loadobj(Obj *obj, FILE *fp)
 {
 	int n;
 	Objlst *lst;
@@ -219,6 +275,9 @@ loadobj(Obj *obj)
 
 	for (sym = obj->syms; sym; sym = sym->next)
 		newsym(sym, obj);
+
+	for (secp = obj->secs; secp; secp = secp->next)
+		newsect(secp, fp);
 
 	return;
 
@@ -260,7 +319,7 @@ newobject(FILE *fp, int type, int inlib)
 		if (sym == p)
 			goto  delete;
 	}
-	loadobj(obj);
+	loadobj(obj, fp);
 
 	return;
 
