@@ -6,6 +6,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 DIRS=ar/execute \
      nm/execute \
      as/execute \
+     ld/execute \
      libc/execute \
      scc/execute scc/error
 
