@@ -31,7 +31,9 @@ enum {
 
 struct section {
 	char *name;
-	unsigned long long size;
+	unsigned long long size, offset;
+	unsigned flags;
+	int type;
 	FILE *fp;
 	Section *next;
 };
@@ -202,51 +204,101 @@ newsym(Objsym *osym, Obj *obj)
 }
 
 static void
-newsect(Objsect *secp, FILE *fp)
+copy(FILE *to, FILE *from, long pad, long nbytes)
 {
 	int c;
-	unsigned long long align, size;
+
+	while (pad--)
+		putc(0, to);
+
+	while (nbytes-- && (c = getc(from)) != EOF)
+		putc(c, to);
+
+	if (c == EOF) {
+		error("section truncated");
+		exit(EXIT_FAILURE);
+	}
+
+	if (ferror(to) || ferror(from)) {
+		error(errstr());
+		exit(EXIT_FAILURE);
+	}
+}
+
+static Section *
+findsect(Objsect *secp)
+{
+	size_t len;
+	char *s;
+	FILE *fp;
+	Section *sp, *lastp;
+
+	for (lastp = sp = sections; sp; lastp = sp, sp = sp->next) {
+		if (!strcmp(sp->name, secp->name))
+			return sp;
+	}
+
+	len = strlen(secp->name) + 1;
+	s = malloc(len);
+	fp = tmpfile();
+
+	sp = malloc(sizeof(*sp));
+	if (!s || !sp || !fp) {
+		error(errstr());
+		exit(EXIT_FAILURE);
+	}
+
+	if (lastp) {
+		lastp->next = sp;
+	} else {
+		sections = sp;
+		sp->next = NULL;
+	}
+
+	sp->name = memcpy(s, secp->name, len);
+	sp->offset = sp->size = 0;
+	sp->fp = fp;
+	sp->flags = secp->flags;
+	sp->type = secp->type;
+
+	return sp;
+}
+
+extern int objpos(Obj *obj, FILE *fp, long pos);
+
+static void
+newsect(Objsect *secp, Obj *obj, FILE *fp)
+{
+	unsigned long long align, size, pad, off;
 	Section *sp;
 
-	for (sp = sections; sp; sp = sp->next) {
-		if (!strcmp(sp->name, secp->name))
-			break;
-	}
+	sp = findsect(secp);
 
-	if (!sp) {
-		size_t len = strlen(secp->name) + 1;
-		char * s = malloc(len);
-		FILE *fp = tmpfile();
+	align = secp->align - 1;
+	pad = (sp->size+align) & ~align;
 
-		sp = malloc(sizeof(*sp));
-		if (!s || !sp || !fp)
-			goto err;
+	if (sp->size > ULLONG_MAX - pad)
+		goto overflow;
+	off = sp->size += pad;
 
-		sp->name = memcpy(s, secp->name, len);
-		sp->size = 0;
-		sp->fp = fp;
-		sp->next = sections;
+	if (sp->size > ULLONG_MAX - secp->size)
+		goto overflow;
+	sp->size += secp->size;
 
-		if (!sections)
-			sections = sp;
-	}
+	objpos(obj, fp, secp->offset);
+	copy(sp->fp, fp, pad, secp->size);
 
-	align = secp->align-1;
-	size = (sp->size + align) & ~align;
+	/*
+	 * and now update the offset to relect the offset
+	 * in the output file
+	 */
+	secp->offset = off;
 
-	for (; secp->size < size; secp->size++)
-		putc(0, sp->fp);
+	return;
 
-	fseek(fp, secp->offset, SEEK_SET);
-	while ((c = getc(fp)) != EOF)
-		putc(c, sp->fp);
-	fflush(sp->fp);
-
-	if (!ferror(fp) && !ferror(sp->fp))
-		return;
-
-err:
-	error(errstr());
+overflow:
+	error("section overflow");
+	exit(EXIT_FAILURE);
 }
 
 static void
@@ -262,9 +314,6 @@ loadobj(Obj *obj, FILE *fp)
 		return;
 	}
 
-	if (objsect(obj) < 0 || objsyms(obj) < 0)
-		goto err1;
-
 	lst->obj = obj;
 	lst->next = NULL;
 
@@ -277,13 +326,7 @@ loadobj(Obj *obj, FILE *fp)
 		newsym(sym, obj);
 
 	for (secp = obj->secs; secp; secp = secp->next)
-		newsect(secp, fp);
-
-	return;
-
-err1:
-	free(lst);
-	error("out of memory");
+		newsect(secp, obj, fp);
 }
 
 static void
@@ -301,7 +344,7 @@ newobject(FILE *fp, int type, int inlib)
 		bintype = type;
 	} else if (bintype != type) {
 		error("not compatible object file");
-		return;
+		goto delete;
 	}
 	bintype = type;
 
@@ -310,18 +353,28 @@ newobject(FILE *fp, int type, int inlib)
 		goto delete;
 	}
 
-	if (inlib) {
-		p = &refhead;
-		for (sym = p->next; sym != p; sym = sym->next) {
-			if (objlookup(obj, sym->name, 0))
-				break;
-		}
-		if (sym == p)
-			goto  delete;
+	if (objsyms(obj) < 0 || objsect(obj) < 0) {
+		error("object file corrupted");
+		goto delete;
 	}
-	loadobj(obj, fp);
 
-	return;
+	if (!inlib) {
+		loadobj(obj, fp);
+		return;
+	}
+
+	/*
+	 * we are in a library without index, so we have to check
+	 * if it defines some symbol that is undefined and only
+	 * in that case we have to load the object
+	 */
+	p = &refhead;
+	for (sym = p->next; sym != p; sym = sym->next) {
+		if (objlookup(obj, sym->name, 0)) {
+			loadobj(obj, fp);
+			return;
+		}
+	}
 
 delete:
 	objdel(obj);
@@ -341,7 +394,8 @@ loadlib(FILE *fp)
 		return;
 	}
 
-	for (loaded = 1; moreundef() && loaded; ) {
+	loaded = 1;
+	while (moreundef() && loaded) {
 		loaded = 0;
 		for (dp = def; dp; dp = dp->next) {
 			sym = lookup(dp->name, NOINSTALL);
@@ -377,8 +431,6 @@ newmember(FILE *fp, char *name, void *data)
 	int t;
 	int *nmemb = data;
 
-	membname = data;
-
 	if (bintype == -1) {
 		error("an object file is needed before any library");
 		return 0;
@@ -392,6 +444,7 @@ newmember(FILE *fp, char *name, void *data)
 		}
 	}
 
+	membname = name;
 	if ((t = objtype(fp, NULL)) == -1)
 		return 1;
 
@@ -401,6 +454,7 @@ newmember(FILE *fp, char *name, void *data)
 	}
 
 	newobject(fp, t, INLIB);
+	membname = NULL;
 
 	return 1;
 }
@@ -459,6 +513,19 @@ openfile(char *name, char *buffer)
 }
 
 static void
+listundef(void)
+{
+	Symbol *sym, *p;
+
+	p = &refhead;
+	for (sym = p->next; sym != p; sym = sym->next) {
+		fprintf(stderr,
+		        "ld: symbol '%s' not defined\n",
+		        sym->name);
+	}
+}
+
+static void
 pass1(int argc, char *argv[])
 {
 	int t;
@@ -480,21 +547,60 @@ pass1(int argc, char *argv[])
 	}
 
 	if (moreundef()) {
-		Symbol *sym, *p;
-
-		p = &refhead;
-		for (sym = p->next; sym != p; sym = sym->next) {
-			fprintf(stderr,
-			        "ld: symbol '%s' not defined\n",
-			        sym->name);
-		}
+		listundef();
 		exit(EXIT_FAILURE);
 	}
 }
 
+/*
+ * default memory layout:
+ * -text
+ * -data
+ * -bss
+ */
 static void
 pass2(int argc, char *argv[])
 {
+	FILE *fp;
+	Section *sp;
+	long off;
+	unsigned long long addr;
+
+	if ((fp = fopen("binary", "wb")) == NULL) {
+		perror("opening output");
+		exit(EXIT_FAILURE);
+	}
+
+	addr = 0x100;
+	for (sp = sections; sp; sp = sp->next) {
+		fprintf(stderr, "1st - %c\n", sp->type);
+		if (sp->type != 'T')
+			continue;
+		rewind(sp->fp);
+		copy(fp, sp->fp, 0, sp->size);
+		addr += sp->size;
+		fclose(sp->fp);
+	}
+
+	addr = addr+3 & ~3;
+	for (sp = sections; sp; sp = sp->next) {
+		fprintf(stderr, "2nd - %c\n", sp->type);
+		if (sp->type != 'D')
+			continue;
+		rewind(sp->fp);
+		copy(fp, sp->fp, 0, sp->size);
+		addr += sp->size;
+		fclose(sp->fp);
+	}
+
+	addr = addr+3 & ~3;
+	for (sp = sections; sp; sp = sp->next) {
+		fprintf(stderr, "3rd - %c\n", sp->type);
+		if (sp->type != 'B')
+			continue;
+		addr += sp->size;
+		fclose(sp->fp);
+	}
 }
 
 static void
