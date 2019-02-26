@@ -19,7 +19,6 @@ coff32getsect(Obj *obj)
 
 	coff  = obj->data;
 	hdr = &coff->hdr;
-	scn = coff->scns;
 
 	secs = malloc(sizeof(Objsect) * hdr->f_nscns);
 	if (!secs)
@@ -28,6 +27,8 @@ coff32getsect(Obj *obj)
 	for (i = 0; i < hdr->f_nscns; i++) {
 		sp = &secs[i];
 		sp->next = (i < hdr->f_nscns-1) ? &secs[i+1] : NULL;
+		scn = &coff->scns[i];
+		flags = scn->s_flags;
 
 		if (flags & STYP_TEXT) {
 			type = 'T';
@@ -66,6 +67,7 @@ coff32getsect(Obj *obj)
 		sp->offset = scn->s_scnptr;
 		sp->size = scn->s_size;
 		sp->type = type;
+		sp->flags = sflags;
 		sp->align = 4; /* TODO: Check how align is defined in coff */
 	}
 	obj->secs = secs;
