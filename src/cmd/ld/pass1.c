@@ -13,7 +13,7 @@ static int bintype = -1;
 Objlst *objhead, *objlast;
 
 static void
-loadobj(Obj *obj, FILE *fp)
+addobj(Obj *obj, FILE *fp)
 {
 	int n;
 	Objlst *lst;
@@ -70,7 +70,7 @@ newobject(FILE *fp, int type, int inlib)
 	 * some symbol needed.
 	 */
 	if (!inlib || defasym(obj)) {
-		loadobj(obj, fp);
+		addobj(obj, fp);
 		return;
 	}
 
@@ -80,9 +80,9 @@ newobject(FILE *fp, int type, int inlib)
 }
 
 static void
-loadlib(FILE *fp)
+addlib(FILE *fp)
 {
-	int t, loaded;
+	int t, added;
 	long n;
 	Objsymdef *def, *dp;
 	Symbol *sym;
@@ -92,9 +92,9 @@ loadlib(FILE *fp)
 		return;
 	}
 
-	loaded = 1;
-	while (moreundef() && loaded) {
-		loaded = 0;
+	added = 1;
+	while (moreundef() && added) {
+		added = 0;
 		for (dp = def; dp; dp = dp->next) {
 			sym = lookup(dp->name, NOINSTALL);
 			if (!sym || sym->def)
@@ -116,7 +116,7 @@ loadlib(FILE *fp)
 			}
 
 			newobject(fp, t, OUTLIB);
-			loaded = 1;
+			added = 1;
 		}
 	}
 clean:
@@ -137,7 +137,7 @@ newmember(FILE *fp, char *name, void *data)
 	if (*nmemb++ == 0) {
 		if (!strncmp(name, "/", SARNAM) ||
 		    !strncmp(name, "__.SYMDEF", SARNAM)) {
-			loadlib(fp);
+			addlib(fp);
 			return 0;
 		}
 	}

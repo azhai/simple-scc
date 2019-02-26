@@ -64,7 +64,8 @@ coff32getsect(Obj *obj)
 			sflags &= ~SLOAD;
 
 		sp->name = scn->s_name;
-		sp->offset = scn->s_scnptr;
+		sp->id = i;
+		sp->seek = scn->s_scnptr;
 		sp->size = scn->s_size;
 		sp->type = type;
 		sp->flags = sflags;

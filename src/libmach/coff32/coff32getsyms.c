@@ -84,6 +84,7 @@ coff32getsyms(Obj *obj)
 		sym->type = t;
 		sym->value = ent->n_value;
 		sym->size = (sym->type == 'C') ? ent->n_value : 0;
+		sym->sect = ent->n_scnum-1;
 	}
 
 	return i;

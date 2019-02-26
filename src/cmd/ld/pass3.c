@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -5,8 +6,35 @@
 
 #include "ld.h"
 
+static void
+rebase(Obj *obj)
+{
+	Symbol *aux;
+	Objsym *sym;
+
+	for (sym = obj->syms; sym; sym = sym->next) {
+		switch (toupper(sym->type)) {
+		case 'T':
+		case 'D':
+		case 'B':
+			aux = lookup(sym->name, NOINSTALL);
+			aux->value += obj->secs[sym->sect].base;
+		case 't':
+		case 'd':
+		case 'b':
+			sym->value += obj->secs[sym->sect].base;
+		case 'N':
+		case 'U':
+		case '?':
+			break;
+		default:
+			abort();
+		}
+	}
+}
+
 /*
- * relocate the sections
+ * rebase all the sections
  */
 void
 pass3(int argc, char *argv[])
@@ -14,21 +42,34 @@ pass3(int argc, char *argv[])
 	Obj *obj;
 	Objlst *lst;
 	Objsect *sp;
-	unsigned long long text, data, bss;
+	unsigned long long *base, text, data, bss;
 
-	textbase = text = 0;
-	database = data = textsiz+3 & ~3;
-	bssbase = bss = data+datasiz+3 & ~3;
+	/*
+	 * TODO: deal with page aligment
+	 */
+	textbase = text = 0x100;
+	database = data = textsiz;
+	bssbase = bss = data+datasiz;
 
 	for (lst = objhead; lst; lst = lst->next) {
-		for (sp = lst->obj->secs; sp; sp = sp->next) {
+		obj = lst->obj;
+		for (sp = obj->secs; sp; sp = sp->next) {
 			switch (sp->type) {
 			case 'T':
+				base = &text;
+				break;
 			case 'D':
+				base = &data;
+				break;
 			case 'B':
+				base = &bss;
+				break;
 			default:
 				abort();
 			}
+			sp->base = *base;
+			*base += sp->size;
 		}
+		rebase(obj);
 	}
 }

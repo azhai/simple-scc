@@ -7,7 +7,6 @@ TARGET = $(BINDIR)/nm \
          $(BINDIR)/strip \
          $(BINDIR)/size \
          $(BINDIR)/ar \
-         $(BINDIR)/ld \
          $(BINDIR)/ranlib \
          $(BINDIR)/objdump \
          $(BINDIR)/objcopy \

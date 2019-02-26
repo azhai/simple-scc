@@ -18,17 +18,19 @@ enum sectype {
 
 struct objsect {
 	char *name;
+	int id;
 	int type;
-	unsigned flags;
-	long offset;
 	int align;
-	unsigned long long size;
+	unsigned flags;
+	long seek;
+	unsigned long long size, base;
 	Objsect *next;
 };
 
 struct objsym {
-	char type;
 	char *name;
+	int type;
+	int sect;
 	unsigned long long size;
 	unsigned long long value;
 	Objsym *next, *hash;
