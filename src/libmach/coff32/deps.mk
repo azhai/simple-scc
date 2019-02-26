@@ -12,7 +12,9 @@
 ./coff32getsect.o: $(INCDIR)/scc/scc/mach.h
 ./coff32getsect.o: ./../libmach.h
 ./coff32getsect.o: ./coff32.h
-./coff32namidx.o: $(INCDIR)/scc/scc/mach.h
+./coff32getsyms.o: $(INCDIR)/scc/scc/mach.h
+./coff32getsyms.o: ./../libmach.h
+./coff32getsyms.o: ./coff32.h
 ./coff32new.o: $(INCDIR)/scc/scc/mach.h
 ./coff32new.o: ./../libmach.h
 ./coff32new.o: ./coff32.h
