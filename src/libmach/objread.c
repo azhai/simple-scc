@@ -19,5 +19,7 @@ objread(Obj *obj, FILE *fp)
 
 	if ((*funv[fmt])(obj, fp) < 0)
 		return -1;
+	obj->fp = fp;
+
 	return 0;
 }

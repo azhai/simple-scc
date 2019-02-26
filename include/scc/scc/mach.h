@@ -3,7 +3,7 @@
 typedef struct objsect Objsect;
 typedef struct objsym Objsym;
 typedef struct objsymdef Objsymdef;
-typedef struct object Obj;
+typedef struct obj Obj;
 
 enum sectype {
 	SREAD   = 1 << 0,
@@ -41,12 +41,13 @@ struct objsymdef {
 	Objsymdef *hash, *next;
 };
 
-struct object {
+struct obj {
 	int type;
 	char *index;
 	Objsym *htab[NR_SYMHASH];
 	Objsym *syms;;
 	Objsect *secs;
+	FILE *fp;
 	fpos_t pos;
 	int nsecs;
 	int nsyms;
