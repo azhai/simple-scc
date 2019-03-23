@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./cc1/types.c";
 #include <assert.h>
 #include <inttypes.h>
 #include <stdlib.h>

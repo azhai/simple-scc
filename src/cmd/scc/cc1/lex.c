@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./cc1/lex.c";
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>

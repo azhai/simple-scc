@@ -1,5 +1,3 @@
-static char sccsid[] = "@(#) ./cc2/main.c";
-
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>

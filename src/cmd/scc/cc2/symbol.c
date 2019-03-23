@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./cc2/symbol.c";
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>

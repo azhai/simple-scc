@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./lib/scc/casecmp.c";
 #include <ctype.h>
 #include <scc/scc.h>
 

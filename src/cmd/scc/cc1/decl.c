@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./cc1/decl.c";
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>

@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./lib/scc/die.c";
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>

@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./cc1/stmt.c";
 #include <stddef.h>
 #include <setjmp.h>
 

@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./lib/scc/alloc.c";
 #include <stdlib.h>
 #include <scc/scc.h>
 

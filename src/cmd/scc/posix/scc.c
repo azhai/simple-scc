@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./driver/posix/scc.c";
 #define _POSIX_SOURCE
 #define _XOPEN_SOURCE 500
 #include <sys/types.h>

@@ -1,5 +1,3 @@
-static char sccsid[] = "@(#) ./cc2/arch/amd64-sysv/types.c";
-
 #include <scc/scc.h>
 
 #include "../../cc2.h"

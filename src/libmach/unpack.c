@@ -1,5 +1,3 @@
-static char sccsid[] = "@(#) ./lib/scc/lunpack.c";
-
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>

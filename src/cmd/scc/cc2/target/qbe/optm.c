@@ -1,5 +1,3 @@
-static char sccsid[] = "@(#) ./cc2/arch/qbe/optm.c";
-
 #include <stddef.h>
 
 #include <scc/scc.h>

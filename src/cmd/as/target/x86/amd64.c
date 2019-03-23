@@ -1,5 +1,3 @@
-static char sccsid[] = "@(#) ./as/target/x86/amd64.c";
-
 #include <scc/scc.h>
 
 #include "../../as.h"

@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./lib/scc/xstrdup.c";
 #include <string.h>
 #include <scc/scc.h>
 

@@ -1,5 +1,3 @@
-static char sccsid[] = "@(#) ./nm/main.c";
-
 #include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>

@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./cc1/error.c";
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>

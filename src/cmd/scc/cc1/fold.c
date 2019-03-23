@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./cc1/fold.c";
 #include <assert.h>
 #include <stdlib.h>
 

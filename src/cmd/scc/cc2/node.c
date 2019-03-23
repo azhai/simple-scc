@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./cc2/node.c";
 #include <stdlib.h>
 #include <string.h>
 

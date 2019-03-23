@@ -1,5 +1,3 @@
-static char sccsid[] = "@(#) ./cc2/arch/qbe/cgen.c";
-
 #include <assert.h>
 #include <stdlib.h>
 

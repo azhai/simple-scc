@@ -1,5 +1,3 @@
-static char sccsid[] = "@(#) ./cc2/arch/i386-sysv/cgen.c";
-
 #include <scc/scc.h>
 
 #include "arch.h"

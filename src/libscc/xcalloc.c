@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./lib/scc/xcalloc.c";
 #include <stdlib.h>
 #include <scc/scc.h>
 

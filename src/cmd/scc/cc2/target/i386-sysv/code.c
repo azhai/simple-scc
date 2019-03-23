@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./cc2/arch/i386-sysv/code.c";
 #include <stdio.h>
 #include <stdlib.h>
 

@@ -1,5 +1,3 @@
-static char sccsid[] = "@(#) ./as/symbol.c";
-
 #include <ctype.h>
 #include <stdio.h>
 #include <stdint.h>

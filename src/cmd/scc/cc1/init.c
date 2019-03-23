@@ -1,4 +1,3 @@
-static char sccsid[] = "@(#) ./cc1/init.c";
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
