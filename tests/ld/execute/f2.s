@@ -2,4 +2,4 @@
 
 	.globl	f1
 	.globl	f2
-f2:	.long	0
+f2:	.long	2
