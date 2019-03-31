@@ -13,7 +13,7 @@ rebase(Obj *obj)
 	Objsym *sym;
 
 	for (sym = obj->syms; sym; sym = sym->next) {
-		switch (toupper(sym->type)) {
+		switch (sym->type) {
 		case 'T':
 		case 'D':
 		case 'B':
