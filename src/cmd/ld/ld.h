@@ -55,6 +55,7 @@ extern int newsym(struct objsym *osym, struct obj *obj);
 extern int moreundef(void);
 extern void listundef(void);
 extern int defasym(struct obj *obj);
+extern int debugsym(void);
 
 /* globals */
 extern char *filename, *membname;

@@ -144,3 +144,19 @@ defasym(Obj *obj)
 
 	return 0;
 }
+
+#ifndef NDEBUG
+int
+debugsym(void)
+{
+	Symbol **symp, *sym;
+
+	for (symp = symtab; symp < &symtab[NR_SYMBOL]; symp++) {
+		for (sym = *symp; sym; sym = sym->hash)
+			fprintf(stderr,
+			        "sym: %s (%#x)\n",
+			        sym->name,
+			        sym->value);
+	}
+}
+#endif
