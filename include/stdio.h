@@ -12,9 +12,9 @@
 #endif
 
 #define EOF            -1
-#define SEEK_CUR        0
-#define SEEK_END        1
-#define SEEK_SET        2
+#define SEEK_SET        0
+#define SEEK_CUR        1
+#define SEEK_END        2
 
 
 #define _IOWRITE        (1 << 0)
