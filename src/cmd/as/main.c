@@ -92,7 +92,6 @@ static int
 dopass(char *fname)
 {
 	struct line line;
-	FILE *fp;
 	extern int nerrors;
 	extern jmp_buf recover;
 
@@ -101,7 +100,7 @@ dopass(char *fname)
 
 	endpass = 0;
 	setjmp(recover);
-	while (!endpass && nextline(fp, &line)) {
+	while (!endpass && nextline(&line)) {
 		linesym = NULL;
 
 		if (line.label)

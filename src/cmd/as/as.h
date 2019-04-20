@@ -163,7 +163,7 @@ extern Node **getargs(char *s);
 extern void error(char *msg, ...);
 /* Avoid errors in files where stdio is not included */
 #ifdef stdin
-extern int nextline(FILE *fp, struct line *linep);
+extern int nextline(struct line *linep);
 #endif
 extern void unexpected(void);
 extern void expect(int token);

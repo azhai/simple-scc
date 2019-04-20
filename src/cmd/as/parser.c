@@ -428,7 +428,7 @@ getline(FILE *fp, char buff[MAXLINE])
 }
 
 int
-nextline(FILE *fp, struct line *lp)
+nextline(struct line *lp)
 {
 	struct input *ip;
 	size_t n;
