@@ -47,7 +47,7 @@ struct obj {
 	int type;
 	char *index;
 	Objsym *htab[NR_SYMHASH];
-	Objsym *syms;;
+	Objsym *syms;
 	Objsect *secs;
 	FILE *fp;
 	fpos_t pos;
