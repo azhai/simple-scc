@@ -3,7 +3,7 @@
 #undef vprintf
 
 int
-vprintf(const char *fmt, va_list ap)
+vprintf(const char * restrict fmt, va_list ap)
 {
 	va_list ap2;
 

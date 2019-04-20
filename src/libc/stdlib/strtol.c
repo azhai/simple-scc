@@ -9,7 +9,7 @@
 #undef strtol
 
 long
-strtol(const char *s, char **end, int base)
+strtol(const char * restrict s, char ** restrict end, int base)
 {
 	int d, sign = -1;
 	long n;

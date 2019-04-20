@@ -2,7 +2,7 @@
 #undef fgets
 
 char *
-fgets(char *s, int n, FILE *fp)
+fgets(char * restrict s, int n, FILE * restrict fp)
 {
 	int ch = 0;
 	char *t = s;

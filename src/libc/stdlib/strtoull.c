@@ -9,7 +9,7 @@
 #undef strtoull
 
 unsigned long long
-strtoull(const char *s, char **end, int base)
+strtoull(const char * restrict s, char ** restrict end, int base)
 {
 	int d, sign = 1;
 	unsigned long long n;

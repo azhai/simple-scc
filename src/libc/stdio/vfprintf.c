@@ -187,7 +187,7 @@ strout(char *s, size_t len, int width, int fill, FILE * restrict fp)
 }
 
 int
-vfprintf(FILE * restrict fp, const char *fmt, va_list va)
+vfprintf(FILE * restrict fp, const char * restrict fmt, va_list va)
 {
 	int ch, n, flags, width, left, fill, cnt = 0;
 	size_t inc, len;
