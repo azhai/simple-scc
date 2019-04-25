@@ -1,7 +1,6 @@
 #include <time.h>
 #undef asctime
 
-#include <stdio.h> // TODO: remove me!
 char *
 asctime(const struct tm *tm)
 {
