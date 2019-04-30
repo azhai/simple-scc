@@ -50,7 +50,7 @@ normalize(struct tm *tm)
 		day += _daysmon[mon];
 		if (mon == JAN) {
 			if (year == EPOCH)
-				return -1;
+				return 0;
 			year--;
 			_daysmon[FEB] = FEBDAYS(year);
 			mon = DEC+1;
@@ -61,7 +61,7 @@ normalize(struct tm *tm)
 		day -= _daysmon[mon];
 		if (mon == DEC) {
 			if (year == _MAXYEAR)
-				return -1;
+				return 0;
 			year++;
 			_daysmon[FEB] = FEBDAYS(year);
 			mon = JAN-1;
