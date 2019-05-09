@@ -19,6 +19,7 @@ extern int strcoll(const char *s1, const char *s2);
 extern int strncmp(const char *s1, const char *s2, size_t n);
 extern size_t strxfrm(char * restrict s1, const char * restrict s2, size_t n);
 extern void *memchr(const void *s, int c, size_t n);
+extern void *memrchr(const void *s, int c, size_t n);
 extern char *strchr(const char *s, int c);
 extern size_t strcspn(const char *s1, const char *s2);
 extern char *strpbrk(const char *s1, const char *s2);

@@ -4,6 +4,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
 OBJS = memchr.o\
+       memrchr.o \
        memcmp.o\
        memcpy.o\
        memmove.o\
