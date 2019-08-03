@@ -1,5 +1,4 @@
 bin
-include/scc
 libexec/scc
 lib
 lib/scc

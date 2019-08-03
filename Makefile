@@ -37,6 +37,7 @@ dep:
 
 clean: $(ENVIRON)
 	$(FORALL)
-	rm -rf lib bin libexec dirs $(ENVIRON)
+	xargs rm -rf < $(SCRIPTDIR)/libc-proto
+	rm -f dirs $(ENVIRON)
 
 tests: all
