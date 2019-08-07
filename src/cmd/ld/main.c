@@ -53,6 +53,20 @@ cleanup(void)
 		remove(output);
 }
 
+/*
+ * pass1: Get the list of object files that are going to be linked.
+ * pass2: Calculate the size of every segment.
+ * pass3: Rebase all symbols in sections
+ */
+static void
+ld(int argc, char*argv[])
+{
+	pass1(argc, argv);
+	pass2(argc, argv);
+	pass3(argc, argv);
+	debugsym();
+}
+
 static void
 usage(void)
 {
@@ -147,12 +161,9 @@ main(int argc, char *argv[])
 
 	if (argc == 0)
 		usage();
-
 	atexit(cleanup);
 
-	pass1(argc, argv);
-	pass2(argc, argv);
-	pass3(argc, argv);
+	ld(argc, argv);
 
 	return status;
 }
