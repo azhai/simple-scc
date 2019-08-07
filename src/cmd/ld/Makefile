@@ -21,3 +21,5 @@ dep: inc-dep
 
 clean:
 	rm -f $(OBJS)
+
+include deps.mk
