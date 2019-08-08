@@ -6,11 +6,6 @@ typedef struct symbol Symbol;
 typedef struct section Section;
 
 enum {
-	NOINSTALL,
-	INSTALL,
-};
-
-enum {
 	OUTLIB,
 	INLIB,
 };
@@ -43,15 +38,15 @@ struct symbol {
 extern void pass1(int argc, char *argv[]);
 extern void pass2(int argc, char *argv[]);
 extern void pass3(int argc, char *argv[]);
+extern void pass4(int argc, char *argv[]);
 
 /* main.c */
 extern char *errstr(void);
 extern void error(char *fmt, ...);
 
 /* symbol.c */
-extern Symbol *lookup(char *name, int install);
-extern Symbol *define(struct objsym *osym, struct obj *obj);
-extern int newsym(struct objsym *osym, struct obj *obj);
+extern Symbol *lookup(char *name);
+extern Symbol *install(char *name);
 extern int moreundef(void);
 extern void listundef(void);
 extern int defasym(struct obj *obj);

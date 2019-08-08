@@ -17,14 +17,14 @@ rebase(Obj *obj)
 		case 'T':
 		case 'D':
 		case 'B':
-			aux = lookup(sym->name, NOINSTALL);
+			aux = lookup(sym->name);
 			aux->value += obj->secs[sym->sect].base;
 		case 't':
 		case 'd':
 		case 'b':
 			sym->value += obj->secs[sym->sect].base;
-		case 'N':
 		case 'U':
+		case 'N':
 		case '?':
 			break;
 		default:

@@ -1,4 +1,3 @@
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,10 +17,8 @@ static Symbol refhead = {
 };
 
 Symbol *
-lookup(char *name, int install)
+lookup(char *name)
 {
-	size_t len;
-	char *s;
 	unsigned h;
 	Symbol *sym;
 
@@ -32,8 +29,18 @@ lookup(char *name, int install)
 			return sym;
 	}
 
-	if (!install)
-		return NULL;
+	return NULL;
+}
+
+Symbol *
+install(char *name)
+{
+	unsigned h;
+	size_t len;
+	Symbol *sym;
+	char *s;
+
+	h = genhash(name) % NR_SYMBOL;
 
 	len = strlen(name) + 1;
 	sym = malloc(sizeof(*sym));
@@ -56,59 +63,6 @@ lookup(char *name, int install)
 	sym->prev = &refhead;
 
 	return sym;
-}
-
-Symbol *
-define(Objsym *osym, Obj *obj)
-{
-	Symbol *sym = lookup(osym->name, INSTALL);
-
-	if (sym->def && sym->def->type != 'C') {
-		error("%s: symbol redefined", osym->name);
-		return NULL;
-	}
-
-	sym->obj = obj;
-	sym->def = osym;
-	sym->size = osym->size;
-	sym->value = osym->value;
-
-	sym->next->prev = sym->prev;
-	sym->prev->next = sym->next;
-	sym->next = sym->prev = NULL;
-
-	return sym;
-}
-
-int
-newsym(Objsym *osym, Obj *obj)
-{
-	Symbol *sym;
-
-	switch (osym->type) {
-	case 'U':
-		lookup(osym->name, INSTALL);
-	case '?':
-	case 'N':
-		break;
-	case 'C':
-		sym = lookup(osym->name, NOINSTALL);
-		if (!sym || !sym->def) {
-			define(osym, obj);
-			break;
-		}
-		if (sym->def->type != 'C')
-			break;
-		if (sym->size < osym->size)
-			sym->size = osym->size;
-		break;
-	default:
-		if (isupper(osym->type))
-			define(osym, obj);
-		break;
-	}
-
-	return 1;
 }
 
 int

@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +12,63 @@
 
 static int bintype = -1;
 Objlst *objhead, *objlast;
+
+static Symbol *
+define(Objsym *osym, Obj *obj)
+{
+	Symbol *sym = lookup(osym->name);
+
+	if (!sym) {
+		sym = install(osym->name);
+	} else if (sym->def && sym->def->type != 'C') {
+		error("%s: symbol redefined", osym->name);
+		return NULL;
+	}
+
+	sym->obj = obj;
+	sym->def = osym;
+	sym->size = osym->size;
+	sym->value = osym->value;
+
+	sym->next->prev = sym->prev;
+	sym->prev->next = sym->next;
+	sym->next = sym->prev = NULL;
+
+	return sym;
+}
+
+static int
+newsym(Objsym *osym, Obj *obj)
+{
+	Symbol *sym;
+
+	switch (osym->type) {
+	case 'U':
+		if ((sym = lookup(osym->name)) == NULL)
+			sym = install(osym->name);
+		break;
+	case '?':
+	case 'N':
+		break;
+	case 'C':
+		sym = lookup(osym->name);
+		if (!sym || !sym->def) {
+			sym = define(osym, obj);
+			break;
+		}
+		if (sym->def->type != 'C')
+			break;
+		if (sym->size < osym->size)
+			sym->size = osym->size;
+		break;
+	default:
+		if (isupper(osym->type))
+			define(osym, obj);
+		break;
+	}
+
+	return 1;
+}
 
 static void
 addobj(Obj *obj, FILE *fp)
@@ -96,7 +154,7 @@ addlib(FILE *fp)
 	while (moreundef() && added) {
 		added = 0;
 		for (dp = def; dp; dp = dp->next) {
-			sym = lookup(dp->name, NOINSTALL);
+			sym = lookup(dp->name);
 			if (!sym || sym->def)
 				continue;
 
