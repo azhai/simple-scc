@@ -11,11 +11,6 @@
 
 static Symbol *symtab[NR_SYMBOL];
 
-static Symbol refhead = {
-	.next = &refhead,
-	.prev = &refhead,
-};
-
 Symbol *
 lookup(char *name)
 {
@@ -23,7 +18,6 @@ lookup(char *name)
 	Symbol *sym;
 
 	h = genhash(name) % NR_SYMBOL;
-
 	for (sym = symtab[h]; sym; sym = sym->hash) {
 		if (!strcmp(name, sym->name))
 			return sym;
@@ -41,7 +35,6 @@ install(char *name)
 	char *s;
 
 	h = genhash(name) % NR_SYMBOL;
-
 	len = strlen(name) + 1;
 	sym = malloc(sizeof(*sym));
 	s = malloc(len);
@@ -56,47 +49,9 @@ install(char *name)
 	symtab[h] = sym;
 	sym->value = 0;
 	sym->size = 0;
-
-	refhead.next->prev = sym;
-	sym->next = refhead.next;
-	refhead.next = sym;
-	sym->prev = &refhead;
+	sym->next = sym->prev = NULL;
 
 	return sym;
-}
-
-int
-moreundef(void)
-{
-
-	return refhead.next != &refhead;
-}
-
-void
-listundef(void)
-{
-	Symbol *sym, *p;
-
-	p = &refhead;
-	for (sym = p->next; sym != p; sym = sym->next) {
-		fprintf(stderr,
-		        "ld: symbol '%s' not defined\n",
-		        sym->name);
-	}
-}
-
-int
-defasym(Obj *obj)
-{
-	Symbol *sym, *p;
-
-	p = &refhead;
-	for (sym = p->next; sym != p; sym = sym->next) {
-		if (objlookup(obj, sym->name, 0))
-			return 1;
-	}
-
-	return 0;
 }
 
 #ifndef NDEBUG

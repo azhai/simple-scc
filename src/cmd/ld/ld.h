@@ -36,6 +36,7 @@ struct symbol {
 
 /* passes */
 extern void pass1(int argc, char *argv[]);
+extern Symbol *undef(char *name);
 extern void pass2(int argc, char *argv[]);
 extern void pass3(int argc, char *argv[]);
 extern void pass4(int argc, char *argv[]);
@@ -47,9 +48,6 @@ extern void error(char *fmt, ...);
 /* symbol.c */
 extern Symbol *lookup(char *name);
 extern Symbol *install(char *name);
-extern int moreundef(void);
-extern void listundef(void);
-extern int defasym(struct obj *obj);
 extern int debugsym(void);
 
 /* globals */

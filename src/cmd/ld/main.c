@@ -132,7 +132,7 @@ main(int argc, char *argv[])
 				if (argc == 0)
 					goto usage;
 				++argv, --argc;
-				install(*argv);
+				undef(*argv);
 				break;
 			case 'o':
 				if (argc == 0)

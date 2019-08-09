@@ -17,6 +17,10 @@ rebase(Obj *obj)
 		case 'T':
 		case 'D':
 		case 'B':
+			/*
+			 * this lookup must succeed, otherwise
+			 * we have an error in our code.
+			 */
 			aux = lookup(sym->name);
 			aux->value += obj->secs[sym->sect].base;
 		case 't':

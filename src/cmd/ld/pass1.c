@@ -11,6 +11,11 @@
 #include "ld.h"
 
 static int bintype = -1;
+static Symbol refhead = {
+	.next = &refhead,
+	.prev = &refhead,
+};
+
 Objlst *objhead, *objlast;
 
 static Symbol *
@@ -37,6 +42,54 @@ define(Objsym *osym, Obj *obj)
 	return sym;
 }
 
+Symbol *
+undef(char *name)
+{
+	Symbol *sym = install(name);
+
+	refhead.next->prev = sym;
+	sym->next = refhead.next;
+	refhead.next = sym;
+	sym->prev = &refhead;
+
+	return sym;
+}
+
+static int
+moreundef(void)
+{
+
+	return refhead.next != &refhead;
+}
+
+static void
+listundef(void)
+{
+	Symbol *sym, *p;
+
+	p = &refhead;
+	for (sym = p->next; sym != p; sym = sym->next) {
+		fprintf(stderr,
+		        "ld: symbol '%s' not defined\n",
+		        sym->name);
+	}
+}
+
+static int
+defasym(Obj *obj)
+{
+	Symbol *sym, *p;
+
+	p = &refhead;
+	for (sym = p->next; sym != p; sym = sym->next) {
+		if (objlookup(obj, sym->name, 0))
+			return 1;
+	}
+
+	return 0;
+}
+
+
 static int
 newsym(Objsym *osym, Obj *obj)
 {
@@ -45,7 +98,7 @@ newsym(Objsym *osym, Obj *obj)
 	switch (osym->type) {
 	case 'U':
 		if ((sym = lookup(osym->name)) == NULL)
-			sym = install(osym->name);
+			sym = undef(osym->name);
 		break;
 	case '?':
 	case 'N':
@@ -150,8 +203,7 @@ addlib(FILE *fp)
 		return;
 	}
 
-	added = 1;
-	while (moreundef() && added) {
+	for (added = 1; moreundef() && added; ) {
 		added = 0;
 		for (dp = def; dp; dp = dp->next) {
 			sym = lookup(dp->name);
