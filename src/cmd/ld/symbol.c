@@ -37,8 +37,7 @@ install(char *name)
 	h = genhash(name) % NR_SYMBOL;
 	len = strlen(name) + 1;
 	sym = malloc(sizeof(*sym));
-	s = malloc(len);
-	if (!len || !s) {
+	if ((s = malloc(len)) == NULL) {
 		error("out of memory");
 		exit(EXIT_FAILURE);
 	}
