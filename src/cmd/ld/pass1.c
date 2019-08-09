@@ -10,6 +10,11 @@
 
 #include "ld.h"
 
+enum {
+	OUTLIB,
+	INLIB,
+};
+
 static int bintype = -1;
 static Symbol refhead = {
 	.next = &refhead,
@@ -42,7 +47,7 @@ define(Objsym *osym, Obj *obj)
 	return sym;
 }
 
-Symbol *
+static Symbol *
 undef(char *name)
 {
 	Symbol *sym = install(name);
@@ -176,9 +181,10 @@ newobject(FILE *fp, int type, int inlib)
 
 	/*
 	 * we add the object to the list of objects
-	 * if we are not in a library without index,
-	 * or in that case if the library defines
-	 * some symbol needed.
+	 * if we are in an object file. If we are in
+	 * a library (without index) then we check
+	 * if the object defines some symbol in the
+	 * undefined list.
 	 */
 	if (!inlib || defasym(obj)) {
 		addobj(obj, fp);
@@ -203,8 +209,7 @@ addlib(FILE *fp)
 		return;
 	}
 
-	for (added = 1; moreundef() && added; ) {
-		added = 0;
+	for (added = 0; moreundef(); added = 0) {
 		for (dp = def; dp; dp = dp->next) {
 			sym = lookup(dp->name);
 			if (!sym || sym->def)
@@ -228,6 +233,8 @@ addlib(FILE *fp)
 			newobject(fp, t, OUTLIB);
 			added = 1;
 		}
+		if (!added)
+			break;
 	}
 clean:
 	free(def);
@@ -319,26 +326,49 @@ openfile(char *name, char *buffer)
 	return NULL;
 }
 
+static void
+load(char *name)
+{
+	int t;
+	FILE *fp;
+	char buff[FILENAME_MAX];
+
+	if ((fp = openfile(name, buff)) == NULL)
+		return;
+
+	if ((t = objtype(fp, NULL)) != -1)
+		newobject(fp, t, OUTLIB);
+	else if (archive(fp))
+		newlibrary(fp);
+	else
+		error("bad format");
+}
+
 /*
  * Get the list of object files that are going to be linked
  */
 void
 pass1(int argc, char *argv[])
 {
-	int t;
-	FILE *fp;
-	char buff[FILENAME_MAX];
+	char **ap, *cp, *arg;
 
-	for ( ; *argv; ++argv) {
-		if ((fp = openfile(*argv, buff)) == NULL)
+	for (ap = argv+1; *ap; ++ap) {
+		if (ap[0][0] != '-') {
+			load(*ap);
 			continue;
-
-		if ((t = objtype(fp, NULL)) != -1)
-			newobject(fp, t, OUTLIB);
-		else if (archive(fp))
-			newlibrary(fp);
-		else
-			error("bad format");
+		}
+		for (cp = &ap[0][1]; *cp; ++cp) {
+			switch (*cp) {
+			case 'l':
+				arg = (cp[1]) ? cp+1 : *++ap;
+				load(arg);
+				continue;
+			case 'u':
+				arg = (cp[1]) ? cp+1 : *++ap;
+				undef(arg);
+				continue;
+			}
+		}
 	}
 
 	if (moreundef()) {

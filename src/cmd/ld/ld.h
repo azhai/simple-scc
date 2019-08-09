@@ -5,11 +5,6 @@ typedef struct objlst Objlst;
 typedef struct symbol Symbol;
 typedef struct section Section;
 
-enum {
-	OUTLIB,
-	INLIB,
-};
-
 struct section {
 	char *name;
 	unsigned long base;
@@ -36,7 +31,6 @@ struct symbol {
 
 /* passes */
 extern void pass1(int argc, char *argv[]);
-extern Symbol *undef(char *name);
 extern void pass2(int argc, char *argv[]);
 extern void pass3(int argc, char *argv[]);
 extern void pass4(int argc, char *argv[]);

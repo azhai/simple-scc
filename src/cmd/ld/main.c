@@ -92,16 +92,15 @@ Lpath(char *path)
 int
 main(int argc, char *argv[])
 {
-	char *cp, **p;
+	int files = 0;
+	char *cp, *arg, **ap;
 
-	for (--argc; *++argv; --argc) {
-		if (argv[0][0] != '-' || argv[0][1] == 'l')
-			break;
-		if (argv[0][1] == '-') {
-			--argc, ++argv;
-			break;
+	for (ap = argv+1; *ap; ++ap) {
+		if (ap[0][0] != '-') {
+			files = 1;
+			continue;
 		}
-		for (cp = &argv[0][1]; *cp; ++cp) {
+		for (cp = &ap[0][1]; *cp; ++cp) {
 			switch (*cp) {
 			case 's':
 				sflag = 1;
@@ -122,47 +121,50 @@ main(int argc, char *argv[])
 			case 'n':
 				/* TODO */
 				break;
-			case 'L':
-				if (argc == 0)
-					goto usage;
-				++argv, --argc;
-				Lpath(*argv);
-				break;
 			case 'u':
-				if (argc == 0)
+			case 'l':
+				arg = (cp[1]) ? cp+1 : *++ap;
+				if (!arg)
 					goto usage;
-				++argv, --argc;
-				undef(*argv);
-				break;
+				goto next_arg;
+			case 'L':
+				arg = (cp[1]) ? cp+1 : *++ap;
+				if (!arg)
+					goto usage;
+				Lpath(arg);
+				goto next_arg;
 			case 'o':
-				if (argc == 0)
+				arg = (cp[1]) ? cp+1 : *++ap;
+				if (!arg)
 					goto usage;
-				++argv, --argc;
-				output = *argv;
-				break;
+				output = arg;
+				goto next_arg;
 			case 'e':
-				if (argc == 0)
+				arg = (cp[1]) ? cp+1 : *++ap;
+				if (!arg)
 					goto usage;
-				++argv, --argc;
-				entry = *argv;
-				break;
+				entry = arg;
+				goto next_arg;
 			case 'D':
-				if (argc == 0)
+				arg = (cp[1]) ? cp+1 : *++ap;
+				if (!arg)
 					goto usage;
-				++argv, --argc;
-				Dflag = *argv;
-				break;
+				Dflag = arg;
+				goto next_arg;
 			default:
 			usage:
 				usage();
 			}
 		}
+
+		next_arg:
+			continue;
 	}
 
-	if (argc == 0)
+	if (!files)
 		usage();
-	atexit(cleanup);
 
+	atexit(cleanup);
 	ld(argc, argv);
 
 	return status;
