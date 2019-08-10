@@ -55,4 +55,4 @@ extern int rflag;
 extern int dflag;
 extern int gflag;
 extern char *Dflag;
-extern Objlst *objhead, *objlast;
+extern Objlst *objhead;

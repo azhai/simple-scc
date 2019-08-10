@@ -20,8 +20,9 @@ static Symbol refhead = {
 	.next = &refhead,
 	.prev = &refhead,
 };
+static Objlst *objlast;
 
-Objlst *objhead, *objlast;
+Objlst *objhead;
 
 static Symbol *
 define(Objsym *osym, Obj *obj)
@@ -81,7 +82,7 @@ listundef(void)
 }
 
 static int
-defasym(Obj *obj)
+is_needed(Obj *obj)
 {
 	Symbol *sym, *p;
 
@@ -179,17 +180,11 @@ newobject(FILE *fp, int type, int inlib)
 		goto delete;
 	}
 
-	/*
-	 * we add the object to the list of objects
-	 * if we are in an object file. If we are in
-	 * a library (without index) then we check
-	 * if the object defines some symbol in the
-	 * undefined list.
-	 */
-	if (!inlib || defasym(obj)) {
-		addobj(obj, fp);
-		return;
-	}
+	if (inlib && !is_needed(obj))
+		goto delete;
+
+	addobj(obj, fp);
+	return;
 
  delete:
 	objdel(obj);
