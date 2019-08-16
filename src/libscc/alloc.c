@@ -3,14 +3,14 @@
 
 /*
  * This is the most pedantic piece of code that I have written
- * in my life. The next union is used to enforce the aligmnet
- * of the address returned by new(). A union has the aligment
- * of the field with the biggest aligment. This union has all
- * the types that we use in scc, and we round all the address
- * to the aligment of this struct, so we can be sure that any
+ * in my life. The next union is used to enforce the alignment
+ * of the address returned by new(). A union has the alignment
+ * of the field with the biggest alignment. This union has all
+ * the types that we use in scc, and we round all the addresses
+ * to the alignment of this struct, so we can be sure that any
  * pointer using that address will be safe. The field ap is
  * in the union to be sure that struct pointers are included
- * in the list, although they will have the same aligment or
+ * in the list, although they will have the same alignment or
  * smaller than void *, but I wanted to be pedantic.
  */
 union hdr {
