@@ -9,3 +9,4 @@ ARCHIVE = ar
 ARCHIVEFLAGS = -U
 NOPIE_CFLAGS = -nopie
 NOPIE_LDFLAGS = -nopie
+TOOLCFLAGS = -std=c99
