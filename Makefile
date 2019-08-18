@@ -23,6 +23,7 @@ $(ENVIRON):
 	@rm -f $@; \
 	trap 'r=$?;rm -f $$$$.tmp;exit $r' EXIT HUP INT QUIT TERM; \
 	echo PATH=$$PATH:$$PWD/$(SCRIPTDIR):. > $$$$.tmp && \
+	echo HOST=`uname | tr 'A-Z' 'a-z'` >> $$$$.tmp && \
 	echo NM=\"$(NM)\" >> $$$$.tmp && \
 	echo AR=\"$(AR)\" >> $$$$.tmp && \
 	echo RL=\"$(RL)\" >> $$$$.tmp && \

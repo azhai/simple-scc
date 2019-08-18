@@ -1,7 +1,9 @@
 CONF=amd64-linux
 TOOL=unix
+HOST=unix
 include $(PROJECTDIR)/config/$(CONF).mk
 include $(PROJECTDIR)/config/toolchain/$(TOOL).mk
+include $(PROJECTDIR)/config/host/$(HOST).mk
 
 LIBDIR     = $(PROJECTDIR)/lib/scc
 SCRIPTDIR  = $(PROJECTDIR)/scripts
@@ -23,6 +25,7 @@ AR = $(CROSS_COMPILE)$(ARCHIVE)
 
 SCC_CFLAGS = $(MORECFLAGS) \
              $(TOOLCFLAGS) \
+             $(HOSTCFLAGS) \
              $(SYSCFLAGS) \
              $(INCLUDE) \
              -g \
@@ -30,6 +33,7 @@ SCC_CFLAGS = $(MORECFLAGS) \
 
 SCC_LDFLAGS = $(MORELFLAGS) \
               $(TOOLLDFLAGS) \
+              $(HOSTLDFLAGS) \
               $(SYSLDFLAGS) \
               -L$(LIBDIR) \
               -g \
@@ -37,6 +41,7 @@ SCC_LDFLAGS = $(MORELFLAGS) \
 
 SCC_ASFLAGS = $(MOREASFLAGS) \
               $(TOOLASFLAGS) \
+              $(HOSTASFLAGS) \
               $(SYSASFLAGS) \
               $(ASFLAGS)
 
