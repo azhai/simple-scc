@@ -2,11 +2,19 @@ Compiling
 =========
 
 SCC is a portable toolchain that can be compiled on any UNIX system
-out of the box. It supports three main configuration options that
+out of the box. It supports four main configuration options that
 can be passed to the command line:
 
 	- CROSS_COMPILE:
           Specify a prefix name for the tools called by the Makefile.
+
+	- HOST:
+	  Specify the host system to be used. Possible supported
+	  values are:
+
+		- unix (by default)
+		- bsd
+		- plan9
 
 	- CONF: Specify which version of libc to build.
 	  Once the build process completes only the target specified in
