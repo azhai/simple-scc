@@ -8,8 +8,8 @@ typedef struct segment Segment;
 
 struct section {
 	char *name;
-	unsigned long base;
-	unsigned long long size;
+	unsigned long long base;
+	unsigned long size;
 	unsigned flags;
 	int type;
 	FILE *fp;

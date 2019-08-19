@@ -8,10 +8,6 @@
 
 #include "ld.h"
 
-char *output = "a.out", *entry = "start";
-
-char *filename, *membname;
-
 int sflag;        /* discard all the symbols */
 int xflag;        /* discard local symbols */
 int Xflag;        /* discard locals starting with 'L' */
@@ -20,6 +16,14 @@ int dflag;        /* define common even with rflag */
 int gflag;        /* preserve debug symbols */
 char *Dflag;      /* size of data */
 
+char *filename, *membname;
+
+Segment text = {.type = 'T'};
+Segment rodata = {.type = 'R'};
+Segment data = {.type = 'D'};
+Segment bss = {.type = 'B'};
+
+static char *output = "a.out", *entry = "start";
 static int status;
 
 char *
@@ -55,6 +59,7 @@ cleanup(void)
  * pass1: Get the list of object files that are going to be linked.
  * pass2: Calculate the size of every segment.
  * pass3: Rebase all symbols in sections
+ * pass4: Create the temporary files per section
  */
 static void
 ld(int argc, char*argv[])
@@ -62,6 +67,7 @@ ld(int argc, char*argv[])
 	pass1(argc, argv);
 	pass2(argc, argv);
 	pass3(argc, argv);
+	pass4(argc, argv);
 	debugsym();
 	debugsec();
 }

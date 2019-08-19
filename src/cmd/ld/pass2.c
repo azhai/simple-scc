@@ -6,12 +6,6 @@
 
 #include "ld.h"
 
-Segment text = {.type = 'T'};
-Segment rodata = {.type = 'R'};
-Segment data = {.type = 'D'};
-Segment bss = {.type = 'B'};
-Segment debug = {.type = 'N'};
-
 static void
 mksecs(void)
 {
@@ -22,7 +16,6 @@ mksecs(void)
 	for (lp = objhead; lp; lp = lp->next) {
 		for (sp = lp->obj->secs; sp; sp = sp->next) {
 			sec = section(sp->name);
-
 			if (sec->type == '?') {
 				sec->type = sp->type;
 				sec->flags = sp->flags;
@@ -33,6 +26,7 @@ mksecs(void)
 				      sec->name);
 			}
 
+			/* TODO: use add symbol aligment */
 			sec->size += sp->size;
 		}
 	}
@@ -67,7 +61,6 @@ mksegs(void)
 	merge(&rodata);
 	merge(&data);
 	merge(&bss);
-	merge(&debug);
 }
 
 void
