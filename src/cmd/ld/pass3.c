@@ -46,33 +46,36 @@ pass3(int argc, char *argv[])
 	Obj *obj;
 	Objlst *lst;
 	Objsect *sp;
-	unsigned long long *base, text, data, bss;
+	Segment *seg;
 
 	/*
 	 * TODO: deal with page aligment
 	 */
-	textbase = text = 0x100;
-	database = data = textsiz;
-	bssbase = bss = data+datasiz;
+	text.base = 0x100;
+	rodata.base = text.base + text.size;
+	data.base = rodata.base + rodata.size;
+	bss.base = data.base + data.size;
 
 	for (lst = objhead; lst; lst = lst->next) {
 		obj = lst->obj;
 		for (sp = obj->secs; sp; sp = sp->next) {
 			switch (sp->type) {
 			case 'T':
-				base = &text;
+				seg = &text;
 				break;
+			/* TODO: what happens with rodata? */
 			case 'D':
-				base = &data;
+				seg = &data;
 				break;
 			case 'B':
-				base = &bss;
+				seg = &bss;
 				break;
 			default:
 				abort();
 			}
-			sp->base = *base;
-			*base += sp->size;
+			sp->base = seg->base + seg->size;
+			/* TODO: deal with symbol aligment */
+			seg->size += sp->size;
 		}
 		rebase(obj);
 	}

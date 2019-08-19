@@ -11,8 +11,6 @@
 char *output = "a.out", *entry = "start";
 
 char *filename, *membname;
-unsigned long textsiz, datasiz, bsssiz;
-unsigned long textbase, database, bssbase;
 
 int sflag;        /* discard all the symbols */
 int xflag;        /* discard local symbols */
@@ -65,6 +63,7 @@ ld(int argc, char*argv[])
 	pass2(argc, argv);
 	pass3(argc, argv);
 	debugsym();
+	debugsec();
 }
 
 static void

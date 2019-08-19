@@ -4,6 +4,7 @@ struct objsym;
 typedef struct objlst Objlst;
 typedef struct symbol Symbol;
 typedef struct section Section;
+typedef struct segment Segment;
 
 struct section {
 	char *name;
@@ -12,7 +13,17 @@ struct section {
 	unsigned flags;
 	int type;
 	FILE *fp;
+	Section *hash;
 	Section *next;
+};
+
+struct segment {
+	char *name;
+	int type;
+	unsigned nsec;
+	unsigned long long base;
+	unsigned long size;
+	Section **sections;
 };
 
 struct objlst {
@@ -42,12 +53,12 @@ extern void error(char *fmt, ...);
 /* symbol.c */
 extern Symbol *lookup(char *name);
 extern Symbol *install(char *name);
-extern int debugsym(void);
+extern Section *section(char *name);
+extern void debugsym(void);
+extern void debugsec(void);
 
 /* globals */
 extern char *filename, *membname;
-extern unsigned long textsiz, datasiz, bsssiz;
-extern unsigned long textbase, database, bssbase;
 extern int sflag;
 extern int xflag;
 extern int Xflag;
@@ -56,3 +67,5 @@ extern int dflag;
 extern int gflag;
 extern char *Dflag;
 extern Objlst *objhead;
+extern Section *sechead;
+extern Segment text, rodata, data, bss;

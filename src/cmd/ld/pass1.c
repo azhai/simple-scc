@@ -25,16 +25,31 @@ static Objlst *objlast;
 Objlst *objhead;
 
 static Symbol *
+undef(char *name)
+{
+	Symbol *sym = install(name);
+
+	sym->next = &refhead;
+	sym->prev = refhead.prev;
+	refhead.prev->next = sym;
+	refhead.prev = sym;
+
+	return sym;
+}
+
+static Symbol *
 define(Objsym *osym, Obj *obj)
 {
 	Symbol *sym = lookup(osym->name);
 
 	if (!sym) {
-		sym = install(osym->name);
+		sym = undef(osym->name);
 	} else if (sym->def && sym->def->type != 'C') {
 		error("%s: symbol redefined", osym->name);
 		return NULL;
 	}
+
+	/* TODO: deal with C symbols */
 
 	sym->obj = obj;
 	sym->def = osym;
@@ -48,33 +63,18 @@ define(Objsym *osym, Obj *obj)
 	return sym;
 }
 
-static Symbol *
-undef(char *name)
-{
-	Symbol *sym = install(name);
-
-	refhead.next->prev = sym;
-	sym->next = refhead.next;
-	refhead.next = sym;
-	sym->prev = &refhead;
-
-	return sym;
-}
-
 static int
 moreundef(void)
 {
-
 	return refhead.next != &refhead;
 }
 
 static void
 listundef(void)
 {
-	Symbol *sym, *p;
+	Symbol *sym;
 
-	p = &refhead;
-	for (sym = p->next; sym != p; sym = sym->next) {
+	for (sym = refhead.next; sym != &refhead; sym = sym->next) {
 		fprintf(stderr,
 		        "ld: symbol '%s' not defined\n",
 		        sym->name);
@@ -84,10 +84,9 @@ listundef(void)
 static int
 is_needed(Obj *obj)
 {
-	Symbol *sym, *p;
+	Symbol *sym;
 
-	p = &refhead;
-	for (sym = p->next; sym != p; sym = sym->next) {
+	for (sym = refhead.next; sym != &refhead; sym = sym->next) {
 		if (objlookup(obj, sym->name, 0))
 			return 1;
 	}
@@ -228,6 +227,7 @@ addlib(FILE *fp)
 			newobject(fp, t, OUTLIB);
 			added = 1;
 		}
+
 		if (!added)
 			break;
 	}
