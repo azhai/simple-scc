@@ -9,12 +9,11 @@ OBJS = main.o \
        pass1.o \
        pass2.o \
        pass3.o \
-
+       pass4.o \
 
 all: $(TARGET)
 
-#TODO Add library dependencies
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) $(LIBDIR)/libscc.a $(LIBDIR)/libmach.a
 	$(CC) $(SCC_LDFLAGS) $(OBJS) -lmach -lscc -o $@
 
 dep: inc-dep
