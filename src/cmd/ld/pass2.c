@@ -36,17 +36,17 @@ static void
 merge(Segment *seg)
 {
 	Section *sec, **p;
-	int n;
+	int n = 0;
 
-	for (n = 0, sec = sechead; sec; sec = sec->next, ++n) {
+	for (sec = sechead; sec; sec = sec->next) {
 		if (sec->type != seg->type)
 			continue;
-		p = realloc(seg->sections, n * sizeof(*p));
+		p = realloc(seg->sections, (n+1) * sizeof(*p));
 		if (!p) {
 			error("ou of memory");
 			exit(EXIT_FAILURE);
 		}
-		p[n] = sec;
+		p[n++] = sec;
 		seg->sections = p;
 		seg->size += sec->size;
 	}
