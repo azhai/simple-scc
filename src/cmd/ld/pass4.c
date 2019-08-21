@@ -17,7 +17,8 @@ pass4(int argc, char *argv[])
 	for (lp = objhead; lp; lp = lp->next) {
 		fp = lp->obj->fp;
 		for (sp = lp->obj->secs; sp; sp = sp->next) {
-			fseek(fp, sp->seek, SEEK_SET);
+			if (!objpos(lp->obj, lp->obj->fp, sp->seek))
+				error("seeking for section content");
 
 			sec = section(sp->name);
 			if (!sec->fp) {

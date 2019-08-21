@@ -31,7 +31,6 @@ enum deltype {
 /* common functions */
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);
-extern int objpos(Obj *obj, FILE *fp, long pos);
 extern int objfree(Obj *obj, int what);
 
 /* coff32 functions */
