@@ -18,9 +18,8 @@ struct section {
 };
 
 struct segment {
-	char *name;
 	int type;
-	unsigned nsec;
+	int nsec;
 	unsigned long long base;
 	unsigned long size;
 	Section **sections;
