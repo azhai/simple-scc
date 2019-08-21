@@ -1,6 +1,5 @@
 #deps
 ./alloc.o: $(INCDIR)/scc/scc/scc.h
-./bpack.o: $(INCDIR)/scc/scc/scc.h
 ./casecmp.o: $(INCDIR)/scc/scc/scc.h
 ./debug.o: $(INCDIR)/scc/scc/scc.h
 ./die.o: $(INCDIR)/scc/scc/scc.h
