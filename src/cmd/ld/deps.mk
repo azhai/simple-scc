@@ -11,6 +11,8 @@
 ./pass3.o: ./ld.h
 ./pass4.o: $(INCDIR)/scc/scc/mach.h
 ./pass4.o: ./ld.h
+./pass5.o: $(INCDIR)/scc/scc/mach.h
+./pass5.o: ./ld.h
 ./symbol.o: $(INCDIR)/scc/scc/mach.h
 ./symbol.o: $(INCDIR)/scc/scc/scc.h
 ./symbol.o: ./ld.h

@@ -34,6 +34,7 @@ extern int unpack(int order, unsigned char *src, char *fmt, ...);
 extern int objfree(Obj *obj, int what);
 
 /* coff32 functions */
+/* TODO: Move this functions to a coff32 files */
 extern long coff32index(int type, long nsyms, Objsymdef *head, FILE *fp);
 extern int coff32new(Obj *obj);
 extern void coff32del(Obj *obj);
@@ -52,3 +53,4 @@ extern int coff32getsect(Obj *obj);
 
 extern char *coff32namidx(void);
 extern int coff32getsyms(Obj *obj);
+extern int coff32sync(Obj *obj);

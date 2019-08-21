@@ -23,7 +23,7 @@ Segment rodata = {.type = 'R'};
 Segment data = {.type = 'D'};
 Segment bss = {.type = 'B'};
 
-static char *output = "a.out", *entry = "start";
+char *output = "a.out", *entry = "start";
 static int status;
 
 char *
@@ -60,6 +60,7 @@ cleanup(void)
  * pass2: Calculate the size of every segment.
  * pass3: Rebase all symbols in sections
  * pass4: Create the temporary files per section
+ * pass5: Create the temporary files per segment
  */
 static void
 ld(int argc, char*argv[])
@@ -68,6 +69,7 @@ ld(int argc, char*argv[])
 	pass2(argc, argv);
 	pass3(argc, argv);
 	pass4(argc, argv);
+	pass5(argc, argv);
 	debugsym();
 	debugsec();
 }

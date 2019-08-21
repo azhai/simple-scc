@@ -10,6 +10,7 @@ OBJS = main.o \
        pass2.o \
        pass3.o \
        pass4.o \
+       pass5.o \
 
 all: $(TARGET)
 

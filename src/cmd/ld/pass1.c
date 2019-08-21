@@ -15,26 +15,42 @@ enum {
 	INLIB,
 };
 
-static int bintype = -1;
+int bintype = -1;
 static Symbol refhead = {
 	.next = &refhead,
 	.prev = &refhead,
+};
+
+Symbol defhead = {
+	.next = &defhead,
+	.prev = &defhead,
 };
 static Objlst *objlast;
 
 Objlst *objhead;
 
 static Symbol *
+linksym(Symbol *list, Symbol *sym)
+{
+	sym->next = list;
+	sym->prev = list->prev;
+	list->prev->next = sym;
+	list->prev = sym;
+	return sym;
+}
+
+static Symbol *
+unlinksym(Symbol *sym)
+{
+	sym->next->prev = sym->prev;
+	sym->prev->next = sym->next;
+	return sym;
+}
+
+static Symbol *
 undef(char *name)
 {
-	Symbol *sym = install(name);
-
-	sym->next = &refhead;
-	sym->prev = refhead.prev;
-	refhead.prev->next = sym;
-	refhead.prev = sym;
-
-	return sym;
+	return linksym(&refhead, install(name));
 }
 
 static Symbol *
@@ -56,9 +72,8 @@ define(Objsym *osym, Obj *obj)
 	sym->size = osym->size;
 	sym->value = osym->value;
 
-	sym->next->prev = sym->prev;
-	sym->prev->next = sym->next;
-	sym->next = sym->prev = NULL;
+	unlinksym(sym);
+	linksym(&defhead, sym);
 
 	return sym;
 }

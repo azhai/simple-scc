@@ -76,7 +76,9 @@ extern long armember(FILE *fp, char *member);
 extern long setindex(int type, long nsyms, Objsymdef *def, FILE *fp);
 extern int getindex(int type, long *nsyms, Objsymdef **def, FILE *fp);
 
+
 /* TODO */
-extern int objload(Obj *obj, Obj *to);
+extern int objaddseg(Obj *obj, void *seg);
+extern int objsync(Obj *obj);
 extern int objreloc(Obj *obj, char *sect, void *rel);
 extern int addr2line(Obj *obj, unsigned long long addr, char *fname, int *line);

@@ -12,6 +12,8 @@ OBJS = objnew.o \
        objsect.o \
        objsyms.o \
        objdel.o \
+       objaddseg.o \
+       objsync.o \
        addr2line.o \
        archive.o \
        armember.o \

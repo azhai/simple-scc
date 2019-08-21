@@ -44,6 +44,7 @@ extern void pass1(int argc, char *argv[]);
 extern void pass2(int argc, char *argv[]);
 extern void pass3(int argc, char *argv[]);
 extern void pass4(int argc, char *argv[]);
+extern void pass5(int argc, char *argv[]);
 
 /* main.c */
 extern char *errstr(void);
@@ -65,6 +66,7 @@ extern int rflag;
 extern int dflag;
 extern int gflag;
 extern char *Dflag;
+extern char *output, *entry;
 extern Objlst *objhead;
 extern Section *sechead;
 extern Segment text, rodata, data, bss;
