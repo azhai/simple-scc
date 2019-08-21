@@ -19,7 +19,6 @@ $(BINDIR)/scc: scc.o
 	$(CC) $(SCC_LDFLAGS) scc.o -lscc -o $@
 
 $(BINDIR)/scpp: cpp.sh
-	set -x ;\
 	trap "rm -f $$$$.sh" 0 2 3;\
 	rm -f $@ ;\
 	sed "s%@PREFIX@%$(PREFIX)%" < cpp.sh > $$$$.sh && \
