@@ -23,10 +23,15 @@ swap(char *i, char *j, size_t n)
 	} while (--n > 0);
 }
 
+/*
+ * This function recurses as much as log2(n) because
+ * it always recurses in the smaller part of the
+ * array.
+ */
 static void
 xqsort(char *a, size_t n, struct qsort *qs)
 {
-	size_t j, es = qs->es;
+	size_t nj, ni, es = qs->es;
 	char *pi, *pj, *pn;
 
 	if (n <= 1)
@@ -51,9 +56,18 @@ xqsort(char *a, size_t n, struct qsort *qs)
 	}
 	swap(a, pj, es);
 
-	j = (pj - a) / es;
-	xqsort(a, j, qs);
-	xqsort(a + (j+1)*es, n-j-1, qs);
+	pi = a;
+	ni = (pj - a) / es;
+	pj += es;
+	nj = n-nj-1;
+
+	if (ni < nj) {
+		xqsort(pi, ni, qs);
+		xqsort(pj, nj, qs);
+	} else {
+		xqsort(pj, nj, qs);
+		xqsort(pi, ni, qs);
+	}
 }
 
 void
