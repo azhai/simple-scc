@@ -9,12 +9,6 @@
 ./coff32getindex.o: $(INCDIR)/scc/scc/mach.h
 ./coff32getindex.o: ./../libmach.h
 ./coff32getindex.o: ./coff32.h
-./coff32getsect.o: $(INCDIR)/scc/scc/mach.h
-./coff32getsect.o: ./../libmach.h
-./coff32getsect.o: ./coff32.h
-./coff32getsyms.o: $(INCDIR)/scc/scc/mach.h
-./coff32getsyms.o: ./../libmach.h
-./coff32getsyms.o: ./coff32.h
 ./coff32new.o: $(INCDIR)/scc/scc/mach.h
 ./coff32new.o: ./../libmach.h
 ./coff32new.o: ./coff32.h
@@ -32,6 +26,8 @@
 ./coff32strip.o: $(INCDIR)/scc/scc/mach.h
 ./coff32strip.o: ./../libmach.h
 ./coff32strip.o: ./coff32.h
+./coff32sync.o: $(INCDIR)/scc/scc/mach.h
+./coff32sync.o: ./../libmach.h
 ./coff32write.o: $(INCDIR)/scc/scc/mach.h
 ./coff32write.o: ./../libmach.h
 ./coff32write.o: ./coff32.h
