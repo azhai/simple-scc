@@ -153,7 +153,7 @@ newobject(FILE *fp, int type)
 		return;
 	}
 
-	if (objread(obj, fp) < 0 || objsyms(obj) < 0)
+	if (objread(obj, fp) < 0)
 		goto error;
 
 	for (sym = obj->syms; sym; sym = sym->next)

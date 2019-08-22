@@ -68,8 +68,6 @@ extern int objread(Obj *obj, FILE *fp);
 extern Objsym *objlookup(Obj *obj, char *name, int install);
 extern int objstrip(Obj *obj);
 extern int objwrite(Obj *obj, FILE *fp);
-extern int objsect(Obj *obj);
-extern int objsyms(Obj *obj);
 extern int objpos(Obj *obj, FILE *fp, long pos);
 extern int archive(FILE *fp);
 extern long armember(FILE *fp, char *member);

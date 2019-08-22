@@ -50,7 +50,7 @@ newobject(FILE *fp, int type)
 		return;
 	}
 
-	if (objread(obj, fp) < 0 || objsect(obj) < 0) {
+	if (objread(obj, fp) < 0) {
 		error("file corrupted");
 		goto err;
 	}

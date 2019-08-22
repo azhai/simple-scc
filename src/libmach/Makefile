@@ -9,8 +9,6 @@ OBJS = objnew.o \
        objread.o \
        objfree.o \
        objstrip.o \
-       objsect.o \
-       objsyms.o \
        objdel.o \
        objaddseg.o \
        objsync.o \

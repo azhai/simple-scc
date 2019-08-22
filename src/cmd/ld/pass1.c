@@ -188,11 +188,6 @@ newobject(FILE *fp, int type, int inlib)
 		error("object file corrupted");
 		goto delete;
 	}
- 
-	if (objsyms(obj) < 0 || objsect(obj) < 0) {
-		error("object file corrupted");
-		goto delete;
-	}
 
 	if (inlib && !is_needed(obj))
 		goto delete;
