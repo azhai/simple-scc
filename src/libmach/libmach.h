@@ -49,8 +49,5 @@ extern long coff32setidx(int order, long nsyms, Objsymdef *head, FILE *fp);
 extern int coff32getindex(int type, long *nsyms, Objsymdef **def, FILE *fp);
 extern int coff32getidx(int order, long *nsyms, Objsymdef **def, FILE *fp);
 
-extern int coff32getsect(Obj *obj);
-
 extern char *coff32namidx(void);
-extern int coff32getsyms(Obj *obj);
 extern int coff32sync(Obj *obj);
