@@ -55,6 +55,7 @@ struct obj {
 	void *data;
 
 	int (*new)(Obj *obj);
+	int (*read)(Obj *obj, FILE *fp);
 };
 
 
@@ -65,7 +66,6 @@ extern int formember(FILE *fp,
 extern int objtype(FILE *fp, char **name);
 extern Obj *objnew(int type);
 extern void objdel(Obj *obj);
-extern int objread(Obj *obj, FILE *fp);
 extern Objsym *objlookup(Obj *obj, char *name, int install);
 extern int objstrip(Obj *obj);
 extern int objwrite(Obj *obj, FILE *fp);

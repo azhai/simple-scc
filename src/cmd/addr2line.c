@@ -93,7 +93,7 @@ loadexe(char *fname)
 		return NULL;
 	}
 
-	if (!objread(obj, fp)) {
+	if ((*obj->read)(obj, fp) < 0) {
 		error("file corrupted");
 		return NULL;
 	}

@@ -25,3 +25,4 @@ struct coff32 {
 };
 
 extern int coff32new(Obj *obj);
+extern int coff32read(Obj *obj, FILE *fp);

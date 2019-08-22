@@ -46,7 +46,7 @@ strip(char *fname)
 		error("out of memory");
 		goto err3;
 	}
-	if (objread(obj, fp) < 0) {
+	if ((*obj->read)(obj, fp) < 0) {
 		error("file corrupted");
 		goto err3;
 	}

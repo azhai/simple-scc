@@ -29,6 +29,7 @@ objnew(int type)
 
 	op = objfmts[fmt];
 	obj->new = op->new;
+	obj->read = op->read;
 
 	if ((*obj->new)(obj) < 0) {
 		free(obj);

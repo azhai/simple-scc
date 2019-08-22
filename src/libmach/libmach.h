@@ -30,6 +30,7 @@ enum deltype {
 
 struct objfmt {
 	int (*new)(Obj *obj);
+	int (*read)(Obj *obj, FILE *fp);
 };
 
 /* common functions */
@@ -41,7 +42,6 @@ extern int objfree(Obj *obj, int what);
 /* TODO: Move this functions to a coff32 files */
 extern long coff32index(int type, long nsyms, Objsymdef *head, FILE *fp);
 extern void coff32del(Obj *obj);
-extern int coff32read(Obj *obj, FILE *fp);
 extern int coff32write(Obj *obj, FILE *fp);
 extern void coff32strip(Obj *obj);
 extern int coff32probe(unsigned char *buf, char **name);

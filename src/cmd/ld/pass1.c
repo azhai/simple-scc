@@ -184,7 +184,7 @@ newobject(FILE *fp, int type, int inlib)
 	}
 	bintype = type;
  
-	if (objread(obj, fp) < 0) {
+	if ((*obj->read)(obj, fp) < 0) {
 		error("object file corrupted");
 		goto delete;
 	}

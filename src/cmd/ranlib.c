@@ -146,7 +146,7 @@ newmember(FILE *fp, char *nam, void *data)
 	}
 	namidx = obj->index;
 
-	if (objread(obj, fp) < 0) {
+	if ((*obj->read)(obj, fp) < 0) {
 		error("file corrupted");
 		goto error;
 	}

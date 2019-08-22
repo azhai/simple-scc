@@ -7,4 +7,5 @@
 
 struct objfmt coff32 = {
 	.new = coff32new,
+	.read = coff32read,
 };

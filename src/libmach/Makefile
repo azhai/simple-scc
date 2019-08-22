@@ -7,7 +7,6 @@ TARGET = $(LIBDIR)/libmach.a
 OBJS = mach.o \
        objnew.o \
        objpos.o \
-       objread.o \
        objfree.o \
        objstrip.o \
        objdel.o \
