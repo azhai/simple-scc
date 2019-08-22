@@ -4,7 +4,8 @@ include $(PROJECTDIR)/scripts/rules.mk
 
 TARGET = $(LIBDIR)/libmach.a
 
-OBJS = objnew.o \
+OBJS = mach.o \
+       objnew.o \
        objpos.o \
        objread.o \
        objfree.o \

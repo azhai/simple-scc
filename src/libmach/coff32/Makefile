@@ -2,7 +2,8 @@
 PROJECTDIR =../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-OBJS = coff32del.o \
+OBJS = coff32.o \
+       coff32del.o \
        coff32new.o \
        coff32probe.o \
        coff32read.o \

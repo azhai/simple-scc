@@ -54,6 +54,8 @@ struct obj {
 	int nsecs;
 	int nsyms;
 	void *data;
+
+	int (*new)(Obj *obj);
 };
 
 

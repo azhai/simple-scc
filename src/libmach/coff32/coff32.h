@@ -23,3 +23,5 @@ struct coff32 {
 	char *strtbl;
 	unsigned long strsiz;
 };
+
+extern int coff32new(Obj *obj);

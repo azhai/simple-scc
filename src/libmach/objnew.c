@@ -6,15 +6,12 @@
 
 #include "libmach.h"
 
-static int (*funv[])(Obj *) = {
-	[COFF32] = coff32new,
-};
-
 Obj *
 objnew(int type)
 {
 	Obj *obj;
 	int fmt;
+	struct objfmt *op;
 
 	fmt = FORMAT(type);
 	if (fmt >= NFORMATS)
@@ -30,7 +27,10 @@ objnew(int type)
 	obj->nsecs = 0;
 	memset(obj->htab, 0, sizeof(obj->htab));
 
-	if ((*funv[fmt])(obj) < 0) {
+	op = objfmts[fmt];
+	obj->new = op->new;
+
+	if ((*obj->new)(obj) < 0) {
 		free(obj);
 		return NULL;
 	}
