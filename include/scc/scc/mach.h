@@ -49,8 +49,7 @@ struct obj {
 	Objsym *htab[NR_SYMHASH];
 	Objsym *syms;
 	Objsect *secs;
-	FILE *fp;
-	fpos_t pos;
+	long pos;
 	int nsecs;
 	int nsyms;
 	void *data;

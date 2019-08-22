@@ -15,11 +15,12 @@ pass4(int argc, char *argv[])
 	FILE *fp;
 
 	for (lp = objhead; lp; lp = lp->next) {
-		fp = lp->obj->fp;
+		/* TODO: fp = lp->obj->fp; */
 		for (sp = lp->obj->secs; sp; sp = sp->next) {
-			if (!objpos(lp->obj, lp->obj->fp, sp->seek))
-				error("seeking for section content");
-
+			/* TODO:
+			 * if (!objpos(lp->obj, lp->obj->fp, sp->seek))
+			 *	error("seeking for section content");
+			 */
 			sec = section(sp->name);
 			if (!sec->fp) {
 				sec->fp = tmpfile();

@@ -340,9 +340,13 @@ readaout(Obj *obj, FILE *fp)
 static int
 readfile(Obj *obj, FILE *fp)
 {
+	long off;
+
 	/* TODO: Add validation of the different fields */
-	if (fgetpos(fp, &obj->pos))
+	if ((off = ftell(fp)) == EOF)
 		goto error;
+	obj->pos = off;
+
 	if (!readhdr(obj, fp))
 		goto error;
 	if (!readaout(obj, fp))

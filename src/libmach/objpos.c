@@ -7,7 +7,7 @@
 int
 objpos(Obj *obj, FILE *fp, long pos)
 {
-	if (fsetpos(fp, &obj->pos))
+	if (fseek(fp, obj->pos, SEEK_SET) == EOF)
 		return 0;
 	if (fseek(fp, pos, SEEK_CUR) < 0)
 		return 0;
