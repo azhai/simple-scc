@@ -174,18 +174,18 @@ newobject(FILE *fp, int type, int inlib)
 {
 	Obj *obj;
  
+	if (bintype != -1 && bintype != type) {
+		error("not compatible object file");
+		return;
+	}
+	bintype = type;
+	binops = obj->ops;
+
 	if ((obj = objnew(type)) == NULL) {
 		error("out of memory");
 		return;
 	}
 
-	if (bintype != -1 && bintype != type) {
-		error("not compatible object file");
-		goto delete;
-	}
-	bintype = type;
-	binops = obj->ops;
- 
 	if ((*binops->read)(obj, fp) < 0) {
 		error("object file corrupted");
 		goto delete;
