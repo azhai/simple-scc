@@ -11,5 +11,8 @@ objdel(Obj *obj)
 {
 	free(obj->secs);
 	free(obj->syms);
-	free(obj);
+
+	obj->syms = NULL;
+	obj->secs = NULL;
+	memset(obj->htab, 0, sizeof(obj->htab));
 }
