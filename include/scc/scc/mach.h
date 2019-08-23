@@ -47,11 +47,11 @@ struct objsymdef {
 struct objops {
 	int (*probe)(unsigned char *buf, char **name);
 	int (*new)(Obj *obj);
-	int (*read)(Obj *obj, FILE *fp);
-	int (*addr2line)(Obj *, unsigned long long , char *, int *);
-	int (*strip)(Obj *obj);
 	void (*del)(Obj *obj);
+	int (*read)(Obj *obj, FILE *fp);
 	int (*write)(Obj *obj, FILE *fp);
+	int (*strip)(Obj *obj);
+	int (*addr2line)(Obj *, unsigned long long , char *, int *);
 	int (*setidx)(long nsyms, Objsymdef *def, FILE *fp);
 	int (*getidx)(long *nsyms, Objsymdef **def, FILE *fp);
 };
