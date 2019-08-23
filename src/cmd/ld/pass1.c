@@ -206,22 +206,22 @@ static void
 addlib(FILE *fp)
 {
 	int t, added;
-	long n;
-	Objsymdef *def, *dp;
+	long n, i, *offs;
+	char **names;
 	Symbol *sym;
 
-	if ((*binops->getidx)(&n, &def, fp) < 0) {
+	if ((*binops->getidx)(&n, &names, &offs, fp) < 0) {
 		error("corrupted index");
 		return;
 	}
 
 	for (added = 0; moreundef(); added = 0) {
-		for (dp = def; dp; dp = dp->next) {
-			sym = lookup(dp->name);
+		for (i = 0; i < n; i++) {
+			sym = lookup(names[i]);
 			if (!sym || sym->def)
 				continue;
 
-			if (fseek(fp, dp->offset, SEEK_SET) == EOF) {
+			if (fseek(fp, offs[i], SEEK_SET) == EOF) {
 				error(errstr());
 				goto clean;
 			}
@@ -244,7 +244,10 @@ addlib(FILE *fp)
 			break;
 	}
 clean:
-	free(def);
+	for (i = 0; i < n; i++)
+		free(names[i]);
+	free(names);
+	free(offs);
 }
 
 static int

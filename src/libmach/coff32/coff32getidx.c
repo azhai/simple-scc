@@ -6,7 +6,7 @@
 #include "coff32.h"
 
 int
-coff32getidx(long *nsyms, Objsymdef **def, FILE *fp)
+coff32getidx(long *nsyms, char ***namep, long **offsp, FILE *fp)
 {
-	return coff32xgetidx(BIG_ENDIAN, nsyms, def, fp);
+	return coff32xgetidx(BIG_ENDIAN, nsyms, namep, offsp, fp);
 }

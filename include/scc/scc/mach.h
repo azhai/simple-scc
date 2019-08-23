@@ -60,7 +60,7 @@ struct objops {
 	int (*strip)(Obj *obj);
 	int (*addr2line)(Obj *, unsigned long long , char *, int *);
 	int (*setidx)(long nsyms, char *names[], long offset[], FILE *fp);
-	int (*getidx)(long *nsyms, Objsymdef **def, FILE *fp);
+	int (*getidx)(long *nsyms, char ***names, long **offset, FILE *fp);
 };
 
 struct obj {
