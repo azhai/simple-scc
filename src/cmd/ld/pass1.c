@@ -178,7 +178,7 @@ newobject(FILE *fp, int type, int inlib)
 		error("out of memory");
 		return;
 	}
- 
+
 	if (bintype != -1 && bintype != type) {
 		error("not compatible object file");
 		goto delete;
