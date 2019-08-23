@@ -31,6 +31,7 @@ strip(char *fname)
 	int type;
 	FILE *fp;
 	Obj *obj;
+	Objops *ops;
 
 	errno = 0;
 	filename = fname;
@@ -46,15 +47,21 @@ strip(char *fname)
 		error("out of memory");
 		goto err3;
 	}
-	if ((*obj->ops->read)(obj, fp) < 0) {
+	ops = obj->ops;
+
+	if ((*ops->read)(obj, fp) < 0) {
 		error("file corrupted");
 		goto err3;
 	}
 	fclose(fp);
 	fp = NULL;
 
-	objstrip(obj);
+	if ((*ops->strip)(obj) < 0) {
+		error("error stripping");
+		goto err3;
+	}
 
+	/* TODO: Use a temporary file */
 	if ((fp = fopen(fname, "wb")) == NULL)
 		goto err1;
 

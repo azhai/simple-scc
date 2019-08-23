@@ -11,4 +11,5 @@ Objops coff32 = {
 	.getidx = coff32getidx,
 	.setidx = coff32setidx,
 	.addr2line = coff32addr2line,
+	.strip = coff32strip,
 };

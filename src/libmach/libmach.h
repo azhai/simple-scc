@@ -37,7 +37,6 @@ extern int objfree(Obj *obj, int what);
 /* TODO: Move this functions to a coff32 files */
 extern void coff32del(Obj *obj);
 extern int coff32write(Obj *obj, FILE *fp);
-extern void coff32strip(Obj *obj);
 extern int coff32probe(unsigned char *buf, char **name);
 
 extern char *coff32namidx(void);

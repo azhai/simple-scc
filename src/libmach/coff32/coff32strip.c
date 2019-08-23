@@ -6,7 +6,7 @@
 #include "../libmach.h"
 #include "coff32.h"
 
-void
+int
 coff32strip(Obj *obj)
 {
 	int i;
@@ -34,4 +34,6 @@ coff32strip(Obj *obj)
 	coff->ents = NULL;
 	coff->rels = NULL;
 	coff->lines = NULL;
+
+	return 0;
 }
