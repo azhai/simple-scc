@@ -265,17 +265,22 @@ copy(FILE *from, char *fname)
 	return ret;
 }
 
+
 static void
 ranlib(char *fname)
 {
-	int c;
+	long *offs, i;
+	char **names;
 	FILE *fp, *idx, *out;
+	Objsymdef *dp;
 	struct fprop prop;
 
 	errno = 0;
 	nolib = 0;
 	artype = -1;
 	nsymbols = 0;
+	offs = NULL;
+	names = NULL;
 	filename = fname;
 	freehash();
 
@@ -288,10 +293,18 @@ ranlib(char *fname)
 	if (!readsyms(fp))
 		goto error;
 
-	if (nolib)
+	if (nolib || nsymbols == 0)
 		goto error;
 
-	if ((*ops->setidx)(nsymbols, head, idx) < 0)
+	offs = malloc(sizeof(long) * nsymbols);
+	names = malloc(sizeof(*names) * nsymbols);
+
+	for (dp = head, i = 0; i < nsymbols; dp = dp->next, i++) {
+		offs[i] = dp->offset;
+		names[i] = dp->name;
+	}
+
+	if ((*ops->setidx)(nsymbols, names, offs, idx) < 0)
 		goto error;
 
 	if (getstat(fname, &prop) < 0)
@@ -302,18 +315,25 @@ ranlib(char *fname)
 	if (!merge(out, &prop, fp, idx))
 		goto error;
 
+	free(offs);
+	free(names);
 	fclose(fp);
 	fclose(idx);
+	offs = NULL;
+	names = NULL;
 	fp = idx = NULL;
 
 	if (!copy(out, fname))
 		goto error;
-
 	fclose(out);
 
 	return;
 
 error:
+	if (offs)
+		free(offs);
+	if (names)
+		free(names);
 	if (errno)
 		error(errstr());
 	if (idx)

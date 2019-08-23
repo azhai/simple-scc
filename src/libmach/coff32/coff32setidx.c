@@ -6,7 +6,7 @@
 #include "coff32.h"
 
 int
-coff32setidx(long nsymbols, Objsymdef *head, FILE *fp)
+coff32setidx(long nsymbols, char *names[], long offs[], FILE *fp)
 {
-	return coff32xsetidx(BIG_ENDIAN, nsymbols, head, fp);
+	return coff32xsetidx(BIG_ENDIAN, nsymbols, names, offs, fp);
 }

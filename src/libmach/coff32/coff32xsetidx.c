@@ -6,7 +6,7 @@
 #include "../libmach.h"
 
 int
-coff32xsetidx(int order, long nsyms, Objsymdef *head, FILE *fp)
+coff32xsetidx(int order, long nsyms, char *names[], long offs[], FILE *fp)
 {
 	long i, n;
 	size_t len;
@@ -17,15 +17,15 @@ coff32xsetidx(int order, long nsyms, Objsymdef *head, FILE *fp)
 	fwrite(buff, 4, 1, fp);
 	n = 4;
 
-	for (def = head; def; def = def->next) {
-		pack(order, buff, "l", (long) def->offset);
+	for (i = 0; i < nsyms; i++) {
+		pack(order, buff, "l", offs[i]);
 		fwrite(buff, 4, 1, fp);
 		n += 4;
 	}
 
-	for (def = head; def; def = def->next) {
-		len = strlen(def->name) + 1;
-		fwrite(def->name, len, 1, fp);
+	for (i = 0; i < nsyms; i++) {
+		len = strlen(names[i]) + 1;
+		fwrite(names[i], len, 1, fp);
 		n += len;
 	}
 
