@@ -1,6 +1,5 @@
 #define NR_SYMHASH 32
 
-typedef struct objsymdef Objsymdef;
 typedef struct objsec Objsec;
 typedef struct objsym Objsym;
 typedef struct objseg Objseg;
@@ -36,13 +35,6 @@ struct objsym {
 	unsigned long long size;
 	unsigned long long value;
 	Objsym *next, *hash;
-};
-
-struct objsymdef {
-	char *name;
-	int type;
-	long offset;
-	Objsymdef *hash, *next;
 };
 
 struct objseg {

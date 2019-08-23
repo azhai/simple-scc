@@ -10,7 +10,6 @@ coff32xsetidx(int order, long nsyms, char *names[], long offs[], FILE *fp)
 {
 	long i, n;
 	size_t len;
-	Objsymdef *def;
 	unsigned char buff[4];
 
 	pack(order, buff, "l", nsyms);

@@ -16,12 +16,21 @@
 
 #define NR_SYMDEF 32
 
+typedef struct symdef Symdef;
+
+struct symdef {
+	char *name;
+	int type;
+	long offset;
+	Symdef *hash, *next;
+};
+
 static char *namidx;
 static long nsymbols;
 static int status, artype, nolib;
 static Objops *ops;
 static char *filename, *membname;
-static Objsymdef *htab[NR_SYMDEF], *head;
+static Symdef *htab[NR_SYMDEF], *head;
 static long offset;
 char *argv0;
 
@@ -47,11 +56,11 @@ error(char *fmt, ...)
 	status = EXIT_FAILURE;
 }
 
-Objsymdef *
+Symdef *
 lookup(char *name)
 {
 	unsigned h;
-	Objsymdef *dp;
+	Symdef *dp;
 	char *s;
 	size_t len;
 
@@ -87,7 +96,7 @@ lookup(char *name)
 static int
 newsymbol(Objsym *sym)
 {
-	Objsymdef *np;
+	Symdef *np;
 
 	if (!isupper(sym->type) || sym->type == 'N')
 		return 1;
@@ -167,7 +176,7 @@ error:
 static void
 freehash(void)
 {
-	Objsymdef **npp, *next, *np;
+	Symdef **npp, *next, *np;
 
 	for (npp = htab; npp < &htab[NR_SYMDEF]; npp++)
 		*npp = NULL;
@@ -272,7 +281,7 @@ ranlib(char *fname)
 	long *offs, i;
 	char **names;
 	FILE *fp, *idx, *out;
-	Objsymdef *dp;
+	Symdef *dp;
 	struct fprop prop;
 
 	errno = 0;
