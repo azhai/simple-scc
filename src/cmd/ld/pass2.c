@@ -10,7 +10,7 @@ static void
 mksecs(void)
 {
 	Objlst *lp;
-	Objsect *sp;
+	Objsec *sp;
 	Section *sec;
 
 	for (lp = objhead; lp; lp = lp->next) {

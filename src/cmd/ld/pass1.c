@@ -150,7 +150,7 @@ addobj(Obj *obj, FILE *fp)
 	int n;
 	Objlst *lst;
 	Objsym *sym;
-	Objsect *secp;
+	Objsec *secp;
 
 	if ((lst = malloc(sizeof(*lst))) == NULL) {
 		error("out of memory");

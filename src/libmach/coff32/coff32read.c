@@ -365,7 +365,7 @@ readfile(Obj *obj, FILE *fp)
 }
 
 static int
-convsect(Obj *obj)
+convsecs(Obj *obj)
 {
 	int i;
 	unsigned sflags, type;
@@ -373,12 +373,12 @@ convsect(Obj *obj)
 	FILHDR *hdr;
 	struct coff32 *coff;
 	SCNHDR *scn;
-	Objsect *secs, *sp;
+	Objsec *secs, *sp;
 
 	coff  = obj->data;
 	hdr = &coff->hdr;
 
-	secs = malloc(sizeof(Objsect) * hdr->f_nscns);
+	secs = malloc(sizeof(Objsec) * hdr->f_nscns);
 	if (!secs)
 		return -1;
 
@@ -513,7 +513,7 @@ convsyms(Obj *obj)
 		sym->type = t;
 		sym->value = ent->n_value;
 		sym->size = (sym->type == 'C') ? ent->n_value : 0;
-		sym->sect = ent->n_scnum-1;
+		sym->sec = ent->n_scnum-1;
 	}
 
 	return i;
@@ -524,7 +524,7 @@ coff32read(Obj *obj, FILE *fp)
 {
 	if (readfile(obj, fp) < 0)
 		return -1;
-	if (convsect(obj) < 0)
+	if (convsecs(obj) < 0)
 		return -1;
 	if (convsyms(obj) < 0)
 		return -1;

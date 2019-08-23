@@ -22,11 +22,11 @@ rebase(Obj *obj)
 			 * we have an error in our code.
 			 */
 			aux = lookup(sym->name);
-			aux->value += obj->secs[sym->sect].base;
+			aux->value += obj->secs[sym->sec].base;
 		case 't':
 		case 'd':
 		case 'b':
-			sym->value += obj->secs[sym->sect].base;
+			sym->value += obj->secs[sym->sec].base;
 		case 'U':
 		case 'N':
 		case '?':
@@ -45,7 +45,7 @@ pass3(int argc, char *argv[])
 {
 	Obj *obj;
 	Objlst *lst;
-	Objsect *sp;
+	Objsec *sp;
 	Segment *seg;
 
 	/*

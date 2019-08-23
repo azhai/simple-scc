@@ -9,7 +9,7 @@ void
 pass4(int argc, char *argv[])
 {
 	Objlst *lp;
-	Objsect *sp;
+	Objsec *sp;
 	Section *sec;
 	unsigned long i;
 	FILE *fp;

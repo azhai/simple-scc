@@ -42,7 +42,7 @@ newobject(FILE *fp, int type)
 	int i;
 	Obj *obj;
 	unsigned long long total, *p;
-	Objsect *sp;
+	Objsec *sp;
 	struct sizes siz;
 
 	if ((obj = objnew(type)) == NULL) {

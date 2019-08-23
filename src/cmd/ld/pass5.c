@@ -35,7 +35,7 @@ pass5(int argc, char *argv[])
 	obj = objnew(bintype);
 
 	for (segp = segv; *segp; segp++)
-		objaddseg(obj, *segp);
+		/* objaddseg(obj, *segp) */ ;
 
 	for (sym = defhead.next; sym != &defhead; sym = sym->next) {
 		osym = objlookup(obj, sym->name, 1);
