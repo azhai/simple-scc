@@ -32,6 +32,7 @@ extern int coff32addr2line(Obj *, unsigned long long , char *, int *);
 extern int coff32strip(Obj *obj);
 extern void coff32del(Obj *obj);
 extern int coff32write(Obj *obj, FILE *fp);
+extern int coff32probe(unsigned char *buf, char **name);
 
 extern int coff32xsetidx(int order, long nsyms, Objsymdef *head, FILE *fp);
 extern int coff32xgetidx(int order, long *nsyms, Objsymdef **def, FILE *fp);

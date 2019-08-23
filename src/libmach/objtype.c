@@ -4,16 +4,12 @@
 
 #include "libmach.h"
 
-static int (*funv[])(unsigned char *, char **) = {
-	[COFF32] = coff32probe,
-};
-
 int
 objtype(FILE *fp, char **name)
 {
 	int n, i;
-	int (**fn)(unsigned char *, char **);
 	fpos_t pos;
+	Objops **opsp, *ops;
 	unsigned char buf[NBYTES];
 
 	fgetpos(fp, &pos);
@@ -23,9 +19,8 @@ objtype(FILE *fp, char **name)
 	if (n != 1 || ferror(fp))
 		return -1;
 
-	for (fn = funv; fn < &funv[NFORMATS]; ++fn) {
-		n = (**fn)(buf, name);
-		if (n == -1)
+	for (opsp = objops; ops = *opsp; ++opsp) {
+		if ((*ops->probe)(buf, name) < 0)
 			continue;
 		return n;
 	}

@@ -45,6 +45,7 @@ struct objsymdef {
 };
 
 struct objops {
+	int (*probe)(unsigned char *buf, char **name);
 	int (*new)(Obj *obj);
 	int (*read)(Obj *obj, FILE *fp);
 	int (*addr2line)(Obj *, unsigned long long , char *, int *);

@@ -30,7 +30,6 @@ extern void objdel(Obj *obj);
 
 /* coff32 functions */
 /* TODO: Move this functions to a coff32 files */
-extern int coff32probe(unsigned char *buf, char **name);
 
 extern char *coff32namidx(void);
 
