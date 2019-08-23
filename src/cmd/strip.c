@@ -65,7 +65,7 @@ strip(char *fname)
 	if ((fp = fopen(fname, "wb")) == NULL)
 		goto err1;
 
-	if (objwrite(obj, fp) < 0) {
+	if (ops->write(obj, fp) < 0) {
 		error("error writing output");
 		goto err3;
 	}

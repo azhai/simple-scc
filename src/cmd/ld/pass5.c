@@ -48,5 +48,5 @@ pass5(int argc, char *argv[])
 
 	fp = fopen(output, "wb");
 	objsync(obj);
-	objwrite(obj, fp);
+	(obj->ops->write)(obj, fp);
 }

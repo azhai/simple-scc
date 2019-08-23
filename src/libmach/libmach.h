@@ -26,11 +26,10 @@ enum order {
 /* common functions */
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);
-extern void objfree(Obj *obj);
+extern void objdel(Obj *obj);
 
 /* coff32 functions */
 /* TODO: Move this functions to a coff32 files */
-extern int coff32write(Obj *obj, FILE *fp);
 extern int coff32probe(unsigned char *buf, char **name);
 
 extern char *coff32namidx(void);
