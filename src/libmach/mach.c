@@ -4,9 +4,7 @@
 
 #include "libmach.h"
 
-extern struct objfmt coff32;
-
-struct objfmt *objfmts[] = {
+Objops *objops[] = {
 	[COFF32] = &coff32,
 	[NFORMATS] = NULL,
 };

@@ -7,8 +7,8 @@
 ./armember.o: $(INCDIR)/scc/scc/mach.h
 ./formember.o: $(INCDIR)/scc/scc/ar.h
 ./formember.o: $(INCDIR)/scc/scc/mach.h
-./getindex.o: $(INCDIR)/scc/scc/mach.h
-./getindex.o: ./libmach.h
+./mach.o: $(INCDIR)/scc/scc/mach.h
+./mach.o: ./libmach.h
 ./objaddseg.o: $(INCDIR)/scc/scc/mach.h
 ./objdel.o: $(INCDIR)/scc/scc/mach.h
 ./objdel.o: ./libmach.h
@@ -20,8 +20,6 @@
 ./objnew.o: ./libmach.h
 ./objpos.o: $(INCDIR)/scc/scc/mach.h
 ./objpos.o: ./libmach.h
-./objread.o: $(INCDIR)/scc/scc/mach.h
-./objread.o: ./libmach.h
 ./objstrip.o: $(INCDIR)/scc/scc/mach.h
 ./objstrip.o: ./libmach.h
 ./objsync.o: $(INCDIR)/scc/scc/mach.h
@@ -32,7 +30,5 @@
 ./objwrite.o: ./libmach.h
 ./pack.o: $(INCDIR)/scc/scc/mach.h
 ./pack.o: ./libmach.h
-./setindex.o: $(INCDIR)/scc/scc/mach.h
-./setindex.o: ./libmach.h
 ./unpack.o: $(INCDIR)/scc/scc/mach.h
 ./unpack.o: ./libmach.h

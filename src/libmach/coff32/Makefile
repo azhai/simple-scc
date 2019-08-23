@@ -9,8 +9,10 @@ OBJS = coff32.o \
        coff32read.o \
        coff32strip.o \
        coff32write.o \
-       coff32setindex.o \
-       coff32getindex.o \
+       coff32setidx.o \
+       coff32xsetidx.o \
+       coff32getidx.o \
+       coff32xgetidx.o \
        coff32setidx.o \
        coff32getidx.o \
        coff32sync.o \

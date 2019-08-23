@@ -11,7 +11,7 @@ objnew(int type)
 {
 	Obj *obj;
 	int fmt;
-	struct objfmt *op;
+	Objops *ops;
 
 	fmt = FORMAT(type);
 	if (fmt >= NFORMATS)
@@ -27,11 +27,10 @@ objnew(int type)
 	obj->nsecs = 0;
 	memset(obj->htab, 0, sizeof(obj->htab));
 
-	op = objfmts[fmt];
-	obj->new = op->new;
-	obj->read = op->read;
+	ops = objops[fmt];
+	obj->ops = ops;
 
-	if ((*obj->new)(obj) < 0) {
+	if ((*ops->new)(obj) < 0) {
 		free(obj);
 		return NULL;
 	}

@@ -26,3 +26,8 @@ struct coff32 {
 
 extern int coff32new(Obj *obj);
 extern int coff32read(Obj *obj, FILE *fp);
+extern int coff32setidx(long nsymbols, Objsymdef *head, FILE *fp);
+extern int coff32getidx(long *nsyms, Objsymdef **def, FILE *fp);
+
+extern int coff32xsetidx(int order, long nsyms, Objsymdef *head, FILE *fp);
+extern int coff32xgetidx(int order, long *nsyms, Objsymdef **def, FILE *fp);

@@ -3,6 +3,7 @@
 typedef struct objsect Objsect;
 typedef struct objsym Objsym;
 typedef struct objsymdef Objsymdef;
+typedef struct objops Objops;
 typedef struct obj Obj;
 
 enum sectype {
@@ -43,8 +44,16 @@ struct objsymdef {
 	Objsymdef *hash, *next;
 };
 
+struct objops {
+	int (*new)(Obj *obj);
+	int (*read)(Obj *obj, FILE *fp);
+	int (*setidx)(long nsyms, Objsymdef *def, FILE *fp);
+	int (*getidx)(long *nsyms, Objsymdef **def, FILE *fp);
+};
+
 struct obj {
 	int type;
+	Objops *ops;
 	char *index;
 	Objsym *htab[NR_SYMHASH];
 	Objsym *syms;
@@ -53,11 +62,7 @@ struct obj {
 	int nsecs;
 	int nsyms;
 	void *data;
-
-	int (*new)(Obj *obj);
-	int (*read)(Obj *obj, FILE *fp);
 };
-
 
 extern int formember(FILE *fp,
                      int (*fn)(FILE *, char *, void *),
@@ -72,8 +77,6 @@ extern int objwrite(Obj *obj, FILE *fp);
 extern int objpos(Obj *obj, FILE *fp, long pos);
 extern int archive(FILE *fp);
 extern long armember(FILE *fp, char *member);
-extern long setindex(int type, long nsyms, Objsymdef *def, FILE *fp);
-extern int getindex(int type, long *nsyms, Objsymdef **def, FILE *fp);
 
 
 /* TODO */

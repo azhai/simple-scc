@@ -153,7 +153,7 @@ newobject(FILE *fp, int type)
 		return;
 	}
 
-	if ((*obj->read)(obj, fp) < 0)
+	if ((*obj->ops->read)(obj, fp) < 0)
 		goto error;
 
 	for (sym = obj->syms; sym; sym = sym->next)

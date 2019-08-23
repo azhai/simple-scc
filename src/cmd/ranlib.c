@@ -19,6 +19,7 @@
 static char *namidx;
 static long nsymbols;
 static int status, artype, nolib;
+static Objops *ops;
 static char *filename, *membname;
 static Objsymdef *htab[NR_SYMDEF], *head;
 static long offset;
@@ -117,7 +118,6 @@ newsymbol(Objsym *sym)
 static int
 newmember(FILE *fp, char *nam, void *data)
 {
-
 	int t, ret = 0;
 	Obj *obj;
 	Objsym *sym;
@@ -144,9 +144,10 @@ newmember(FILE *fp, char *nam, void *data)
 		error("out of memory");
 		return 0;
 	}
+	ops = obj->ops;
 	namidx = obj->index;
 
-	if ((*obj->read)(obj, fp) < 0) {
+	if ((*ops->read)(obj, fp) < 0) {
 		error("file corrupted");
 		goto error;
 	}
@@ -269,7 +270,6 @@ ranlib(char *fname)
 {
 	int c;
 	FILE *fp, *idx, *out;
-	long siz;
 	struct fprop prop;
 
 	errno = 0;
@@ -291,13 +291,12 @@ ranlib(char *fname)
 	if (nolib)
 		goto error;
 
-	siz = setindex(artype, nsymbols, head, idx);
-	if (siz <= 0)
+	if ((*ops->setidx)(nsymbols, head, idx) < 0)
 		goto error;
 
 	if (getstat(fname, &prop) < 0)
 		goto error;
-	prop.size = siz;
+	prop.size = ftell(idx);
 	prop.time = time(NULL);
 
 	if (!merge(out, &prop, fp, idx))

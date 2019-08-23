@@ -16,6 +16,7 @@ enum {
 };
 
 int bintype = -1;
+static Objops *binops;
 static Symbol refhead = {
 	.next = &refhead,
 	.prev = &refhead,
@@ -183,8 +184,9 @@ newobject(FILE *fp, int type, int inlib)
 		goto delete;
 	}
 	bintype = type;
+	binops = obj->ops;
  
-	if ((*obj->read)(obj, fp) < 0) {
+	if ((*binops->read)(obj, fp) < 0) {
 		error("object file corrupted");
 		goto delete;
 	}
@@ -208,7 +210,7 @@ addlib(FILE *fp)
 	Objsymdef *def, *dp;
 	Symbol *sym;
 
-	if (getindex(bintype, &n, &def, fp) < 0) {
+	if ((*binops->getidx)(&n, &def, fp) < 0) {
 		error("corrupted index");
 		return;
 	}
