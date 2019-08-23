@@ -160,7 +160,7 @@ newmember(FILE *fp, char *nam, void *data)
 	ret = 1;
 
 error:
-	objdel(obj);
+	(ops->del)(obj);
 	return ret;
 }
 

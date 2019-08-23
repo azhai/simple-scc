@@ -49,6 +49,7 @@ struct objops {
 	int (*read)(Obj *obj, FILE *fp);
 	int (*addr2line)(Obj *, unsigned long long , char *, int *);
 	int (*strip)(Obj *obj);
+	void (*del)(Obj *obj);
 	int (*setidx)(long nsyms, Objsymdef *def, FILE *fp);
 	int (*getidx)(long *nsyms, Objsymdef **def, FILE *fp);
 };
@@ -72,7 +73,6 @@ extern int formember(FILE *fp,
 
 extern int objtype(FILE *fp, char **name);
 extern Obj *objnew(int type);
-extern void objdel(Obj *obj);
 extern Objsym *objlookup(Obj *obj, char *name, int install);
 extern int objwrite(Obj *obj, FILE *fp);
 extern int objpos(Obj *obj, FILE *fp, long pos);

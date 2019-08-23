@@ -198,7 +198,7 @@ newobject(FILE *fp, int type, int inlib)
 	return;
 
  delete:
-	objdel(obj);
+	(*binops->del)(obj);
 	return;
 }
 

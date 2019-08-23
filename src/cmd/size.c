@@ -92,7 +92,7 @@ newobject(FILE *fp, int type)
 	ttotal += total;
 
 err:
-	objdel(obj);
+	(*obj->ops->del)(obj);
 }
 
 static int

@@ -163,8 +163,8 @@ newobject(FILE *fp, int type)
 	err = 0;
 
 error:
+	(*obj->ops->del)(obj);
 	free(tbl.buf);
-	objdel(obj);
 	if (err)
 		error("object file corrupted");
 }

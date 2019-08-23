@@ -23,19 +23,13 @@ enum order {
 	BIG_ENDIAN,
 };
 
-enum deltype {
-	GENERICDEL = 1 << 0,
-	TARGETDEL  = 1 << 1,
-};
-
 /* common functions */
 extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);
-extern int objfree(Obj *obj, int what);
+extern void objfree(Obj *obj);
 
 /* coff32 functions */
 /* TODO: Move this functions to a coff32 files */
-extern void coff32del(Obj *obj);
 extern int coff32write(Obj *obj, FILE *fp);
 extern int coff32probe(unsigned char *buf, char **name);
 

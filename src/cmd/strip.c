@@ -71,12 +71,12 @@ strip(char *fname)
 	}
 
 	fclose(fp);
-	objdel(obj);
+	(*ops->del)(obj);
 
 	return;
 
 err3:
-	objdel(obj);
+	(*ops->del)(obj);
 err2:
 	if (fp)
 		fclose(fp);

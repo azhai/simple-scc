@@ -344,28 +344,24 @@ readfile(Obj *obj, FILE *fp)
 
 	/* TODO: Add validation of the different fields */
 	if ((off = ftell(fp)) == EOF)
-		goto error;
+		return -1;
 	obj->pos = off;
 
 	if (!readhdr(obj, fp))
-		goto error;
+		return -1;
 	if (!readaout(obj, fp))
-		goto error;
+		return -1;
 	if (!readscns(obj, fp))
-		goto error;
+		return -1;
 	if (!readents(obj, fp))
-		goto error;
+		return -1;
 	if (!readstr(obj, fp))
-		goto error;
+		return -1;
 	if (!readreloc(obj, fp))
-		goto error;
+		return -1;
 	if (!readlines(obj, fp))
-		goto error;
+		return -1;
 	return 0;
-
-error:
-	objfree(obj, TARGETDEL);
-	return -1;
 }
 
 static int

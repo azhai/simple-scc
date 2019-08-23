@@ -18,4 +18,6 @@ coff32del(Obj *obj)
 	}
 	free(obj->data);
 	obj->data = NULL;
+
+	objdel(obj);
 }

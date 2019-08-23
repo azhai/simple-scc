@@ -6,28 +6,10 @@
 
 #include "libmach.h"
 
-static void (*funv[])(Obj *) = {
-	[COFF32] = coff32del,
-};
-
-int
-objfree(Obj *obj, int what)
+void
+objdel(Obj *obj)
 {
-	int fmt;
-
-	if (what & TARGETDEL) {
-		fmt = FORMAT(obj->type);
-		if (fmt < NFORMATS)
-			return -1;
-		(*funv[fmt])(obj);
-	}
-
-	if (what & GENERICDEL) {
-		free(obj->secs);
-		free(obj->syms);
-		obj->syms = NULL;
-		memset(obj->htab, 0, sizeof(obj->htab));
-	}
-
-	return 0;
+	free(obj->secs);
+	free(obj->syms);
+	free(obj);
 }
