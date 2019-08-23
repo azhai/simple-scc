@@ -28,11 +28,6 @@ extern int pack(int order, unsigned char *dst, char *fmt, ...);
 extern int unpack(int order, unsigned char *src, char *fmt, ...);
 extern void objdel(Obj *obj);
 
-/* coff32 functions */
-/* TODO: Move this functions to a coff32 files */
-
-extern char *coff32namidx(void);
-
 /* globals */
 extern Objops *objops[];
 extern Objops coff32;
