@@ -15,7 +15,6 @@ OBJS = coff32.o \
        coff32xgetidx.o \
        coff32setidx.o \
        coff32getidx.o \
-       coff32sync.o \
        coff32addr2line.o \
 
 all: $(OBJS)

@@ -33,7 +33,6 @@ extern void objdel(Obj *obj);
 extern int coff32probe(unsigned char *buf, char **name);
 
 extern char *coff32namidx(void);
-extern int coff32sync(Obj *obj);
 
 /* globals */
 extern Objops *objops[];

@@ -47,6 +47,5 @@ pass5(int argc, char *argv[])
 	/* TODO: write line information */
 
 	fp = fopen(output, "wb");
-	objsync(obj);
 	(obj->ops->write)(obj, fp);
 }

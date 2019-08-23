@@ -82,5 +82,4 @@ extern long armember(FILE *fp, char *member);
 
 /* TODO */
 extern int objaddseg(Obj *obj, void *seg);
-extern int objsync(Obj *obj);
 extern int objreloc(Obj *obj, char *sect, void *rel);
