@@ -58,6 +58,7 @@ newobject(FILE *fp, int type)
 	siz.text = siz.data = siz.bss = 0;
 	for (sp = obj->secs; sp; sp = sp->next) {
 		switch (sp->type) {
+		case 'R':
 		case 'T':
 			p = &siz.text;
 			break;
