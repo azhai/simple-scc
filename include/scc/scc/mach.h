@@ -47,6 +47,7 @@ struct objsymdef {
 struct objops {
 	int (*new)(Obj *obj);
 	int (*read)(Obj *obj, FILE *fp);
+	int (*addr2line)(Obj *, unsigned long long , char *, int *);
 	int (*setidx)(long nsyms, Objsymdef *def, FILE *fp);
 	int (*getidx)(long *nsyms, Objsymdef **def, FILE *fp);
 };
@@ -83,4 +84,3 @@ extern long armember(FILE *fp, char *member);
 extern int objaddseg(Obj *obj, void *seg);
 extern int objsync(Obj *obj);
 extern int objreloc(Obj *obj, char *sect, void *rel);
-extern int addr2line(Obj *obj, unsigned long long addr, char *fname, int *line);

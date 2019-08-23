@@ -27,7 +27,7 @@ error(char *fmt, ...)
 }
 
 static void
-translate(Obj *obj, char *s)
+addr2line(Obj *obj, char *s)
 {
 	int line;
 	unsigned long long addr;
@@ -40,7 +40,7 @@ translate(Obj *obj, char *s)
 		return;
 	}
 
-	if (!addr2line(obj, addr, fname, &line)) {
+	if ((*obj->ops->addr2line)(obj, addr, fname, &line) < 0) {
 		error("not matching line");
 		return;
 	}
@@ -128,10 +128,10 @@ main(int argc, char *argv[])
 
 	if (argc > 0) {
 		for ( ; *argv; ++argv)
-			translate(obj, *argv);
+			addr2line(obj, *argv);
 	} else {
 		while ((ln = getline()) != NULL)
-			translate(obj, ln);
+			addr2line(obj, ln);
 	}
 
 	fflush(stdout);
