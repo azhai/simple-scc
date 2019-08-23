@@ -69,6 +69,7 @@ struct obj {
 	void *data;
 };
 
+extern int archive(FILE *fp);
 extern int formember(FILE *fp,
                      int (*fn)(FILE *, char *, void *),
                      void *data);
@@ -77,8 +78,6 @@ extern int objtype(FILE *fp, char **name);
 extern Obj *objnew(int type);
 extern Objsym *objlookup(Obj *obj, char *name, int install);
 extern int objpos(Obj *obj, FILE *fp, long pos);
-extern int archive(FILE *fp);
-extern long armember(FILE *fp, char *member);
 
 
 /* TODO */
