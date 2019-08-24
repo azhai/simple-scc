@@ -124,15 +124,29 @@ newsymbol(Objsym *sym)
 	return 1;
 }
 
+static void
+freehash(void)
+{
+	Symdef **npp, *next, *np;
+
+	for (npp = htab; npp < &htab[NR_SYMDEF]; npp++)
+		*npp = NULL;
+
+	for (np = head; np; np = next) {
+		next = np->next;
+		free(np->name);
+		free(np);
+	}
+
+	head = NULL;
+}
+
 static int
-newmember(FILE *fp, char *nam, void *data)
+newmember(FILE *fp, char *nam)
 {
 	int t, ret = 0;
 	Obj *obj;
 	Objsym *sym;
-
-	if (artype == -1 && (!strcmp(nam, "/") || !strcmp(nam, "__.SYMDEF")))
-		return 1;
 
 	membname = nam;
 	offset = ftell(fp);
@@ -173,37 +187,36 @@ error:
 	return ret;
 }
 
-static void
-freehash(void)
-{
-	Symdef **npp, *next, *np;
-
-	for (npp = htab; npp < &htab[NR_SYMDEF]; npp++)
-		*npp = NULL;
-
-	for (np = head; np; np = next) {
-		next = np->next;
-		free(np->name);
-		free(np);
-	}
-
-	head = NULL;
-}
-
 static int
 readsyms(FILE *fp)
 {
+	long r, off;
+	char memb[SARNAM+1];
+
 	if (!archive(fp)) {
 		error("file format not recognized");
 		return 0;
 	}
 
-	if (formember(fp, newmember, NULL) < 0) {
-		error("library file corrupted");
-		return 0;
+	if ((off = armember(fp, memb)) < 0)
+		goto corrupted;
+
+	if (strcmp(memb, "/") != 0 && strcmp(memb, "__.SYMDEF") != 0) {
+		if (fseek(fp, -off, SEEK_CUR) == EOF) {
+			error(errstr());
+			return 0;
+		}
 	}
 
+	while ((r = armember(fp, memb)) > 0)
+		newmember(fp, memb);
+	if (r < 0)
+		goto corrupted;
 	return 1;
+
+corrupted:
+	error("corrupted ar file");
+	return 0;
 }
 
 static int

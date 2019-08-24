@@ -16,7 +16,6 @@ OBJS = mach.o \
        archive.o \
        armember.o \
        objlookup.o \
-       formember.o \
        objtype.o \
        objwrite.o \
        pack.o \

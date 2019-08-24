@@ -73,9 +73,6 @@ struct obj {
 
 extern int archive(FILE *fp);
 extern long armember(FILE *fp, char *member);
-extern int formember(FILE *fp,
-                     int (*fn)(FILE *, char *, void *),
-                     void *data);
 
 extern int objtype(FILE *fp, char **name);
 extern Obj *objnew(int type);

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <scc/ar.h>
 #include <scc/arg.h>
 #include <scc/mach.h>
 
@@ -169,17 +170,21 @@ error:
 		error("object file corrupted");
 }
 
-static int
-newmember(FILE *fp, char *name, void *data)
+static void
+newlib(FILE *fp)
 {
 	int t;
+	long r;
+	char memb[SARNAM+1];
 
-	multi = 1;
-	membname = name;
-	if ((t = objtype(fp, NULL)) != -1)
-		newobject(fp, t);
-
-	return 1;
+	while ((r = armember(fp, memb)) > 0) {
+		membname = memb;
+		if ((t = objtype(fp, NULL)) != -1)
+			newobject(fp, t);
+		membname = NULL;
+	}
+	if (r < 0)
+		error("library corrupted");
 }
 
 static void
@@ -196,14 +201,12 @@ nm(char *fname)
 		return;
 	}
 
-	if ((t = objtype(fp, NULL)) != -1) {
+	if ((t = objtype(fp, NULL)) != -1)
 		newobject(fp, t);
-	} else if (archive(fp)) {
-		if (formember(fp, newmember, NULL) < 0)
-			error("library corrupted");
-	} else {
+	else if (archive(fp))
+		newlib(fp);
+	else
 		error("bad format");
-	}
 
 	if (ferror(fp))
 		error(strerror(errno));
