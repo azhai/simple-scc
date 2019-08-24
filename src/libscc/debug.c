@@ -3,12 +3,12 @@
 
 #include <scc/scc.h>
 
-int debug;
+int enadebug;
 
 void
 dbg(const char *fmt, ...)
 {
-	if (!debug)
+	if (!enadebug)
 		return;
 	va_list va;
 	va_start(va, fmt);

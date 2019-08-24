@@ -1,10 +1,10 @@
 #include <stddef.h>
 
-extern int debug;
+extern int enadebug;
 
 #ifndef NDEBUG
 #define DBG(...) dbg(__VA_ARGS__)
-#define DBGON() (debug = 1)
+#define DBGON() (enadebug = 1)
 #else
 #define DBG(...)
 #define DBGON()
