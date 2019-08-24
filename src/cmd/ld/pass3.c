@@ -22,11 +22,11 @@ rebase(Obj *obj)
 			 * we have an error in our code.
 			 */
 			aux = lookup(sym->name);
-			aux->value += obj->secs[sym->sec].base;
+			aux->value += obj->secs[sym->index].base;
 		case 't':
 		case 'd':
 		case 'b':
-			sym->value += obj->secs[sym->sec].base;
+			sym->value += obj->secs[sym->index].base;
 		case 'U':
 		case 'N':
 		case '?':

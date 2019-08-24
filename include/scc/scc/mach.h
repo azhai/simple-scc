@@ -30,10 +30,13 @@ struct objsec {
 
 struct objsym {
 	char *name;
-	int type;
-	int sec;
 	unsigned long long size;
 	unsigned long long value;
+	void *aux;
+	int index;
+	char class;
+	char type;
+
 	Objsym *next, *hash;
 };
 
