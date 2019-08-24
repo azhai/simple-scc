@@ -22,6 +22,7 @@ Segment text = {.type = 'T'};
 Segment rodata = {.type = 'R'};
 Segment data = {.type = 'D'};
 Segment bss = {.type = 'B'};
+Segment debug = {.type = 'N'};
 
 char *output = "a.out", *entry = "start";
 static int status;
