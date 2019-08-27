@@ -5,7 +5,8 @@ include $(PROJECTDIR)/scripts/rules.mk
 TARGET = $(LIBDIR)/libmach.a
 
 OBJS = mach.o \
-       objnew.o \
+       newobj.o \
+       delobj.o \
        objpos.o \
        archive.o \
        armember.o \

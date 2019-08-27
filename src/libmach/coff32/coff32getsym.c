@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <errno.h>
 #include <stdio.h>
 
 #include <scc/mach.h>
@@ -59,8 +60,10 @@ coff32getsym(Obj *obj, long *idx, Symbol *sym)
 	SYMENT *ent;
 	Coff32 *coff = obj->data;
 
-	if (*idx >= coff->hdr.f_nsyms)
-		return 0;
+	if (*idx >= coff->hdr.f_nsyms) {
+		errno = ERANGE;
+		return -1;
+	}
 
 	ent = &coff->ents[n];
 	sym->name = symname(coff, ent);
@@ -70,5 +73,5 @@ coff32getsym(Obj *obj, long *idx, Symbol *sym)
 	sym->index = n;
 	*idx += ent->n_numaux;
 
-	return 1;
+	return 0;
 }

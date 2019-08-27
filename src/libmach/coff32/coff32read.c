@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <ctype.h>
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -359,8 +360,10 @@ coff32read(Obj *obj, FILE *fp)
 
 	for (i = 0; i < hdr->f_nsyms; i++) {
 		SYMENT *ent = &coff->ents[i];
-		if (ent->n_zeroes != 0 && ent->n_offset > coff->strsiz)
+		if (ent->n_zeroes != 0 && ent->n_offset > coff->strsiz) {
+			errno = ERANGE;
 			return -1;
+		}
 	}
 
 	return 0;

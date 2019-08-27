@@ -68,6 +68,7 @@ extern int archive(FILE *fp);
 extern long armember(FILE *fp, char *member);
 
 extern int objtype(FILE *fp, char **name);
-extern Obj *objnew(int type);
+extern Obj *newobj(int type);
+extern void delobj(Obj *obj);
 extern int readobj(Obj *obj, FILE *fp);
 extern int getsym(Obj *obj, long *index, Symbol *sym);

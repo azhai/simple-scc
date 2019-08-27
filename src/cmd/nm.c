@@ -121,36 +121,32 @@ newsym(Symbol *sym, struct symtbl *tbl)
 	size_t n, size;
 	int type = sym->type;
 
-	if (type == '?' || type == 'N')
-		return 1;
-
-	if (uflag && type != 'U')
-		return 1;
-
-	if (gflag && !isupper(type))
-		return 1;
+	if (type == '?'
+	|| type == 'N'
+	|| uflag && type != 'U'
+	|| gflag && !isupper(type)) {
+		return 0;
+	}
 
 	n = tbl->nsyms+1;
-	if (n == 0 || n > SIZE_MAX / sizeof(*p))
-		return 0;
 	size = n *sizeof(*p);
-
 	p = realloc(tbl->buf, size);
 	s = malloc(sizeof(*s));
 	if (!p || !s) {
-		error("out of memory");
-		exit(EXIT_FAILURE);
+		free(p);
+		free(s);
+		error(strerror(errno));
+		return -1;
 	}
 
 	*s = *sym;
 	tbl->buf = p;
 	p[tbl->nsyms++] = s;
-
-	return 1;
+	return 0;
 }
 
 static void
-newobject(FILE *fp, int type)
+nmobj(FILE *fp, int type)
 {
 	int err = 1;
 	long i;
@@ -158,54 +154,60 @@ newobject(FILE *fp, int type)
 	Symbol sym;
 	struct symtbl tbl = {NULL, 0};
 
-	if ((obj = objnew(type)) == NULL) {
-		error("out of memory");
-		exit(EXIT_FAILURE);
+	if ((obj = newobj(type)) == NULL) {
+		error(strerror(errno));
+		goto err1;
 	}
 
-	if (readobj(obj, fp) < 0)
-		goto error;
+	if (readobj(obj, fp) < 0) {
+		error(strerror(errno));
+		goto err2;
+	}
 
-	for (i = 0; getsym(obj, &i, &sym); i++)
-		newsym(&sym, &tbl);
+	for (i = 0; getsym(obj, &i, &sym) != -1; i++) {
+		if (newsym(&sym, &tbl) < 0)
+			goto err3;
+	}
 
 	printsyms(tbl.buf, tbl.nsyms);
 	err = 0;
 
-error:
-	(*obj->ops->del)(obj);
+err3:
 	free(tbl.buf);
+err2:
+	delobj(obj);
+err1: 
 	if (err)
 		error("object file corrupted");
 }
 
 static void
-newlib(FILE *fp)
+nmlib(FILE *fp)
 {
 	int t;
 	long off, cur;
 	char memb[SARNAM+1];
 
-	while (!feof(fp)) {
+	for (;;) {
 		cur = ftell(fp);
 		off = armember(fp, memb);
 		switch (off) {
 		case -1:
 			error("library corrupted");
+			if (ferror(fp))
+				error(strerror(errno));
 		case 0:
 			return;
 		default:
 			membname = memb;
 			if ((t = objtype(fp, NULL)) != -1)
-				newobject(fp, t);
+				nmobj(fp, t);
 			membname = NULL;
 			fseek(fp, cur, SEEK_SET);
 			fseek(fp, off, SEEK_CUR);
 			break;
 		}
 	}
-
-	error("library corrupted:%s", strerror(errno));
 }
 
 static void
@@ -223,14 +225,11 @@ nm(char *fname)
 	}
 
 	if ((t = objtype(fp, NULL)) != -1)
-		newobject(fp, t);
+		nmobj(fp, t);
 	else if (archive(fp))
-		newlib(fp);
+		nmlib(fp);
 	else
 		error("bad format");
-
-	if (ferror(fp))
-		error(strerror(errno));
 
 	fclose(fp);
 }
@@ -287,7 +286,7 @@ main(int argc, char *argv[])
 			nm(*argv);
 	}
 
-	if (fflush(stdout)) {
+	if (fflush(stdout) == EOF) {
 		fprintf(stderr,
 		        "nm: error writing in output:%s\n",
 		        strerror(errno));

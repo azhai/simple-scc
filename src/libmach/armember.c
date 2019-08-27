@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,14 +32,18 @@ armember(FILE *fp, char *member)
 	if (fread(&hdr, sizeof(hdr), 1, fp) != 1)
 		return (feof(fp)) ? 0 : -1;
 
-	if (strncmp(hdr.ar_fmag, ARFMAG, sizeof(hdr.ar_fmag)))
+	if (strncmp(hdr.ar_fmag, ARFMAG, sizeof(hdr.ar_fmag))) {
+		errno = ERANGE;
 		return -1;
+	}
 
 	siz = strtol(hdr.ar_size, NULL, 0);
 	if (siz & 1)
 		siz++;
-	if (siz == 0)
+	if (siz == 0) {
+		errno = ERANGE;
 		return -1;
+	}
 
 	getfname(&hdr, member);
 
