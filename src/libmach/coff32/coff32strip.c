@@ -10,11 +10,10 @@ int
 coff32strip(Obj *obj)
 {
 	int i;
-	FILHDR *hdr;
 	SCNHDR *scn;
 	struct coff32 *coff = obj->data;
+	FILHDR *hdr = &coff->hdr;
 
-	hdr = &coff->hdr;
 	for (i = 0; i < hdr->f_nscns; i++) {
 		scn = &coff->scns[i];
 		scn->s_nrelloc = 0;

@@ -53,17 +53,16 @@ symname(Coff32 *coff, SYMENT *ent)
 	return &coff->strtbl[ent->n_offset];
 }
 
-int
+Symbol *
 coff32getsym(Obj *obj, long *idx, Symbol *sym)
 {
 	long n = *idx;
 	SYMENT *ent;
 	Coff32 *coff = obj->data;
+	FILHDR *hdr = &coff->hdr;
 
-	if (*idx >= coff->hdr.f_nsyms) {
-		errno = ERANGE;
-		return -1;
-	}
+	if ((hdr->f_flags & F_SYMS) != 0 || n >= coff->hdr.f_nsyms)
+		return NULL;
 
 	ent = &coff->ents[n];
 	sym->name = symname(coff, ent);
@@ -73,5 +72,5 @@ coff32getsym(Obj *obj, long *idx, Symbol *sym)
 	sym->index = n;
 	*idx += ent->n_numaux;
 
-	return 0;
+	return sym;
 }

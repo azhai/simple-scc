@@ -8,6 +8,7 @@
 #include <scc/mach.h>
 
 static int status;
+static char tmpname[FILENAME_MAX];
 static char *filename;
 char *argv0;
 
@@ -26,65 +27,53 @@ error(char *fmt, ...)
 }
 
 static void
-strip(char *fname)
+doit(char *fname)
 {
 	int type;
+	size_t r;
 	FILE *fp;
 	Obj *obj;
-	Objops *ops;
 
-	errno = 0;
 	filename = fname;
-
 	if ((fp = fopen(fname, "rb")) == NULL)
 		goto err1;
+	if ((type = objtype(fp, NULL)) < 0)
+		goto err2;
+	if ((obj = newobj(type)) == NULL)
+		goto err2;
+	if (readobj(obj, fp) < 0)
+		goto err3;
+	fclose(fp);
 
-	if ((type = objtype(fp, NULL)) < 0) {
-		error("file format not recognized");
+	if (strip(obj) < 0)
+		goto err2;
+
+	r = snprintf(tmpname, sizeof(tmpname), "%s.tmp", fname);
+	if (r >= sizeof(tmpname)) {
+		errno = ERANGE;
 		goto err2;
 	}
-	if ((obj = objnew(type)) == NULL) {
-		error("out of memory");
-		goto err3;
-	}
-	ops = obj->ops;
 
-	if ((*ops->read)(obj, fp) < 0) {
-		error("file corrupted");
+	if ((fp = fopen(tmpname, "wb")) == NULL)
+		goto err2;
+
+	if (writeobj(obj, fp) < 0)
 		goto err3;
-	}
 	fclose(fp);
-	fp = NULL;
+	delobj(obj);
 
-	if ((*ops->strip)(obj) < 0) {
-		error("error stripping");
-		goto err3;
-	}
-
-	/* TODO: Use a temporary file */
-	if ((fp = fopen(fname, "wb")) == NULL)
+	if (rename(tmpname, fname) == EOF)
 		goto err1;
-
-	if (ops->write(obj, fp) < 0) {
-		error("error writing output");
-		goto err3;
-	}
-
-	fclose(fp);
-	(*ops->del)(obj);
 
 	return;
 
 err3:
-	(*ops->del)(obj);
+	fclose(fp);
 err2:
-	if (fp)
-		fclose(fp);
+	delobj(obj);
 err1:
-	if (errno)
-		error(strerror(errno));
-
-	return;
+	error(strerror(errno));
+	remove(tmpname);
 }
 
 static void
@@ -103,10 +92,10 @@ main(int argc, char *argv[])
 	} ARGEND
 
 	if (argc == 0) {
-		strip("a.out");
+		doit("a.out");
 	} else {
 		for (; *argv; ++argv)
-			strip(*argv);
+			doit(*argv);
 	}
 
 	return status;

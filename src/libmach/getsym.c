@@ -2,7 +2,7 @@
 
 #include <scc/mach.h>
 
-int
+Symbol *
 getsym(Obj *obj, long *index, Symbol *sym)
 {
 	return (*obj->ops->getsym)(obj, index, sym);

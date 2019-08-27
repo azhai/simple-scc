@@ -12,7 +12,9 @@ OBJS = mach.o \
        armember.o \
        objtype.o \
        readobj.o \
+       writeobj.o \
        getsym.o \
+       strip.o \
        pack.o \
        unpack.o \
 

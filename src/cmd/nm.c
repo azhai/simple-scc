@@ -70,6 +70,10 @@ printsyms(Symbol **syms, size_t nsym)
 {
 	size_t i;
 
+	if (nsym == 0) {
+		error("no symbols");
+		return;
+	}
 	qsort(syms, nsym, sizeof(syms), cmp);
 
 	if (!Aflag) {
@@ -164,7 +168,7 @@ nmobj(FILE *fp, int type)
 		goto err2;
 	}
 
-	for (i = 0; getsym(obj, &i, &sym) != -1; i++) {
+	for (i = 0; getsym(obj, &i, &sym); i++) {
 		if (newsym(&sym, &tbl) < 0)
 			goto err3;
 	}
