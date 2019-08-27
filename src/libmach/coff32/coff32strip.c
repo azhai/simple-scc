@@ -34,7 +34,6 @@ coff32strip(Obj *obj)
 	coff->ents = NULL;
 	coff->rels = NULL;
 	coff->lines = NULL;
-	objdel(obj);
 
 	return 0;
 }

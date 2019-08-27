@@ -22,7 +22,7 @@ objtype(FILE *fp, char **name)
 	for (opsp = objops; ops = *opsp; ++opsp) {
 		if ((*ops->probe)(buf, name) < 0)
 			continue;
-		return n;
+		return opsp - objops;
 	}
 
 	return -1;

@@ -4,13 +4,14 @@ PROJECTDIR = ../..
 include $(PROJECTDIR)/scripts/rules.mk
 
 TARGET = $(BINDIR)/nm \
-         $(BINDIR)/strip \
-         $(BINDIR)/size \
          $(BINDIR)/ar \
-         $(BINDIR)/ranlib \
-         $(BINDIR)/objdump \
-         $(BINDIR)/objcopy \
-         $(BINDIR)/addr2line \
+
+#         $(BINDIR)/strip \
+#         $(BINDIR)/size \
+#         $(BINDIR)/ranlib \
+#         $(BINDIR)/objdump \
+#         $(BINDIR)/objcopy \
+#         $(BINDIR)/addr2line \
 
 DIRS   = as scc
 

@@ -15,7 +15,7 @@ struct arch {
 
 struct coff32 {
 	FILHDR hdr;
-	AOUTHDR *aout;
+	AOUTHDR aout;
 	SCNHDR *scns;
 	SYMENT *ents;
 	RELOC **rels;
@@ -38,3 +38,5 @@ extern int coff32xsetidx(int order,
                          long nsymbols, char *names[], long offs[], FILE *fp);
 extern int coff32xgetidx(int order,
                          long *nsyms, char ***namep, long **offsp, FILE *fp);
+
+extern int coff32getsym(Obj *obj, long *idx, Symbol *sym);

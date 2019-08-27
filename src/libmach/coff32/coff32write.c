@@ -231,7 +231,7 @@ writeaout(Obj *obj, FILE *fp)
 
 	if (hdr->f_opthdr == 0)
 		return 1;
-	pack_aout(ORDER(obj->type), buf, coff->aout);
+	pack_aout(ORDER(obj->type), buf, &coff->aout);
 
 	return fread(buf, AOUTSZ, 1, fp) != 1;
 }

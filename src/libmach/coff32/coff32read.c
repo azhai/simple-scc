@@ -82,7 +82,7 @@ unpack_ent(int order, unsigned char *buf, SYMENT *ent)
 
 	s = ent->n_name;
 	if (!s[0] && !s[1] && !s[2] && !s[3])
-		unpack(order, "ll", buf, &ent->n_zeroes, &ent->n_offset);
+		unpack(order, buf, "ll", &ent->n_zeroes, &ent->n_offset);
 }
 
 static void
@@ -153,10 +153,9 @@ readstr(Obj *obj, FILE *fp)
 	if (fread(buf, 4, 1, fp) != 1)
 		return 0;
 	unpack(ORDER(obj->type), buf, "l", &siz);
-	siz -= 4;
-	if (siz < 0)
+	if (siz == 4)
 		return 0;
-	if (siz > 0) {
+	if (siz > 4) {
 		if (siz > SIZE_MAX)
 			return 0;
 		str = malloc(siz);
@@ -165,7 +164,7 @@ readstr(Obj *obj, FILE *fp)
 		coff->strtbl = str;
 		coff->strsiz = siz;
 
-		if (fread(str, siz, 1, fp) != 1)
+		if (fread(str+4, siz-4, 1, fp) != 1)
 			return 0;
 	}
 	return 1;
@@ -185,7 +184,7 @@ readreloc(Obj *obj, FILE *fp)
 	coff  = obj->data;
 	hdr = &coff->hdr;
 
-	rels = calloc(obj->nsecs, sizeof(*rels));
+	rels = calloc(hdr->f_nscns, sizeof(*rels));
 	if (!rels)
 		return 0;
 	coff->rels = rels;
@@ -207,6 +206,8 @@ readreloc(Obj *obj, FILE *fp)
 			if (fread(buf, RELSZ, 1, fp) != 1)
 				return 0;
 			unpack_reloc(ORDER(obj->type), buf, &rp[i]);
+			if (rp[i].r_symndx >= hdr->f_nsyms)
+				return 0;
 		}
 	}
 
@@ -239,6 +240,8 @@ readents(Obj *obj, FILE *fp)
 		if (fread(buf, SYMESZ, 1, fp) != 1)
 			return 0;
 		unpack_ent(ORDER(obj->type), buf, &ent[i]);
+		if (ent->n_scnum > hdr->f_nscns)
+			return 0;		
 	}
 
 	return 1;
@@ -306,6 +309,8 @@ readlines(Obj *obj, FILE *fp)
 			if (fread(buf, LINESZ, 1, fp) == 1)
 				return 0;
 			unpack_line(ORDER(obj->type), buf, &lp[j]);
+			if (lp[i].l_symndx >= hdr->f_nsyms)
+				return 0;
 		}
 	}
 
@@ -315,12 +320,9 @@ readlines(Obj *obj, FILE *fp)
 static int
 readaout(Obj *obj, FILE *fp)
 {
-	FILHDR *hdr;
-	struct coff32 *coff;
+	struct coff32 *coff = obj->data;
+	FILHDR *hdr = &coff->hdr;
 	unsigned char buf[AOUTSZ];
-
-	coff  = obj->data;
-	hdr = &coff->hdr;
 
 	if (hdr->f_opthdr == 0)
 		return 1;
@@ -328,24 +330,17 @@ readaout(Obj *obj, FILE *fp)
 	if (fread(buf, AOUTSZ, 1, fp) != 1)
 		return 0;
 
-	coff->aout = malloc(sizeof(AOUTHDR));
-	if (!coff->aout)
-		return 0;
-
-	unpack_aout(ORDER(obj->type), buf, coff->aout);
+	unpack_aout(ORDER(obj->type), buf, &coff->aout);
 
 	return 1;
 }
 
-static int
-readfile(Obj *obj, FILE *fp)
+int
+coff32read(Obj *obj, FILE *fp)
 {
-	long off;
-
-	/* TODO: Add validation of the different fields */
-	if ((off = ftell(fp)) == EOF)
-		return -1;
-	obj->pos = off;
+	long i;
+	struct coff32 *coff = obj->data;
+	FILHDR *hdr = &coff->hdr;
 
 	if (!readhdr(obj, fp))
 		return -1;
@@ -361,172 +356,12 @@ readfile(Obj *obj, FILE *fp)
 		return -1;
 	if (!readlines(obj, fp))
 		return -1;
-	return 0;
-}
 
-static int
-convsecs(Obj *obj)
-{
-	int i;
-	unsigned sflags, type;
-	unsigned long flags;
-	FILHDR *hdr;
-	struct coff32 *coff;
-	SCNHDR *scn;
-	Objsec *secs, *sp;
-
-	coff  = obj->data;
-	hdr = &coff->hdr;
-
-	secs = malloc(sizeof(Objsec) * hdr->f_nscns);
-	if (!secs)
-		return -1;
-
-	for (i = 0; i < hdr->f_nscns; i++) {
-		sp = &secs[i];
-		sp->next = (i < hdr->f_nscns-1) ? &secs[i+1] : NULL;
-		scn = &coff->scns[i];
-		flags = scn->s_flags;
-
-		if (flags & STYP_TEXT) {
-			type = 'T';
-			sflags = SALLOC | SRELOC | SLOAD | SEXEC | SREAD;
-			if (flags & STYP_NOLOAD)
-				sflags |= SSHARED;
-		} else if (flags & STYP_DATA) {
-			type = 'D';
-			sflags = SALLOC | SRELOC | SLOAD | SWRITE | SREAD;
-			if (flags & STYP_NOLOAD)
-				sflags |= SSHARED;
-		} else if (flags & STYP_BSS) {
-			type = 'B';
-			sflags = SALLOC | SREAD | SWRITE;
-		} else if (flags & STYP_INFO) {
-			type = 'N';
-			sflags = 0;
-		} else if (flags & STYP_LIB) {
-			type = 'T';
-			sflags = SRELOC;
-		} else if (flags & STYP_DSECT) {
-			type = 'D';
-			sflags = SRELOC;
-		} else if (flags & STYP_PAD) {
-			type = 'D';
-			sflags = SLOAD;
-		} else {
-			type = 'D';  /* We assume that STYP_REG is data */
-			sflags = SALLOC | SRELOC | SLOAD | SWRITE | SREAD;
-		}
-
-		if (flags & STYP_NOLOAD)
-			sflags &= ~SLOAD;
-
-		sp->name = scn->s_name;
-		sp->id = i;
-		sp->seek = scn->s_scnptr;
-		sp->size = scn->s_size;
-		sp->type = type;
-		sp->flags = sflags;
-		sp->align = 4; /* TODO: Check how align is defined in coff */
-	}
-	obj->secs = secs;
-	obj->nsecs = i;
-
-	return 1;
-}
-
-static int
-typeof(Coff32 *coff, SYMENT *ent)
-{
-	int c;
-	SCNHDR *scn;
-	long flags;
-
-	switch (ent->n_scnum) {
-	case N_DEBUG:
-		c = 'N';
-		break;
-	case N_ABS:
-		c = 'a';
-		break;
-	case N_UNDEF:
-		c = (ent->n_value != 0) ? 'C' : 'U';
-		break;
-	default:
-		if (ent->n_scnum > coff->hdr.f_nscns)
+	for (i = 0; i < hdr->f_nsyms; i++) {
+		SYMENT *ent = &coff->ents[i];
+		if (ent->n_zeroes != 0 && ent->n_offset > coff->strsiz)
 			return -1;
-		scn = &coff->scns[ent->n_scnum-1];
-		flags = scn->s_flags;
-		if (flags & STYP_TEXT)
-			c = 't';
-		else if (flags & STYP_DATA)
-			c = 'd';
-		else if (flags & STYP_BSS)
-			c = 'b';
-		else
-			c = '?';
-		break;
 	}
 
-	if (ent->n_sclass == C_EXT)
-		c = toupper(c);
-
-	return c;
-}
-
-static char *
-symname(Coff32 *coff, SYMENT *ent)
-{
-	long off;
-
-	if (ent->n_zeroes != 0)
-		return ent->n_name;
-
-	off = ent->n_offset;
-	if (off >= coff->strsiz)
-		return NULL;
-	return &coff->strtbl[off];
-}
-
-static int
-convsyms(Obj *obj)
-{
-	int t;
-	long i;
-	char *s;
-	Objsym *sym;
-	SYMENT *ent;
-	Coff32 *coff = obj->data;
-
-	for (i = 0; i < coff->hdr.f_nsyms; i += ent->n_numaux + 1) {
-		ent = &coff->ents[i];
-
-		if ((t = typeof(coff, ent)) < 0)
-			return -1;
-
-		if ((s = symname(coff, ent)) == NULL)
-			return -1;
-
-		if ((sym = objlookup(obj, s, 1)) == NULL)
-			return -1;
-
-		sym->type = t;
-		sym->value = ent->n_value;
-		sym->size = (sym->type == 'C') ? ent->n_value : 0;
-		sym->index = ent->n_scnum-1;
-	}
-
-	return i;
-}
-
-int
-coff32read(Obj *obj, FILE *fp)
-{
-	if (readfile(obj, fp) < 0)
-		return -1;
-	if (convsecs(obj) < 0)
-		return -1;
-	if (convsyms(obj) < 0)
-		return -1;
 	return 0;
 }

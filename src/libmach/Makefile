@@ -7,17 +7,11 @@ TARGET = $(LIBDIR)/libmach.a
 OBJS = mach.o \
        objnew.o \
        objpos.o \
-       objfree.o \
-       objstrip.o \
-       objdel.o \
-       objaddseg.o \
-       objsync.o \
-       addr2line.o \
        archive.o \
        armember.o \
-       objlookup.o \
        objtype.o \
-       objwrite.o \
+       readobj.o \
+       getsym.o \
        pack.o \
        unpack.o \
 

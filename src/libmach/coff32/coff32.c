@@ -6,6 +6,7 @@
 #include "coff32.h"
 
 Objops coff32 = {
+	.probe = coff32probe,
 	.new = coff32new,
 	.read = coff32read,
 	.getidx = coff32getidx,
@@ -14,4 +15,5 @@ Objops coff32 = {
 	.strip = coff32strip,
 	.del = coff32del,
 	.write = coff32write,
+	.getsym = coff32getsym,
 };

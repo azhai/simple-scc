@@ -12,7 +12,7 @@
 
 
 struct symtbl {
-	Objsym **buf;
+	Symbol **buf;
 	size_t nsyms;
 };
 
@@ -45,8 +45,8 @@ error(char *fmt, ...)
 static int
 cmp(const void *p1, const void *p2)
 {
-	Objsym **s1 = (Objsym **) p1, **s2 = (Objsym **) p2;
-	Objsym *sym1 = *s1, *sym2 = *s2;
+	Symbol **s1 = (Symbol **) p1, **s2 = (Symbol **) p2;
+	Symbol *sym1 = *s1, *sym2 = *s2;
 
 	if (vflag) {
 		if (sym1->value > sym2->value)
@@ -66,17 +66,19 @@ cmp(const void *p1, const void *p2)
 }
 
 static void
-printsyms(Objsym **syms, size_t nsym)
+printsyms(Symbol **syms, size_t nsym)
 {
 	size_t i;
 
 	qsort(syms, nsym, sizeof(syms), cmp);
 
-	if (multi)
-		printf("%s:\n", (membname) ? membname : filename);
+	if (!Aflag) {
+		if (multi || membname)
+			printf("%s:\n", (membname) ? membname : filename);
+	}
 
 	for (i = 0; i < nsym; i++) {
-		Objsym *sym = syms[i];
+		Symbol *sym = syms[i];
 		int type = sym->type;
 		char *fmt;
 
@@ -113,9 +115,9 @@ printsyms(Objsym **syms, size_t nsym)
 }
 
 static int
-newsym(Objsym *sym, struct symtbl *tbl)
+newsym(Symbol *sym, struct symtbl *tbl)
 {
-	Objsym **p;
+	Symbol **p, *s;
 	size_t n, size;
 	int type = sym->type;
 
@@ -133,10 +135,16 @@ newsym(Objsym *sym, struct symtbl *tbl)
 		return 0;
 	size = n *sizeof(*p);
 
-	if ((p = realloc(tbl->buf, size)) == NULL)
-		return 0;
+	p = realloc(tbl->buf, size);
+	s = malloc(sizeof(*s));
+	if (!p || !s) {
+		error("out of memory");
+		exit(EXIT_FAILURE);
+	}
+
+	*s = *sym;
 	tbl->buf = p;
-	p[tbl->nsyms++] = sym;
+	p[tbl->nsyms++] = s;
 
 	return 1;
 }
@@ -145,20 +153,21 @@ static void
 newobject(FILE *fp, int type)
 {
 	int err = 1;
+	long i;
 	Obj *obj;
-	Objsym *sym;
+	Symbol sym;
 	struct symtbl tbl = {NULL, 0};
 
 	if ((obj = objnew(type)) == NULL) {
 		error("out of memory");
-		return;
+		exit(EXIT_FAILURE);
 	}
 
-	if ((*obj->ops->read)(obj, fp) < 0)
+	if (readobj(obj, fp) < 0)
 		goto error;
 
-	for (sym = obj->syms; sym; sym = sym->next)
-		newsym(sym, &tbl);
+	for (i = 0; getsym(obj, &i, &sym); i++)
+		newsym(&sym, &tbl);
 
 	printsyms(tbl.buf, tbl.nsyms);
 	err = 0;
@@ -174,17 +183,29 @@ static void
 newlib(FILE *fp)
 {
 	int t;
-	long r;
+	long off, cur;
 	char memb[SARNAM+1];
 
-	while ((r = armember(fp, memb)) > 0) {
-		membname = memb;
-		if ((t = objtype(fp, NULL)) != -1)
-			newobject(fp, t);
-		membname = NULL;
+	while (!feof(fp)) {
+		cur = ftell(fp);
+		off = armember(fp, memb);
+		switch (off) {
+		case -1:
+			error("library corrupted");
+		case 0:
+			return;
+		default:
+			membname = memb;
+			if ((t = objtype(fp, NULL)) != -1)
+				newobject(fp, t);
+			membname = NULL;
+			fseek(fp, cur, SEEK_SET);
+			fseek(fp, off, SEEK_CUR);
+			break;
+		}
 	}
-	if (r < 0)
-		error("library corrupted");
+
+	error("library corrupted:%s", strerror(errno));
 }
 
 static void
@@ -267,7 +288,9 @@ main(int argc, char *argv[])
 	}
 
 	if (fflush(stdout)) {
-		fprintf(stderr, "nm: error writing in output");
+		fprintf(stderr,
+		        "nm: error writing in output:%s\n",
+		        strerror(errno));
 		status = 1;
 	}
 

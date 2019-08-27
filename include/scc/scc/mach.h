@@ -1,7 +1,7 @@
 #define NR_SYMHASH 32
 
 typedef struct objsec Objsec;
-typedef struct objsym Objsym;
+typedef struct symbol Symbol;
 typedef struct objseg Objseg;
 typedef struct objops Objops;
 typedef struct obj Obj;
@@ -28,7 +28,7 @@ struct objsec {
 	Objsec *next;
 };
 
-struct objsym {
+struct symbol {
 	char *name;
 	unsigned long long size;
 	unsigned long long value;
@@ -36,8 +36,6 @@ struct objsym {
 	int index;
 	char class;
 	char type;
-
-	Objsym *next, *hash;
 };
 
 struct objseg {
@@ -51,23 +49,18 @@ struct objops {
 	void (*del)(Obj *obj);
 	int (*read)(Obj *obj, FILE *fp);
 	int (*write)(Obj *obj, FILE *fp);
-	int (*addseg)(Obj *obj, void *seg);
 	int (*strip)(Obj *obj);
 	int (*addr2line)(Obj *, unsigned long long , char *, int *);
+	int (*getsym)(Obj *obj, long *index, Symbol *sym);
 	int (*setidx)(long nsyms, char *names[], long offset[], FILE *fp);
 	int (*getidx)(long *nsyms, char ***names, long **offset, FILE *fp);
 };
 
 struct obj {
-	int type;
-	Objops *ops;
 	char *index;
-	Objsym *htab[NR_SYMHASH];
-	Objsym *syms;
-	Objsec *secs;
+	Objops *ops;
+	int type;
 	long pos;
-	int nsecs;
-	int nsyms;
 	void *data;
 };
 
@@ -76,5 +69,5 @@ extern long armember(FILE *fp, char *member);
 
 extern int objtype(FILE *fp, char **name);
 extern Obj *objnew(int type);
-extern Objsym *objlookup(Obj *obj, char *name, int install);
-extern int objpos(Obj *obj, FILE *fp, long pos);
+extern int readobj(Obj *obj, FILE *fp);
+extern int getsym(Obj *obj, long *index, Symbol *sym);
