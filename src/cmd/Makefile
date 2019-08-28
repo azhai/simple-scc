@@ -8,9 +8,9 @@ TARGET = $(BINDIR)/nm \
          $(BINDIR)/strip \
          $(BINDIR)/size \
          $(BINDIR)/ranlib \
+         $(BINDIR)/objdump \
+         $(BINDIR)/objcopy \
 
-#         $(BINDIR)/objdump \
-#         $(BINDIR)/objcopy \
 #         $(BINDIR)/addr2line \
 
 DIRS   = as scc
