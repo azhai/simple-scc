@@ -4,7 +4,6 @@
 #define ARCH(t) (((t) >> 5) & 0x1f)
 #define ORDER(t) (((t) >> 10) & 0x1f)
 
-typedef struct objops Objops;
 
 enum objformat {
 	COFF32,
@@ -42,14 +41,6 @@ struct objops {
 
 	int (*setidx)(long nsyms, char *names[], long offset[], FILE *fp);
 	int (*getidx)(long *nsyms, char ***names, long **offset, FILE *fp);
-};
-
-struct obj {
-	char *index;
-	struct objops *ops;
-	int type;
-	long pos;
-	void *data;
 };
 
 /* common functions */

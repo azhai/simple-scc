@@ -1,5 +1,6 @@
 typedef struct symbol Symbol;
 typedef struct section Section;
+typedef struct objops Objops;
 typedef struct obj Obj;
 
 enum sectype {
@@ -11,6 +12,14 @@ enum sectype {
 	SRELOC  = 1 << 5,
 	SABS    = 1 << 6,
 	SSHARED = 1 << 7,
+};
+
+struct obj {
+	char *index;
+	Objops *ops;
+	int type;
+	long pos;
+	void *data;
 };
 
 struct section {
@@ -46,3 +55,6 @@ extern int strip(Obj *obj);
 
 extern Symbol *getsym(Obj *obj, long *index, Symbol *sym);
 extern Section *getsec(Obj *obj, long *index, Section *sec);
+
+extern int setindex(int, long, char **, long *, FILE *);
+extern int getindex(int, long *, char ***, long **, FILE *);

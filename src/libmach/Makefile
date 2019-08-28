@@ -18,6 +18,8 @@ OBJS = mach.o \
        strip.o \
        pack.o \
        unpack.o \
+       setindex.o \
+       getindex.o \
 
 DIRS = coff32
 

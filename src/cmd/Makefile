@@ -7,8 +7,8 @@ TARGET = $(BINDIR)/nm \
          $(BINDIR)/ar \
          $(BINDIR)/strip \
          $(BINDIR)/size \
+         $(BINDIR)/ranlib \
 
-#         $(BINDIR)/ranlib \
 #         $(BINDIR)/objdump \
 #         $(BINDIR)/objcopy \
 #         $(BINDIR)/addr2line \

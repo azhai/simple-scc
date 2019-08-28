@@ -28,17 +28,10 @@ struct symdef {
 static char *namidx;
 static long nsymbols;
 static int status, artype, nolib;
-static Objops *ops;
 static char *filename, *membname;
 static Symdef *htab[NR_SYMDEF], *head;
 static long offset;
 char *argv0;
-
-static char *
-errstr(void)
-{
-	return strerror(errno);
-}
 
 static void
 error(char *fmt, ...)
@@ -94,7 +87,7 @@ lookup(char *name)
 }
 
 static int
-newsymbol(Objsym *sym)
+newsymbol(Symbol *sym)
 {
 	Symdef *np;
 
@@ -102,7 +95,7 @@ newsymbol(Objsym *sym)
 		return 1;
 
 	if ((np = lookup(sym->name)) == NULL) {
-		error("out of memory");
+		error(strerror(errno));
 		return 0;
 	}
 
@@ -142,17 +135,17 @@ freehash(void)
 }
 
 static int
-newmember(FILE *fp, char *nam)
+newmember(FILE *fp)
 {
 	int t, ret = 0;
+	long i;
 	Obj *obj;
-	Objsym *sym;
+	Symbol sym;
 
-	membname = nam;
 	offset = ftell(fp);
 
 	if (offset == EOF) {
-		error(errstr());
+		error(strerror(errno));
 		return 0;
 	}
 
@@ -163,63 +156,78 @@ newmember(FILE *fp, char *nam)
 	}
 	artype = t;
 
-	if ((obj = objnew(t)) == NULL) {
-		error("out of memory");
+	if ((obj = newobj(t)) == NULL) {
+		error(strerror(errno));
 		return 0;
 	}
-	ops = obj->ops;
 	namidx = obj->index;
 
-	if ((*ops->read)(obj, fp) < 0) {
-		error("file corrupted");
+	if (readobj(obj, fp) < 0) {
+		error(strerror(errno));
 		goto error;
 	}
 
-	for (sym = obj->syms; sym; sym = sym->next) {
-		if (!newsymbol(sym))
+	for (i = 0; getsym(obj, &i, &sym); i++) {
+		if (!newsymbol(&sym))
 			goto error;
 	}
 
 	ret = 1;
 
 error:
-	(ops->del)(obj);
+	delobj(obj);
 	return ret;
 }
 
 static int
 readsyms(FILE *fp)
 {
-	long r, off;
+	long cur, off;
 	char memb[SARNAM+1];
+
+	nolib = 0;
+	artype = -1;
+	nsymbols = 0;
 
 	if (!archive(fp)) {
 		error("file format not recognized");
 		return 0;
 	}
 
+	cur = ftell(fp);
 	if ((off = armember(fp, memb)) < 0)
 		goto corrupted;
 
-	if (strcmp(memb, "/") != 0 && strcmp(memb, "__.SYMDEF") != 0) {
-		if (fseek(fp, -off, SEEK_CUR) == EOF) {
-			error(errstr());
-			return 0;
+	if (strcmp(memb, "/") == 0 || strcmp(memb, "__.SYMDEF") == 0)
+		cur = ftell(fp) + off;
+
+	fseek(fp, SEEK_SET, cur);
+	for (;;) {
+		cur = ftell(fp);
+		off = armember(fp, memb);
+		switch (off) {
+		case -1:
+			goto corrupted;
+		case 0:
+			return (nolib || nsymbols == 0) ? -1 : 0;
+		default:
+			membname = memb;
+			if (objtype(fp, NULL) != -1)
+				newmember(fp);
+			membname = NULL;
+			fseek(fp, cur, SEEK_SET);
+			fseek(fp, off, SEEK_CUR);
+			break;
 		}
 	}
 
-	while ((r = armember(fp, memb)) > 0)
-		newmember(fp, memb);
-	if (r < 0)
-		goto corrupted;
-	return 1;
-
 corrupted:
-	error("corrupted ar file");
+	error(strerror(errno));
+	error("library corrupted");
 	return 0;
 }
 
-static int
+static void
 merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 {
 	int c;
@@ -231,7 +239,7 @@ merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 	fseek(lib, SARMAG, SEEK_SET);
 
 	if (fread(&first, sizeof(first), 1, lib) != 1)
-		return 0;
+		return;
 
 	if (!strncmp(first.ar_name, namidx, SARNAM))
 		fseek(lib, atol(first.ar_size), SEEK_CUR);
@@ -259,111 +267,91 @@ merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 		putc(c, to);
 
 	fflush(to);
-
-	if (ferror(to) || ferror(lib) || ferror(idx))
-		return 0;
-
-	return 1;
 }
-
-static int
-copy(FILE *from, char *fname)
-{
-	int c, ret;
-	FILE *fp;
-
-	if ((fp = fopen(fname, "wb")) == NULL)
-		return 0;
-
-	rewind(from);
-	while ((c = getc(from)) != EOF)
-		putc(c, fp);
-	fflush(fp);
-
-	ret = !ferror(fp) && !ferror(from);
-
-	fclose(fp);
-
-	return ret;
-}
-
 
 static void
 ranlib(char *fname)
 {
+	size_t r;
 	long *offs, i;
 	char **names;
 	FILE *fp, *idx, *out;
 	Symdef *dp;
 	struct fprop prop;
+	char tmpname[FILENAME_MAX];
 
-	errno = 0;
-	nolib = 0;
-	artype = -1;
-	nsymbols = 0;
-	offs = NULL;
-	names = NULL;
 	filename = fname;
-	freehash();
+	if ((fp = fopen(fname, "rb")) == NULL) {
+		error(strerror(errno));
+		return;
+	}
 
-	fp = fopen(fname, "rb");
-	idx = tmpfile();
-	out = tmpfile();
-	if (!fp || !idx || !out)
-		goto error;
+	if (readsyms(fp) <0)
+		goto err2;
 
-	if (!readsyms(fp))
-		goto error;
-
-	if (nolib || nsymbols == 0)
-		goto error;
+	if ((idx = tmpfile()) == NULL) {
+		error(strerror(errno));
+		goto err2;
+	}
 
 	offs = malloc(sizeof(long) * nsymbols);
 	names = malloc(sizeof(*names) * nsymbols);
+	if (!offs || !names) {
+		error(strerror(errno));
+		goto err3;
+	}
 
 	for (dp = head, i = 0; i < nsymbols; dp = dp->next, i++) {
 		offs[i] = dp->offset;
 		names[i] = dp->name;
 	}
 
-	if ((*ops->setidx)(nsymbols, names, offs, idx) < 0)
-		goto error;
+	if (setindex(artype, nsymbols, names, offs, idx) < 0) {
+		error(strerror(errno));
+		goto err3;
+	}
 
-	if (getstat(fname, &prop) < 0)
-		goto error;
+	if (getstat(fname, &prop) < 0) {
+		error(strerror(errno));
+		goto err3;
+	}
 	prop.size = ftell(idx);
 	prop.time = time(NULL);
 
-	if (!merge(out, &prop, fp, idx))
-		goto error;
+	r = snprintf(tmpname, sizeof(tmpname), "%s.tmp", fname);
+	if (r >= sizeof(tmpname)) {
+		error("too long temporary name");
+		goto err3;
+	}
 
+	if ((out = fopen(tmpname, "wb")) == NULL) {
+		error(strerror(errno));
+		goto err3;
+	}
+
+	merge(out, &prop, fp, idx);
+	if (ferror(out) || ferror(fp) || ferror(idx)) {
+		error(strerror(errno));
+		fclose(out);
+		goto err4;
+	}
+
+	fclose(out);
+	if (rename(tmpname, fname) == EOF) {
+		error(strerror(errno));
+		goto err4;
+	}
+
+err4:
+	remove(tmpname);
+err3:
 	free(offs);
 	free(names);
-	fclose(fp);
 	fclose(idx);
-	offs = NULL;
-	names = NULL;
-	fp = idx = NULL;
-
-	if (!copy(out, fname))
-		goto error;
-	fclose(out);
-
-	return;
-
-error:
-	if (offs)
-		free(offs);
-	if (names)
-		free(names);
-	if (errno)
-		error(errstr());
-	if (idx)
-		fclose(idx);
-	if (out)
-		fclose(out);
-	if (fp)
-		fclose(fp);
+err2:
+	freehash();
+err1:
+	fclose(fp);
 }
 
 static void
