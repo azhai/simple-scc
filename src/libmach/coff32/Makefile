@@ -15,7 +15,7 @@ OBJS = coff32.o \
        coff32xgetidx.o \
        coff32setidx.o \
        coff32getidx.o \
-       coff32addr2line.o \
+       coff32pc2line.o \
        coff32getsym.o \
        coff32getsec.o \
 

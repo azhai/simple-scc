@@ -16,6 +16,7 @@ OBJS = mach.o \
        getsym.o \
        getsec.o \
        strip.o \
+       pc2line.o \
        pack.o \
        unpack.o \
        setindex.o \

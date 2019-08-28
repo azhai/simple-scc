@@ -28,7 +28,7 @@ extern int coff32new(Obj *obj);
 extern int coff32read(Obj *obj, FILE *fp);
 extern int coff32setidx(long nsyms, char **names, long *offs, FILE *fp);
 extern int coff32getidx(long *nsyms, char ***namep, long **offsp, FILE *fp);
-extern int coff32addr2line(Obj *, unsigned long long , char *, int *);
+extern int coff32pc2line(Obj *, unsigned long long , char *, int *);
 extern int coff32strip(Obj *obj);
 extern void coff32del(Obj *obj);
 extern int coff32write(Obj *obj, FILE *fp);

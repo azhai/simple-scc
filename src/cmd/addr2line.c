@@ -40,7 +40,7 @@ addr2line(Obj *obj, char *s)
 		return;
 	}
 
-	if ((*obj->ops->addr2line)(obj, addr, fname, &line) < 0) {
+	if (pc2line(obj, addr, fname, &line) < 0) {
 		error("not matching line");
 		return;
 	}
@@ -88,12 +88,12 @@ loadexe(char *fname)
 		return NULL;
 	}
 
-	if ((obj = objnew(t)) == NULL) {
+	if ((obj = newobj(t)) == NULL) {
 		error("out of memory");
 		return NULL;
 	}
 
-	if ((*obj->ops->read)(obj, fp) < 0) {
+	if (readobj(obj, fp) < 0) {
 		error("file corrupted");
 		return NULL;
 	}

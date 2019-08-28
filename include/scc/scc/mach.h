@@ -52,6 +52,7 @@ extern int readobj(Obj *obj, FILE *fp);
 extern int writeobj(Obj *obj, FILE *fp);
 
 extern int strip(Obj *obj);
+extern int pc2line(Obj *obj, unsigned long long pc, char *fname, int *ln);
 
 extern Symbol *getsym(Obj *obj, long *index, Symbol *sym);
 extern Section *getsec(Obj *obj, long *index, Section *sec);

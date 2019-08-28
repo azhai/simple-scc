@@ -34,7 +34,7 @@ struct objops {
 	int (*write)(Obj *obj, FILE *fp);
 
 	int (*strip)(Obj *obj);
-	int (*addr2line)(Obj *, unsigned long long , char *, int *);
+	int (*pc2line)(Obj *, unsigned long long , char *, int *);
 
 	Symbol *(*getsym)(Obj *obj, long *index, Symbol *sym);
 	Section *(*getsec)(Obj *obj, long *index, Section *sec);
