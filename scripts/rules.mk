@@ -15,7 +15,7 @@ CRTDIR     = $(PROJECTDIR)/lib/scc
 LIBCDIR    = $(CRTDIR)/$(ARCH)-$(SYS)/
 ENVIRON    = $(SCRIPTDIR)/env.sh
 
-INCLUDE    = -I$(INCDIR)/scc \
+INCLUDE    = -I$(INCDIR)/scc
 
 CC = $(CROSS_COMPILE)$(COMP)
 AS = $(CROSS_COMPILE)$(ASM)
@@ -23,27 +23,30 @@ LD = $(CROSS_COMPILE)$(LINKER)
 RL = $(CROSS_COMPILE)$(RANLIB)
 AR = $(CROSS_COMPILE)$(ARCHIVE)
 
-SCC_CFLAGS = $(MORECFLAGS) \
-             $(TOOLCFLAGS) \
-             $(HOSTCFLAGS) \
-             $(SYSCFLAGS) \
-             $(INCLUDE) \
-             -g \
-             $(CFLAGS)
+SCC_CFLAGS =\
+	$(MORECFLAGS)\
+	$(TOOLCFLAGS)\
+	$(HOSTCFLAGS)\
+	$(SYSCFLAGS)\
+	$(INCLUDE)\
+	-g\
+	$(CFLAGS)
 
-SCC_LDFLAGS = $(MORELFLAGS) \
-              $(TOOLLDFLAGS) \
-              $(HOSTLDFLAGS) \
-              $(SYSLDFLAGS) \
-              -L$(LIBDIR) \
-              -g \
-              $(LDFLAGS)
+SCC_LDFLAGS =\
+	$(MORELFLAGS)\
+	$(TOOLLDFLAGS)\
+	$(HOSTLDFLAGS)\
+	$(SYSLDFLAGS)\
+	-L$(LIBDIR)\
+	-g \
+	$(LDFLAGS)
 
-SCC_ASFLAGS = $(MOREASFLAGS) \
-              $(TOOLASFLAGS) \
-              $(HOSTASFLAGS) \
-              $(SYSASFLAGS) \
-              $(ASFLAGS)
+SCC_ASFLAGS =\
+	$(MOREASFLAGS)\
+	$(TOOLASFLAGS)\
+	$(HOSTASFLAGS)\
+	$(SYSASFLAGS)\
+	$(ASFLAGS)
 
 # helper macro to run over all the directories
 FORALL = +@set -e ;\
