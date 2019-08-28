@@ -2,6 +2,8 @@
 
 #include <scc/mach.h>
 
+#include "libmach.h"
+
 int
 readobj(Obj *obj, FILE *fp)
 {

@@ -1,9 +1,5 @@
-#define NR_SYMHASH 32
-
-typedef struct objsec Objsec;
 typedef struct symbol Symbol;
-typedef struct objseg Objseg;
-typedef struct objops Objops;
+typedef struct section Section;
 typedef struct obj Obj;
 
 enum sectype {
@@ -17,51 +13,23 @@ enum sectype {
 	SSHARED = 1 << 7,
 };
 
-struct objsec {
+struct section {
 	char *name;
-	int id;
-	int type;
-	int align;
+	unsigned long long base;
+	unsigned long long size;
 	unsigned flags;
-	long seek;
-	unsigned long long size, base;
-	Objsec *next;
+	int type;
+	int index;
+	int align;
 };
 
 struct symbol {
 	char *name;
 	unsigned long long size;
 	unsigned long long value;
-	void *aux;
 	int index;
 	char class;
 	char type;
-};
-
-struct objseg {
-	unsigned long long size;
-	unsigned long long value;
-};
-
-struct objops {
-	int (*probe)(unsigned char *buf, char **name);
-	int (*new)(Obj *obj);
-	void (*del)(Obj *obj);
-	int (*read)(Obj *obj, FILE *fp);
-	int (*write)(Obj *obj, FILE *fp);
-	int (*strip)(Obj *obj);
-	int (*addr2line)(Obj *, unsigned long long , char *, int *);
-	Symbol *(*getsym)(Obj *obj, long *index, Symbol *sym);
-	int (*setidx)(long nsyms, char *names[], long offset[], FILE *fp);
-	int (*getidx)(long *nsyms, char ***names, long **offset, FILE *fp);
-};
-
-struct obj {
-	char *index;
-	Objops *ops;
-	int type;
-	long pos;
-	void *data;
 };
 
 extern int archive(FILE *fp);
@@ -70,6 +38,11 @@ extern long armember(FILE *fp, char *member);
 extern int objtype(FILE *fp, char **name);
 extern Obj *newobj(int type);
 extern void delobj(Obj *obj);
+
 extern int readobj(Obj *obj, FILE *fp);
-extern Symbol *getsym(Obj *obj, long *index, Symbol *sym);
+extern int writeobj(Obj *obj, FILE *fp);
+
 extern int strip(Obj *obj);
+
+extern Symbol *getsym(Obj *obj, long *index, Symbol *sym);
+extern Section *getsec(Obj *obj, long *index, Section *sec);

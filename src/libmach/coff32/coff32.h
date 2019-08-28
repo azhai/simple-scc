@@ -40,3 +40,4 @@ extern int coff32xgetidx(int order,
                          long *nsyms, char ***namep, long **offsp, FILE *fp);
 
 extern Symbol *coff32getsym(Obj *obj, long *idx, Symbol *sym);
+extern Section *coff32getsec(Obj *obj, long *idx, Section *sec);

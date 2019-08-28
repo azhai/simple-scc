@@ -14,6 +14,7 @@ OBJS = mach.o \
        readobj.o \
        writeobj.o \
        getsym.o \
+       getsec.o \
        strip.o \
        pack.o \
        unpack.o \

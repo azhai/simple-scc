@@ -6,8 +6,8 @@ include $(PROJECTDIR)/scripts/rules.mk
 TARGET = $(BINDIR)/nm \
          $(BINDIR)/ar \
          $(BINDIR)/strip \
+         $(BINDIR)/size \
 
-#         $(BINDIR)/size \
 #         $(BINDIR)/ranlib \
 #         $(BINDIR)/objdump \
 #         $(BINDIR)/objcopy \

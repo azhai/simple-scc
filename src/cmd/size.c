@@ -38,27 +38,27 @@ error(char *fmt, ...)
 }
 
 static void
-newobject(FILE *fp, int type)
+sizeobj(FILE *fp, int type)
 {
-	int i;
+	long i;
 	Obj *obj;
 	unsigned long long total, *p;
-	Objsec *sp;
 	struct sizes siz;
+	Section sec;
 
-	if ((obj = objnew(type)) == NULL) {
-		error("out of memory");
+	if ((obj = newobj(type)) == NULL) {
+		error(strerror(errno));
 		return;
 	}
 
-	if ((*obj->ops->read)(obj, fp) < 0) {
-		error("file corrupted");
+	if (readobj(obj, fp) < 0) {
+		error(strerror(errno));
 		goto err;
 	}
 
 	siz.text = siz.data = siz.bss = 0;
-	for (sp = obj->secs; sp; sp = sp->next) {
-		switch (sp->type) {
+	for (i = 0; getsec(obj, &i, &sec); i++) {
+		switch (sec.type) {
 		case 'R':
 		case 'T':
 			p = &siz.text;
@@ -73,12 +73,12 @@ newobject(FILE *fp, int type)
 			continue;
 		}
 
-		if (*p > ULLONG_MAX - sp->size) {
+		if (*p > ULLONG_MAX - sec.size) {
 			error("integer overflow");
 			goto err;
 		}
 			
-		*p += sp->size;
+		*p += sec.size;
 	}
 
 	total = siz.text + siz.data + siz.bss;
@@ -94,24 +94,36 @@ newobject(FILE *fp, int type)
 	ttotal += total;
 
 err:
-	(*obj->ops->del)(obj);
+	delobj(obj);
 }
 
 static void
-newlib(FILE *fp)
+sizelib(FILE *fp)
 {
 	int t;
-	long r;
+	long off, cur;
 	char memb[SARNAM+1];
 
-	while ((r = armember(fp, memb)) > 0) {
-		membname = memb;
-		if ((t = objtype(fp, NULL)) != -1)
-			newobject(fp, t);
-		membname = NULL;
+	for (;;) {
+		cur = ftell(fp);
+		off = armember(fp, memb);
+		switch (off) {
+		case -1:
+			error("library corrupted");
+			if (ferror(fp))
+				error(strerror(errno));
+		case 0:
+			return;
+		default:
+			membname = memb;
+			if ((t = objtype(fp, NULL)) != -1)
+				sizeobj(fp, t);
+			membname = NULL;
+			fseek(fp, cur, SEEK_SET);
+			fseek(fp, off, SEEK_CUR);
+			break;
+		}
 	}
-	if (r < 0)
-		error("library corrupted");
 }
 
 static void
@@ -127,14 +139,11 @@ size(char *fname)
 	}
 
 	if ((t = objtype(fp, NULL)) != -1)
-		newobject(fp, t);
+		sizeobj(fp, t);
 	else if (archive(fp))
-		newlib(fp);
+		sizelib(fp);
 	else
 		error("bad format");
-
-	if (ferror(fp))
-		error(strerror(errno));
 
 	fclose(fp);
 }
@@ -175,8 +184,10 @@ main(int argc, char *argv[])
 	}
 
 	if (fflush(stdout)) {
-		filename = "stdout";
-		error(strerror(errno));
+		fprintf(stderr,
+		        "size: error writing in output:%s\n",
+		        strerror(errno));
+		status = 1;
 	}
 
 	return status;

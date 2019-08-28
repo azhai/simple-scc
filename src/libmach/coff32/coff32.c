@@ -5,7 +5,7 @@
 #include "../libmach.h"
 #include "coff32.h"
 
-Objops coff32 = {
+struct objops coff32 = {
 	.probe = coff32probe,
 	.new = coff32new,
 	.read = coff32read,
@@ -16,4 +16,5 @@ Objops coff32 = {
 	.del = coff32del,
 	.write = coff32write,
 	.getsym = coff32getsym,
+	.getsec = coff32getsec,
 };
