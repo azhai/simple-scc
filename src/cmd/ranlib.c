@@ -201,7 +201,7 @@ readsyms(FILE *fp)
 	if (strcmp(memb, "/") == 0 || strcmp(memb, "__.SYMDEF") == 0)
 		cur = ftell(fp) + off;
 
-	fseek(fp, SEEK_SET, cur);
+	fseek(fp, cur, SEEK_SET);
 	for (;;) {
 		cur = ftell(fp);
 		off = armember(fp, memb);

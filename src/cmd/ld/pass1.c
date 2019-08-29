@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -16,227 +17,138 @@ enum {
 };
 
 int bintype = -1;
-static Objops *binops;
-static Symbol refhead = {
-	.next = &refhead,
-	.prev = &refhead,
-};
-
-Symbol defhead = {
-	.next = &defhead,
-	.prev = &defhead,
-};
-static Objlst *objlast;
-
-Objlst *objhead;
-
-static Symbol *
-linksym(Symbol *list, Symbol *sym)
-{
-	sym->next = list;
-	sym->prev = list->prev;
-	list->prev->next = sym;
-	list->prev = sym;
-	return sym;
-}
-
-static Symbol *
-unlinksym(Symbol *sym)
-{
-	sym->next->prev = sym->prev;
-	sym->prev->next = sym->next;
-	return sym;
-}
-
-static Symbol *
-undef(char *name)
-{
-	return linksym(&refhead, install(name));
-}
-
-static Symbol *
-define(Objsym *osym, Obj *obj)
-{
-	Symbol *sym = lookup(osym->name);
-
-	if (!sym) {
-		sym = undef(osym->name);
-	} else if (sym->def && sym->def->type != 'C') {
-		error("%s: symbol redefined", osym->name);
-		return NULL;
-	}
-
-	/* TODO: deal with C symbols */
-
-	sym->obj = obj;
-	sym->def = osym;
-	sym->size = osym->size;
-	sym->value = osym->value;
-
-	unlinksym(sym);
-	linksym(&defhead, sym);
-
-	return sym;
-}
-
-static int
-moreundef(void)
-{
-	return refhead.next != &refhead;
-}
-
-static void
-listundef(void)
-{
-	Symbol *sym;
-
-	for (sym = refhead.next; sym != &refhead; sym = sym->next) {
-		fprintf(stderr,
-		        "ld: symbol '%s' not defined\n",
-		        sym->name);
-	}
-}
 
 static int
 is_needed(Obj *obj)
 {
-	Symbol *sym;
+	long i;
+	Symbol sym;
 
-	for (sym = refhead.next; sym != &refhead; sym = sym->next) {
-		if (objlookup(obj, sym->name, 0))
+	for (i = 0; getsym(obj, &i, &sym); i++) {
+		if (hasref(sym.name))
 			return 1;
 	}
 
 	return 0;
 }
 
-
-static int
-newsym(Objsym *osym, Obj *obj)
+static void
+newsec(Section *osec, Obj *obj)
 {
-	Symbol *sym;
+	int align;
+	Section *sec;
+	unsigned long long base;
 
-	switch (osym->type) {
-	case 'U':
-		if ((sym = lookup(osym->name)) == NULL)
-			sym = undef(osym->name);
-		break;
-	case '?':
-	case 'N':
-		break;
-	case 'C':
-		sym = lookup(osym->name);
-		if (!sym || !sym->def) {
-			sym = define(osym, obj);
-			break;
+	sec = lookupsec(osec->name);
+	if (sec->type != 'U') {
+		if (sec->type != osec->type
+		|| sec->flags != osec->flags
+		|| sec->base != osec->base
+		|| sec->align != osec->align) {
+			error("incompatible definition of section %s", sec->name);
+			return;
 		}
-		if (sym->def->type != 'C')
-			break;
-		if (sym->size < osym->size)
-			sym->size = osym->size;
-		break;
-	default:
-		if (isupper(osym->type))
-			define(osym, obj);
-		break;
+		align = osec->align;
+		align -= sec->size & align-1;
+		grow(sec, align);
+		rebase(obj, osec->index,  sec->size);
+	} else {
+		sec->type = osec->type;
+		sec->base = osec->base;
+		sec->size = osec->size;
+		sec->flags = osec->flags;
 	}
 
-	return 1;
+	copy(obj, osec, sec);
 }
 
 static void
-addobj(Obj *obj, FILE *fp)
+newsym(Symbol *sym, Obj *obj)
 {
-	int n;
-	Objlst *lst;
-	Objsym *sym;
-	Objsec *secp;
+	long id;
+	Section sec;
 
-	if ((lst = malloc(sizeof(*lst))) == NULL) {
-		error("out of memory");
+	if (sym->type == 'U' || islower(sym->type))
+		return;
+
+	sym = define(sym, obj);
+	id = sym->section;
+	getsec(obj, &id, &sec);
+  	sym->value += sec.base;
+}
+
+static void
+load(FILE *fp, int inlib)
+{
+	int t;
+	long i;
+	Obj *obj;
+	Section sec;
+	Symbol sym;
+
+	if ((t = objtype(fp, NULL)) < 0) {
+		error("bad format");
 		return;
 	}
 
-	lst->obj = obj;
-	lst->next = NULL;
-
-	if (!objlast)
-		objlast = objhead = lst;
-	else
-		objlast = objlast->next = lst;
-
-	for (sym = obj->syms; sym; sym = sym->next)
-		newsym(sym, obj);
-}
-
-static void
-newobject(FILE *fp, int type, int inlib)
-{
-	Obj *obj;
- 
-	if (bintype != -1 && bintype != type) {
+	if (bintype != -1 && bintype != t) {
 		error("not compatible object file");
 		return;
 	}
-	bintype = type;
-	binops = obj->ops;
+	bintype = t;
 
-	if ((obj = objnew(type)) == NULL) {
-		error("out of memory");
+	if ((obj = newobj(t)) == NULL) {
+		error(strerror(errno));
 		return;
 	}
 
-	if ((*binops->read)(obj, fp) < 0) {
-		error("object file corrupted");
+	if (readobj(obj, fp) < 0) {
+		error(strerror(errno));
 		goto delete;
 	}
 
 	if (inlib && !is_needed(obj))
 		goto delete;
 
-	addobj(obj, fp);
+	for (i = 0; getsec(obj, &i, &sec); i++)
+		newsec(&sec, obj);
+
+	for ( i = 0; getsym(obj, &i, &sym); i++)
+		newsym(&sym, obj);
+
+	/* TODO: link the object */
+
 	return;
 
  delete:
-	(*binops->del)(obj);
+	delobj(obj);
 	return;
 }
 
 static void
-addlib(FILE *fp)
+scanindex(FILE *fp)
 {
 	int t, added;
 	long n, i, *offs;
 	char **names;
 	Symbol *sym;
 
-	if ((*binops->getidx)(&n, &names, &offs, fp) < 0) {
+	if (getindex(bintype, &n, &names, &offs, fp) < 0) {
 		error("corrupted index");
 		return;
 	}
 
 	for (added = 0; moreundef(); added = 0) {
 		for (i = 0; i < n; i++) {
-			sym = lookup(names[i]);
-			if (!sym || sym->def)
+			if (!hasref(names[i]))
 				continue;
 
 			if (fseek(fp, offs[i], SEEK_SET) == EOF) {
-				error(errstr());
+				error(strerror(errno));
 				goto clean;
 			}
 
-			if ((t = objtype(fp, NULL)) == -1) {
-				error("library file corrupted");
-				goto clean;
-			}
-
-			if (t != bintype) {
-				error("incompatible library");
-				goto clean;
-			}
-
-			newobject(fp, t, OUTLIB);
+			load(fp, OUTLIB);
 			added = 1;
 		}
 
@@ -250,62 +162,66 @@ clean:
 	free(offs);
 }
 
-static int
-newmember(FILE *fp, char *name, void *data)
+void
+scanlib(FILE *fp)
 {
-	int t;
-	int *nmemb = data;
+	long cur, off;
+	char memb[SARNAM+1];
 
 	if (bintype == -1) {
 		error("an object file is needed before any library");
-		return 0;
+		return;
 	}
 
-	if (*nmemb++ == 0) {
-		if (!strncmp(name, "/", SARNAM) ||
-		    !strncmp(name, "__.SYMDEF", SARNAM)) {
-			addlib(fp);
-			return 0;
+	cur = ftell(fp);
+	if ((off = armember(fp, memb)) < 0)
+		goto corrupted;
+
+	if (strcmp(memb, "/") == 0 || strcmp(memb, "__.SYMDEF") == 0) {
+		scanindex(fp);
+		return;
+	}
+
+	fseek(fp, cur, SEEK_SET);
+	for (;;) {
+		cur = ftell(fp);
+		off = armember(fp, memb);
+		switch (off) {
+		case -1:
+			goto corrupted;
+		case 0:
+			return;
+		default:
+			membname = memb;
+			if (objtype(fp, NULL) != -1)
+				load(fp, INLIB);
+			membname = NULL;
+			fseek(fp, cur, SEEK_SET);
+			fseek(fp, off, SEEK_CUR);
+			break;
 		}
 	}
 
-	membname = name;
-	if ((t = objtype(fp, NULL)) == -1)
-		return 1;
-
-	if (bintype != t) {
-		error("wrong object file format");
-		return 1;
-	}
-
-	newobject(fp, t, INLIB);
-	membname = NULL;
-
-	return 1;
-}
-
-static int
-newlibrary(FILE *fp)
-{
-	int nmemb = 0;
-
-	return formember(fp, newmember, &nmemb);
+corrupted:
+	error(strerror(errno));
+	error("library corrupted");
 }
 
 static FILE *
-openfile(char *name, char *buffer)
+openfile(char *name)
 {
 	size_t pathlen, len;
 	FILE *fp;
 	char **bp;
 	char libname[FILENAME_MAX];
+	static char buffer[FILENAME_MAX];
 	extern char *syslibs[];
 
 	filename = name;
 	membname = NULL;
 	if (name[0] != '-' || name[1] != 'l') {
 		if ((fp = fopen(name, "rb")) == NULL)
-			error(errstr());
+			error(strerror(errno));
 		return fp;
 	}
 
@@ -317,7 +233,7 @@ openfile(char *name, char *buffer)
 	strcat(strcpy(buffer, "lib"), name+2);
 
 	filename = buffer;
-	if ((fp = fopen(libname, "rb")) != NULL)
+	if ((fp = fopen(buffer, "rb")) != NULL)
 		return fp;
 
 	for (bp = syslibs; *bp; ++bp) {
@@ -328,7 +244,7 @@ openfile(char *name, char *buffer)
 		memcpy(libname+pathlen+1, buffer, len);
 		buffer[pathlen] = '/';
 
-		if ((fp = fopen(buffer, "rb")) != NULL)
+		if ((fp = fopen(libname, "rb")) != NULL)
 			return fp;
 	}
 
@@ -337,21 +253,20 @@ openfile(char *name, char *buffer)
 }
 
 static void
-load(char *name)
+process(char *name)
 {
 	int t;
 	FILE *fp;
-	char buff[FILENAME_MAX];
 
-	if ((fp = openfile(name, buff)) == NULL)
+	if ((fp = openfile(name)) == NULL)
 		return;
 
-	if ((t = objtype(fp, NULL)) != -1)
-		newobject(fp, t, OUTLIB);
-	else if (archive(fp))
-		newlibrary(fp);
+	if (archive(fp))
+		scanlib(fp);
 	else
-		error("bad format");
+		load(fp, OUTLIB);
+
+	fclose(fp);
 }
 
 /*
@@ -364,18 +279,20 @@ pass1(int argc, char *argv[])
 
 	for (ap = argv+1; *ap; ++ap) {
 		if (ap[0][0] != '-') {
-			load(*ap);
+			process(*ap);
 			continue;
 		}
 		for (cp = &ap[0][1]; *cp; ++cp) {
 			switch (*cp) {
 			case 'l':
+				/* FIXME: we proccess arg again after this */
 				arg = (cp[1]) ? cp+1 : *++ap;
-				load(arg);
+				process(arg);
 				continue;
 			case 'u':
+				/* FIXME: we proccess arg again after this */
 				arg = (cp[1]) ? cp+1 : *++ap;
-				undef(arg);
+				lookupsym(arg);
 				continue;
 			}
 		}

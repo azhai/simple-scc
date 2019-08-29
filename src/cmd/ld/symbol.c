@@ -1,3 +1,5 @@
+#include <assert.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,134 +10,165 @@
 #include "ld.h"
 
 #define NR_SYMBOL 128
-#define NR_SECTIONS 32
 
-static Symbol *symtab[NR_SYMBOL];
-static Section *sectab[NR_SECTIONS];
-static Section *seclast;
+/*
+ * struct symtab and struct sectab have a Symbol and a
+ * Section as first field because the code is going to
+ * cast from the symbols and the sections to the tab.
+ */
+struct symtab {
+	Symbol sym;
+	Obj *where;
+	struct symtab *hash;
+	struct symtab *next, *prev;
+};
 
-Section *sechead;
+static struct symtab *symtab[NR_SYMBOL];
+static struct symtab undef = {.next = &undef, .prev = &undef};
+static struct symtab def = {.next = &def, .prev = &def};
+static struct symtab common = {.next = &common, .prev = &common};
 
-Symbol *
-lookup(char *name)
+static Symbol *
+unlinksym(Symbol *sym)
 {
-	unsigned h;
-	Symbol *sym;
+	struct symtab *sp = (struct symtab *) sym;
 
-	h = genhash(name) % NR_SYMBOL;
-	for (sym = symtab[h]; sym; sym = sym->hash) {
-		if (!strcmp(name, sym->name))
-			return sym;
-	}
-
-	return NULL;
-}
-
-Symbol *
-install(char *name)
-{
-	unsigned h;
-	size_t len;
-	Symbol *sym;
-	char *s;
-
-	h = genhash(name) % NR_SYMBOL;
-
-	len = strlen(name) + 1;
-	s = malloc(len);
-	sym = malloc(sizeof(*sym));
-	if (!s || !sym) {
-		error("out of memory");
-		exit(EXIT_FAILURE);
-	}
-
-	sym->obj = NULL;
-	sym->name = memcpy(s, name, len);
-	sym->hash = symtab[h];
-	symtab[h] = sym;
-	sym->value = 0;
-	sym->size = 0;
-	sym->next = sym->prev = NULL;
+	sp->next->prev = sp->prev;
+	sp->prev->next = sp->next;
 
 	return sym;
 }
 
-Section *
-section(char *name)
+static Symbol *
+linksym(struct symtab *lst, Symbol *sym)
+{
+	struct symtab *sp = (struct symtab *) sym;
+
+	sp->next = lst;
+	sp->prev = lst->prev;
+	lst->prev->next = sp;
+	lst->prev = sp;
+
+	return sym;
+}
+
+int
+hasref(char *name)
+{
+	unsigned h;
+	struct symtab *sp;
+
+	h = genhash(name) % NR_SYMBOL;
+	for (sp = symtab[h]; sp; sp = sp->hash) {
+		if (!strcmp(name, sp->sym.name))
+			return sp->sym.type == 'U';
+	}
+	return 0;
+}
+
+Symbol *
+lookupsym(char *name)
 {
 	unsigned h;
 	size_t len;
 	char *s;
-	Section *sec;
+	Symbol *sym;
+	struct symtab *sp;
 
-	h = genhash(name) % NR_SECTIONS;
-	for (sec = sectab[h]; sec; sec = sec->hash) {
-		if (!strcmp(name, sec->name))
-			return sec;
+	h = genhash(name) % NR_SYMBOL;
+	for (sp = symtab[h]; sp; sp = sp->hash) {
+		if (!strcmp(name, sp->sym.name))
+			return &sp->sym;
 	}
 
 	len = strlen(name) + 1;
 	s = malloc(len);
-	sec = malloc(sizeof(*sec));
-	if (!s || !sec) {
-		error("out of memory");
+	sp = malloc(sizeof(*sp));
+	if (!s  || !sp) {
+		error(strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 
-	sec->name = memcpy(s, name, len);
-	sec->type = '?';
-	sec->base = 0;
-	sec->size = 0;
-	sec->flags = 0;
-	sec->hash = sectab[h];
-	sectab[h] = sec;
+	sym = &sp->sym;
+	sym->name = memcpy(s, name, len);
+	sym->value = 0;
+	sym->size = 0;
+	sym->index = 0;
+	sym->type = 'U';
+	sp->where = NULL;
+	sp->hash = symtab[h];
+	symtab[h] = sp;
 
-	if (!sechead)
-		sechead = sec;
-	else
-		seclast->next = sec;
-	sec->next = NULL;
+	return linksym(&undef, sym);;
+}
 
-	return seclast = sec;
+
+int
+moreundef(void)
+{
+	return undef.next != &undef;
+}
+
+void
+listundef(void)
+{
+	struct symtab *sp;
+
+	for (sp = undef.next; sp != &undef; sp = sp->next)
+		error("ld: symbol '%s' not defined", sp->sym.name);
+}
+
+Symbol *
+define(Symbol *osym, Obj *obj)
+{
+	struct symtab *lst;
+	Symbol *sym = lookupsym(osym->name);
+	struct symtab *sp = (struct symtab *) sym;
+
+	assert(osym->type != 'U');
+	sp->where = obj;
+
+	switch (sym->type) {
+	case 'U':
+		sym->value = osym->value;
+		sym->size = osym->size;
+		lst = (osym->type == 'C') ? &common : &def;
+		linksym(lst, unlinksym(sym));
+		break;
+	case 'C':
+		if (osym->type != 'C') {
+			sym->size = osym->size;
+			sym->value = osym->size;
+			linksym(&def, unlinksym(sym));
+		} else  if (sym->size < osym->size) {
+			sym->value = osym->value;
+			sym->size = osym->size;
+		}
+		break;
+	defaul:
+		error("%s: symbol redefined", sym->name);
+		break;
+	}
+
+	return sym;
 }
 
 #ifndef NDEBUG
 void
 debugsym(void)
 {
-	Symbol **symp, *sym;
+	struct symtab **spp, *sp;
+	Symbol*sym;
 
 	fputs("Symbols:\n", stderr);
-	for (symp = symtab; symp < &symtab[NR_SYMBOL]; symp++) {
-		for (sym = *symp; sym; sym = sym->hash)
+	for (spp = symtab; spp < &symtab[NR_SYMBOL]; spp++) {
+		for (sp = *spp; sp; sp = sp->hash) {
+			sym = &sp->sym;
 			fprintf(stderr,
 			        "sym: %s (%#llx)\n",
 			        sym->name,
 			        sym->value);
-	}
-}
-
-void
-debugsec(void)
-{
-	Section **secp, *sec;
-
-	fputs("Sections:\n", stderr);
-	for (secp = sectab; secp < &sectab[NR_SECTIONS]; secp++) {
-		for (sec = *secp; sec; sec = sec->hash)
-			fprintf(stderr,
-			        "sec: %s - %c (%#llx,%#lx)\n",
-			        sec->name,
-			        sec->type,
-			        sec->base,
-			        sec->size);
-	}
-
-	for (sec = sechead; sec; sec = sec->next) {
-		fprintf(stderr,
-		        "%s %s",
-		        sec->name,
-			sec->next ? "->" : "\n");
+		}
 	}
 }
 #endif

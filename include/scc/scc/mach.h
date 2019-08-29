@@ -1,5 +1,6 @@
-typedef struct symbol Symbol;
+typedef struct segment Segment;
 typedef struct section Section;
+typedef struct symbol Symbol;
 typedef struct objops Objops;
 typedef struct obj Obj;
 
@@ -22,13 +23,24 @@ struct obj {
 	void *data;
 };
 
+struct segment {
+	char *name;
+	unsigned long long base;
+	unsigned long long size;
+	unsigned flags;
+	int index;
+	int type;
+	int align;
+	int nsec;
+};
+
 struct section {
 	char *name;
 	unsigned long long base;
 	unsigned long long size;
 	unsigned flags;
-	int type;
 	int index;
+	int type;
 	int align;
 };
 
@@ -37,7 +49,7 @@ struct symbol {
 	unsigned long long size;
 	unsigned long long value;
 	int index;
-	char class;
+	int section;
 	char type;
 };
 
@@ -53,7 +65,10 @@ extern int writeobj(Obj *obj, FILE *fp);
 
 extern int strip(Obj *obj);
 extern int pc2line(Obj *obj, unsigned long long pc, char *fname, int *ln);
+extern int rebase(Obj *obj, long index, unsigned long offset);
+extern int mapsec(Obj *obj, int idx, FILE *fp);
 
+/* TODO: Change index to int */
 extern Symbol *getsym(Obj *obj, long *index, Symbol *sym);
 extern Section *getsec(Obj *obj, long *index, Section *sec);
 

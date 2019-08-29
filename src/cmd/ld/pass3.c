@@ -6,6 +6,7 @@
 
 #include "ld.h"
 
+/* TODO: This function must go in pass2 */
 static void
 rebase(Obj *obj)
 {

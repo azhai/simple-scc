@@ -4,23 +4,26 @@ include $(PROJECTDIR)/scripts/rules.mk
 
 TARGET = $(LIBDIR)/libmach.a
 
-OBJS = mach.o \
-       newobj.o \
-       delobj.o \
-       objpos.o \
-       archive.o \
-       armember.o \
-       objtype.o \
-       readobj.o \
-       writeobj.o \
-       getsym.o \
-       getsec.o \
-       strip.o \
-       pc2line.o \
-       pack.o \
-       unpack.o \
-       setindex.o \
-       getindex.o \
+OBJS =\
+	mach.o\
+	newobj.o \
+	delobj.o\
+	objpos.o\
+	archive.o\
+	armember.o\
+	objtype.o\
+	readobj.o\
+	writeobj.o\
+	getsym.o\
+	getsec.o\
+	rebase.o\
+	mapsec.o\
+	strip.o\
+	pc2line.o\
+	pack.o\
+	unpack.o\
+	setindex.o\
+	getindex.o\
 
 DIRS = coff32
 

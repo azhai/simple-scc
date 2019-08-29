@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <scc/mach.h>
 #include <scc/syslibs.h>
 
 #include "ld.h"
@@ -26,12 +27,6 @@ Segment debug = {.type = 'N'};
 
 char *output = "a.out", *entry = "start";
 static int status;
-
-char *
-errstr(void)
-{
-	return strerror(errno);
-}
 
 void
 error(char *fmt, ...)
@@ -67,10 +62,10 @@ static void
 ld(int argc, char*argv[])
 {
 	pass1(argc, argv);
-	pass2(argc, argv);
+/*	pass2(argc, argv);
 	pass3(argc, argv);
 	pass4(argc, argv);
-	pass5(argc, argv);
+	pass5(argc, argv); */
 	debugsym();
 	debugsec();
 }
@@ -131,6 +126,7 @@ main(int argc, char *argv[])
 				break;
 			case 'u':
 			case 'l':
+				/* FIXME: This way of handling options is wrong */
 				arg = (cp[1]) ? cp+1 : *++ap;
 				if (!arg)
 					goto usage;
