@@ -155,22 +155,17 @@ readstr(Obj *obj, FILE *fp)
 		return 0;
 	unpack(ORDER(obj->type), buf, "l", &siz);
 	coff->strsiz = 0;
-	if (siz == 4)
+	if (siz < 4 || siz > SIZE_MAX) {
+		errno = ERANGE;
 		return 1;
-	if (siz > 4) {
-		if (siz > SIZE_MAX) {
-			errno = ERANGE;
-			return 0;
-		}
-		if ((str = malloc(siz)) == NULL)
-			return 0;
-		coff->strtbl = str;
-		coff->strsiz = siz;
-
-		if (fread(str+4, siz-4, 1, fp) != 1)
-			return 0;
 	}
-	return 1;
+
+	if ((str = malloc(siz)) == NULL)
+		return 0;
+	coff->strtbl = str;
+	coff->strsiz = siz;
+
+	return fread(str+4, siz-4, 1, fp) != 1;
 }
 
 static int
