@@ -154,13 +154,15 @@ readstr(Obj *obj, FILE *fp)
 	if (fread(buf, 4, 1, fp) != 1)
 		return 0;
 	unpack(ORDER(obj->type), buf, "l", &siz);
+	coff->strsiz = 0;
 	if (siz == 4)
-		return 0;
+		return 1;
 	if (siz > 4) {
-		if (siz > SIZE_MAX)
+		if (siz > SIZE_MAX) {
+			errno = ERANGE;
 			return 0;
-		str = malloc(siz);
-		if (!str)
+		}
+		if ((str = malloc(siz)) == NULL)
 			return 0;
 		coff->strtbl = str;
 		coff->strsiz = siz;
@@ -207,8 +209,10 @@ readreloc(Obj *obj, FILE *fp)
 			if (fread(buf, RELSZ, 1, fp) != 1)
 				return 0;
 			unpack_reloc(ORDER(obj->type), buf, &rp[i]);
-			if (rp[i].r_symndx >= hdr->f_nsyms)
+			if (rp[i].r_symndx >= hdr->f_nsyms) {
+				errno = ERANGE;
 				return 0;
+			}
 		}
 	}
 
