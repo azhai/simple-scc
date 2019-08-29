@@ -5,7 +5,7 @@
 #include "libmach.h"
 
 Symbol *
-getsym(Obj *obj, long *index, Symbol *sym)
+getsym(Obj *obj, int *index, Symbol *sym)
 {
 	return (*obj->ops->getsym)(obj, index, sym);
 }

@@ -65,12 +65,11 @@ extern int writeobj(Obj *obj, FILE *fp);
 
 extern int strip(Obj *obj);
 extern int pc2line(Obj *obj, unsigned long long pc, char *fname, int *ln);
-extern int rebase(Obj *obj, long index, unsigned long offset);
+extern int rebase(Obj *obj, int index, unsigned long long offset);
 extern int mapsec(Obj *obj, int idx, FILE *fp);
 
-/* TODO: Change index to int */
-extern Symbol *getsym(Obj *obj, long *index, Symbol *sym);
-extern Section *getsec(Obj *obj, long *index, Section *sec);
+extern Symbol *getsym(Obj *obj, int *index, Symbol *sym);
+extern Section *getsec(Obj *obj, int *index, Section *sec);
 
 extern int setindex(int, long, char **, long *, FILE *);
 extern int getindex(int, long *, char ***, long **, FILE *);

@@ -5,7 +5,7 @@
 #include "libmach.h"
 
 int
-rebase(Obj *obj, long idx, unsigned long base)
+rebase(Obj *obj, int idx, unsigned long long base)
 {
 	return 0;
 }

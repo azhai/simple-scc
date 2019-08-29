@@ -40,7 +40,7 @@ error(char *fmt, ...)
 static void
 sizeobj(FILE *fp, int type)
 {
-	long i;
+	int i;
 	Obj *obj;
 	unsigned long long total, *p;
 	struct sizes siz;

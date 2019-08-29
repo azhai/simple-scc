@@ -152,8 +152,7 @@ newsym(Symbol *sym, struct symtbl *tbl)
 static void
 nmobj(FILE *fp, int type)
 {
-	int err = 1;
-	long i;
+	int i, err = 1;
 	Obj *obj;
 	Symbol sym;
 	struct symtbl tbl = {NULL, 0};

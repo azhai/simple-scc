@@ -137,8 +137,7 @@ freehash(void)
 static int
 newmember(FILE *fp)
 {
-	int t, ret = 0;
-	long i;
+	int i,t, ret = 0;
 	Obj *obj;
 	Symbol sym;
 

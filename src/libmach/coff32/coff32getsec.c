@@ -6,7 +6,7 @@
 #include "coff32.h"
 
 Section *
-coff32getsec(Obj *obj, long *idx, Section *sec)
+coff32getsec(Obj *obj, int *idx, Section *sec)
 {
 	long n = *idx;
 	int type;

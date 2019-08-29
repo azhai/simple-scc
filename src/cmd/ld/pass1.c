@@ -21,7 +21,7 @@ int bintype = -1;
 static int
 is_needed(Obj *obj)
 {
-	long i;
+	int i;
 	Symbol sym;
 
 	for (i = 0; getsym(obj, &i, &sym); i++) {
@@ -65,7 +65,7 @@ newsec(Section *osec, Obj *obj)
 static void
 newsym(Symbol *sym, Obj *obj)
 {
-	long id;
+	int id;
 	Section sec;
 
 	if (sym->type == 'U' || islower(sym->type))
@@ -80,8 +80,7 @@ newsym(Symbol *sym, Obj *obj)
 static void
 load(FILE *fp, int inlib)
 {
-	int t;
-	long i;
+	int t, i;
 	Obj *obj;
 	Section sec;
 	Symbol sym;

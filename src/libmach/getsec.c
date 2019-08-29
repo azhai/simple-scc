@@ -5,7 +5,7 @@
 #include "libmach.h"
 
 Section *
-getsec(Obj *obj, long *idx, Section *sec)
+getsec(Obj *obj, int *idx, Section *sec)
 {
 	return (*obj->ops->getsec)(obj, idx, sec);
 }
