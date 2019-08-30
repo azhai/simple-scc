@@ -17,4 +17,5 @@ struct objops coff32 = {
 	.write = coff32write,
 	.getsym = coff32getsym,
 	.getsec = coff32getsec,
+	.loadmap = coff32loadmap,
 };

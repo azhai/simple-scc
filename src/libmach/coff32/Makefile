@@ -18,6 +18,7 @@ OBJS = coff32.o \
        coff32pc2line.o \
        coff32getsym.o \
        coff32getsec.o \
+	coff32loadmap.o\
 
 all: $(OBJS)
 

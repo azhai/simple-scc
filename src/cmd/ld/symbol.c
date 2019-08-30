@@ -12,9 +12,8 @@
 #define NR_SYMBOL 128
 
 /*
- * struct symtab and struct sectab have a Symbol and a
- * Section as first field because the code is going to
- * cast from the symbols and the sections to the tab.
+ * struct symtab has a Symbol as first field because
+ * the code is going to cast from the symbols to the tab.
  */
 struct symtab {
 	Symbol sym;

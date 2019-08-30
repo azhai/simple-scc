@@ -5,7 +5,7 @@
 #include "libmach.h"
 
 int
-writeobj(Obj *obj, FILE *fp)
+writeobj(Obj *obj, Map *map, FILE *fp)
 {
 	return (obj->ops->write)(obj, fp);
 }

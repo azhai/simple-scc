@@ -41,3 +41,4 @@ extern int coff32xgetidx(int order,
 
 extern Symbol *coff32getsym(Obj *obj, int *idx, Symbol *sym);
 extern Section *coff32getsec(Obj *obj, int *idx, Section *sec);
+extern Map *coff32loadmap(Obj *obj, FILE *fp);

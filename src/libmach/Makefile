@@ -17,7 +17,9 @@ OBJS =\
 	getsym.o\
 	getsec.o\
 	rebase.o\
-	mapsec.o\
+	loadmap.o\
+	newmap.o\
+	setmap.o\
 	strip.o\
 	pc2line.o\
 	pack.o\

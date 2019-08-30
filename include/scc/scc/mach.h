@@ -3,6 +3,7 @@ typedef struct section Section;
 typedef struct symbol Symbol;
 typedef struct objops Objops;
 typedef struct obj Obj;
+typedef struct map Map;
 
 enum sectype {
 	SREAD   = 1 << 0,
@@ -61,12 +62,15 @@ extern Obj *newobj(int type);
 extern void delobj(Obj *obj);
 
 extern int readobj(Obj *obj, FILE *fp);
-extern int writeobj(Obj *obj, FILE *fp);
+extern int writeobj(Obj *obj, Map *map, FILE *fp);
 
 extern int strip(Obj *obj);
 extern int pc2line(Obj *obj, unsigned long long pc, char *fname, int *ln);
 extern int rebase(Obj *obj, int index, unsigned long long offset);
-extern int mapsec(Obj *obj, int idx, FILE *fp);
+
+extern Map *loadmap(Obj *obj, FILE *fp);
+extern Map *newmap(int n, FILE *fp);
+extern int setmap(Map *map, char *name, long off);
 
 extern Symbol *getsym(Obj *obj, int *index, Symbol *sym);
 extern Section *getsec(Obj *obj, int *index, Section *sec);

@@ -29,51 +29,57 @@ error(char *fmt, ...)
 static void
 doit(char *fname)
 {
-	int type;
+	int type;;
 	size_t r;
-	FILE *fp;
+	FILE *src, *dst;
+	Map *map;
 	Obj *obj;
 
+	errno = 0;
 	filename = fname;
-	if ((fp = fopen(fname, "rb")) == NULL)
-		goto err1;
-	if ((type = objtype(fp, NULL)) < 0)
-		goto err2;
-	if ((obj = newobj(type)) == NULL)
-		goto err2;
-	if (readobj(obj, fp) < 0)
-		goto err3;
-	fclose(fp);
-
-	if (strip(obj) < 0)
-		goto err2;
-
 	r = snprintf(tmpname, sizeof(tmpname), "%s.tmp", fname);
 	if (r >= sizeof(tmpname)) {
-		errno = ERANGE;
-		goto err2;
+		error("%s: name too long", fname);
+		return;
 	}
-
-	if ((fp = fopen(tmpname, "wb")) == NULL)
-		goto err2;
-
-	if (writeobj(obj, fp) < 0)
-		goto err3;
-	fclose(fp);
-	delobj(obj);
-
-	if (rename(tmpname, fname) == EOF)
+	if ((src = fopen(fname, "rb")) == NULL)
+		goto err0;
+	if ((type = objtype(src, NULL)) < 0)
 		goto err1;
+	if ((obj = newobj(type)) == NULL)
+		goto err1;
+	if (readobj(obj, src) < 0)
+		goto err2;
+	if ((map = loadmap(obj, src)) == NULL)
+		goto err3;
+	if (strip(obj) < 0)
+		goto err3;
+	if ((dst = fopen(tmpname, "wb")) == NULL)
+		goto err3;
+	if (writeobj(obj, map, dst) < 0)
+		goto err5;
+	if (fclose(dst) == EOF)
+		goto err4;
+	if (remove(fname) == EOF)
+		goto err4;
+	if (rename(tmpname, fname) == EOF)
+		goto err4;
 
-	return;
+	goto err3;
 
+err5:
+	fclose(dst);
+err4:
+	remove(tmpname);
 err3:
-	fclose(fp);
+	free(map);
 err2:
 	delobj(obj);
 err1:
-	error(strerror(errno));
-	remove(tmpname);
+	fclose(src);
+err0:
+	if (errno)
+		error(strerror(errno));
 }
 
 static void

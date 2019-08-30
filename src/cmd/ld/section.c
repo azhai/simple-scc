@@ -12,6 +12,10 @@
 
 #define NR_SECTION 32
 
+/*
+ * struct sectab has a Section as first field because
+ * the code is going to cast from the sections to the tab.
+ */
 struct sectab {
 	Section sec;
 	FILE *tmpfp;
@@ -88,10 +92,12 @@ copy(Obj *obj, Section *osec, Section *sec)
 		exit(EXIT_FAILURE);
 	}
 
+/*
 	if (mapsec(obj, osec->index, sp->tmpfp) < 0) {
 		error(strerror(errno));
 		return;
 	}
+*/
 
 	sec->size += osec->size;
 }

@@ -36,11 +36,23 @@ struct objops {
 	int (*strip)(Obj *obj);
 	int (*pc2line)(Obj *, unsigned long long , char *, int *);
 
+	Map *(*loadmap)(Obj *obj, FILE *fp);
+
 	Symbol *(*getsym)(Obj *obj, int *index, Symbol *sym);
 	Section *(*getsec)(Obj *obj, int *index, Section *sec);
 
 	int (*setidx)(long nsyms, char *names[], long offset[], FILE *fp);
 	int (*getidx)(long *nsyms, char ***names, long **offset, FILE *fp);
+};
+
+
+struct map {
+	int n;
+	struct mapsec {
+		char *name;
+		FILE *fp;
+		long offset;
+	} sec[];
 };
 
 /* common functions */
