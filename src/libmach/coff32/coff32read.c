@@ -165,7 +165,7 @@ readstr(Obj *obj, FILE *fp)
 	coff->strtbl = str;
 	coff->strsiz = siz;
 
-	return fread(str+4, siz-4, 1, fp) != 1;
+	return fread(str+4, siz-4, 1, fp) == 1;
 }
 
 static int
