@@ -273,14 +273,11 @@ writelines(Obj *obj, FILE *fp)
 {
 	int i;
 	long j;
-	FILHDR *hdr;
 	LINENO *lp;
 	SCNHDR *scn;
-	struct coff32 *coff;
+	struct coff32 *coff = obj->data;
+	FILHDR *hdr = &coff->hdr;
 	unsigned char buf[LINESZ];
-
-	coff  = obj->data;
-	hdr = &coff->hdr;
 
 	if (!coff->lines)
 		return 1;
@@ -300,14 +297,70 @@ writelines(Obj *obj, FILE *fp)
 	return 1;
 }
 
-int
-coff32write(Obj *obj, FILE *fp)
+static int
+writedata(Obj *obj, Map *map, FILE *fp)
 {
+	int id;
+	long nsec;
+	unsigned long long n;
+	struct coff32 *coff = obj->data;
+	FILHDR *hdr = &coff->hdr;
+	SCNHDR *scn;
+	Mapsec *sec;
+
+	nsec = hdr->f_nscns;
+	for (scn = coff->scns; nsec--; scn++) {
+		if ((id = findsec(map, scn->s_name)) < 0)
+			return 0;
+		sec = &map->sec[id];
+		fseek(sec->fp, sec->offset, SEEK_SET);
+
+		for (n = sec->end - sec->begin; n > 0; n--)
+			putc(getc(sec->fp), fp);
+	}
+
+	return !ferror(fp);
+}
+
+int
+coff32write(Obj *obj, Map *map, FILE *fp)
+{
+	long ptr, n;
+	SCNHDR *scn;
+	struct coff32 *coff = obj->data;
+	FILHDR *hdr = &coff->hdr;
+
+	ptr = ftell(fp);
+	obj->pos = ptr;
+	ptr += FILHSZ + AOUTSZ + n*hdr->f_nscns;
+
+	n = hdr->f_nscns;
+	for (scn = coff->scns; n--; scn++) {
+		scn->s_scnptr = ptr;
+		ptr += scn->s_size;
+	}
+
+	n = hdr->f_nscns;
+	for (scn = coff->scns; n--; scn++) {
+		scn->s_relptr = ptr;
+		ptr += scn->s_nrelloc * RELSZ;
+	}
+
+	n = hdr->f_nscns;
+	for (scn = coff->scns; n--; scn++) {
+		scn->s_lnnoptr = ptr;
+		ptr += scn->s_nlnno * RELSZ;
+	}
+
+	/* and now update symbols */
+
 	if (!writehdr(obj, fp))
 		return -1;
 	if (!writeaout(obj, fp))
 		return -1;
 	if (!writescns(obj, fp))
+		return -1;
+	if (!writedata(obj, map, fp))
 		return -1;
 	if (!writereloc(obj, fp))
 		return -1;

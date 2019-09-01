@@ -4,6 +4,7 @@ typedef struct symbol Symbol;
 typedef struct objops Objops;
 typedef struct obj Obj;
 typedef struct map Map;
+typedef struct mapsec Mapsec;
 
 enum sectype {
 	SREAD   = 1 << 0,
@@ -70,7 +71,13 @@ extern int rebase(Obj *obj, int index, unsigned long long offset);
 
 extern Map *loadmap(Obj *obj, FILE *fp);
 extern Map *newmap(int n, FILE *fp);
-extern int setmap(Map *map, char *name, long off);
+extern int findsec(Map *map, char *name);
+extern int setmap(Map *map,
+                  char *name,
+                  FILE *fp,
+                  unsigned long long begin,
+                  unsigned long long end,
+                  long off);
 
 extern Symbol *getsym(Obj *obj, int *index, Symbol *sym);
 extern Section *getsec(Obj *obj, int *index, Section *sec);

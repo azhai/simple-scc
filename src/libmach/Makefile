@@ -20,6 +20,7 @@ OBJS =\
 	loadmap.o\
 	newmap.o\
 	setmap.o\
+	findsec.o\
 	strip.o\
 	pc2line.o\
 	pack.o\

@@ -31,7 +31,7 @@ struct objops {
 	void (*del)(Obj *obj);
 
 	int (*read)(Obj *obj, FILE *fp);
-	int (*write)(Obj *obj, FILE *fp);
+	int (*write)(Obj *obj, Map *map, FILE *fp);
 
 	int (*strip)(Obj *obj);
 	int (*pc2line)(Obj *, unsigned long long , char *, int *);
@@ -51,6 +51,8 @@ struct map {
 	struct mapsec {
 		char *name;
 		FILE *fp;
+		unsigned long long begin;
+		unsigned long long end;
 		long offset;
 	} sec[];
 };

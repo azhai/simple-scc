@@ -6,28 +6,27 @@
 #include "libmach.h"
 
 int
-setmap(Map *map, char *name, long off)
+setmap(Map *map,
+       char *name,
+       FILE *fp,
+       unsigned long long begin,
+       unsigned long long end,
+       long off)
 {
 	int n;
-	struct mapsec *sec;
+	Mapsec *sec;
 
 	n = map->n;
 	for (sec = map->sec; n--; sec++) {
-		if (sec->name && strcmp(sec->name, name) == 0)
-			goto found;
+		if (!sec->name) {
+			sec->name = name;
+			sec->fp = fp,
+			sec->begin = begin;
+			sec->end = end;
+			sec->offset = off;
+			return 0;
+		}
 	}
 
-	n = map->n;
-	for (sec = map->sec; n--; sec++) {
-		if (!sec->name)
-			goto found;
-	}
-
-	/* TODO: Set some errno here */
 	return -1;
-
-found:
-	sec->name = name;
-	sec->offset = off;
-	return 0;
 }

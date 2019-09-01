@@ -42,28 +42,50 @@ doit(char *fname)
 		error("%s: name too long", fname);
 		return;
 	}
-	if ((src = fopen(fname, "rb")) == NULL)
+	if ((src = fopen(fname, "rb")) == NULL) {
+		error("opening src file");
 		goto err0;
-	if ((type = objtype(src, NULL)) < 0)
+	}
+	if ((type = objtype(src, NULL)) < 0) {
+		error("getting object type");
 		goto err1;
-	if ((obj = newobj(type)) == NULL)
+	}
+	if ((obj = newobj(type)) == NULL) {
+		error("creating object");
 		goto err1;
-	if (readobj(obj, src) < 0)
+	}
+	if (readobj(obj, src) < 0) {
+		error("reading object");
 		goto err2;
-	if ((map = loadmap(obj, src)) == NULL)
+	}
+	if ((map = loadmap(obj, src)) == NULL) {
+		error("loading map");
 		goto err3;
-	if (strip(obj) < 0)
+	}
+	if (strip(obj) < 0) {
+		error("stripping");
 		goto err3;
-	if ((dst = fopen(tmpname, "wb")) == NULL)
+	}
+	if ((dst = fopen(tmpname, "wb")) == NULL) {
+		error("opening dst");
 		goto err3;
-	if (writeobj(obj, map, dst) < 0)
+	}
+	if (writeobj(obj, map, dst) < 0) {
+		error("writing object");
 		goto err5;
-	if (fclose(dst) == EOF)
+	}
+	if (fclose(dst) == EOF) {
+		error("closing dst");
 		goto err4;
-	if (remove(fname) == EOF)
+	}
+	if (remove(fname) == EOF) {
+		error("removing fname");
 		goto err4;
-	if (rename(tmpname, fname) == EOF)
+	}
+	if (rename(tmpname, fname) == EOF) {
+		error("rename fname");
 		goto err4;
+	}
 
 	goto err3;
 
@@ -78,8 +100,7 @@ err2:
 err1:
 	fclose(src);
 err0:
-	if (errno)
-		error(strerror(errno));
+	error("cannot strip it");
 }
 
 static void

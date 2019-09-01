@@ -7,5 +7,5 @@
 int
 writeobj(Obj *obj, Map *map, FILE *fp)
 {
-	return (obj->ops->write)(obj, fp);
+	return (obj->ops->write)(obj, map, fp);
 }
