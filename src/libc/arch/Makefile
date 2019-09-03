@@ -3,7 +3,7 @@ PROJECTDIR =../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
-DIRS = amd64 arm32 arm64
+DIRS = amd64 arm32 arm64 i386
 
 all:
 	+@cd $(ARCH) && $(MAKE)
