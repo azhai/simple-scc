@@ -16,6 +16,12 @@
 ./target/powerpc/powerpc.o: $(INCDIR)/scc/scc/scc.h
 ./target/powerpc/powerpc.o: ./target/powerpc/../../as.h
 ./target/powerpc/powerpc.o: ./target/powerpc/proc.h
+./target/powerpc/powerpc64.o: $(INCDIR)/scc/scc/scc.h
+./target/powerpc/powerpc64.o: ./target/powerpc/../../as.h
+./target/powerpc/powerpc64.o: ./target/powerpc/proc.h
+./target/powerpc/powerpc64tbl.o: $(INCDIR)/scc/scc/scc.h
+./target/powerpc/powerpc64tbl.o: ./target/powerpc/../../as.h
+./target/powerpc/powerpc64tbl.o: ./target/powerpc/../powerpc/proc.h
 ./target/powerpc/powerpctbl.o: $(INCDIR)/scc/scc/scc.h
 ./target/powerpc/powerpctbl.o: ./target/powerpc/../../as.h
 ./target/powerpc/powerpctbl.o: ./target/powerpc/../powerpc/proc.h

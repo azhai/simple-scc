@@ -5,13 +5,15 @@ include $(PROJECTDIR)/scripts/rules.mk
 
 MORECFLAGS = -I$(INCDIR)/$(STD)
 
-OBJS = main.o \
-       symbol.o \
-       ins.o \
-       parser.o \
-       expr.o \
+OBJS = \
+	main.o\
+	symbol.o\
+	ins.o\
+	parser.o\
+	expr.o\
 
 TARGET =\
+	$(LIBEXEC)/as-powerpc64\
 	$(LIBEXEC)/as-powerpc\
 	$(LIBEXEC)/as-amd64\
 	$(LIBEXEC)/as-i386\
@@ -27,6 +29,7 @@ dep: inc-dep
 clean:
 	rm -f target/*/*.o target/*/*tbl.c
 
+include target/powerpc64.mk
 include target/powerpc.mk
 include target/amd64.mk
 include target/i386.mk

@@ -1,9 +1,11 @@
-POWERPC_OBJ = $(OBJS) \
-           target/powerpc/powerpctbl.o \
-           target/powerpc/powerpc.o \
-           target/powerpc/ins.o \
+POWERPC = target/powerpc
+POWERPC_OBJ =\
+	$(OBJS)\
+	$(POWERPC)/powerpctbl.o\
+	$(POWERPC)/powerpc.o\
+	$(POWERPC)/ins.o\
 
-target/powerpc/powerpctbl.c: target/powerpc/powerpc.dat target/powerpc/rules.dat
+$(POWERPC)/powerpctbl.c: $(POWERPC)/powerpc.dat $(POWERPC)/rules.dat
 	./mktbl -f powerpc -c powerpc
 
 $(LIBEXEC)/as-powerpc: $(POWERPC_OBJ)
