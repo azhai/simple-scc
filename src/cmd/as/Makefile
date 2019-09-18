@@ -11,10 +11,12 @@ OBJS = main.o \
        parser.o \
        expr.o \
 
-TARGET = $(LIBEXEC)/as-amd64 \
-         $(LIBEXEC)/as-i386 \
-         $(LIBEXEC)/as-i286 \
-         $(LIBEXEC)/as-z80 \
+TARGET =\
+	$(LIBEXEC)/as-powerpc\
+	$(LIBEXEC)/as-amd64\
+	$(LIBEXEC)/as-i386\
+	$(LIBEXEC)/as-i286\
+	$(LIBEXEC)/as-z80 \
 
 all: $(TARGET)
 
@@ -25,6 +27,7 @@ dep: inc-dep
 clean:
 	rm -f target/*/*.o target/*/*tbl.c
 
+include target/powerpc.mk
 include target/amd64.mk
 include target/i386.mk
 include target/i286.mk

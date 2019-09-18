@@ -11,6 +11,14 @@
 ./parser.o: ./as.h
 ./symbol.o: $(INCDIR)/scc/scc/scc.h
 ./symbol.o: ./as.h
+./target/powerpc/ins.o: $(INCDIR)/scc/scc/scc.h
+./target/powerpc/ins.o: ./target/powerpc/../../as.h
+./target/powerpc/powerpc.o: $(INCDIR)/scc/scc/scc.h
+./target/powerpc/powerpc.o: ./target/powerpc/../../as.h
+./target/powerpc/powerpc.o: ./target/powerpc/proc.h
+./target/powerpc/powerpctbl.o: $(INCDIR)/scc/scc/scc.h
+./target/powerpc/powerpctbl.o: ./target/powerpc/../../as.h
+./target/powerpc/powerpctbl.o: ./target/powerpc/../powerpc/proc.h
 ./target/x80/ins.o: $(INCDIR)/scc/scc/scc.h
 ./target/x80/ins.o: ./target/x80/../../as.h
 ./target/x80/ins.o: ./target/x80/proc.h
