@@ -1,7 +1,8 @@
-I386_OBJ = $(OBJS) \
-           target/x86/i386tbl.o \
-           target/x86/i386.o \
-           target/x86/ins.o \
+I386_OBJ =\
+	$(OBJS)\
+	target/x86/i386tbl.o\
+	target/x86/i386.o\
+	target/x86/ins.o\
 
 target/x86/i386tbl.c: target/x86/x86.dat target/x86/rules.dat
 	./mktbl -f x86 -c i386

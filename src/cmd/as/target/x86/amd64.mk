@@ -1,7 +1,8 @@
-AMD64_OBJ = $(OBJS) \
-            target/x86/amd64tbl.o \
-            target/x86/amd64.o \
-            target/x86/ins.o \
+AMD64_OBJ =\
+	$(OBJS)\
+	target/x86/amd64tbl.o\
+	target/x86/amd64.o\
+	target/x86/ins.o\
 
 target/x86/amd64tbl.c: target/x86/x86.dat target/x86/rules.dat
 	./mktbl -f x86 -c amd64
