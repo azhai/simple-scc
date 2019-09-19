@@ -3,6 +3,51 @@
 #include <scc/scc.h>
 
 #include "../../as.h"
+#include "proc.h"
+
+static int
+getclass(Node *np)
+{
+	if (np->addr != AREG)
+		return 0;
+
+	switch (np->sym->value) {
+	case AREG_R0:
+	case AREG_R1:
+	case AREG_R2:
+	case AREG_R3:
+	case AREG_R4:
+	case AREG_R5:
+	case AREG_R6:
+	case AREG_R7:
+	case AREG_R8:
+	case AREG_R9:
+	case AREG_R10:
+	case AREG_R11:
+	case AREG_R12:
+	case AREG_R13:
+	case AREG_R14:
+	case AREG_R15:
+	case AREG_R16:
+	case AREG_R17:
+	case AREG_R18:
+	case AREG_R19:
+	case AREG_R20:
+	case AREG_R21:
+	case AREG_R22:
+	case AREG_R23:
+	case AREG_R24:
+	case AREG_R25:
+	case AREG_R26:
+	case AREG_R27:
+	case AREG_R29:
+	case AREG_R30:
+	case AREG_R31:
+		return GPRSCLASS;
+	default:
+		abort();
+	}
+}
 
 int
 match(Op *Op, Node **args)
