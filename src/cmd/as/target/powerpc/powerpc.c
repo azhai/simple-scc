@@ -6,7 +6,7 @@
 #include "proc.h"
 
 TUINT maxaddr = 0xFFFF;
-int endian = LITTLE_ENDIAN;
+int endian = BIG_ENDIAN;
 int left2right = 0;
 
 void

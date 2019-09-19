@@ -35,3 +35,13 @@
 .ALIGN	imm16+	0	none	align	POWERPC,POWERPC64
 .END	none	0	none	end	POWERPC,POWERPC64
 .INCLUDE	string	0	none	include	POWERPC,POWERPC64
+
+# Branch instructions
+B	imm32	4	18,0,0	i_form	POWERPC
+B	imm64	4	18,0,0	i_form	POWERPC64
+BA	imm32	4	18,1,0	i_form	POWERPC
+BA	imm64	4	18,1,0	i_form	POWERPC64
+BL	imm32	4	18,0,1	i_form	POWERPC
+BL	imm64	4	18,0,1	i_form	POWERPC64
+BLA	imm32	4	18,1,1	i_form	POWERPC
+BLA	imm64	4	18,1,1	i_form	POWERPC64

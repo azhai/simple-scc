@@ -31,6 +31,8 @@ enum args {
 	AREG_R29,
 	AREG_R30,
 	AREG_R31,
+
+	AREG_GPRSCLASS,   /* register class for GPRS registers */
 };
 
 enum class {

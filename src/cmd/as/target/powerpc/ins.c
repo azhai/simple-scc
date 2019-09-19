@@ -50,9 +50,59 @@ getclass(Node *np)
 }
 
 int
-match(Op *Op, Node **args)
+match(Op *op, Node **args)
 {
-	return 0;
+	unsigned char *p;
+	int arg, class, rep, opt;
+	Node *np;
+
+	if (!op->args)
+		return args == NULL;
+
+	opt = rep = 0;
+	for (p = op->args; arg = *p; ++p) {
+		if (rep)
+			--p;
+		if ((np = *args++) == NULL)
+			return (rep|opt) != 0;
+
+		switch (arg) {
+		case AOPT:
+			opt = 1;
+			break;
+		case AREP:
+			rep = 1;
+			break;
+		case AREG_GPRSCLASS:
+			class = GPRSCLASS;
+		check_class:
+			if ((getclass(np) & class) == 0)
+				return 0;
+			break;
+		case AIMM8:
+		case AIMM16:
+		case AIMM32:
+		case AIMM64:
+			if (np->addr != AIMM)
+				return 0;
+			if (toobig(np, arg))
+				error("overflow in immediate operand");
+			break;
+		case ASYM:
+			if (np->addr != AIMM || np->op != IDEN)
+				return 0;
+			break;
+		case ADIRECT:
+		case ASTR:
+			if (np->addr != arg)
+				return 0;
+			break;
+		default:
+			abort();
+		}
+	}
+
+	return *args == NULL;
 }
 
 Node *
@@ -61,10 +111,45 @@ moperand(void)
 	abort();
 }
 
+static void
+pack_emit(unsigned long ins)
+{
+	char buff[4];
+
+	if (endian == BIG_ENDIAN) {
+		buff[0] = ins >> 24;
+		buff[1] = ins >> 16;
+		buff[2] = ins >> 8;
+		buff[3] = ins;
+	} else {
+		buff[0] = ins;
+		buff[1] = ins >> 8;
+		buff[2] = ins >> 16;
+		buff[3] = ins >> 24;
+	}
+
+	emit(buff, 4);
+}
+
 void
 i_form(Op *op, Node **args)
 {
-	abort();
+	unsigned long ins, opcd, li, aa, lk;
+	unsigned long long dst;
+
+	opcd = op->bytes[0];
+	aa = op->bytes[1];
+	lk = op->bytes[2];
+
+	dst = args[0]->sym->value;
+	if (dst & 0x3)
+		error("unaligned branch");
+	if (aa)
+		dst -= cursec->curpc - 4;
+	li = dst >> 2;
+
+	ins = opcd<<26 | li<<2 | aa<<1 | lk;
+	pack_emit(ins);
 }
 
 void
