@@ -25,10 +25,31 @@ error(char *fmt, ...)
 	status = EXIT_FAILURE;
 }
 
+/*
+ * TODO: Dummy implementation used only in the assembler tests
+ */
 static void
 dump(char *fname)
 {
-	/* TODO */
+	int c, n;
+	FILE *fp;
+
+	filename = fname;
+	if ((fp = fopen(fname, "rb")) == NULL) {
+		error("%s", strerror(errno));
+		return;
+	}
+
+	puts("data:");
+	for (n = 1; (c = getc(fp)) != EOF; n++)
+		printf("%02X%c", c, (n%16 == 0) ? '\n' : ' ');
+	if (n%16 != 0)
+		putchar('\n');
+
+	if (ferror(fp))
+		error("%s", strerror(errno));
+
+	fclose(fp);
 }
 
 static void
