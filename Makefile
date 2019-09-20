@@ -3,7 +3,6 @@
 PROJECTDIR = .
 include $(PROJECTDIR)/scripts/rules.mk
 
-STD = c99
 PREFIX    = $(PWD)/$(PROJECTDIR)/root
 MANPREFIX = $(PREFIX)/share/man
 DIRS  = src include/scc/scc tests
