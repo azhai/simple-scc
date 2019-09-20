@@ -4,7 +4,7 @@ _environ:
 	.quad	0
 
 	.text
-	.global	start
+	.globl	_start
 _start:
 	movq	%rsp,%rbp
 
