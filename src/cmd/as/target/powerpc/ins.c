@@ -135,7 +135,9 @@ void
 i_form(Op *op, Node **args)
 {
 	unsigned long ins, opcd, li, aa, lk;
-	unsigned long long dst;
+	long long dst;
+	long long max = 1l << 23;
+	long long min = -(1l << 23);
 
 	opcd = op->bytes[0];
 	aa = op->bytes[1];
@@ -146,8 +148,11 @@ i_form(Op *op, Node **args)
 		error("unaligned branch");
 	if (aa)
 		dst -= cursec->curpc - 4;
-	li = dst >> 2;
+	if (dst < min || dst > max)
+		error("out of range branch");
 
+	li = dst;
+	li >>= 2;
 	ins = opcd<<26 | li<<2 | aa<<1 | lk;
 	emit_packed(ins);
 }
