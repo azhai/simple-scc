@@ -164,9 +164,10 @@ match(Op *op, Node **args)
 		index_address:
 			if (np->addr != AINDEX)
 				return 0;
-			if (np->left->left->sym->value != arg)
+			np = np->left->left;
+			if (np->sym->value != arg)
 				return 0;
-			if (toobig(np, arg))
+			if (toobig(np, AIMM8))
 				error("overflow in index");
 			break;
 		case ARST:
@@ -176,6 +177,9 @@ match(Op *op, Node **args)
 				return 0;
 			break;
 		case AZERO:
+			if (np->addr != AIMM)
+				return 0;
+			break;
 		case AIMM3:
 		case AIMM8:
 		case AIMM16:

@@ -32,6 +32,8 @@ enum common_args {
 	ASTR,
 	AREG,
 	ANUMBER,
+	AIMM3,
+	AIMM5,
 	AIMM8,
 	AIMM16,
 	AIMM32,

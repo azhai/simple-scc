@@ -57,7 +57,6 @@ enum args {
 	AINDER_IX,    /* (IX) */
 	AINDER_IY,    /* (IY) */
 
-	AIMM3,         /* 3 bit immediate */
 	AZERO,         /* a literal 0 */
 	ARST,          /* 0h, 08h, 10h, 18h, 20h, 28h, 30h, 38h */
 };

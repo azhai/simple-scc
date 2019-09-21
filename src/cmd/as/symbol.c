@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <scc/scc.h>
@@ -117,8 +118,24 @@ deflabel(char *name)
 int
 toobig(Node *np, int type)
 {
-	/* TODO */
-	return 0;
+	unsigned long long val = np->sym->value;
+
+	switch (type) {
+	case AIMM3:
+		return val > 7;
+	case AIMM5:
+		return val > 0x1F;
+	case AIMM8:
+		return val > 0xFF;
+	case AIMM16:
+		return val > 0xFFFF;
+	case AIMM32:
+		return val > 0xFFFFFFFF;
+	case AIMM64:
+		return 1;
+	default:
+		abort();
+	}
 }
 
 static void
