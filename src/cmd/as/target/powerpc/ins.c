@@ -79,6 +79,7 @@ match(Op *op, Node **args)
 			if ((getclass(np) & class) == 0)
 				return 0;
 			break;
+		case AIMM5:
 		case AIMM8:
 		case AIMM16:
 		case AIMM32:
@@ -160,7 +161,31 @@ i_form(Op *op, Node **args)
 void
 b_form(Op *op, Node **args)
 {
-	abort();
+	unsigned long ins, opcd, bo, bi, bd, aa, lk;
+	long long dst;
+	long long max = 1l << 13;
+	long long min = -(1l << 13);
+
+	opcd = op->bytes[0];
+	aa = op->bytes[1];
+	lk = op->bytes[2];
+
+	bo = args[0]->sym->value;
+	bi = args[1]->sym->value;
+
+	dst = args[2]->sym->value;
+	if (dst & 0x3)
+		error("unaligned branch");
+	if (aa)
+		dst -= cursec->curpc - 4;
+
+	if (dst < min || dst > max)
+		error("out of range branch");
+	bd = dst;
+	bd >>= 2;
+
+	ins = opcd<<26 | bo<<21 | bi<<16 | bd<<11 | aa<<1 | lk;
+	emit_packed(ins);
 }
 
 void

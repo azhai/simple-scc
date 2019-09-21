@@ -45,3 +45,12 @@ BL	imm32	4	18,0,1	i_form	POWERPC
 BL	imm64	4	18,0,1	i_form	POWERPC64
 BLA	imm32	4	18,1,1	i_form	POWERPC
 BLA	imm64	4	18,1,1	i_form	POWERPC64
+
+BC	imm5,imm5,imm32	4	16,0,0	b_form	POWERPC
+BC	imm5,imm5,imm64	4	16,0,0	b_form	POWERPC64
+BCA	imm5,imm5,imm32	4	16,1,0	b_form	POWERPC
+BCA	imm5,imm5,imm64	4	16,1,0	b_form	POWERPC64
+BCL	imm5,imm5,imm32	4	16,0,1	b_form	POWERPC
+BCL	imm5,imm5,imm64	4	16,0,1	b_form	POWERPC64
+BCLA	imm5,imm5,imm32	4	16,1,1	b_form	POWERPC
+BCLA	imm5,imm5,imm64	4	16,1,1	b_form	POWERPC64
