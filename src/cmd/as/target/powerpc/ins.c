@@ -112,7 +112,7 @@ moperand(void)
 }
 
 static void
-pack_emit(unsigned long ins)
+emit_packed(unsigned long ins)
 {
 	char buff[4];
 
@@ -149,7 +149,7 @@ i_form(Op *op, Node **args)
 	li = dst >> 2;
 
 	ins = opcd<<26 | li<<2 | aa<<1 | lk;
-	pack_emit(ins);
+	emit_packed(ins);
 }
 
 void
