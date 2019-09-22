@@ -5,6 +5,12 @@
 #include "../../as.h"
 #include "proc.h"
 
+/*
+ * This code is derived from PowerISA_V2.06B_V2_PUBLIC document.
+ * All the names used in the specification are preserved in
+ * this code.
+ */
+
 static int
 getclass(Node *np)
 {
