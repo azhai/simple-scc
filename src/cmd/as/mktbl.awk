@@ -4,7 +4,7 @@ BEGIN		{
 		       "#include \"../../as.h\"\n"\
 		       "#include \"../" family "/proc.h\"\n"
 
-		rules = "target/" family "/rules.dat" 
+		rules = "target/" family "/opers.dat"
 		while (getline < rules > 0) {
 			regex[++nregs] = $1
 			value[nregs] = $2

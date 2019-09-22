@@ -4,7 +4,7 @@ I386_OBJ =\
 	target/x86/i386.o\
 	target/x86/ins.o\
 
-target/x86/i386tbl.c: target/x86/x86.dat target/x86/rules.dat
+target/x86/i386tbl.c: target/x86/ops.dat target/x86/opers.dat
 	./mktbl -f x86 -c i386
 
 $(LIBEXEC)/as-i386: $(I386_OBJ)
