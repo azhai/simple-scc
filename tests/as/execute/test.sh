@@ -13,8 +13,8 @@ trap "rm -f a.out $tmp1 $tmp2; exit" 0 2 3
 
 as-$cpu $file
 
-sed -n '/^\// ! {
-	s%.*/%%
+sed -n '/^\#/ ! {
+	s%.*#%%
 	s%^[ 	]*%%
 	s%[ 	]*$%%
 	/^$/d

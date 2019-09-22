@@ -322,7 +322,7 @@ field(char **oldp, size_t *siz)
 
 	for (s = begin; isspace(*s) && *s != '\t'; ++s)
 		;
-	if (*s == '\0' || *s == '/' || *s == ';') {
+	if (*s == '\0' || *s == '#') {
 		*s = '\0';
 		return *oldp = NULL;
 	}
@@ -377,26 +377,12 @@ extract(char *s, size_t len, struct line *lp)
 	if (lp->args = field(&s, &len))
 		r++;
 
-	if (s && *s && *s != '/')
+	if (s && *s && *s != '#')
 		error("trailing characters at the end of the line");
 	if (lp->label && !validlabel(lp->label))
 		error("incorrect label name '%s'", lp->label);
 
 	return r;
-}
-
-static void
-comment(FILE *fp)
-{
-	int c;
-
-	while ((c = getc(fp)) != EOF) {
-		if (c != '*')
-			continue;
-		if ((c = getc(fp)) == '/')
-			return;
-		ungetc(c, fp);
-	}
 }
 
 static size_t
@@ -408,17 +394,10 @@ getline(FILE *fp, char buff[MAXLINE])
 	for (bp = buff; (c = getc(fp)) != EOF; *bp++ = c) {
 		if (c == '\n')
 			break;
-		if (c == '/') {
-			if ((c = getc(fp)) != '*') {
-				ungetc(c, fp);
-				c = '/';
-			} else {
-				comment(fp);
-				c = ' ';
-			}
-		} else if (c > UCHAR_MAX) {
+
+		if (c > UCHAR_MAX)
 			error("invalid character '%x'", c);
-		}
+
 		if (bp == &buff[MAXLINE-1])
 			error("line too long");
 	}
