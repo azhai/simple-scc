@@ -54,3 +54,6 @@ BCL	imm5,imm5,imm32	4	16,0,1	b_form	POWERPC
 BCL	imm5,imm5,imm64	4	16,0,1	b_form	POWERPC64
 BCLA	imm5,imm5,imm32	4	16,1,1	b_form	POWERPC
 BCLA	imm5,imm5,imm64	4	16,1,1	b_form	POWERPC64
+
+BCLR	imm5,imm5,imm2	4	19,0,16,0	xl_form	POWERPC,POWERPC64
+BCLRL	imm5,imm5,imm2	4	19,0,16,1	xl_form	POWERPC,POWERPC64

@@ -79,6 +79,7 @@ match(Op *op, Node **args)
 			if ((getclass(np) & class) == 0)
 				return 0;
 			break;
+		case AIMM2:
 		case AIMM5:
 		case AIMM8:
 		case AIMM16:
@@ -221,7 +222,20 @@ x_form(Op *op, Node **args)
 void
 xl_form(Op *op, Node **args)
 {
-	abort();
+	unsigned long ins, bo, bi, bh, lk;
+	unsigned long opcd1, opcd2;
+	long long dst;
+
+	opcd1 = op->bytes[0];
+	opcd2 = op->bytes[1]<<8 | op->bytes[2];
+	lk = op->bytes[3];
+
+	bo = args[0]->sym->value;
+	bi = args[1]->sym->value;
+	bh = args[2]->sym->value;
+
+	ins = opcd1<<26 | bo<<21 | bi<<16 | bh<<11 | opcd2<<1 | lk;
+	emit_packed(ins);
 }
 
 void

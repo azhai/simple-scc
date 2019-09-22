@@ -121,6 +121,8 @@ toobig(Node *np, int type)
 	unsigned long long val = np->sym->value;
 
 	switch (type) {
+	case AIMM2:
+		return val > 3;
 	case AIMM3:
 		return val > 7;
 	case AIMM5:
