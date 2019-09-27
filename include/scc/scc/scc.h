@@ -29,7 +29,7 @@ extern void newitem(struct items *items, char *item);
 extern void *xmalloc(size_t size);
 extern void *xcalloc(size_t nmemb, size_t size);
 extern char *xstrdup(const char *s);
-extern void *xrealloc(void *buff, register size_t size);
+extern void *xrealloc(void *buff, size_t size);
 extern Alloc *alloc(size_t size, size_t nmemb);
 extern void dealloc(Alloc *allocp);
 extern void *new(Alloc *allocp);
