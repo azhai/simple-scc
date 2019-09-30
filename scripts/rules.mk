@@ -1,7 +1,7 @@
 CONF=amd64-linux
 TOOL=unix
 HOST=unix
-include $(PROJECTDIR)/config/$(CONF).mk
+include $(PROJECTDIR)/config/config/$(CONF).mk
 include $(PROJECTDIR)/config/toolchain/$(TOOL).mk
 include $(PROJECTDIR)/config/host/$(HOST).mk
 
