@@ -5,9 +5,10 @@
 #include <string.h>
 
 #include <scc/mach.h>
-#include <scc/syslibs.h>
 
 #include "ld.h"
+
+#define MAX_LIB_PATHS 12
 
 int sflag;        /* discard all the symbols */
 int xflag;        /* discard local symbols */
@@ -25,6 +26,8 @@ Segment rodata = {.type = 'R'};
 Segment data = {.type = 'D'};
 Segment bss = {.type = 'B'};
 Segment debug = {.type = 'N'};
+
+char *libpaths[MAX_LIB_PATHS];
 
 char *output = "a.out", *entry = "start";
 static int status;
@@ -83,8 +86,8 @@ Lpath(char *path)
 {
 	char **bp, **end;
 
-	end = &syslibs[MAX_LIB_PATHS];
-	for (bp = syslibs; bp < end && *bp; ++bp)
+	end = &libpaths[MAX_LIB_PATHS];
+	for (bp = libpaths; bp < end && *bp; ++bp)
 		;
 	if (bp == end) {
 		fputs("ld: too many -L options\n", stderr);

@@ -1,5 +1,4 @@
 #deps
-./main.o: $(INCDIR)/scc/scc/syslibs.h
 ./main.o: ./ld.h
 ./pass1.o: $(INCDIR)/scc/scc/ar.h
 ./pass1.o: $(INCDIR)/scc/scc/mach.h

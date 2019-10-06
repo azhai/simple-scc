@@ -6,10 +6,11 @@ include $(PROJECTDIR)/scripts/rules.mk
 # SYSLST is a list of backend-arch-abi-sys. First
 # element of the list becomes the default target
 
-SYSLST  = amd64-sysv-linux-elf z80-scc-none-none \
-          i386-sysv-linux-elf amd64-sysv-openbsd-elf
-
-STDCFLAGS =
+SYSLST  =\
+	amd64-sysv-linux-elf\
+	z80-scc-none-none\
+	i386-sysv-linux-elf\
+	amd64-sysv-openbsd-elf\
 
 TARGETS = $(BINDIR)/scc $(BINDIR)/scpp
 

@@ -214,7 +214,6 @@ openfile(char *name)
 	char **bp;
 	char libname[FILENAME_MAX];
 	static char buffer[FILENAME_MAX];
-	extern char *syslibs[];
 
 	filename = name;
 	membname = NULL;
@@ -235,7 +234,7 @@ openfile(char *name)
 	if ((fp = fopen(buffer, "rb")) != NULL)
 		return fp;
 
-	for (bp = syslibs; *bp; ++bp) {
+	for (bp = libpaths; *bp; ++bp) {
 		pathlen = strlen(*bp);
 		if (pathlen + len > FILENAME_MAX-1)
 			continue;

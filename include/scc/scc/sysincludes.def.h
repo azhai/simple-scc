@@ -1,8 +1,6 @@
+/* configure below your standard sys include paths */
 char *sysincludes[] = {
-	PREFIX "/include/scc/" ,
-	PREFIX "/include/scc/bits/" ARCH "-" ABI "/",
-	/* configure below your standard sys include paths */
-	PREFIX "/include/",
-	PREFIX "/local/include/",
+	"%p/include/scc/",
+	"%p/include/scc/bits/%a-%s",
 	NULL
 };

@@ -76,6 +76,50 @@ terminate(void)
 	}
 }
 
+static char *
+path(char *s)
+{
+	char *arg, buff[FILENAME_MAX];
+	size_t len, cnt;
+
+	for ( ; *s && cnt < FILENAME_MAX; ++s) {
+		if (*s != '%') {
+			buff[cnt++] = *s;
+			continue;
+		}
+
+		switch (*++s) {
+		case 'a':
+			arg = arch;
+			break;
+		case 's':
+			arg = sys;
+			break;
+		case 'p':
+			arg = prefix;
+			break;
+		case 'b':
+			arg = abi;
+			break;
+		default:
+			buff[cnt++] = *s;
+			continue;
+		}
+
+		len = strlen(arg);
+		if (len + cnt >= FILENAME_MAX)
+			goto too_long;
+		memcpy(buff+cnt, arg, len);
+		cnt += len;
+	}
+
+	if (cnt != FILENAME_MAX)
+		return xstrdup(buff);
+
+too_long:
+	die("scc: too long pathname");
+}
+
 static void
 addarg(int tool, char *arg)
 {
@@ -124,7 +168,7 @@ inittool(int tool)
 			addarg(tool, "-w");
 		for (n = 0; sysincludes[n]; ++n) {
 			addarg(tool, "-I");
-			addarg(tool, sysincludes[n]);
+			addarg(tool, path(sysincludes[n]));
 		}
 	case CC2:
 		fmt = (qbe(tool)) ? "%s-qbe_%s-%s" : "%s-%s-%s";
@@ -145,13 +189,10 @@ inittool(int tool)
 		addarg(tool, t->outfile);
 		for (n = 0; syslibs[n]; ++n) {
 			addarg(tool, "-L");
-			addarg(tool, syslibs[n]);
+			addarg(tool, path(syslibs[n]));
 		}
-		if (syscrts[0]) {
-			for (n = 0; syscrts[n]; ++n)
-				addarg(tool, syscrts[n]);
-			break;
-		}
+		for (n = 0; syscrts[n]; ++n)
+			addarg(tool, path(syscrts[n]));
 		break;
 	case AS:
 		addarg(tool, "-o");

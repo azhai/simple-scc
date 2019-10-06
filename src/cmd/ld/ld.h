@@ -25,6 +25,7 @@ extern void grow(Section *sec, int nbytes);
 extern void debugsec(void);
 
 /* globals */
+extern char *libpaths[];
 extern char *filename, *membname;
 extern int sflag;
 extern int xflag;
