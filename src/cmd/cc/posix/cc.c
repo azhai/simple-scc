@@ -353,6 +353,9 @@ toolfor(char *file)
 {
 	char *dot = strrchr(file, '.');
 
+	if (Eflag)
+		return CC1;
+
 	if (dot) {
 		if (!strcmp(dot, ".c"))
 			return CC1;
