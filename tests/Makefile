@@ -10,7 +10,7 @@ DIRS=ar/execute \
      size/execute \
      strip/execute \
      libc/execute \
-     scc/execute scc/error
+     cc/execute cc/error
 
 all clean:
 	$(FORALL)
