@@ -117,7 +117,7 @@ path(char *s)
 		return xstrdup(buff);
 
 too_long:
-	die("scc: too long pathname");
+	die("cc: too long pathname");
 }
 
 static void
@@ -174,12 +174,12 @@ inittool(int tool)
 		fmt = (qbe(tool)) ? "%s-qbe_%s-%s" : "%s-%s-%s";
 		n = snprintf(t->bin, sizeof(t->bin), fmt, t->cmd, arch, abi);
 		if (n < 0 || n >= sizeof(t->bin))
-			die("scc: target tool name too long");
+			die("cc: target tool name too long");
 
 		n = snprintf(t->cmd, sizeof(t->cmd),
 		             "%s/libexec/scc/%s", prefix, t->bin);
 		if (n < 0 || n >= sizeof(t->cmd))
-			die("scc: target tool path too long");
+			die("cc: target tool path too long");
 		break;
 	case LD:
 		for (n = 0; ldflags[n]; ++n)
@@ -233,10 +233,10 @@ outfname(char *path, char *type)
 	new = xmalloc(newsz);
 	n = snprintf(new, newsz, "%.*s%c%s", (int)pathln, path, sep, type);
 	if (n < 0 || n >= newsz)
-		die("scc: wrong output filename");
+		die("cc: wrong output filename");
 	if (sep == '/') {
 		if ((tmpfd = mkstemp(new)) < 0)
-			die("scc: could not create output file '%s': %s",
+			die("cc: could not create output file '%s': %s",
 			    new, strerror(errno));
 		close(tmpfd);
 	}
@@ -298,7 +298,7 @@ settool(int tool, char *infile, int nexttool)
 
 	if (nexttool < LAST_TOOL) {
 		if (pipe(fds))
-			die("scc: pipe: %s", strerror(errno));
+			die("cc: pipe: %s", strerror(errno));
 		t->out = fds[1];
 		fdin = fds[0];
 	} else {
@@ -318,7 +318,7 @@ spawn(int tool)
 
 	switch (t->pid = fork()) {
 	case -1:
-		die("scc: %s: %s", t->bin, strerror(errno));
+		die("cc: %s: %s", t->bin, strerror(errno));
 	case 0:
 		if (t->out > -1)
 			dup2(t->out, 1);
@@ -370,7 +370,7 @@ toolfor(char *file)
 		return CC1;
 	}
 
-	die("scc: do not recognize filetype of %s", file);
+	die("cc: do not recognize filetype of %s", file);
 }
 
 static int
@@ -386,7 +386,7 @@ valid(int tool, struct tool *t)
 		goto fail;
 
 internal:
-	fprintf(stderr, "scc:%s: internal error\n", t->bin);
+	fprintf(stderr, "cc:%s: internal error\n", t->bin);
 fail:
 	failure = 1;
 	return 0;

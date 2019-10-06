@@ -12,12 +12,12 @@ SYSLST  =\
 	i386-sysv-linux-elf\
 	amd64-sysv-openbsd-elf\
 
-TARGETS = $(BINDIR)/scc $(BINDIR)/cpp
+TARGETS = $(BINDIR)/cc $(BINDIR)/cpp
 
 all: $(TARGETS)
 
-$(BINDIR)/scc: scc.o
-	$(CC) $(SCC_LDFLAGS) scc.o -lscc -o $@
+$(BINDIR)/cc: cc.o
+	$(CC) $(SCC_LDFLAGS) cc.o -lscc -o $@
 
 $(BINDIR)/cpp: cpp.sh
 	trap "rm -f $$$$.sh" 0 2 3;\

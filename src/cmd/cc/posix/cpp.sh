@@ -1,4 +1,4 @@
 #!/bin/sh
 
 SCCPREFIX=${SCCPREFIX:-@PREFIX@}
-${SCCPREFIX}/bin/scc -E $@
+${SCCPREFIX}/bin/cc -E $@
