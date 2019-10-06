@@ -7,6 +7,7 @@ extern void pass5(int argc, char *argv[]);
 
 /* main.c */
 extern void error(char *fmt, ...);
+extern char *nextarg(char **argp, char ***argv);
 
 /* symbol.c */
 extern int hasref(char *name);

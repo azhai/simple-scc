@@ -15,6 +15,7 @@ int Xflag;        /* discard locals starting with 'L' */
 int rflag;        /* preserve relocation bits */
 int dflag;        /* define common even with rflag */
 int gflag;        /* preserve debug symbols */
+int nmagic;       /* nmagic output */
 char *Dflag;      /* size of data */
 
 char *filename, *membname;
@@ -92,19 +93,37 @@ Lpath(char *path)
 	*bp = path;
 }
 
+char *
+nextarg(char **argp, char ***argv)
+{
+	char *ap = *argp, **av = *argv;
+
+	if (ap[1]) {
+		*argp += strlen(ap);
+		return ap+1;
+	}
+
+	if (av[1]) {
+		*argv = ++av;
+		return *av;
+	}
+
+	usage();
+}
+
 int
 main(int argc, char *argv[])
 {
 	int files = 0;
-	char *cp, *arg, **ap;
+	char *ap, **av;
 
-	for (ap = argv+1; *ap; ++ap) {
-		if (ap[0][0] != '-') {
+	for (av = argv+1; *av; ++av) {
+		if (av[0][0] != '-') {
 			files = 1;
 			continue;
 		}
-		for (cp = &ap[0][1]; *cp; ++cp) {
-			switch (*cp) {
+		for (ap = &av[0][1]; *ap; ++ap) {
+			switch (*ap) {
 			case 's':
 				sflag = 1;
 				break;
@@ -114,55 +133,36 @@ main(int argc, char *argv[])
 			case 'X':
 				Xflag = 1;
 				break;
+			case 'i':
 			case 'r':
 				rflag = 1;
 				break;
 			case 'd':
 				dflag = 1;
 				break;
-			case 'i':
 			case 'n':
-				/* TODO */
+				nmagic = 1;
 				break;
-			case 'u':
 			case 'l':
-				/* FIXME: This way of handling options is wrong */
-				arg = (cp[1]) ? cp+1 : *++ap;
-				if (!arg)
-					goto usage;
-				goto next_arg;
+			case 'u':
+				nextarg(&ap, &av);
+				break;
 			case 'L':
-				arg = (cp[1]) ? cp+1 : *++ap;
-				if (!arg)
-					goto usage;
-				Lpath(arg);
-				goto next_arg;
+				Lpath(nextarg(&ap, &av));
+				break;
 			case 'o':
-				arg = (cp[1]) ? cp+1 : *++ap;
-				if (!arg)
-					goto usage;
-				output = arg;
-				goto next_arg;
+				output = nextarg(&ap, &av);
+				break;
 			case 'e':
-				arg = (cp[1]) ? cp+1 : *++ap;
-				if (!arg)
-					goto usage;
-				entry = arg;
-				goto next_arg;
+				entry = nextarg(&ap, &av);
+				break;
 			case 'D':
-				arg = (cp[1]) ? cp+1 : *++ap;
-				if (!arg)
-					goto usage;
-				Dflag = arg;
-				goto next_arg;
+				Dflag = nextarg(&ap, &av);
+				break;
 			default:
-			usage:
 				usage();
 			}
 		}
-
-		next_arg:
-			continue;
 	}
 
 	if (!files)

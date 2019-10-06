@@ -274,25 +274,21 @@ process(char *name)
 void
 pass1(int argc, char *argv[])
 {
-	char **ap, *cp, *arg;
+	char **av, *ap;
 
-	for (ap = argv+1; *ap; ++ap) {
-		if (ap[0][0] != '-') {
-			process(*ap);
+	for (av = argv+1; *av; ++av) {
+		if (av[0][0] != '-') {
+			process(*av);
 			continue;
 		}
-		for (cp = &ap[0][1]; *cp; ++cp) {
-			switch (*cp) {
+		for (ap = &av[0][1]; *ap; ++ap) {
+			switch (*ap) {
 			case 'l':
-				/* FIXME: we proccess arg again after this */
-				arg = (cp[1]) ? cp+1 : *++ap;
-				process(arg);
-				continue;
+				process(nextarg(&ap, &av));
+				break;
 			case 'u':
-				/* FIXME: we proccess arg again after this */
-				arg = (cp[1]) ? cp+1 : *++ap;
-				lookupsym(arg);
-				continue;
+				lookupsym(nextarg(&ap, &av));
+				break;
 			}
 		}
 	}
