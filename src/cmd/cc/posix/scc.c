@@ -152,16 +152,6 @@ inittool(int tool)
 				addarg(tool, syscrts[n]);
 			break;
 		}
-		n = snprintf(NULL, 0,
-		             "%s/lib/scc/%s-%s-%s/crt.o",
-		             prefix, arch, abi, sys);
-		if (n < 0)
-			die("scc: wrong crt file name");
-		crt = xmalloc(++n);
-		sprintf(crt,
-		        "%s/lib/scc/%s-%s-%s/crt.o",
-		        prefix, arch, abi, sys);
-		addarg(tool, crt);
 		break;
 	case AS:
 		addarg(tool, "-o");
@@ -613,6 +603,7 @@ operand:
 
 	if (link && !failure) {
 		addarg(LD, xstrdup("-lc"));
+		addarg(LD, xstrdup("-lcrt"));
 		spawn(settool(LD, NULL, LAST_TOOL));
 		validatetools();
 	}
