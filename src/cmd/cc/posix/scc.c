@@ -282,6 +282,7 @@ settool(int tool, char *infile, int nexttool)
 static void
 spawn(int tool)
 {
+	char **ap;
 	struct tool *t = &tools[tool];
 
 	switch (t->pid = fork()) {
@@ -294,6 +295,11 @@ spawn(int tool)
 			dup2(t->in, 0);
 		if (!dflag && tool != CC1 && tool != LD)
 			dup2(devnullfd, 2);
+		if (dflag) {
+			for (ap = t->args.s; *ap; ap++)
+				fprintf(stderr, " %s", *ap);
+			putc('\n', stderr);
+		}
 		execvp(t->cmd, t->args.s);
 		if (dflag) {
 			fprintf(stderr,
