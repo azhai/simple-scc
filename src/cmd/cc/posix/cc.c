@@ -334,7 +334,7 @@ spawn(int tool)
 		execvp(t->cmd, t->args.s);
 		if (dflag) {
 			fprintf(stderr,
-			        "scc: execvp %s: %s\n",
+			        "cc: execvp %s: %s\n",
 				t->cmd,
 			        strerror(errno));
 		}
