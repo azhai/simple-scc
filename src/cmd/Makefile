@@ -13,7 +13,7 @@ TARGET =\
 	$(BINDIR)/objcopy\
 	$(BINDIR)/addr2line\
 
-DIRS   = ld as scc
+DIRS   = ld as cc
 
 LIBMACH = $(LIBDIR)/libmach.a
 LIBSCC  = $(LIBDIR)/libscc.a
