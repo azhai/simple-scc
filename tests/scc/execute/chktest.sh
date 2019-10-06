@@ -15,10 +15,10 @@ export SYS FORMAT ABI ARCH
 while read i state
 do
 	echo $i >>test.log
-	state=${state:-"\t"}
+	state=${state:-""}
 	rm -f a.out
 
 	(scc -Isysinclude $CFLAGS "$i" && ./a.out) 2>>test.log &&
 		printf '[PASS]' || printf '[FAIL]'
-	printf '%s\t%s\n' "$state" "$i"
+	printf '\t%s\t%s\n' $i $state
 done < $file
