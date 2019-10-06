@@ -1,10 +1,9 @@
 .POSIX:
-PROJECTDIR =../..
+PROJECTDIR=../../..
 include $(PROJECTDIR)/scripts/rules.mk
-include rules.mk
-include objlst.mk
 
-TARGET = $(LIBCDIR)/libc.a
+OBJS = crt-$(SYS).o
+TARGET = $(LIBCDIR)/libcrt.a
 
 all: $(TARGET)
 

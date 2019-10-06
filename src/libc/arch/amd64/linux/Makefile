@@ -22,14 +22,11 @@ OBJS  = _Exit.o \
         signal.o \
         time.o \
         _sys_errlist.o \
-        crt.o \
 
 all: syscall
 	$(MAKE) objs
 
 objs: $(OBJS)
-
-crt.o: ../crt-posix.s
 
 syscall: syscall.lst
 	gensys.sh syscall.lst
