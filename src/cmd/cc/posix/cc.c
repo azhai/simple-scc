@@ -602,7 +602,7 @@ main(int argc, char *argv[])
 		break;
 	case '-':
 		fprintf(stderr,
-		        "scc: ignored parameter --%s\n", EARGF(usage()));
+		        "cc: ignored parameter --%s\n", EARGF(usage()));
 		break;
 	default:
 		usage();
@@ -625,7 +625,7 @@ operand:
 
 	if (!dflag) {
 		if ((devnullfd = open("/dev/null", O_WRONLY)) < 0)
-			fputs("scc: could not open /dev/null\n", stderr);
+			fputs("cc: could not open /dev/null\n", stderr);
 	}
 
 	if (!(tmpdir = getenv("TMPDIR")) || !tmpdir[0])
