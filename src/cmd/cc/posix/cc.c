@@ -113,8 +113,10 @@ path(char *s)
 		cnt += len;
 	}
 
-	if (cnt != FILENAME_MAX)
+	if (cnt < FILENAME_MAX) {
+		buff[cnt] = '\0';
 		return xstrdup(buff);
+	}
 
 too_long:
 	die("cc: too long pathname");
