@@ -73,6 +73,8 @@ all:
 
 dep:
 
+distclean:
+
 inc-dep: FORCE
 	mkdep
 

@@ -34,6 +34,11 @@ $(ENVIRON):
 dep:
 	$(FORALL)
 
+distclean: clean
+	$(MAKE) $(ENVIRON)
+	$(FORALL)
+	rm -f $(ENVIRON)
+
 clean: $(ENVIRON)
 	$(FORALL)
 	xargs rm -rf < $(SCRIPTDIR)/libc-proto
