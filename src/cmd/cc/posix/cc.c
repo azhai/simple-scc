@@ -505,15 +505,7 @@ build(struct items *chain, int link)
 static void
 usage(void)
 {
-	fputs("usage: scc [-D def[=val]]... [-U def]... [-I dir]... "
-	       "[-L dir]... [-l dir]...\n"
-	       "           [-dgksw] [-m arch] [-M|-E|-S] [-o outfile] file...\n"
-	       "       scc [-D def[=val]]... [-U def]... [-I dir]... "
-	       "[-L dir]... [-l dir]...\n"
-	       "           [-dgksw] [-m arch] [-M|-E|-S] -c file...\n"
-	       "       scc [-D def[=val]]... [-U def]... [-I dir]... "
-	       "[-L dir]... [-l dir]...\n"
-	       "           [-dgksw] [-m arch] -c -o outfile file\n", stderr);
+	fputs("usage: cc [options] file...\n", stderr);
 	exit(1);
 }
 
