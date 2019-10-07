@@ -82,7 +82,7 @@ path(char *s)
 	char *arg, buff[FILENAME_MAX];
 	size_t len, cnt;
 
-	for ( ; *s && cnt < FILENAME_MAX; ++s) {
+	for (cnt = 0 ; *s && cnt < FILENAME_MAX; ++s) {
 		if (*s != '%') {
 			buff[cnt++] = *s;
 			continue;
