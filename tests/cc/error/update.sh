@@ -3,7 +3,7 @@
 for i
 do
 	(echo '/^PATTERN/+;/^\./-c'
-	 scc $CFLAGS -w -c $i 2>&1
+	 cc $CFLAGS -w -c $i 2>&1
 	 printf ".\nw\n"
 	 echo w) |
 	ed -s $i

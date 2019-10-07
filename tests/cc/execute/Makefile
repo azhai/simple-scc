@@ -1,11 +1,13 @@
 .POSIX:
 
 ROOT=../../..
+SCCPREFIX=$(ROOT)
+CC=$(ROOT)/bin/cc
 
 all: tests
 
 tests:
-	@CFLAGS='' SCCPREFIX=$(ROOT) PATH=$(ROOT)/bin:$$PATH ./chktest.sh scc-tests.lst
+	@CC=$(CC) SCCPREFIX=$(SCCPREFIX) ./chktest.sh scc-tests.lst
 
 clean:
 	rm -f *.as *.o *.ir *.qbe *core test.log

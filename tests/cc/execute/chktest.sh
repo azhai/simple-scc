@@ -18,7 +18,7 @@ do
 	state=${state:-""}
 	rm -f a.out
 
-	(scc -Isysinclude $CFLAGS "$i" && ./a.out) 2>>test.log &&
+	(SCCPREFIX=$SCCPREFIX $CC -Isysinclude $CFLAGS "$i" && ./a.out) 2>>test.log &&
 		printf '[PASS]' || printf '[FAIL]'
 	printf '\t%s\t%s\n' $i $state
 done < $file
