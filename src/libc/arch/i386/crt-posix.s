@@ -4,7 +4,7 @@ _environ:
 	.long	0
 
 	.text
-	.global	_start
+	.global	start
 _start:
 	movl	%esp,%ebp
 

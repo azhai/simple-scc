@@ -2,7 +2,7 @@
 PROJECTDIR=../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-OBJS = crt-$(SYS).o
+OBJS = dummy.o
 TARGET = $(LIBCDIR)/libcrt.a
 
 all: $(TARGET)

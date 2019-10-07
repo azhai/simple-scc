@@ -15,11 +15,14 @@ OBJS 	=\
 	_getpid.o\
 	_Exit.o\
 	_kill.o\
+	crt.o\
 
 all: syscall
 	$(MAKE) objs
 
 objs: $(OBJS)
+
+crt.o:	../crt-posix.s
 
 syscall: syscall.lst
 	gensys.sh syscall.lst
