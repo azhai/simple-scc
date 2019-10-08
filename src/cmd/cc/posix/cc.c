@@ -119,7 +119,7 @@ path(char *s)
 	}
 
 too_long:
-	die("cc: too long pathname");
+	die("cc: pathname too long");
 }
 
 static void
@@ -176,12 +176,12 @@ inittool(int tool)
 		fmt = (qbe(tool)) ? "%s-qbe_%s-%s" : "%s-%s-%s";
 		n = snprintf(t->bin, sizeof(t->bin), fmt, t->cmd, arch, abi);
 		if (n < 0 || n >= sizeof(t->bin))
-			die("cc: target tool name too long");
+			die("cc: target tool name is too long");
 
 		n = snprintf(t->cmd, sizeof(t->cmd),
 		             "%s/libexec/scc/%s", prefix, t->bin);
 		if (n < 0 || n >= sizeof(t->cmd))
-			die("cc: target tool path too long");
+			die("cc: target tool path is too long");
 		break;
 	case LD:
 		for (n = 0; ldflags[n]; ++n)
@@ -375,7 +375,7 @@ toolfor(char *file)
 		return CC1;
 	}
 
-	die("cc: do not recognize filetype of %s", file);
+	die("cc: unrecognized filetype of %s", file);
 }
 
 static int
