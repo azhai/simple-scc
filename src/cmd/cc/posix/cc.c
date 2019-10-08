@@ -391,7 +391,8 @@ valid(int tool, struct tool *t)
 		goto fail;
 
 internal:
-	fprintf(stderr, "cc:%s: internal error\n", t->bin);
+	if (!failure)
+		fprintf(stderr, "cc:%s: internal error\n", t->bin);
 fail:
 	failure = 1;
 	return 0;
