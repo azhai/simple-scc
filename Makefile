@@ -3,8 +3,7 @@
 PROJECTDIR = .
 include $(PROJECTDIR)/scripts/rules.mk
 
-PREFIX    = $(HOME)
-MANPREFIX = $(PREFIX)/share/man
+PREFIX= /usr/local
 DIRS  = src include/scc/scc tests
 
 all: src
@@ -34,6 +33,9 @@ $(ENVIRON):
 
 dep:
 	$(FORALL)
+
+install: all
+	$(SCRIPTDIR)/install $(PREFIX)
 
 distclean: clean
 	$(MAKE) $(ENVIRON)

@@ -5,6 +5,9 @@ SCC is a portable toolchain that can be compiled on any UNIX system
 out of the box. It supports four main configuration options that
 can be passed to the command line:
 
+	- PREFIX: Prefix of the path where scc toolchain is going
+	  to be installed. /usr/local by default.
+
 	- CROSS_COMPILE:
           Specify a prefix name for the tools called by the Makefile.
 
