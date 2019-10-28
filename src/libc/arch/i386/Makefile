@@ -4,7 +4,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 include ../../rules.mk
 
 OBJS = longjmp.o setjmp.o
-DIRS = netbsd openbsd dragonfly linux darwin
+DIRS = linux
 
 all: $(OBJS) $(SYS)
 
