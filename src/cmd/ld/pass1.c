@@ -17,6 +17,7 @@ enum {
 };
 
 int bintype = -1;
+Obj *objhead;
 
 static int
 is_needed(Obj *obj)

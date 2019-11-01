@@ -21,7 +21,7 @@ extern void debugsym(void);
 extern Section *lookupsec(char *name);
 extern void copy(Obj *obj, Section *osec, Section *sec);
 extern void grow(Section *sec, int nbytes);
-
+extern void merge(Segment *seg);
 extern void debugsec(void);
 
 /* globals */
@@ -35,4 +35,5 @@ extern int dflag;
 extern int gflag;
 extern char *Dflag;
 extern char *output, *entry;
+extern Obj *objhead;
 extern Segment debug, text, rodata, data, bss;

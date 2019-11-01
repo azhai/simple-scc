@@ -23,6 +23,7 @@ struct obj {
 	int type;
 	long pos;
 	void *data;
+	Obj *next;
 };
 
 struct segment {
@@ -34,6 +35,7 @@ struct segment {
 	int type;
 	int align;
 	int nsec;
+	Section **sections;
 };
 
 struct section {

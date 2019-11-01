@@ -9,49 +9,27 @@
 static void
 mksecs(void)
 {
-	Objlst *lp;
-	Objsec *sp;
-	Section *sec;
+	int i;
+	Obj *obj;
+	Section sec, *sp;
 
-	for (lp = objhead; lp; lp = lp->next) {
-		for (sp = lp->obj->secs; sp; sp = sp->next) {
-			sec = section(sp->name);
-			if (sec->type == '?') {
-				sec->type = sp->type;
-				sec->flags = sp->flags;
+	for (obj = objhead; obj; obj = obj->next) {
+		for (i = 0; getsec(obj, &i, &sec); i++) {
+			sp = lookupsec(sec.name);
+			if (sp->type == '?') {
+				sp->type = sec.type;
+				sp->flags = sec.flags;
 			}
 
-			if (sec->type != sp->type || sec->flags != sp->flags) {
+			if (sp->type != sec.type || sp->flags != sec.flags) {
 				error("incompatible definitions of section '%s'",
-				      sec->name);
+				      sp->name);
 			}
 
-			/* TODO: use add symbol aligment */
-			sec->size += sp->size;
+			sp->size = sp->size+sp->align-1 & sp->align-1;
+			sp->size += sec.size;
 		}
 	}
-}
-
-static void
-merge(Segment *seg)
-{
-	Section *sec, **p;
-	int n = 0;
-
-	for (sec = sechead; sec; sec = sec->next) {
-		if (sec->type != seg->type)
-			continue;
-		p = realloc(seg->sections, (n+1) * sizeof(*p));
-		if (!p) {
-			error("ou of memory");
-			exit(EXIT_FAILURE);
-		}
-		p[n++] = sec;
-		seg->sections = p;
-		seg->size += sec->size;
-	}
-
-	seg->nsec = n;
 }
 
 static void

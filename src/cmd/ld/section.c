@@ -74,7 +74,36 @@ lookupsec(char *name)
 	sp->hash = sectab[h];
 	sectab[h] = sp;
 
-	return linksec(&secs, sec);
+	sp->next = &secs;
+	sp->prev = secs.prev;
+	secs.prev->next = sp;
+	secs.prev = sp;
+
+	return sec;
+}
+
+void
+merge(Segment *seg)
+{
+	struct sectab *sp;
+	Section *sec, **p;
+	int n = 0;
+
+	for (sp = secs.next; sp != &secs; sp = sp->next) {
+		sec = &sp->sec;
+		if (sec->type != seg->type)
+			continue;
+		p = realloc(seg->sections, (n+1) * sizeof(*p));
+		if (!p) {
+			error("out of memory");
+			exit(EXIT_FAILURE);
+		}
+		p[n++] = sec;
+		seg->sections = p;
+		seg->size += sec->size;
+	}
+
+	seg->nsec = n;
 }
 
 void

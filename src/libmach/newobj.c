@@ -24,6 +24,7 @@ newobj(int type)
 
 	obj->type = type;
 	obj->ops = objops[fmt];
+	obj->next = NULL;
 	if ((*obj->ops->new)(obj) < 0) {
 		free(obj);
 		return NULL;

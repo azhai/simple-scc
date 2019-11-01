@@ -66,10 +66,12 @@ static void
 ld(int argc, char*argv[])
 {
 	pass1(argc, argv);
-/*	pass2(argc, argv);
+	pass2(argc, argv);
+/*
 	pass3(argc, argv);
 	pass4(argc, argv);
-	pass5(argc, argv); */
+	pass5(argc, argv);
+*/
 	debugsym();
 	debugsec();
 }
