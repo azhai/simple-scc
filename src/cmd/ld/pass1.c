@@ -85,6 +85,7 @@ load(FILE *fp, int inlib)
 	Obj *obj;
 	Section sec;
 	Symbol sym;
+	static Obj *last;
 
 	if ((t = objtype(fp, NULL)) < 0) {
 		error("bad format");
@@ -116,7 +117,10 @@ load(FILE *fp, int inlib)
 	for ( i = 0; getsym(obj, &i, &sym); i++)
 		newsym(&sym, obj);
 
-	/* TODO: link the object */
+	obj->next = last;
+	last = obj;
+	if (!objhead)
+		objhead = obj;
 
 	return;
 
