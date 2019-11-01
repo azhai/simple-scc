@@ -45,7 +45,6 @@ void
 pass3(int argc, char *argv[])
 {
 	Obj *obj;
-	Objlst *lst;
 	Objsec *sp;
 	Segment *seg;
 
@@ -57,8 +56,7 @@ pass3(int argc, char *argv[])
 	data.base = rodata.base + rodata.size;
 	bss.base = data.base + data.size;
 
-	for (lst = objhead; lst; lst = lst->next) {
-		obj = lst->obj;
+	for (obj = objhead; obj; obj = obj->next) {
 		for (sp = obj->secs; sp; sp = sp->next) {
 			switch (sp->type) {
 			case 'T':

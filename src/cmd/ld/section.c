@@ -26,19 +26,6 @@ struct sectab {
 static struct sectab *sectab[NR_SECTION];
 static struct sectab secs = {.next = &secs, .prev = &secs};
 
-static Section *
-linksec(struct sectab *lst, Section *sec)
-{
-	struct sectab *sp = (struct sectab *) sec;
-
-	sp->next = lst;
-	sp->prev = lst->prev;
-	lst->prev->next = sp;
-	lst->prev = sp;
-
-	return sec;
-}
-
 Section *
 lookupsec(char *name)
 {
@@ -70,7 +57,7 @@ lookupsec(char *name)
 	sec->align = 0;
 	sec->index = 0;
 	sec->flags = 0;
-	sp->tmpfp;
+	sp->tmpfp = NULL;
 	sp->hash = sectab[h];
 	sectab[h] = sp;
 
