@@ -20,11 +20,11 @@ struct sectab {
 	Section sec;
 	FILE *tmpfp;
 	struct sectab *hash;
-	struct sectab *next, *prev;
+	struct sectab *next;
 };
 
 static struct sectab *sectab[NR_SECTION];
-static struct sectab secs = {.next = &secs, .prev = &secs};
+static struct sectab *secs;
 
 Section *
 lookupsec(char *name)
@@ -60,11 +60,8 @@ lookupsec(char *name)
 	sp->tmpfp = NULL;
 	sp->hash = sectab[h];
 	sectab[h] = sp;
-
-	sp->next = &secs;
-	sp->prev = secs.prev;
-	secs.prev->next = sp;
-	secs.prev = sp;
+	sp->next = secs;
+	secs = sp;
 
 	return sec;
 }
@@ -76,7 +73,7 @@ merge(Segment *seg)
 	Section *sec, **p;
 	int n = 0;
 
-	for (sp = secs.next; sp != &secs; sp = sp->next) {
+	for (sp = secs; sp; sp = sp->next) {
 		sec = &sp->sec;
 		if (sec->type != seg->type)
 			continue;
