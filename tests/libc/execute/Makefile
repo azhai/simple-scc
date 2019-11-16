@@ -13,4 +13,4 @@ tests:
 	@CFLAGS='' SCCPREFIX=$(ROOT) ./chktest.sh libc-tests.lst
 
 clean:
-	rm -f *.o *core a.out test.log
+	rm -f *.o *core test.log `awk '{print $$1}' libc-tests.lst`
