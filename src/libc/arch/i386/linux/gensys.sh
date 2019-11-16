@@ -1,7 +1,7 @@
 #!/bin/sh
 
-awk '
-NR > 1	{syscall=$2
+awk '/^[0-9]*\t/ {
+	syscall=$2
 	fname=$2".s"
 	noper=$3
 

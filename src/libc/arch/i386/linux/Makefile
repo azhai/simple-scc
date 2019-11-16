@@ -15,8 +15,12 @@ OBJS 	=\
 	_getpid.o\
 	_Exit.o\
 	_kill.o\
+	_getheap.o\
 	crt.o\
 	signal.o\
+	raise.o\
+	_cerrno.o\
+	signal.o
 
 all: syscall
 	$(MAKE) objs
@@ -25,10 +29,14 @@ objs: $(OBJS)
 
 crt.o:	../crt-posix.s
 
+raise.o:	../../posix/raise.c
+
+signal.o:	../../posix/signal.c
+
 syscall: syscall.lst
 	gensys.sh syscall.lst
 	touch syscall
 
 clean:
-	rm -f `awk '/[0-9]*	_/ {print $$2".s"}' syscall.lst`
+	rm -f `awk '/[0-9]*\t/{print $$2".s"}' syscall.lst`
 	rm -f syscall _sys_errlist.c
