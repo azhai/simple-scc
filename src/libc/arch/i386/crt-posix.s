@@ -4,14 +4,17 @@ _environ:
 	.long	0
 
 	.text
-	.global	start
+	.globl	_start
 _start:
 	movl	%esp,%ebp
 
-	movl	(%ebp),%edi
-	leal	8(%ebp),%esi
 	leal	16(%ebp,%edi,8),%edx
 	movl	%edx,_environ
+	pushl	%edx
+	leal	8(%ebp),%esi
+	pushl	%esi
+	movl	(%ebp),%edi
+	pushl	%edi
 
 	call 	main
 	movl	%eax,%edi
