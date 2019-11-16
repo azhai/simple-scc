@@ -1,16 +1,17 @@
 	.file	"setjmp.s"
 
 	.text
-	.globl	_setjmp
+	.globl	setjmp,_setjmp
 _setjmp:
-	mov 	4(%esp),%eax
-	mov    	%ebx,(%eax)
-	mov    	%esi,4(%eax)
-	mov    	%edi,8(%eax)
-	mov    	%ebp,12(%eax)
-	lea 	4(%esp),%ecx
-	mov    	%ecx,16(%eax)
-	mov  	(%esp),%ecx
-	mov    	%ecx,20(%eax)
-	xor    	%eax,%eax
+setjmp:
+	movl    4(%esp),%eax
+	movl    %ebx,(%eax)
+	movl    %ecx,4(%eax)
+	movl    %esi,8(%eax)
+	movl    %edi,12(%eax)
+	movl    %ebp,16(%eax)
+	movl    %esp,20(%eax)
+	pushl   (%esp)
+	popl	24(%eax)
+	xor     %eax,%eax
 	ret
