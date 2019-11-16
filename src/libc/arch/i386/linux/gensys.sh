@@ -1,20 +1,38 @@
 #!/bin/sh
-#
-# This job is very easy because app and kernel ABI are identical
-# until the 4th parameter, so we only have to set the syscall
-# number in eax
 
-sed 's/[ 	]*#.*//
-     /^$/d' syscall.lst |
-while read num name
-do
-cat <<EOF > $name.s
-	.file	"$name.s"
+awk '
+NR > 1	{syscall=$2
+	fname=$2".s"
+	noper=$3
 
-	.globl	$name
-$name:
-	movl	\$$num,%eax
-	syscall
-	jmp	_cerrno
-EOF
-done
+	printf "\t.file\t"
+	       "\"fname\"\n"
+	       "\t.globl\t%s\n"
+	       "%s:\n"
+	       "\tpushl\t%%ebp\n"
+	       "\tpushl\t%%ebx\n"
+	       "\tpushl\t%%esi\n\n",
+	       "\tpushl\t%%edi\n"
+	       "\tmovl\t%%esp,%%ebp\n"
+	       syscall, syscall > fname
+
+	if (noper > 0)
+		printf "\tmovl\t20(%%ebp),%%ebx\n" >> fname
+	if (noper > 1)
+		printf "\tmovl\t24(%%ebp),%%ecx\n" >> fname
+	if (noper > 2)
+		printf "\tmovl\t28(%%ebp),%%edx\n" >> fname
+	if (noper > 3)
+		printf "\tmovl\t28(%%ebp),%%esi\n" >> fname
+	if (noper > 4)
+		printf "\tmovl\t28(%%ebp),%%edi\n" >> fname
+
+	printf "\tmovl\t$%d,%%eax\n"
+	       "\tint\t$0x80\n"
+	       "\tpopl\t%%edi\n"
+	       "\tpopl\t%%esi\n"
+	       "\tpopl\t%%ebx\n"
+	       "\tpopl\t%%ebp\n"
+	       "\tjmp\t_cerrno\n", $1 >> fname
+
+} ' syscall.lst

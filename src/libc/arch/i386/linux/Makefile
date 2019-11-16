@@ -16,6 +16,7 @@ OBJS 	=\
 	_Exit.o\
 	_kill.o\
 	crt.o\
+	signal.o\
 
 all: syscall
 	$(MAKE) objs
