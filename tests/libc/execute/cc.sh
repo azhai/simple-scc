@@ -29,22 +29,24 @@ do
 done
 
 sys=${sys:-`uname | tr 'A-Z' 'a-z'`}
-abi=${abi:-amd64-sysv}
+abi=${abi:-i386}
 out=${out:-a.out}
 root=${root:-$SCCPREFIX}
-inc=$root/include/scc
-arch_inc=$root/include/scc/bits/$abi
-sys_inc=$root/include/scc/bits/$sys
+inc=$root/include
+arch_inc=$inc/bits/$abi
+sys_inc=$inc/bits/$sys
 lib=$root/lib/scc/${abi}-${sys}
 obj=${1%.c}.o
+cc=${CROSS_COMPILE}gcc
+ld=${CROSS_COMPILE}ld
 
 includes="-nostdinc -I$inc -I$arch_inc -I$sys_inc"
 flags="-std=c99 -g -w -fno-stack-protector --freestanding -static"
 
-if ! gcc -nopie 2>&1 | grep unrecogn >/dev/null
+if ! ${cc} -nopie 2>&1 | grep unrecogn >/dev/null
 then
-	pie=-nopie
+	pie=-no-pie
 fi
 
-gcc $flags $pie $includes -c $1
-ld -g $pie -z nodefaultlib -static -L$lib $lib/crt.o $obj -lc -o $out
+${cc} $flags $pie $includes -c $1
+${ld} -g -z nodefaultlib -static -L$lib $obj -lc -lcrt -o $out

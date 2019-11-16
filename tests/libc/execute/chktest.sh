@@ -13,9 +13,9 @@ do
 	rm -f a.out *.o $tmp1 $tmp2
 
 	(echo $i
-	 ./cc.sh $CFLAGS $i.c
+	 ./cc.sh $CFLAGS -o $i $i.c
 	 echo '/^output:$/+;/^end:$/-'w $tmp1 | ed -s $i.c
-	 ./a.out > $tmp2
+	 ./$i > $tmp2
 	 diff -u $tmp1 $tmp2) >> test.log 2>&1 &&
 	printf '[PASS]' || printf '[FAIL]'
 	printf "$state\t%s\n" $i
