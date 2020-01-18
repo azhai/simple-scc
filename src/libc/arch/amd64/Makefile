@@ -8,7 +8,7 @@ DIRS = netbsd openbsd dragonfly linux darwin
 
 all: $(LIBC) $(SYS)
 
-$(LIBCLST): $(OBJS)
+$(LIBC): $(OBJS)
 	$(MKLST)
 
 $(SYS): FORCE

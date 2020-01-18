@@ -22,8 +22,6 @@ MKLST = \
 _sys_errlist.c: $(SYSERRNO)
 	../../mkerrstr $(SYSERRNO)
 
-$(LIBC): $(LIBCLST)
-
 $(CRT): crt.$O
 	cp crt.$O $@
 

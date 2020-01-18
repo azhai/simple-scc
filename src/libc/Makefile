@@ -15,10 +15,8 @@ DIRS =\
 
 all: $(LIBC)
 
-$(LIBC): $(LIBCLST)
-	mklib -o $@ `cat $(LIBCLST)`
-
-$(LIBCLST): $(DIRS)
+$(LIBC): $(DIRS)
+	mklib -o $@ `cat $(LIBCLST)`;\
 
 $(DIRS): rm-lst
 	+@cd $@ && $(MAKE)

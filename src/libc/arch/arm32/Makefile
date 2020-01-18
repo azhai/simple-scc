@@ -8,7 +8,7 @@ DIRS = linux
 
 all: $(LIBC) $(SYS)
 
-$(LIBCLST): $(OBJS)
+$(LIBC): $(OBJS)
 	$(MKLST)
 
 $(SYS): FORCE

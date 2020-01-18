@@ -3,38 +3,42 @@ PROJECTDIR =../../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../../../rules.mk
 
-OBJS  = _Exit.o \
-        _close.o \
-        _brk.o \
-        _getpid.o \
-        _kill.o \
-        _lseek.o \
-        _openat.o \
-        _read.o \
-        _write.o \
-        _getheap.o \
-        _cerrno.o \
-        _open.o \
-        _sigaction.o \
-        _tzone.o \
-        getenv.o \
-        raise.o \
-        signal.o \
-        time.o \
-        _sys_errlist.o \
-        crt.o \
+GENOBJS  =\
+	_Exit.$O\
+	_close.$O\
+	_brk.$O\
+	_getpid.$O\
+	_kill.$O\
+	_lseek.$O\
+	_openat.$O\
+	_read.$O\
+	_write.$O\
+	_sigaction.$O\
 
-all: syscall
-	$(MAKE) objs
+GENSRC = $(GENOBJS:.$O=.s)
 
-objs: $(OBJS)
+OBJS =\
+	$(GENOBJS)\
+	getenv.$O\
+	raise.$O\
+	signal.$O\
+	time.$O\
+	_tzone.$O\
+	_open.$O\
+	_getheap.$O\
+	_cerrno.$O\
+	_sys_errlist.$O\
 
-crt.o: ../crt-posix.s
+all: $(LIBC) $(CRT)
 
-syscall: syscall.lst
-	gensys.sh syscall.lst
-	touch syscall
+$(LIBC): $(OBJS)
+	$(MKLST)
+
+crt.$O: ../crt-posix.s
+
+%(GENSRC): syscall.lst
+	gensys.sh $(@:.s=)
 
 clean:
-	rm -f `awk '/[0-9]*	_/ {print $$2".s"}' syscall.lst`
+	rm -f $(GENSRC)
 	rm -f syscall _sys_errlist.c

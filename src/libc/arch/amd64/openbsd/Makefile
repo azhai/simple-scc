@@ -29,7 +29,7 @@ OBJS =\
 
 all: $(LIBC) $(CRT)
 
-$(LIBCLST): $(OBJS)
+$(LIBC): $(OBJS)
 	$(MKLST)
 
 crt.$O: ../crt-posix.s ../../crt-openbsd.s

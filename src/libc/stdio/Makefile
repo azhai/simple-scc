@@ -46,7 +46,7 @@ OBJS =\
 
 all: $(LIBC)
 
-$(LIBCLST): $(OBJS)
+$(LIBC): $(OBJS)
 	$(MKLST)
 
 dep: inc-dep
