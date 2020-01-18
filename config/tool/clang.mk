@@ -1,4 +1,4 @@
-include $(PROJECTDIR)/config/toolchain/gnu.mk
+include $(PROJECTDIR)/config/tool/gnu.mk
 
 COMP = clang
 ASM = clang
