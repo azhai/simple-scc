@@ -33,7 +33,7 @@ $(LIBCLST): $(OBJS)
 crt.o: ../crt-posix.s
 
 $(GENSRC): syscall.lst
-	gensys.sh $*
+	gensys.sh $(@:.s=)
 
 dep: inc-dep
 
