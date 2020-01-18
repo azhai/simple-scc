@@ -37,7 +37,7 @@ raise.o: ../../posix/raise.c
 signal.o: ../../posix/signal.c
 
 $(GENSRC): syscall.lst
-	gensys.sh $*
+	gensys.sh $(@:.s=)
 
 clean:
 	rm -f $(GENSRC)
