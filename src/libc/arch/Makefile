@@ -8,5 +8,5 @@ DIRS = amd64 arm32 arm64 i386
 all:
 	+@cd $(ARCH) && $(MAKE)
 
-clean:
+dep clean:
 	$(FORALL)

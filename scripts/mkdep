@@ -2,7 +2,8 @@
 
 set -e
 
-(echo '/^#deps/+;$c'
+(echo '/^#deps/;$c'
+echo '#deps'
 
 for i in `find . -name '*.c'`
 do

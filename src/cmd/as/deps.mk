@@ -13,6 +13,7 @@
 ./symbol.o: ./as.h
 ./target/powerpc/ins.o: $(INCDIR)/scc/scc/scc.h
 ./target/powerpc/ins.o: ./target/powerpc/../../as.h
+./target/powerpc/ins.o: ./target/powerpc/proc.h
 ./target/powerpc/powerpc.o: $(INCDIR)/scc/scc/scc.h
 ./target/powerpc/powerpc.o: ./target/powerpc/../../as.h
 ./target/powerpc/powerpc.o: ./target/powerpc/proc.h

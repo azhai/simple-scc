@@ -14,5 +14,9 @@ $(LIBCLST): $(OBJS)
 $(SYS): FORCE
 	+@cd $@ && $(MAKE)
 
+dep: inc-dep
+
 clean:
 	$(FORALL)
+
+include deps.mk

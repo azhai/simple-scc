@@ -26,5 +26,8 @@ $(DIRS): rm-lst
 rm-lst: FORCE
 	rm -f $(LIBCLST)
 
+dep:
+	$(FORALL)
+
 clean: rm-lst
 	$(FORALL)

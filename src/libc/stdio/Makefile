@@ -48,3 +48,7 @@ all: $(OBJS)
 
 $(LIBC): $(OBJS)
 	$(MKLIB)
+
+dep: inc-dep
+
+include deps.mk

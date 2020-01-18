@@ -32,13 +32,13 @@ $(LIBCLST): $(OBJS)
 
 crt.o: ../crt-posix.s
 
-raise.o: ../../posix/raise.c
-
-signal.o: ../../posix/signal.c
-
 $(GENSRC): syscall.lst
 	gensys.sh $*
+
+dep: inc-dep
 
 clean:
 	rm -f $(GENSRC)
 	rm -f syscall _sys_errlist.c
+
+include deps.mk

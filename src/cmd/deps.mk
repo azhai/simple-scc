@@ -14,6 +14,7 @@
 ./ranlib.o: $(INCDIR)/scc/scc/mach.h
 ./ranlib.o: $(INCDIR)/scc/scc/scc.h
 ./ranlib.o: ./sys.h
+./size.o: $(INCDIR)/scc/scc/ar.h
 ./size.o: $(INCDIR)/scc/scc/arg.h
 ./size.o: $(INCDIR)/scc/scc/mach.h
 ./strip.o: $(INCDIR)/scc/scc/arg.h

@@ -40,6 +40,10 @@ crt.$O: ../crt-posix.s
 $(GENSRC): syscall.lst
 	gensys.sh $*
 
+dep: inc-dep
+
 clean:
 	rm -f $(GENSRC)
 	rm -f _sys_errlist.c
+
+include deps.mk
