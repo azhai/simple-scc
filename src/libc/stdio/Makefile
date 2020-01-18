@@ -44,10 +44,10 @@ OBJS =\
 	vprintf.$O\
 	_allocbuf.$O\
 
-all: $(OBJS)
+all: $(LIBC)
 
-$(LIBC): $(OBJS)
-	$(MKLIB)
+$(LIBCLST): $(OBJS)
+	$(MKLST)
 
 dep: inc-dep
 

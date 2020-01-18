@@ -7,10 +7,10 @@ OBJS =\
 	localeconv.$O\
 	setlocale.$O\
 
-all: $(OBJS)
+all: $(LIBC)
 
-$(LIBC): $(OBJS)
-	$(MKLIB)
+$(LIBCLST): $(OBJS)
+	$(MKLST)
 
 dep: inc-dep
 

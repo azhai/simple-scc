@@ -30,8 +30,8 @@ OBJS = \
 
 all: $(LIBC)
 
-$(LIBC): $(OBJS)
-	$(MKLIB)
+$(LIBCLST): $(OBJS)
+	$(MKLST)
 
 dep: inc-dep
 

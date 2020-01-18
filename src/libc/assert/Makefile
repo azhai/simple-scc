@@ -7,7 +7,10 @@ OBJS =\
 	__assert.$O\
 	assert.$O\
 
-all: $(OBJS)
+all: $(LIBC)
+
+$(LIBCLST): $(OBJS)
+	$(MKLST)
 
 dep: inc-dep
 
