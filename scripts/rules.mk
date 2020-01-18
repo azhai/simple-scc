@@ -12,7 +12,7 @@ INCDIR     = $(PROJECTDIR)/include
 BINDIR     = $(PROJECTDIR)/bin
 LIBEXEC    = $(PROJECTDIR)/libexec/scc
 CRTDIR     = $(PROJECTDIR)/lib/scc
-LIBCDIR    = $(CRTDIR)/$(ARCH)-$(SYS)/
+LIBCDIR    = $(CRTDIR)/$(ARCH)-$(SYS)
 ENVIRON    = $(SCRIPTDIR)/env.sh
 
 INCLUDE    = -I$(INCDIR)/scc

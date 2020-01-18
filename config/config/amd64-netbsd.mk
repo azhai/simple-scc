@@ -1,3 +1,3 @@
-ARCH = amd64
+include $(PROJECTDIR)/config/config/amd64-posix.mk
+
 SYS = netbsd
-ABI = amd64-posix

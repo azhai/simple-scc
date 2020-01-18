@@ -3,24 +3,28 @@ PROJECTDIR =../..
 include $(PROJECTDIR)/scripts/rules.mk
 include rules.mk
 
-DIRS = arch\
-       assert\
-       ctype\
-       locale\
-       stdio\
-       stdlib\
-       string\
-       time\
+DIRS =\
+	arch\
+	assert\
+	ctype\
+	locale\
+	stdio\
+	stdlib\
+	string\
+	time\
 
-all: $(DIRS) objlst.mk
-	+@$(MAKE) -f Makefile.libc
+all: $(LIBC)
 
-$(DIRS): FORCE
+$(LIBC): $(LIBCLST)
+	mklib -o $@ `cat $(LIBCLST)`
+
+$(LIBCLST): $(DIRS)
+
+$(DIRS): rm-lst
 	+@cd $@ && $(MAKE)
 
-objlst.mk: $(DIRS) FORCE
-	mklst $@
+rm-lst: FORCE
+	rm -f $(LIBCLST)
 
-clean:
+clean: rm-lst
 	$(FORALL)
-	rm -f objlst.mk

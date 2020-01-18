@@ -3,28 +3,32 @@ PROJECTDIR =../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
-OBJS = memchr.o\
-       memcmp.o\
-       memcpy.o\
-       memmove.o\
-       memset.o\
-       strcat.o\
-       strchr.o\
-       strcmp.o\
-       strcoll.o\
-       strcpy.o\
-       strcspn.o\
-       strerror.o\
-       strlen.o\
-       strncat.o\
-       strncmp.o\
-       strncpy.o\
-       strnlen.o\
-       strpbrk.o\
-       strrchr.o\
-       strspn.o\
-       strstr.o\
-       strtok.o\
-       strxfrm.o\
+OBJS = \
+	memchr.$O\
+	memcmp.$O\
+	memcpy.$O\
+	memmove.$O\
+	memset.$O\
+	strcat.$O\
+	strchr.$O\
+	strcmp.$O\
+	strcoll.$O\
+	strcpy.$O\
+	strcspn.$O\
+	strerror.$O\
+	strlen.$O\
+	strncat.$O\
+	strncmp.$O\
+	strncpy.$O\
+	strnlen.$O\
+	strpbrk.$O\
+	strrchr.$O\
+	strspn.$O\
+	strstr.$O\
+	strtok.$O\
+	strxfrm.$O\
 
-all: $(OBJS)
+all: $(LIBC)
+
+$(LIBC): $(OBJS)
+	$(MKLIB)

@@ -3,22 +3,26 @@ PROJECTDIR =../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
-OBJS = ctype.o\
-       isalnum.o\
-       isalpha.o\
-       isascii.o\
-       isblank.o\
-       iscntrl.o\
-       isdigit.o\
-       isgraph.o\
-       islower.o\
-       isprint.o\
-       ispunct.o\
-       isspace.o\
-       isupper.o\
-       isxdigit.o\
-       toascii.o\
-       tolower.o\
-       toupper.o\
+OBJS =\
+	ctype.$O\
+	isalnum.$O\
+	isalpha.$O\
+	isascii.$O\
+	isblank.$O\
+	iscntrl.$O\
+	isdigit.$O\
+	isgraph.$O\
+	islower.$O\
+	isprint.$O\
+	ispunct.$O\
+	isspace.$O\
+	isupper.$O\
+	isxdigit.$O\
+	toascii.$O\
+	tolower.$O\
+	toupper.$O\
 
 all: $(OBJS)
+
+$(LIBC): $(OBJS)
+	$(MKLIB)

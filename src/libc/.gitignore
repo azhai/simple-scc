@@ -1,1 +1,5 @@
-objlst.mk
+*.6
+*.7
+*.8
+*.z
+libc.lst

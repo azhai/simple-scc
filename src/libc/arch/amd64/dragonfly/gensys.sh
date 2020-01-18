@@ -5,8 +5,9 @@
 # until the 4th parameter, so we only have to set the syscall
 # number in rax
 
-sed 's/[ 	]*#.*//
-     /^$/d' syscall.lst |
+sed -n "
+     s/[ 	]*#.*//
+     /$1/p" syscall.lst |
 while read num name
 do
 cat <<EOF > $name.s

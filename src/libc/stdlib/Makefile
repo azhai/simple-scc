@@ -3,26 +3,30 @@ PROJECTDIR =../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
-OBJS = _dtoi.o\
-       abort.o\
-       abs.o\
-       atexit.o\
-       atoi.o\
-       atol.o\
-       atoll.o\
-       bsearch.o\
-       calloc.o\
-       errno.o\
-       exit.o\
-       labs.o\
-       llabs.o\
-       malloc.o\
-       qsort.o\
-       rand.o\
-       realloc.o\
-       strtol.o\
-       strtoll.o\
-       strtoul.o\
-       strtoull.o\
+OBJS =\
+	_dtoi.$O\
+	abort.$O\
+	abs.$O\
+	atexit.$O\
+	atoi.$O\
+	atol.$O\
+	atoll.$O\
+	bsearch.$O\
+	calloc.$O\
+	errno.$O\
+	exit.$O\
+	labs.$O\
+	llabs.$O\
+	malloc.$O\
+	qsort.$O\
+	rand.$O\
+	realloc.$O\
+	strtol.$O\
+	strtoll.$O\
+	strtoul.$O\
+	strtoull.$O\
 
 all: $(OBJS)
+
+$(LIBC): $(OBJS)
+	$(MKLIB)

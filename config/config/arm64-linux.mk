@@ -1,3 +1,3 @@
-ARCH = arm64
+include $(PROJECTDIR)/config/config/arm64-linux.mk
+
 SYS = linux
-ABI = arm64-posix

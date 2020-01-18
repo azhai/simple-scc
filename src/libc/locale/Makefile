@@ -3,7 +3,11 @@ PROJECTDIR =../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
-OBJS = localeconv.o\
-       setlocale.o\
+OBJS =\
+	localeconv.$O\
+	setlocale.$O\
 
 all: $(OBJS)
+
+$(LIBC): $(OBJS)
+	$(MKLIB)

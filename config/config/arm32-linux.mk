@@ -1,3 +1,3 @@
-ARCH = arm32
+include $(PROJECTDIR)/config/config/arm32-posix.mk
+
 SYS = linux
-ABI = arm32-posix

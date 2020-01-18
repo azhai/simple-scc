@@ -5,7 +5,9 @@
 # until the 4th parameter, so we only have to set the syscall
 # number in rax
 
-awk 'NF == 2 {printf("0x%x\t%s\n", 33554432 + $1, $2)}' syscall.lst |
+awk 'NF == 2 && $2 == "'$1'" {
+	printf("0x%x\t%s\n", 33554432 + $1, $2)
+}' syscall.lst |
 while read num name
 do
 cat <<EOF > $name.s

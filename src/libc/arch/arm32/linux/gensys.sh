@@ -1,7 +1,8 @@
 #!/bin/sh
 
-sed 's/[ 	]*#.*//
-     /^$/d' syscall.lst |
+sed -n "
+     s/[ 	]*#.*//
+     /$1/p" syscall.lst |
 while read num name
 do
 cat <<EOF > $name.s
