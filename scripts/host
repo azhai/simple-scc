@@ -1,0 +1,13 @@
+#!/bin/sh
+
+case `uname` in
+*BSD)
+	echo bsd
+	;;
+Plan9)
+	echo plan9
+	;;
+*)
+	echo unix
+	;;
+esac

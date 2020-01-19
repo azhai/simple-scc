@@ -30,6 +30,7 @@ can be passed to the command line:
 		- amd64-dragonfly
 		- amd64-netbsd
 		- arm32-linux
+		- i386-linux
 
 	- TOOL: Specify the toolchain type to be used.  Possible
 	  supported values are:
@@ -38,6 +39,28 @@ can be passed to the command line:
 		- gnu
 		- gnu-darwin
 		- clang
+
+The main targets of the Makefile are:
+
+	- all:
+	  Compile the toolchain and all the amd64-posix libc. It automatically
+	  determines what is the best value for HOST.
+
+	- toolchain
+	  Compile the toolchain.
+
+	- libc:
+	  Compile the libc for the target specified in CONF.
+
+	- install:
+	  Installs scc in PREFIX.
+	
+	- clean:
+	  Remoe all the generated files except the one supposed to be edited
+	  by the user.
+
+	- distclean
+	  Remove all the generated files. 
 
 Deviations from standard C
 ===========================

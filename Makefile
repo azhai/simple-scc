@@ -4,11 +4,20 @@ PROJECTDIR = .
 include $(PROJECTDIR)/scripts/rules.mk
 
 PREFIX= /usr/local
-DIRS  = src include/scc/scc tests
+DIRS  = src src/libc include/scc/scc tests
 
-all: src
+all:
+	+@$(MAKE) HOST=`$(SCRIPTDIR)/host` toolchain
+	+@$(MAKE) HOST=`$(SCRIPTDIR)/host` CONF=amd64-linux libc
+	+@$(MAKE) HOST=`$(SCRIPTDIR)/host` CONF=amd64-openbsd libc
+	+@$(MAKE) HOST=`$(SCRIPTDIR)/host` CONF=amd64-netbsd libc
+	+@$(MAKE) HOST=`$(SCRIPTDIR)/host` CONF=amd64-dragonfly libc
 
-src: dirs include/scc/scc
+toolchain: dirs src
+
+libc: dirs src/libc
+
+src: include/scc/scc
 
 dirs: $(SCRIPTDIR)/libc-proto
 	xargs mkdir -p < $(SCRIPTDIR)/libc-proto
