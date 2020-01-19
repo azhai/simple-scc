@@ -22,7 +22,7 @@ do
 		shift 2
 		;;
 	-*)
-		echo usage: cc.sh [-t target] file
+		echo usage: cc.sh [-o outfile][-r root][-a abi][-s sys] file
 		exit 1
 		;;
 	esac
@@ -36,6 +36,7 @@ inc=$root/include
 arch_inc=$inc/bits/$abi
 sys_inc=$inc/bits/$sys
 lib=$root/lib/scc/${abi}-${sys}
+crt=$root/lib/scc/${abi}-${sys}/crt.o
 obj=${1%.c}.o
 cc=${CROSS_COMPILE}gcc
 ld=${CROSS_COMPILE}ld
@@ -49,4 +50,4 @@ then
 fi
 
 ${cc} $flags $pie $includes -c $1
-${ld} -g -z nodefaultlib -static -L$lib $obj -lc -lcrt -o $out
+${ld} -g -z nodefaultlib -static -L$lib $obj $crt -lc -lcrt -o $out

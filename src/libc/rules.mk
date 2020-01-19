@@ -6,7 +6,7 @@ INCLUDE  =\
 SYSERRNO = $(INCDIR)/bits/$(SYS)/sys/errno.h
 
 LIBC = $(LIBCDIR)/libc.a
-CRT = $(LIBCDIR)/libcrt.o
+CRT = $(LIBCDIR)/crt.o
 LIBCLST= $(PROJECTDIR)/src/libc/libc.lst
 
 MKLST = \

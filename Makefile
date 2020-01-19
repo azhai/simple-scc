@@ -7,11 +7,11 @@ PREFIX= /usr/local
 DIRS  = src src/libc include/scc/scc tests
 
 all:
-	+@$(MAKE) HOST=`$(SCRIPTDIR)/host` toolchain
-	+@$(MAKE) HOST=`$(SCRIPTDIR)/host` CONF=amd64-linux libc
-	+@$(MAKE) HOST=`$(SCRIPTDIR)/host` CONF=amd64-openbsd libc
-	+@$(MAKE) HOST=`$(SCRIPTDIR)/host` CONF=amd64-netbsd libc
-	+@$(MAKE) HOST=`$(SCRIPTDIR)/host` CONF=amd64-dragonfly libc
+	+@$(MAKE) `$(SCRIPTDIR)/config` toolchain
+	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-linux libc
+	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-openbsd libc
+	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-netbsd libc
+	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-dragonfly libc
 
 toolchain: dirs src
 

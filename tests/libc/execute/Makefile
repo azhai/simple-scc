@@ -10,7 +10,7 @@ CC     = SCCPREFIX=$(ROOT) ./cc.sh
 all: tests
 
 tests:
-	@CFLAGS='' SCCPREFIX=$(ROOT) ./chktest.sh libc-tests.lst
+	@SCCPREFIX=$(ROOT) ./chktest.sh libc-tests.lst
 
 clean:
 	rm -f *.o *core test.log `awk '{print $$1}' libc-tests.lst`
