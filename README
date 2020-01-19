@@ -54,13 +54,13 @@ The main targets of the Makefile are:
 
 	- install:
 	  Installs scc in PREFIX.
-	
+
 	- clean:
 	  Remoe all the generated files except the one supposed to be edited
 	  by the user.
 
 	- distclean
-	  Remove all the generated files. 
+	  Remove all the generated files.
 
 Deviations from standard C
 ===========================
