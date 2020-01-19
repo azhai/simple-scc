@@ -157,8 +157,10 @@ readstr(Obj *obj, FILE *fp)
 	coff->strsiz = 0;
 	if (siz < 4 || siz > SIZE_MAX) {
 		errno = ERANGE;
-		return 1;
+		return 0;
 	}
+	if (siz == 4)
+		return 1;
 
 	if ((str = malloc(siz)) == NULL)
 		return 0;
