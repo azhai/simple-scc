@@ -11,19 +11,18 @@
 Map *
 newmap(int n, FILE *fp)
 {
-	size_t siz, vsiz;
+	size_t vsiz;
 	struct mapsec *p;
 	Map *map;
 
-	siz = sizeof(*map);
 	if (n > SIZE_MAX/sizeof(struct mapsec))
 		goto out_range;
-
 	vsiz = n * sizeof(struct mapsec);
-	if (vsiz > SIZE_MAX - siz)
+	if (vsiz > SIZE_MAX - sizeof(*map))
 		goto out_range;
+	vsiz += sizeof(*map);
 
-	if ((map = malloc(siz + vsiz)) == NULL)
+	if ((map = malloc(vsiz)) == NULL)
 		return NULL;
 
 	map->n = n;
@@ -34,6 +33,6 @@ newmap(int n, FILE *fp)
 	return map;
 
 out_range:
-		errno = ERANGE;
-		return NULL;
+	errno = ERANGE;
+	return NULL;
 }
