@@ -257,10 +257,13 @@ update(struct member *m, int argc, char *argv[])
 	char *pname;
 
 	if (pname = inlist(m->fname, argc, argv)) {
-		if (uflag && older(m, pname))
+		if (!uflag || older(m, pname)) {
 			archive(pname, tmps[m->cur].fp, 'r');
-		return;
-	} else if (posname && !strcmp(posname, m->fname)) {
+			return;
+		}
+	}
+
+	if (posname && !strcmp(posname, m->fname)) {
 		where = (bflag) ? AFTER : BEFORE;
 		m->cur = AFTER;
 	} else {
