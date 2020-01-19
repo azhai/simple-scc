@@ -3,8 +3,7 @@
 file=${1?' empty input file'}
 tmp1=`mktemp`
 tmp2=`mktemp`
-bins=`awk '{print $1}' libc-tests.lst`
-trap "rm -f *.o $bins $tmp1 $tmp2; exit" 0 1 2 3 15
+trap "rm -f *.o  $tmp1 $tmp2" EXIT INT QUIT TERM
 ulimit -c 0
 rm -f test.log
 
@@ -16,8 +15,9 @@ do
 	(echo $i
 	 ./cc.sh $CFLAGS -o $i $i.c
 	 echo '/^output:$/+;/^end:$/-'w $tmp1 | ed -s $i.c
-	 ./$i > $tmp2
+	 ./$i > $tmp2 2>> test.log
 	 diff -u $tmp1 $tmp2) >> test.log 2>&1 &&
+
 	printf '[PASS]' || printf '[FAIL]'
 	printf "$state\t%s\n" $i
 done < $file
