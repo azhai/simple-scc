@@ -13,10 +13,10 @@ OBJS =\
 	mktime.$O\
 	strftime.$O\
 
-all: $(OBJS)
+all: $(LIBC)
 
 $(LIBC): $(OBJS)
-	$(MKLIB)
+	$(MKLST)
 
 dep: inc-dep
 

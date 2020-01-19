@@ -22,10 +22,10 @@ OBJS =\
 	tolower.$O\
 	toupper.$O\
 
-all: $(OBJS)
+all: $(LIBC)
 
 $(LIBC): $(OBJS)
-	$(MKLIB)
+	$(MKLST)
 
 dep: inc-dep
 
