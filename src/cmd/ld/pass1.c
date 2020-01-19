@@ -41,25 +41,26 @@ newsec(Section *osec, Obj *obj)
 	unsigned long long base;
 
 	sec = lookupsec(osec->name);
-	if (sec->type != 'U') {
+	if (sec->type == 'U') {
+		sec->type = osec->type;
+		sec->base = osec->base;
+		sec->size = osec->size;
+		sec->flags = osec->flags;
+		align = 0;
+	} else {
 		if (sec->type != osec->type
 		|| sec->flags != osec->flags
-		|| sec->base != osec->base
 		|| sec->align != osec->align) {
-			error("incompatible definition of section %s", sec->name);
+			error("incompatible definition of section %s",
+			      sec->name);
 			return;
 		}
 		align = osec->align;
 		align -= sec->size & align-1;
 		grow(sec, align);
-		rebase(obj, osec->index,  sec->size);
-	} else {
-		sec->type = osec->type;
-		sec->base = osec->base;
-		sec->size = osec->size;
-		sec->flags = osec->flags;
 	}
 
+	rebase(obj, osec->index, sec->size);
 	copy(obj, osec, sec);
 }
 
