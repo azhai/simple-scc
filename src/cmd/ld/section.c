@@ -84,56 +84,55 @@ merge(Segment *seg)
 		}
 		p[n++] = sec;
 		seg->sections = p;
+
+		/* rebase(obj, sec->index, seg->size); */
 		seg->size += sec->size;
 	}
 
 	seg->nsec = n;
 }
 
-void
-copy(Obj *obj, Section *osec, Section *sec)
+static FILE *
+mkfile(Section *sec, unsigned long long size)
 {
 	struct sectab *sp = (struct sectab *) sec;
 
-	if (sec->size > ULLONG_MAX - osec->size) {
+	if (sec->size > ULLONG_MAX - size) {
 		error("%s: section too long", sec->name);
-		return;
+		exit(EXIT_FAILURE);
 	}
+	sec->size += size;
 
 	if (!sp->tmpfp && (sp->tmpfp = tmpfile()) == NULL) {
 		error(strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 
+	return sp->tmpfp;
+}
+
+void
+copy(Obj *obj, Section *osec, Section *sec)
+{
+	FILE *fp;
+
+	fp = mkfile(sec, osec->size);
 /*
-	if (mapsec(obj, osec->index, sp->tmpfp) < 0) {
+	if (mapsec(obj, osec->index, fp) < 0) {
 		error(strerror(errno));
 		return;
 	}
 */
-
-	sec->size += osec->size;
 }
 
 void
 grow(Section *sec, int nbytes)
 {
-	struct sectab *sp = (struct sectab *) sec;
+	FILE *fp;
 
-	if (sec->size > ULLONG_MAX - nbytes) {
-		error("%s: section too long", sec->name);
-		return;
-	}
-
-	if (!sp->tmpfp && (sp->tmpfp = tmpfile()) == NULL) {
-		error(strerror(errno));
-		exit(EXIT_FAILURE);
-	}
-
+	fp = mkfile(sec, nbytes);
 	while (nbytes-- > 0)
-		putc(0, sp->tmpfp);
-
-	sec->size += nbytes;
+		putc(0, fp);
 }
 
 #ifndef NDEBUG

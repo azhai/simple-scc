@@ -44,8 +44,9 @@ rebase(Obj *obj)
 void
 pass3(int argc, char *argv[])
 {
+	int i;
 	Obj *obj;
-	Objsec *sp;
+	Section *sec;
 	Segment *seg;
 
 	/*
@@ -57,8 +58,9 @@ pass3(int argc, char *argv[])
 	bss.base = data.base + data.size;
 
 	for (obj = objhead; obj; obj = obj->next) {
-		for (sp = obj->secs; sp; sp = sp->next) {
-			switch (sp->type) {
+		for (i = 0; getsec(obj, &i, &sec); i++) {
+			/* TODO: deal with symbol aligment */
+			switch (sec->type) {
 			case 'T':
 				seg = &text;
 				break;
@@ -72,10 +74,9 @@ pass3(int argc, char *argv[])
 			default:
 				abort();
 			}
-			sp->base = seg->base + seg->size;
-			/* TODO: deal with symbol aligment */
-			seg->size += sp->size;
+
+			rebase(obj, i, seg->size);
+			seg->size += sec.size;
 		}
-		rebase(obj);
 	}
 }
