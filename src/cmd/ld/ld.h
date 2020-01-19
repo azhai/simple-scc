@@ -33,7 +33,6 @@ extern int Xflag;
 extern int rflag;
 extern int dflag;
 extern int gflag;
-extern char *Dflag;
 extern char *output, *entry;
 extern Obj *objhead;
 extern Segment debug, text, rodata, data, bss;

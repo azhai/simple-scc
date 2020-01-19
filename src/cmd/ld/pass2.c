@@ -49,15 +49,4 @@ pass2(int argc, char *argv[])
 
 	mksecs();
 	mksegs();
-
-	if (Dflag) {
-		n = strtoull(Dflag, &end, 0);
-		if (n == ULLONG_MAX || *end != '\0') {
-			error("incorrect -D value");
-			exit(EXIT_FAILURE);
-		}
-
-		if (n > data.size)
-			data.size = n;
-	}
 }

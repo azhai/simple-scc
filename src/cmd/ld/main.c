@@ -17,7 +17,6 @@ int rflag;        /* preserve relocation bits */
 int dflag;        /* define common even with rflag */
 int gflag;        /* preserve debug symbols */
 int nmagic;       /* nmagic output */
-char *Dflag;      /* size of data */
 
 char *filename, *membname;
 
@@ -160,9 +159,6 @@ main(int argc, char *argv[])
 				break;
 			case 'e':
 				entry = nextarg(&ap, &av);
-				break;
-			case 'D':
-				Dflag = nextarg(&ap, &av);
 				break;
 			default:
 				usage();
