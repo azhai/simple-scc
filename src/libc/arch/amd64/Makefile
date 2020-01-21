@@ -3,8 +3,21 @@ PROJECTDIR =../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../../rules.mk
 
-OBJS = longjmp.$O setjmp.$O
-DIRS = netbsd openbsd dragonfly linux darwin
+OBJS =\
+	longjmp.$O\
+	setjmp.$O\
+	memchr.$O\
+	memcmp.$O\
+	memcpy.$O\
+	memmove.$O\
+	memset.$O\
+
+DIRS =\
+	netbsd\
+	openbsd\
+	dragonfly\
+	linux\
+	darwin\
 
 all: $(LIBC) $(SYS)
 
