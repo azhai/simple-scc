@@ -22,5 +22,9 @@ $(LIBC): $(OBJS)
 $(SYS): FORCE
 	+@cd $@ && $(MAKE)
 
+dep: inc-dep
+
 dep clean:
 	$(FORALL)
+
+include deps.mk
