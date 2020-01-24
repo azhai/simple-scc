@@ -1,6 +1,6 @@
-#ifndef SIZET_
+#ifndef _SIZET
 typedef unsigned long size_t;
-#define SIZET_
+#define _SIZET
 #endif
 
 #ifndef _PTRDIFF_T

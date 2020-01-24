@@ -1,6 +1,6 @@
-#ifndef SIZET_
+#ifndef _SIZET
 typedef unsigned int size_t;
-#define SIZET_
+#define _SIZET
 #endif
 
 #define EXIT_FAILURE 1
