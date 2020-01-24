@@ -26,6 +26,10 @@ d 755 lib/scc/amd64-linux
 f 644 lib/scc/amd64-linux/libc.a
 f 644 lib/scc/amd64-linux/crt.o
 f 644 lib/scc/amd64-linux/libcrt.a
+d 755 lib/scc/ppc32-linux
+f 644 lib/scc/ppc32-linux/libc.a
+f 644 lib/scc/ppc32-linux/crt.o
+f 644 lib/scc/ppc32-linux/libcrt.a
 d 755 bin
 f 755 bin/ld
 f 755 bin/cpp
@@ -101,6 +105,16 @@ f 644 include/bits/arm32/arch/stddef.h
 f 644 include/bits/arm32/arch/setjmp.h
 f 644 include/bits/arm32/arch/time.h
 f 644 include/bits/arm32/arch/stdint.h
+d 755 include/bits/ppc32
+d 755 include/bits/ppc32/arch
+f 644 include/bits/ppc32/arch/string.h
+f 644 include/bits/ppc32/arch/limits.h
+f 644 include/bits/ppc32/arch/stdlib.h
+f 644 include/bits/ppc32/arch/stdio.h
+f 644 include/bits/ppc32/arch/stddef.h
+f 644 include/bits/ppc32/arch/setjmp.h
+f 644 include/bits/ppc32/arch/time.h
+f 644 include/bits/ppc32/arch/stdint.h
 d 755 include/bits/z80
 d 755 include/bits/z80/arch
 f 644 include/bits/z80/arch/string.h

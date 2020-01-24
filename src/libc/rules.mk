@@ -17,7 +17,7 @@ MKLST = \
 
 # Rules
 
-.SUFFIXES: .6 .7 .8 .z
+.SUFFIXES: .6 .7 .8 .z .q
 
 _sys_errlist.c: $(SYSERRNO)
 	../../mkerrstr $(SYSERRNO)
@@ -28,7 +28,7 @@ $(CRT): crt.$O
 clean: clean-libc
 
 clean-libc: FORCE
-	rm -f *.6 *.7 *.8 *.z
+	rm -f *.6 *.7 *.8 *.z *.q
 
 # amd64-posix objects
 .c.6:
@@ -63,4 +63,11 @@ clean-libc: FORCE
 	$(CC) $(SCC_CFLAGS) -o $@ -c $<
 
 .s.z:
+	$(AS) $(SCC_ASFLAGS) $< -o $@
+
+# ppc32 objects
+.c.q:
+	$(CC) $(SCC_CFLAGS) -o $@ -c $<
+
+.s.q:
 	$(AS) $(SCC_ASFLAGS) $< -o $@
