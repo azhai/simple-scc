@@ -1,10 +1,8 @@
-	.bss
 	.globl	_environ
-_environ:
-	.long	0
+	.comm	_environ,4,4
 
-	.text
 	.globl	_start
+	.text
 _start:
 	movl	%esp,%ebp
 

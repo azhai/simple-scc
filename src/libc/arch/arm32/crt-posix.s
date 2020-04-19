@@ -1,7 +1,5 @@
-	.bss
 	.globl	_environ
-_environ:
-	.word	0
+	.comm	_environ,4,4
 
 	.text
 	.globl	_start

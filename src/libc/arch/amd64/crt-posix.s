@@ -1,7 +1,5 @@
-	.bss
 	.globl	_environ
-_environ:
-	.quad	0
+	.comm	_environ,8,8
 
 	.text
 	.globl	_start
