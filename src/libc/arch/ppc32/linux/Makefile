@@ -3,12 +3,23 @@ PROJECTDIR =../../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../../../rules.mk
 
-GENOBJS =
+GENOBJS =\
+	_Exit.$O\
+	_read.$O\
+	_write.$O\
+	_open.$O\
+	_close.$O\
+	_waitpid.$O\
+	_create.$O\
+	_link.$O\
+	_unlink.$O\
+	_getpid.$O\
 
 GENSRC = $(GENOBJS:.$O=.s)
 
 OBJS  = \
 	$(GENOBJS)\
+	_cerrno.$O\
 
 # Rules
 
