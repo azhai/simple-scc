@@ -21,6 +21,7 @@ GENSRC = $(GENOBJS:.$O=.s)
 OBJS  = \
 	$(GENOBJS)\
 	_cerrno.$O\
+	_getheap.$O\
 
 # Rules
 
