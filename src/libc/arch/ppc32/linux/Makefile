@@ -14,6 +14,7 @@ GENOBJS =\
 	_link.$O\
 	_unlink.$O\
 	_getpid.$O\
+	_brk.$0\
 
 GENSRC = $(GENOBJS:.$O=.s)
 
