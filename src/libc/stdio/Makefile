@@ -4,7 +4,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
 OBJS =\
-	__getc.o\
+	__getc.$O\
 	__putc.$O\
 	_flsbuf.$O\
 	_fpopen.$O\
