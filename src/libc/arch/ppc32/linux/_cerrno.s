@@ -5,8 +5,9 @@ _cerrno:
 	bne	err
 	blr
 err:
-	lis	0,errno@h
-	ori	0,0,errno@l
-	stw	3,0(0)
+	lis	14,errno@h
+	ori	14,14,errno@l
+	stw	3,0(14)
+	xor	3,3,3
 	addi	3,3,-1
 	blr
