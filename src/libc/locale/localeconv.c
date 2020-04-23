@@ -5,7 +5,7 @@
 struct lconv *
 localeconv(void)
 {
-	static struct lconv lc = { 
+	static struct lconv lc = {
 		.decimal_point = ".",
 		.thousands_sep = "",
 		.grouping = "",

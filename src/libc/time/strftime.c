@@ -6,7 +6,7 @@
 
 static char *days[] = {
 	"Sunday",   "Monday", "Tuesday",  "Wednesday",
-	"Thursday", "Friday", "Saturday", 
+	"Thursday", "Friday", "Saturday",
 };
 
 static char *months[] = {
@@ -154,10 +154,10 @@ strftime(char * restrict s, size_t siz,
 		case 'n':
 			val = '\n';
 			goto character;
-		case 't': 
+		case 't':
 			val = '\t';
 			goto character;
-		case '%': 
+		case '%':
 			val = '%';
 		character:
 			*s = val;
