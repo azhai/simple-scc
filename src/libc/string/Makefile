@@ -15,7 +15,6 @@ OBJS = \
 	strncat.$O\
 	strncmp.$O\
 	strncpy.$O\
-	strnlen.$O\
 	strpbrk.$O\
 	strrchr.$O\
 	strspn.$O\
