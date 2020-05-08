@@ -53,7 +53,7 @@ _fpopen(const char * restrict fname,
 		return NULL;
 	}
 
-	if ((fd = _open(fname, flags)) < 0)
+	if ((fd = _open(fname, flags, 0666)) < 0)
 		return NULL;
 
 	fp->buf = NULL;
