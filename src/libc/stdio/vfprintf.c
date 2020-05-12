@@ -186,6 +186,16 @@ strout(char *s, size_t len, int width, int fill, FILE * restrict fp)
 	return cnt;
 }
 
+static size_t
+strnlen(const char *s, size_t maxlen)
+{
+	size_t n;
+
+	for (n = 0; n < maxlen && *s++; ++n)
+		;
+	return n;
+}
+
 int
 vfprintf(FILE * restrict fp, const char * restrict fmt, va_list va)
 {
