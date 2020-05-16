@@ -1,2 +1,2 @@
-	.include	"../../crt-netbsd.s"
+	.include	"../../netbsd/crt.s"
 	.include	"../crt-posix.s"
