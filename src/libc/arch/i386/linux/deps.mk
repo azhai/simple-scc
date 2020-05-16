@@ -1,4 +1,4 @@
 #deps
-./_getheap.o: ./../../posix/_getheap.c
+./_getheap.o: ./../../linux/_getheap.c
 ./raise.o: ./../../posix/raise.c
 ./signal.o: ./../../posix/signal.c

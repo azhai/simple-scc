@@ -1,5 +1,5 @@
 #deps
-./linux/_getheap.o: ./linux/../../posix/_getheap.c
+./linux/_getheap.o: ./linux/../../linux/_getheap.c
 ./linux/raise.o: ./linux/../../posix/raise.c
 ./linux/signal.o: ./linux/../../posix/signal.c
 ./memchr.o: ./../../string/memchr.c

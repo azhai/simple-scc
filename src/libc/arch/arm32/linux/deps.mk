@@ -1,5 +1,5 @@
 #deps
-./_getheap.o: ./../../posix/_getheap.c
+./_getheap.o: ./../../linux/_getheap.c
 ./_open.o: ./../../../syscall.h
 ./_tzone.o: ./../../posix/_tzone.c
 ./getenv.o: ./../../posix/getenv.c
