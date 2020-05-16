@@ -31,6 +31,7 @@ OBJS =\
 	putc.$O\
 	putchar.$O\
 	puts.$O\
+	remove.$O\
 	rewind.$O\
 	setbuf.$O\
 	setvbuf.$O\

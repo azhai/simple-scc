@@ -14,6 +14,7 @@ GENOBJS =\
 	_write.$O\
 	_brk.$O\
 	_sigaction.$O\
+	_unlink.$O\
 
 GENSRC = $(GENOBJS:.$O=.s)
 

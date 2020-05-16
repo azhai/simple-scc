@@ -9,3 +9,4 @@
 39	_getpid
 60	_Exit
 62	_kill
+87	_unlink
