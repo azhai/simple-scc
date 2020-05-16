@@ -350,7 +350,8 @@ flags:
 				goto wstrout;
 			} else {
 				s = va_arg(va2, char *);
-				len = strnlen(s, conv.prec);
+				if ((len = strlen(s)) > conv.prec)
+					len = conv.prec;
 				goto strout;
 			}
 		wstrout:
