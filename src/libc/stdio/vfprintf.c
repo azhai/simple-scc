@@ -61,7 +61,7 @@ getnum(va_list *va, int flags, int *sign)
 
 	if ((flags & UNSIGNED) == 0 && val < 0) {
 		*sign = '-';
-		uval = -uval;
+		uval = -val;
 	}
 	return uval;
 }
