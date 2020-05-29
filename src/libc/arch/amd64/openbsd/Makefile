@@ -32,7 +32,7 @@ all: $(LIBC) $(CRT)
 $(LIBC): $(OBJS)
 	$(MKLST)
 
-crt.$O: ../crt-posix.s ../../crt-openbsd.s
+crt.$O: ../crt-posix.s ../openbsd/crt.s
 
 $(GENSRC): syscall.lst
 	gensys.sh $(@:.s=)
