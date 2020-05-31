@@ -6,6 +6,7 @@ memcpy:
 _memcpy:
 	mov	%rdi,%rax
 	mov	%rdx,%rcx
+	cld
 	rep
 	movsb
 	ret
