@@ -10,7 +10,7 @@
 ./dragonfly/raise.o: ./dragonfly/../../posix/raise.c
 ./dragonfly/signal.o: ./dragonfly/../../posix/signal.c
 ./dragonfly/time.o: ./dragonfly/../../posix/time.c
-./linux/_getheap.o: ./linux/../../posix/_getheap.c
+./linux/_getheap.o: ./linux/../../linux/_getheap.c
 ./linux/_tzone.o: ./linux/../../posix/_tzone.c
 ./linux/getenv.o: ./linux/../../posix/getenv.c
 ./linux/raise.o: ./linux/../../posix/raise.c
