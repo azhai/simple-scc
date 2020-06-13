@@ -1,11 +1,11 @@
 #ifndef _STDDEF_H
 #define _STDDEF_H
 
-#include <arch/stddef.h>
-
-#ifndef NULL
-#define NULL ((void *) 0)
-#endif
+#define _NEED_SIZET
+#define _NEED_WCHAR_T
+#define _NEED_PTRDIFFT
+#define _NEED_NULL
+#include <arch/cdefs.h>
 
 #define offsetof(st, m) ((size_t)&(((st *)0)->m))
 

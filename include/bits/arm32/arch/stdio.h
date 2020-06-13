@@ -1,8 +1,3 @@
-#ifndef _SIZET
-typedef unsigned int size_t;
-#define _SIZET
-#endif
-
 #define BUFSIZ        512
 #define FILENAME_MAX  256
 #define FOPEN_MAX      16

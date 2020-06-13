@@ -1,8 +1,3 @@
-#ifndef _SIZET
-typedef unsigned long size_t;
-#define _SIZET
-#endif
-
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
 

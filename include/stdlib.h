@@ -1,11 +1,11 @@
 #ifndef _STDLIB_H
 #define _STDLIB_H
 
+#define _NEED_NULL
+#define _NEED_SIZET
+#define _NEED_WCHART
+#include <arch/cdefs.h>
 #include <arch/stdlib.h>
-
-#ifndef NULL
-#define NULL ((void *) 0)
-#endif
 
 #define _ATEXIT_MAX 32
 

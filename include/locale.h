@@ -1,9 +1,8 @@
 #ifndef _LOCALE_H
 #define _LOCALE_H
 
-#ifndef NULL
-#define NULL ((void *) 0)
-#endif
+#define _NEED_NULL
+#include <arch/cdefs.h>
 
 #define LC_ALL      0
 #define LC_COLLATE  1

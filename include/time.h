@@ -1,11 +1,10 @@
 #ifndef _TIME_H
 #define _TIME_H
 
+#define _NEED_SIZET
+#define _NEED_NULL
+#include <arch/cdefs.h>
 #include <arch/time.h>
-
-#ifndef NULL
-#define NULL ((void *) 0)
-#endif
 
 #define CLOCKS_PER_SEC 1000000
 

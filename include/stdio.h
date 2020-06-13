@@ -1,14 +1,13 @@
 #ifndef _STDIO_H
 #define _STDIO_H
 
+#define _NEED_NULL
+#define _NEED_SIZET
+#include <arch/cdefs.h>
 #include <arch/stdio.h>
 
 #ifndef FOPEN_MAX
 #define FOPEN_MAX 12
-#endif
-
-#ifndef NULL
-#define NULL ((void *) 0)
 #endif
 
 #define EOF            -1
