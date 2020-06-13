@@ -1,1 +1,4 @@
-/* TODO: Placeholder for compatibility with libraries that need to include it */
+#ifndef _FLOAT_H
+#define _FLOAT_H
+#error float.h is not supported yet
+#endif
