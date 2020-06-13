@@ -2,6 +2,7 @@
 #define _LOCALE_H
 
 #define _NEED_NULL
+#include <sys/cdefs.h>
 #include <arch/cdefs.h>
 
 #define LC_ALL      0

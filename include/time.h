@@ -3,6 +3,7 @@
 
 #define _NEED_SIZET
 #define _NEED_NULL
+#include <sys/cdefs.h>
 #include <arch/cdefs.h>
 #include <arch/time.h>
 

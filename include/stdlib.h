@@ -4,6 +4,7 @@
 #define _NEED_NULL
 #define _NEED_SIZET
 #define _NEED_WCHART
+#include <sys/cdefs.h>
 #include <arch/cdefs.h>
 #include <arch/stdlib.h>
 
