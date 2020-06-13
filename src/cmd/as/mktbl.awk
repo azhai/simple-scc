@@ -92,7 +92,7 @@ function str2args(s, args, i, j, out, n, found)
 
 		if (!found) {
 			print FILENAME ":" NR ":" \
-			      $0 ":wrong arg", a > "/dev/stderr"
+			      $0 ":wrong arg in opcode list", a > "/dev/stderr"
 			exit 1
 		}
 
