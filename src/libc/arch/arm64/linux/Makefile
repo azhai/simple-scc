@@ -36,7 +36,7 @@ $(LIBC): $(OBJS)
 
 crt.$O: ../crt-posix.s
 
-%(GENSRC): syscall.lst
+$(GENSRC): syscall.lst
 	gensys.sh $(@:.s=)
 
 clean:
