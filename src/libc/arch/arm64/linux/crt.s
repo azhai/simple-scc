@@ -1,1 +1,1 @@
-	.include	"../crt-posix.c"
+	.include	"../crt-posix.s"
