@@ -8,7 +8,7 @@ DIRS =\
 	arm32\
 	arm64\
 	i386\
-	ppc32\
+	ppc\
 
 all:
 	+@cd $(ARCH) && $(MAKE)
