@@ -5,8 +5,8 @@ include ../rules.mk
 
 DIRS =\
 	amd64\
-	arm32\
 	arm64\
+	arm\
 	i386\
 	ppc\
 
