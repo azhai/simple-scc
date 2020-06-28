@@ -1,4 +1,10 @@
 #deps
+./amd64-sysv.o: $(INCDIR)/scc/scc/scc.h
+./amd64-sysv.o: ./cc1.h
+./arch.o: $(INCDIR)/scc/scc/scc.h
+./arch.o: ./cc1.h
+./arm64-sysv.o: $(INCDIR)/scc/scc/scc.h
+./arm64-sysv.o: ./cc1.h
 ./builtin.o: $(INCDIR)/scc/scc/scc.h
 ./builtin.o: ./cc1.h
 ./code.o: $(INCDIR)/scc/scc/scc.h
@@ -16,6 +22,8 @@
 ./expr.o: ./cc1.h
 ./fold.o: $(INCDIR)/scc/scc/scc.h
 ./fold.o: ./cc1.h
+./i386-sysv.o: $(INCDIR)/scc/scc/scc.h
+./i386-sysv.o: ./cc1.h
 ./init.o: $(INCDIR)/scc/scc/cstd.h
 ./init.o: $(INCDIR)/scc/scc/scc.h
 ./init.o: ./cc1.h
@@ -31,14 +39,8 @@
 ./symbol.o: $(INCDIR)/scc/scc/cstd.h
 ./symbol.o: $(INCDIR)/scc/scc/scc.h
 ./symbol.o: ./cc1.h
-./target/amd64-sysv/arch.o: $(INCDIR)/scc/scc/scc.h
-./target/amd64-sysv/arch.o: ./target/amd64-sysv/../../cc1.h
-./target/arm64-sysv/arch.o: $(INCDIR)/scc/scc/scc.h
-./target/arm64-sysv/arch.o: ./target/arm64-sysv/../../cc1.h
-./target/i386-sysv/arch.o: $(INCDIR)/scc/scc/scc.h
-./target/i386-sysv/arch.o: ./target/i386-sysv/../../cc1.h
-./target/z80-scc/arch.o: $(INCDIR)/scc/scc/scc.h
-./target/z80-scc/arch.o: ./target/z80-scc/../../cc1.h
 ./types.o: $(INCDIR)/scc/scc/cstd.h
 ./types.o: $(INCDIR)/scc/scc/scc.h
 ./types.o: ./cc1.h
+./z80-scc.o: $(INCDIR)/scc/scc/scc.h
+./z80-scc.o: ./cc1.h

@@ -51,6 +51,9 @@ main(int argc, char *argv[])
 	ibuilts();
 
 	ARGBEGIN {
+	case 'a':
+		architecture = EARGF(usage());
+		break;
 	case 'D':
 		defmacro(EARGF(usage()));
 		break;

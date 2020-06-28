@@ -276,6 +276,7 @@ typedef struct symbol Symbol;
 typedef struct swtch Switch;
 typedef struct node Node;
 typedef struct input Input;
+typedef struct arch Arch;
 
 struct limits {
 	union {
@@ -354,6 +355,36 @@ struct node {
 struct swtch {
 	short nr;
 	char hasdef;
+};
+
+struct arch {
+	Symbol zero;
+	Symbol one;
+
+	Type voidtype;
+	Type pvoidtype;
+	Type booltype;
+	Type schartype;
+	Type uchartype;
+	Type chartype;
+	Type ushortype;
+	Type shortype;
+	Type uinttype;
+	Type inttype;
+	Type longtype;
+	Type ulongtype;
+	Type ullongtype;
+	Type llongtype;
+	Type floattype;
+	Type doubletype;
+	Type ldoubletype;
+	Type sizettype;
+	Type pdifftype;
+	Type ellipsistype;
+	Type va_type;
+	Type va_list_type;
+
+	int (*valid_va_list)(Type *tp);
 };
 
 struct yystype {
@@ -467,6 +498,12 @@ extern void ibuilts(void);
 extern void iarch(void);
 extern int valid_va_list(Type *tp);
 
+/* architectures */
+extern Arch *amd64_sysv(void);
+extern Arch *z80_scc(void);
+extern Arch *arm64_sysv(void);
+extern Arch *i386_sysv(void);
+
 /*
  * Definition of global variables
  */
@@ -484,6 +521,7 @@ extern Symbol *curfun, *zero, *one;
 extern char *infile;
 extern unsigned lineno;
 extern char filenam[];
+extern char *architecture;
 
 extern Type *voidtype, *pvoidtype, *booltype,
             *uchartype,   *chartype, *schartype,

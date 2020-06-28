@@ -3,36 +3,33 @@
 PROJECTDIR = ../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-OBJS = types.o \
-       decl.o \
-       lex.o \
-       error.o \
-       symbol.o \
-       main.o \
-       expr.o \
-       code.o \
-       stmt.o \
-       cpp.o \
-       fold.o \
-       init.o \
-       builtin.o \
+OBJS =\
+	types.o \
+	decl.o \
+	lex.o \
+	error.o \
+	symbol.o \
+	main.o \
+	expr.o \
+	code.o \
+	stmt.o \
+	cpp.o \
+	fold.o \
+	init.o \
+	builtin.o \
+	arch.o\
+	amd64-sysv.o\
+	arm64-sysv.o \
+	i386-sysv.o \
+	z80-scc.o\
 
-TARGET   = $(LIBEXEC)/cc1-amd64-sysv \
-           $(LIBEXEC)/cc1-arm64-sysv \
-           $(LIBEXEC)/cc1-i386-sysv \
-           $(LIBEXEC)/cc1-z80-scc \
+TARGET   = $(LIBEXEC)/cc1
 
 all: $(TARGET)
 
-$(TARGET): $(LIBDIR)/libscc.a
+$(TARGET): $(LIBDIR)/libscc.a $(OBJS)
+	$(CC) $(SCC_LDFLAGS) $(OBJS) -lscc -o $@
 
 dep: inc-dep
 
-clean:
-	rm -f target/*/*.o
-
-include target/amd64-sysv/arch.mk
-include target/arm64-sysv/arch.mk
-include target/i386-sysv/arch.mk
-include target/z80-scc/arch.mk
 include deps.mk
