@@ -51,7 +51,6 @@ error(char *fmt, ...)
 	va_start(va, fmt);
 	warn_error(-1, fmt, va);
 	va_end(va);
-	exit(1);
 	discard();
 }
 
