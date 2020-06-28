@@ -818,9 +818,7 @@ outcpp(void)
 				goto print_str;
 			case '\a':
 				t = "\\a";
-			print_str:
-				fputs(t, stdout);
-				break;
+				goto print_str;
 			case '\\':
 				putchar('\\');
 			default:
@@ -829,10 +827,12 @@ outcpp(void)
 				else
 					putchar(c);
 				break;
+			print_str:
+				fputs(t, stdout);
+				break;
 			}
 		}
 		putchar(' ');
 	}
 	putchar('\n');
 }
-
