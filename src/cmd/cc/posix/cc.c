@@ -108,7 +108,7 @@ path(char *s)
 
 		len = strlen(arg);
 		if (len + cnt >= FILENAME_MAX)
-			goto too_long;
+			die("cc: pathname too long");
 		memcpy(buff+cnt, arg, len);
 		cnt += len;
 	}
@@ -117,9 +117,6 @@ path(char *s)
 		buff[cnt] = '\0';
 		return xstrdup(buff);
 	}
-
-too_long:
-	die("cc: pathname too long");
 }
 
 static void
