@@ -461,16 +461,26 @@ escape(void)
 	int c, base;
 
 	switch (*++input->p) {
-	case 'a':  return '\a';
-	case 'f':  return '\f';
-	case 'n':  return '\n';
-	case 'r':  return '\r';
-	case 't':  return '\t';
-	case 'v':  return '\v';
-	case '"':  return '"';
-	case '\'': return '\'';
-	case '\\': return '\\';
-	case '\?': return '\?';
+	case 'a':
+		return '\a';
+	case 'f':
+		return '\f';
+	case 'n':
+		return '\n';
+	case 'r':
+		return '\r';
+	case 't':
+		return '\t';
+	case 'v':
+		return '\v';
+	case '"':
+		return '"';
+	case '\'':
+		return '\'';
+	case '\\':
+		return '\\';
+	case '\?':
+		return '\?';
 	case 'u':
 		/*
 		 * FIXME: universal constants are not correctly handled
@@ -593,10 +603,15 @@ static int
 minus(void)
 {
 	switch (*input->p++) {
-	case '-': return DEC;
-	case '>': return INDIR;
-	case '=': return SUB_EQ;
-	default: --input->p; return '-';
+	case '-':
+		return DEC;
+	case '>':
+		return INDIR;
+	case '=':
+		return SUB_EQ;
+	default:
+		--input->p;
+		return '-';
 	}
 }
 
@@ -604,9 +619,13 @@ static int
 plus(void)
 {
 	switch (*input->p++) {
-	case '+': return INC;
-	case '=': return ADD_EQ;
-	default: --input->p; return '+';
+	case '+':
+		return INC;
+	case '=':
+		return ADD_EQ;
+	default:
+		--input->p;
+		return '+';
 	}
 }
 
@@ -655,19 +674,45 @@ operator(void)
 	int t;
 
 	switch (t = *input->p++) {
-	case '<': t = relational('<', LE, SHL, SHL_EQ); break;
-	case '>': t = relational('>', GE, SHR, SHR_EQ); break;
-	case '&': t = logic('&', AND_EQ, AND); break;
-	case '|': t = logic('|', OR_EQ, OR); break;
-	case '=': t = follow('=', EQ, '='); break;
-	case '^': t = follow('=', XOR_EQ, '^'); break;
-	case '*': t = follow('=', MUL_EQ, '*'); break;
-	case '/': t = follow('=', DIV_EQ, '/'); break;
-	case '!': t = follow('=', NE, '!'); break;
-	case '#': t = follow('#', '$', '#'); break;
-	case '-': t = minus(); break;
-	case '+': t = plus(); break;
-	case '.': t = dot(); break;
+	case '<':
+		t = relational('<', LE, SHL, SHL_EQ);
+		break;
+	case '>':
+		t = relational('>', GE, SHR, SHR_EQ);
+		break;
+	case '&':
+		t = logic('&', AND_EQ, AND);
+		break;
+	case '|':
+		t = logic('|', OR_EQ, OR);
+		break;
+	case '=':
+		t = follow('=', EQ, '=');
+		break;
+	case '^':
+		t = follow('=', XOR_EQ, '^');
+		break;
+	case '*':
+		t = follow('=', MUL_EQ, '*');
+		break;
+	case '/':
+		t = follow('=', DIV_EQ, '/');
+		break;
+	case '!':
+		t = follow('=', NE, '!');
+		break;
+	case '#':
+		t = follow('#', '$', '#');
+		break;
+	case '-':
+		t = minus();
+		break;
+	case '+':
+		t = plus();
+		break;
+	case '.':
+		t = dot();
+		break;
 	}
 	tok2str();
 	return t;
