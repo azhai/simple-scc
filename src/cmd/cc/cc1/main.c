@@ -13,7 +13,6 @@ char *argv0, *infile;
 int warnings;
 jmp_buf recover;
 
-static struct items uflags;
 int onlycpp, onlyheader;
 
 
@@ -44,18 +43,14 @@ int
 main(int argc, char *argv[])
 {
 	int i;
-
-	ilex();
-	icpp();
-	icode();
-	ibuilts();
+	static struct items uflags, dflags, iflags;
 
 	ARGBEGIN {
 	case 'a':
 		architecture = EARGF(usage());
 		break;
 	case 'D':
-		defmacro(EARGF(usage()));
+		newitem(&dflags, EARGF(usage()));
 		break;
 	case 'M':
 		onlyheader = 1;
@@ -64,7 +59,7 @@ main(int argc, char *argv[])
 		onlycpp = 1;
 		break;
 	case 'I':
-		incdir(EARGF(usage()));
+		newitem(&iflags, EARGF(usage()));
 		break;
 	case 'U':
 		newitem(&uflags, EARGF(usage()));
@@ -82,17 +77,24 @@ main(int argc, char *argv[])
 	if (argc > 1)
 		usage();
 
+	icode();
+	iarch();
+	ilex();
+	icpp();
+	ibuilts();
+
+	for (i = 0; i < iflags.n; ++i)
+		incdir(iflags.s[i]);
+
+	for (i = 0; i < dflags.n; ++i)
+		defmacro(dflags.s[i]);
+
 	for (i = 0; i < uflags.n; ++i)
 		undefmacro(uflags.s[i]);
 
 	infile = (*argv) ? *argv : "<stdin>";
 	addinput(*argv, NULL, NULL);
 
-	/*
-	 * we cannot initialize arch until we have an
-	 * output stream, because we maybe want to emit new types
-	 */
-	iarch();
 	if (onlycpp || onlyheader) {
 		outcpp();
 	} else {
