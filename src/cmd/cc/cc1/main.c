@@ -35,7 +35,7 @@ static void
 usage(void)
 {
 	fputs("usage: cc1 [-Ewd] [-D def[=val]]... [-U def]... "
-	      "[-I dir]... [-o output] [input]\n", stderr);
+	      "[-I dir]... [-a architecture] [input]\n", stderr);
 	exit(1);
 }
 
