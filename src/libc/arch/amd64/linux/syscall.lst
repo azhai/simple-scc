@@ -10,3 +10,4 @@
 60	_Exit
 62	_kill
 87	_unlink
+96	_gettimeofday

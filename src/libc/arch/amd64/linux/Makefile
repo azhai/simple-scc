@@ -13,6 +13,7 @@ GENOBJS =\
 	_read.$O\
 	_write.$O\
 	_brk.$O\
+	_gettimeofday.$O\
 	_sigaction.$O\
 	_unlink.$O\
 
