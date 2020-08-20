@@ -11,3 +11,4 @@
 62	_kill
 87	_unlink
 96	_gettimeofday
+98	_getrusage

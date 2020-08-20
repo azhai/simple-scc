@@ -7,8 +7,6 @@
 #include <arch/cdefs.h>
 #include <arch/time.h>
 
-#define CLOCKS_PER_SEC 1000000
-
 typedef long int clock_t;
 
 struct tm {

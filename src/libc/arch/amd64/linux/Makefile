@@ -15,6 +15,7 @@ GENOBJS =\
 	_brk.$O\
 	_gettimeofday.$O\
 	_sigaction.$O\
+	_getrusage.$O\
 	_unlink.$O\
 
 GENSRC = $(GENOBJS:.$O=.s)
@@ -25,6 +26,7 @@ OBJS  = \
 	raise.$O\
 	signal.$O\
 	time.$O\
+	clock.$O\
 	_cerrno.$O\
 	_getheap.$O\
 	_tzone.$O\
