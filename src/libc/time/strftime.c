@@ -106,6 +106,10 @@ strftime(char * restrict s, size_t siz,
 		fill = '0';
 		width = 2;
 
+		if (*fmt == 'E' || *fmt == 'O') {
+			fmt++;
+		}
+
 		switch (*fmt++) {
 		case 'Z':
 			if (!tm->tm_zone)
@@ -173,7 +177,7 @@ strftime(char * restrict s, size_t siz,
 		case 'V':
 		case 'g':
 		case 'G':
-			/* TODO */
+			inc = 0;
 			break;
 		case 'C':
 			val = tm->tm_year / 100;
@@ -231,10 +235,6 @@ strftime(char * restrict s, size_t siz,
 		case 'z':
 			inc = timezone(s, n, tm);
 			break;
-		case 'E':
-		case 'O':
-			if (*fmt != '\0')
-				fmt += 2;;
 		case '\0':
 			inc = 0;
 			--fmt;
