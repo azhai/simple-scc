@@ -17,6 +17,33 @@ static char *months[] = {
 
 static char *am_pm[] = {"AM", "PM"};
 
+static int
+first(int day, int year)
+{
+	int ny;
+
+	ny = _newyear(year);
+	if (ny == day)
+		return 0;
+	return 7 - ny + day;
+}
+
+static int
+weeknum(struct tm* tm, int day)
+{
+	int fday, val;
+
+	fday = first(day, tm->tm_year);
+	if (tm->tm_yday < fday) {
+		val = 0;
+	} else {
+		val = tm->tm_yday - fday;
+		val /= 7;
+		val++;
+	}
+	return val;
+}
+
 static size_t
 sval(char *s, size_t siz, char **strs, int abrev, int idx, int max)
 {
@@ -210,14 +237,10 @@ strftime(char * restrict s, size_t siz,
 			val = tm->tm_wday+1;
 			goto number;
 		case 'U':
-			val = tm->tm_yday / 7;
-			if (_newyear(tm->tm_year) == SAT)
-				val++;
+			val = weeknum(tm, SUN);
 			goto number;
 		case 'W':
-			val = tm->tm_yday / 7;
-			if (_newyear(tm->tm_year) == MON)
-				val++;
+			val = weeknum(tm, MON);
 			goto number;
 		case 'w':
 			width = 1;
