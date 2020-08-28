@@ -43,7 +43,7 @@ normalize(struct tm *tm)
 	}
 
 	day = tm->tm_mday;
-	year = EPOCH + tm->tm_year;
+	year = 1900 + tm->tm_year;
 	_daysmon[FEB] = FEBDAYS(year);
 
 	for (mon = tm->tm_mon; day < 1; --mon) {
@@ -69,7 +69,7 @@ normalize(struct tm *tm)
 	}
 
 	tm->tm_mon = mon;
-	tm->tm_year = year - EPOCH;
+	tm->tm_year = year - 1900;
 	tm->tm_mday = day;
 	tm->tm_wday = (_newyear(tm->tm_year) + tm->tm_yday) % 7;
 
