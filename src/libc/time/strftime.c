@@ -25,7 +25,7 @@ first(int day, int year)
 	ny = _newyear(year);
 	if (ny == day)
 		return 0;
-	return 7 - ny + day;
+	return 7 - (ny + day);
 }
 
 
