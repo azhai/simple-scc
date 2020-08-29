@@ -28,6 +28,7 @@ first(int day, int year)
 	return 7 - ny + day;
 }
 
+
 static int
 weeknum(struct tm* tm, int day)
 {
@@ -41,6 +42,42 @@ weeknum(struct tm* tm, int day)
 		val /= 7;
 		val++;
 	}
+	return val;
+}
+
+static int
+isoyear(struct tm* tm)
+{
+	int monday;
+
+	if (tm->tm_yday < 7) {
+		monday = first(THU, tm->tm_year) - 3;
+		if (tm->tm_yday < monday)
+			return tm->tm_year - 1;
+	} else if (tm->tm_yday > 357) {
+		monday = first(THU, tm->tm_year + 1) - 3;
+		if (tm->tm_mday >= (31 + monday))
+			return tm->tm_year + 1;
+	}
+	return tm->tm_year;
+}
+
+static int
+isoweek(struct tm* tm)
+{
+	int year, monday, yday, val;
+
+	year = isoyear(tm);
+	monday = first(THU, year) - 3;
+	yday = tm->tm_yday;
+	if (year > tm->tm_year) {
+		yday = tm->tm_mday - 31 + monday;
+	} else if (year < tm->tm_year) {
+		yday = _daysyear(year) + yday;
+	}
+	val = yday - monday;
+	val /= 7;
+	val++;
 	return val;
 }
 
@@ -202,10 +239,16 @@ strftime(char * restrict s, size_t siz,
 			val = tm->tm_mday;
 			goto number;
 		case 'V':
+			val = isoweek(tm);
+			goto number;
 		case 'g':
+			val = isoyear(tm);
+			goto number;
 		case 'G':
-			inc = 0;
-			break;
+			val = isoyear(tm);
+			val += 1900;
+			width = 4;
+			goto number;
 		case 'C':
 			val = tm->tm_year / 100;
 			goto number;
