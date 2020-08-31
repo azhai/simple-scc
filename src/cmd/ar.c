@@ -640,7 +640,9 @@ main(int argc, char *argv[])
 		usage();
 
 	signal(SIGINT, sigfun);
+#ifdef SIGQUIT
 	signal(SIGQUIT, sigfun);
+#endif
 	signal(SIGTERM, sigfun);
 
 	arfile = *argv;
