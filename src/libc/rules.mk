@@ -11,7 +11,7 @@ LIBCLST= $(PROJECTDIR)/src/libc/libc.lst
 
 MKLST = \
 	echo $?  |\
-	sed 's/ /\n/g' |\
+	tr ' ' '\n' |\
 	sed '/^$$/d' |\
 	sed 's@^@$(PWD)/@' >> $(LIBCLST)
 
