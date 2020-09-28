@@ -32,7 +32,7 @@ norm(int *val, int *next, int qty)
 static int
 normalize(struct tm *tm)
 {
-	int mon, day, year;
+	int mon, day, year, yday;
 	struct tm aux = *tm;
 
 	if (!norm(&tm->tm_sec, &tm->tm_min, 60)   ||
@@ -43,6 +43,7 @@ normalize(struct tm *tm)
 	}
 
 	day = tm->tm_mday;
+	yday = 0;
 	year = 1900 + tm->tm_year;
 	_daysmon[FEB] = FEBDAYS(year);
 
@@ -68,9 +69,13 @@ normalize(struct tm *tm)
 		}
 	}
 
+	for (int i = 0; i < mon; i++)
+		yday += _daysmon[i];
+
 	tm->tm_mon = mon;
 	tm->tm_year = year - 1900;
 	tm->tm_mday = day;
+	tm->tm_yday = yday + day - 1;
 	tm->tm_wday = (_newyear(tm->tm_year) + tm->tm_yday) % 7;
 
 	return 1;
