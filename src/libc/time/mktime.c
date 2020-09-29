@@ -14,14 +14,14 @@ norm(int *val, int *next, int qty)
 		v += d * qty;
 		if (n > INT_MAX - d)
 			return 0;
-		n += d;
+		n -= d;
 	}
 	if (v >= qty) {
 		d = v / qty;
 		v -= d * qty;
 		if (n < INT_MIN + d)
 			return 0;
-		n -= d;
+		n += d;
 	}
 
 	*val = v;
@@ -48,7 +48,6 @@ normalize(struct tm *tm)
 	_daysmon[FEB] = FEBDAYS(year);
 
 	for (mon = tm->tm_mon; day < 1; --mon) {
-		day += _daysmon[mon];
 		if (mon == JAN) {
 			if (year == EPOCH)
 				return 0;
@@ -56,6 +55,7 @@ normalize(struct tm *tm)
 			_daysmon[FEB] = FEBDAYS(year);
 			mon = DEC+1;
 		}
+		day += _daysmon[mon-1];
 	}
 
 	for (; day > _daysmon[mon]; ++mon) {
