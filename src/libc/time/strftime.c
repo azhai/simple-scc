@@ -252,7 +252,7 @@ strftime(char * restrict s, size_t siz,
 			width = 4;
 			goto number;
 		case 'C':
-			val = tm->tm_year / 100;
+			val = (tm->tm_year + 1900) / 100;
 			goto number;
 		case 'H':
 			val = tm->tm_hour;
