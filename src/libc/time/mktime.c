@@ -42,6 +42,9 @@ normalize(struct tm *tm)
 		return 0;
 	}
 
+	if (tm->tm_year < 0)
+		return 0;
+
 	day = tm->tm_mday;
 	yday = 0;
 	year = 1900 + tm->tm_year;
@@ -49,7 +52,7 @@ normalize(struct tm *tm)
 
 	for (mon = tm->tm_mon; day < 1; --mon) {
 		if (mon == JAN) {
-			if (year == EPOCH)
+			if (year == 1900)
 				return 0;
 			year--;
 			_daysmon[FEB] = FEBDAYS(year);
