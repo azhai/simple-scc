@@ -109,13 +109,7 @@ mktime(struct tm *tm)
 
 	aux = localtime(&t);
 
-	dst = 0;
-	if (tm->tm_isdst == 0 && aux->tm_isdst == 1)
-		dst = -SECHOUR;
-	else if (tm->tm_isdst == 1 && aux->tm_isdst == 0)
-		dst = +SECHOUR;
-
-	t += aux->tm_gmtoff + dst;
+	t += aux->tm_gmtoff;
 
 	return t;
 }

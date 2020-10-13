@@ -24,11 +24,19 @@ struct tzone {
 
 struct tm;
 
-extern struct tzone *_tzone(struct tm *tm);
+extern void _tzset(void);
 extern int _daysyear(int year);
 extern int _newyear(int year);
 extern void *_getheap(void);
 extern int _dtoi(char);
+
+#ifdef _TIME_H
+extern char *_tzname[2];
+extern time_t _tzstdoff, _tzdstoff;
+extern time_t _tzstart, _tzend;
+extern int _tzjulian;
+extern struct tzone tzones[];
+#endif
 
 #ifdef stdin
 extern int _flsbuf(FILE *fp);

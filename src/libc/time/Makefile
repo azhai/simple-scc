@@ -12,11 +12,17 @@ OBJS =\
 	localtime.$O\
 	mktime.$O\
 	strftime.$O\
+	tz.$O\
 
 all: $(LIBC)
 
 $(LIBC): $(OBJS)
 	$(MKLST)
+
+$(OBJS): tz.c
+
+tz.c: timezone.lst
+	awk -f gentz.awk $< >$@
 
 dep: inc-dep
 
