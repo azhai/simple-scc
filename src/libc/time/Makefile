@@ -22,7 +22,7 @@ $(LIBC): $(OBJS)
 $(OBJS): tz.c
 
 tz.c: timezone.lst
-	awk -f gentz.awk $< >$@
+	awk -f gentz.awk $? >$@
 
 dep: inc-dep
 
