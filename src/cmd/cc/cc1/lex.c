@@ -83,8 +83,8 @@ setloc(char *fname, unsigned line)
 	lineno = input->lineno = line;
 }
 
-void
-addinput(char *fname, Symbol *hide, char *buffer)
+int
+addinput(char *fname, Symbol *hide, char *buffer, int fail)
 {
 	FILE *fp;
 	char *extp;
@@ -101,8 +101,11 @@ addinput(char *fname, Symbol *hide, char *buffer)
 		flags = IMACRO;
 	} else  if (fname) {
 		/* a new file */
-		if ((fp = fopen(fname, "r")) == NULL)
+		if ((fp = fopen(fname, "r")) == NULL) {
+			if (!fail)
+				return 0;
 			die("cc1: %s: %s", fname, strerror(errno));
+		}
 		flags = IFILE;
 		if (curip && onlyheader) {
 			infileln = strlen(infile);
@@ -138,6 +141,7 @@ addinput(char *fname, Symbol *hide, char *buffer)
 	input = newip;
 
 	setloc(fname, (curip) ? curip->lineno : newip->lineno);
+	return 1;
 }
 
 void

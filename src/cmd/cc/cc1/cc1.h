@@ -5,6 +5,9 @@
 
 #define NR_USWITCHES 20
 
+#define FAIL   0
+#define NOFAIL 1
+
 /*
  * Definition of enumerations
  */
@@ -447,7 +450,7 @@ extern int ahead(void);
 extern int next(void);
 extern void expect(int tok);
 extern void discard(void);
-extern void addinput(char *fname, Symbol *hide, char *buffer);
+extern int addinput(char *fname, Symbol *hide, char *buffer, int fail);
 extern void delinput(void);
 extern void setsafe(int type);
 extern void ilex(void);

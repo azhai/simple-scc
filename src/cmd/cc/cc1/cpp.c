@@ -32,7 +32,7 @@ defdefine(char *macro, char *val, char *source)
 
 	sprintf(def, fmt, macro, val);
 	lineno = ++ncmdlines;
-	addinput(source, &dummy, def);
+	addinput(source, &dummy, def, FAIL);
 	cpp();
 	delinput();
 }
@@ -273,7 +273,7 @@ expand(char *begin, Symbol *sym)
 substitute:
 	DBG("MACRO '%s' expanded to :'%s'", macroname, buffer);
 	buffer[elen] = '\0';
-	addinput(filenam, sym, xstrdup(buffer));
+	addinput(filenam, sym, xstrdup(buffer), FAIL);
 
 	return 1;
 }
@@ -440,8 +440,7 @@ includefile(char *dir, char *file, size_t filelen)
 	memcpy(path+dirlen, file, filelen);
 	path[dirlen + filelen] = '\0';
 
-	addinput(path, NULL, NULL);
-	return 1;
+	return addinput(path, NULL, NULL, NOFAIL);
 }
 
 static char *

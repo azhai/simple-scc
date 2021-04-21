@@ -93,7 +93,7 @@ main(int argc, char *argv[])
 		undefmacro(uflags.s[i]);
 
 	infile = (*argv) ? *argv : "<stdin>";
-	addinput(*argv, NULL, NULL);
+	addinput(*argv, NULL, NULL, FAIL);
 
 	if (onlycpp || onlyheader) {
 		outcpp();
