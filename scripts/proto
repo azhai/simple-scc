@@ -157,12 +157,9 @@ d 755 libexec/scc
 f 755 libexec/scc/as-i386
 f 755 libexec/scc/as-i286
 f 755 libexec/scc/cc2-qbe_amd64-sysv
-f 755 libexec/scc/cc1-amd64-sysv
+f 755 libexec/scc/cc1
 f 755 libexec/scc/as-powerpc64
-f 755 libexec/scc/cc1-i386-sysv
-f 755 libexec/scc/cc1-z80-scc
 f 755 libexec/scc/cc2-i386-sysv
-f 755 libexec/scc/cc1-arm64-sysv
 f 755 libexec/scc/as-powerpc
 f 755 libexec/scc/as-amd64
 f 755 libexec/scc/cc2-amd64-sysv
