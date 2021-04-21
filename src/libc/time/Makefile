@@ -26,4 +26,6 @@ tz.c: timezone.lst
 
 dep: inc-dep
 
+distclean: tz.c
+
 include deps.mk
