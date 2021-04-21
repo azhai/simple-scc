@@ -141,14 +141,14 @@ setargv0(int tool, char *arg)
 		newitem(&t->args, arg);
 }
 
-static int
-qbe(int tool)
+static char *
+cc12fmt(int tool)
 {
-	if (tool != CC2 || !Qflag)
-		return 0;
-	if (!strcmp(arch, "amd64") && !strcmp(abi, "sysv"))
-		return 1;
-	return 0;
+	if (tool == CC1)
+		return "%s";
+	if (Qflag && !strcmp(arch, "amd64") && !strcmp(abi, "sysv"))
+		return "%s-qbe_%s-%s";
+	return "%s-%s-%s";
 }
 
 static int
@@ -170,7 +170,7 @@ inittool(int tool)
 			addarg(tool, path(sysincludes[n]));
 		}
 	case CC2:
-		fmt = (qbe(tool)) ? "%s-qbe_%s-%s" : "%s-%s-%s";
+		fmt = cc12fmt(tool);
 		n = snprintf(t->bin, sizeof(t->bin), fmt, t->cmd, arch, abi);
 		if (n < 0 || n >= sizeof(t->bin))
 			die("cc: target tool name is too long");
