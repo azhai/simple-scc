@@ -88,7 +88,7 @@ arm64_sysv(void)
 			.align = 2,
 			.n.rank = RANK_SHORT,
 		},
-		.uinttype = (Type) {
+		.uinttype = {
 			.op = INT,
 			.letter = L_UINT32,
 			.prop = TDEFINED | TINTEGER | TARITH,
@@ -96,7 +96,7 @@ arm64_sysv(void)
 			.align = 4,
 			.n.rank = RANK_UINT,
 		},
-		.inttype = (Type) {
+		.inttype = {
 			.op = INT,
 			.letter = L_INT32,
 			.prop = TDEFINED | TINTEGER | TARITH | TSIGNED,
