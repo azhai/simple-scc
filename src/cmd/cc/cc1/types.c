@@ -138,7 +138,7 @@ ctype(int type, int sign, int size)
 		case 0:
 			return (sign == UNSIGNED) ? uinttype   : inttype;
 		case SHORT:
-			return (sign == UNSIGNED) ? ushortype  : shortype;
+			return (sign == UNSIGNED) ? ushorttype  : shorttype;
 		case LONG:
 			return (sign == UNSIGNED) ? ulongtype  : longtype;
 		case LLONG:

@@ -19,7 +19,7 @@ builtin_va_arg(Symbol *sym)
 	}
 	if (tp == booltype ||
 	    tp == chartype || tp == uchartype || tp == schartype ||
-	    tp == shortype || tp == ushortype) {
+	    tp == shorttype || tp == ushorttype) {
 		warn("bool, char and short are promoted to int when passed through '...'");
 		tp = (tp->prop & TSIGNED) ? inttype : uinttype;
 	}
@@ -75,7 +75,7 @@ builtin_va_start(Symbol *sym)
 	tp = last->type;
 	if (tp == booltype ||
 	    tp == chartype || tp == uchartype || tp == schartype ||
-	    tp == shortype || tp == ushortype) {
+	    tp == shorttype || tp == ushorttype) {
 		warn("last parameter before '...' must not be bool, char or short");
 	}
 

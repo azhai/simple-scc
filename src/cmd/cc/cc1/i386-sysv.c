@@ -71,7 +71,7 @@ i386_sysv(void)
 			.align = 1,
 			.n.rank = RANK_CHAR,
 		},
-		.ushortype = {
+		.ushorttype = {
 			.op = INT,
 			.letter = L_UINT16,
 			.prop = TDEFINED | TINTEGER | TARITH,
@@ -80,7 +80,7 @@ i386_sysv(void)
 			.n.rank = RANK_USHORT,
 
 		},
-		.shortype = {
+		.shorttype = {
 			.op = INT,
 			.letter = L_INT16,
 			.prop = TDEFINED | TINTEGER | TARITH | TSIGNED,

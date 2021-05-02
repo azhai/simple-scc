@@ -9,7 +9,7 @@ Type *voidtype, *pvoidtype, *booltype,
      *uchartype, *chartype, *schartype,
      *uinttype, *inttype,
      *sizettype, *pdifftype,
-     *ushortype, *shortype,
+     *ushorttype, *shorttype,
      *longtype, *ulongtype,
      *ullongtype, *llongtype,
      *floattype, *doubletype, *ldoubletype,
@@ -66,8 +66,8 @@ iarch(void)
 	inttype = &arch->inttype;
 	sizettype = &arch->sizettype;
 	pdifftype = &arch->pdifftype;
-	ushortype = &arch->ushortype;
-	shortype = &arch->shortype;
+	ushorttype = &arch->ushorttype;
+	shorttype = &arch->shorttype;
 	longtype = &arch->longtype;
 	ulongtype = &arch->ulongtype;
 	ullongtype = &arch->ullongtype;
