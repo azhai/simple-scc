@@ -1,5 +1,5 @@
-#define _POSIX_SOURCE
-#define _XOPEN_SOURCE 500
+#define _POSIX_SOURCE 200809L
+
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
