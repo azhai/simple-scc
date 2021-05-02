@@ -348,6 +348,7 @@ arithmetic(int op, Node *lp, Node *rp)
 		}
 	}
 	errorp("incorrect arithmetic operands");
+	return lp;
 }
 
 static Node *
