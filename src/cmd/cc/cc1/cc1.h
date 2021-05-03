@@ -370,8 +370,8 @@ struct arch {
 	Type schartype;
 	Type uchartype;
 	Type chartype;
-	Type ushortype;
-	Type shortype;
+	Type ushorttype;
+	Type shorttype;
 	Type uinttype;
 	Type inttype;
 	Type longtype;
@@ -530,7 +530,7 @@ extern Type *voidtype, *pvoidtype, *booltype,
             *uchartype,   *chartype, *schartype,
             *uinttype,    *inttype,
             *sizettype, *pdifftype,
-            *ushortype,   *shortype,
+            *ushorttype,   *shorttype,
             *longtype,    *ulongtype,
             *ullongtype,  *llongtype,
             *floattype,   *doubletype,  *ldoubletype,

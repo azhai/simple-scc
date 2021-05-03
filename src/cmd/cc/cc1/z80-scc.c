@@ -71,7 +71,7 @@ z80_scc(void)
 			.align = 1,
 			.n.rank = RANK_CHAR,
 		},
-		.ushortype = {
+		.ushorttype = {
 			.op = INT,
 			.letter = L_UINT16,
 			.prop = TDEFINED | TINTEGER | TARITH,
@@ -80,7 +80,7 @@ z80_scc(void)
 			.n.rank = RANK_USHORT,
 
 		},
-		.shortype = {
+		.shorttype = {
 			.op = INT,
 			.letter = L_INT16,
 			.prop = TDEFINED | TINTEGER | TARITH | TSIGNED,
@@ -88,7 +88,7 @@ z80_scc(void)
 			.align = 2,
 			.n.rank = RANK_SHORT,
 		},
-		.uinttype = (Type) {
+		.uinttype = {
 			.op = INT,
 			.letter = L_UINT16,
 			.prop = TDEFINED | TINTEGER | TARITH,
@@ -96,7 +96,7 @@ z80_scc(void)
 			.align = 1,
 			.n.rank = RANK_UINT,
 		},
-		.inttype = (Type) {
+		.inttype = {
 			.op = INT,
 			.letter = L_INT16,
 			.prop = TDEFINED | TINTEGER | TARITH | TSIGNED,

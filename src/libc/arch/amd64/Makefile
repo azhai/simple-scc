@@ -22,7 +22,9 @@ OBJS =\
 
 all: $(LIBC) $(SYS)
 
-$(LIBC): $(OBJS)
+$(LIBC): $(LIBCLST)
+
+$(LIBCLST): $(OBJS)
 	$(MKLST)
 
 dep: inc-dep
