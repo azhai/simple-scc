@@ -1,4 +1,5 @@
 .POSIX:
+
 PROJECTDIR =../../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../../../rules.mk
@@ -37,7 +38,7 @@ $(LIBC): $(OBJS)
 crt.o: ../crt-posix.s
 
 $(GENSRC): syscall.lst
-	gensys.sh $(@:.s=)
+	./gensys.sh $(@:.s=)
 
 dep: inc-dep
 

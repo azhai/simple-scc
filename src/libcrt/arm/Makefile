@@ -1,4 +1,5 @@
 .POSIX:
+
 PROJECTDIR=../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
@@ -8,4 +9,5 @@ TARGET = $(LIBCDIR)/libcrt.a
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	mklib -o $@ $?
+	$(AR) $(PROJ_ARFLAGS) $@ $?
+	$(RL) $(PROJ_RLFLAGS) $@

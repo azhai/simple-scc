@@ -16,8 +16,8 @@ OBJS =\
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS) $(LIBDIR)/libscc.a $(LIBDIR)/libmach.a
-	$(CC) $(SCC_LDFLAGS) $(OBJS) -lmach -lscc -o $@
+$(TARGET): $(OBJS) $(LIBMACH) $(LIBSCC)
+	$(CC) $(PROJ_LDFLAGS) $(OBJS) -lmach -lscc -o $@
 
 dep: inc-dep
 

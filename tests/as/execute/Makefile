@@ -1,4 +1,5 @@
 .POSIX:
+
 ROOT=../../../
 
 all: tests

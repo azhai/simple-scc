@@ -1,0 +1,3 @@
+DRIVER = posix
+
+HOST_CFLAGS = -D_POSIX_C_SOURCE=1

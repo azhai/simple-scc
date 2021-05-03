@@ -1,4 +1,5 @@
 .POSIX:
+
 ROOT=../../..
 
 OUT = z80.out

@@ -3,23 +3,25 @@
 PROJECTDIR = ../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-OBJS = debug.o \
-       die.o \
-       newitem.o \
-       xcalloc.o \
-       xmalloc.o \
-       xrealloc.o \
-       xstrdup.o \
-       alloc.o \
-       casecmp.o \
-       genhash.o
+OBJS =\
+	debug.o\
+	die.o\
+	newitem.o\
+	xcalloc.o\
+	xmalloc.o\
+	xrealloc.o\
+	xstrdup.o\
+	alloc.o\
+	casecmp.o\
+	genhash.o\
 
-TARGET = $(LIBDIR)/libscc.a
+TARGET = $(LIBDIR)/scc/libscc.a
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	mklib -o $@ $(OBJS)
+	$(AR) $(PROJ_ARFLAGS) $@ $?
+	$(RL) $(PROJ_RLFLAGS) $@
 
 dep: inc-dep
 

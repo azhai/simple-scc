@@ -3,20 +3,22 @@
 PROJECTDIR = ../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-MORECFLAGS = -I$(INCDIR)/$(STD)
+MORE_CFLAGS = -I$(INCDIR)/$(STD)
 
-OBJS = main.o \
-       parser.o \
-       peep.o \
-       symbol.o \
-       node.o \
-       code.o \
-       optm.o \
+OBJS =\
+	main.o\
+	parser.o\
+	peep.o\
+	symbol.o\
+	node.o\
+	code.o\
+	optm.o\
 
-TARGET  = $(LIBEXEC)/cc2-amd64-sysv \
-          $(LIBEXEC)/cc2-i386-sysv \
-          $(LIBEXEC)/cc2-qbe_amd64-sysv \
-          $(LIBEXEC)/cc2-z80-scc \
+TARGET  =\
+	$(LIBEXEC)/scc/cc2-amd64-sysv\
+	$(LIBEXEC)/scc//cc2-i386-sysv\
+	$(LIBEXEC)/scc/cc2-qbe_amd64-sysv\
+	$(LIBEXEC)/scc//cc2-z80-scc\
 
 all: $(TARGET)
 

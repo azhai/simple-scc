@@ -1,4 +1,4 @@
-INCLUDE  =\
+CINCLUDES =\
 	-I$(INCDIR)\
 	-I$(INCDIR)/bits/$(SYS)\
 	-I$(INCDIR)/bits/$(ARCH)\
@@ -32,42 +32,42 @@ clean-libc: FORCE
 
 # amd64-posix objects
 .c.6:
-	$(CC) $(SCC_CFLAGS) -o $@ -c $<
+	$(CC) $(PROJ_CFLAGS) -o $@ -c $<
 
 .s.6:
-	$(AS) $(SCC_ASFLAGS) $< -o $@
+	$(AS) $(PROJ_ASFLAGS) $< -o $@
 
 # amd64-darwin objects
 .c.6d:
-	$(CC) $(SCC_CFLAGS) -o $@ -c $<
+	$(CC) $(PROJ_CFLAGS) -o $@ -c $<
 
 .s.6d:
-	$(AS) $(SCC_ASFLAGS) $< -o $@
+	$(AS) $(PROJ_ASFLAGS) $< -o $@
 
 # arm64-posix objects
 .c.7:
-	$(CC) $(SCC_CFLAGS) -o $@ -c $<
+	$(CC) $(PROJ_CFLAGS) -o $@ -c $<
 
 .s.7:
-	$(AS) $(SCC_ASFLAGS) $< -o $@
+	$(AS) $(PROJ_ASFLAGS) $< -o $@
 
 # 386-posix objects
 .c.8:
-	$(CC) $(SCC_CFLAGS) -o $@ -c $<
+	$(CC) $(PROJ_CFLAGS) -o $@ -c $<
 
 .s.8:
-	$(AS) $(SCC_ASFLAGS) $< -o $@
+	$(AS) $(PROJ_ASFLAGS) $< -o $@
 
 # z80 objects
 .c.z:
-	$(CC) $(SCC_CFLAGS) -o $@ -c $<
+	$(CC) $(PROJ_CFLAGS) -o $@ -c $<
 
 .s.z:
-	$(AS) $(SCC_ASFLAGS) $< -o $@
+	$(AS) $(PROJ_ASFLAGS) $< -o $@
 
 # ppc32 objects
 .c.q:
-	$(CC) $(SCC_CFLAGS) -o $@ -c $<
+	$(CC) $(PROJ_CFLAGS) -o $@ -c $<
 
 .s.q:
-	$(AS) $(SCC_ASFLAGS) $< -o $@
+	$(AS) $(PROJ_ASFLAGS) $< -o $@

@@ -23,12 +23,12 @@ OBJS =\
 	i386-sysv.o \
 	z80-scc.o\
 
-TARGET   = $(LIBEXEC)/cc1
+TARGET   = $(LIBEXEC)/scc/cc1
 
 all: $(TARGET)
 
-$(TARGET): $(LIBDIR)/libscc.a $(OBJS)
-	$(CC) $(SCC_LDFLAGS) $(OBJS) -lscc -o $@
+$(TARGET): $(LIBSCC) $(OBJS)
+	$(CC) $(PROJ_LDFLAGS) $(OBJS) -lscc -o $@
 
 dep: inc-dep
 

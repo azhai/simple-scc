@@ -1,4 +1,4 @@
-TOOLCFLAGS = -std=c99
+TOOL_CFLAGS = -std=c99
 
 COMP = gcc
 ASM = as
@@ -6,7 +6,7 @@ LINKER = ld
 RANLIB = ranlib
 ARCHIVE = ar
 
-ARCHIVEFLAGS = -U
+ARCHIVE_FLAGS = -U
 NOPIE_CFLAGS = -nopie
 NOPIE_LDFLAGS = -nopie
-TOOLCFLAGS = -std=c99 -fno-stack-protector -static
+TOOL_CFLAGS = -std=c99 -fno-stack-protector -static

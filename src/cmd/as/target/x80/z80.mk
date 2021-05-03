@@ -7,5 +7,5 @@ Z80_OBJ =\
 target/x80/z80tbl.c: target/x80/ops.dat target/x80/opers.dat
 	./mktbl -f x80 -c z80
 
-$(LIBEXEC)/as-z80: $(OBJ) $(Z80_OBJ)
-	$(CC) $(SCC_LDFLAGS) $(Z80_OBJ) -lscc -o $@
+$(LIBEXEC)/scc/as-z80: $(OBJ) $(Z80_OBJ)
+	$(CC) $(PROJ_LDFLAGS) $(Z80_OBJ) -lscc -o $@

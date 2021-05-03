@@ -8,5 +8,5 @@ POWERPC_OBJ =\
 $(POWERPC)/powerpctbl.c: $(POWERPC)/ops.dat $(POWERPC)/opers.dat
 	./mktbl -f powerpc -c powerpc
 
-$(LIBEXEC)/as-powerpc: $(POWERPC_OBJ)
-	$(CC) $(SCC_LDFLAGS) $(POWERPC_OBJ) -lscc -o $@
+$(LIBEXEC)/scc/as-powerpc: $(POWERPC_OBJ)
+	$(CC) $(PROJ_LDFLAGS) $(POWERPC_OBJ) -lscc -o $@

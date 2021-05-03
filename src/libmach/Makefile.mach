@@ -3,9 +3,10 @@ PROJECTDIR =../..
 include $(PROJECTDIR)/scripts/rules.mk
 include objlst.mk
 
-TARGET = $(LIBDIR)/libmach.a
+TARGET = $(LIBDIR)/scc/libmach.a
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	mklib -o $@ $?
+	$(AR) $(PROJ_ARFLAGS) $@ $?
+	$(RL) $(PROJ_RLFLAGS) $@

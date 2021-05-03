@@ -1,8 +1,9 @@
-include $(PROJECTDIR)/config/tool/gnu.mk
+include $(BUILDDIR)/tool/gnu.mk
+
+TOOL_ASFLAGS = -c
 
 COMP = clang
 ASM = clang
-TOOLASFLAGS = -c
 LINKER = ld.lld
 OBJCOPY = llvm-objcopy
 OBJDUMP = llvm-objdump

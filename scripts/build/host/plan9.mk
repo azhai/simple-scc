@@ -1,0 +1,3 @@
+DRIVER = posix
+
+HOST_CFLAGS = -D_SUSV2_SOURCE

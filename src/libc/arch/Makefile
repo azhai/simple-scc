@@ -1,7 +1,4 @@
 .POSIX:
-PROJECTDIR =../../..
-include $(PROJECTDIR)/scripts/rules.mk
-include ../rules.mk
 
 DIRS =\
 	amd64\
@@ -10,8 +7,11 @@ DIRS =\
 	i386\
 	ppc\
 
-all:
-	+@cd $(ARCH) && $(MAKE)
+PROJECTDIR =../../..
+include $(PROJECTDIR)/scripts/rules.mk
+include ../rules.mk
+
+all: $(ARCH)
 
 dep clean:
 	$(FORALL)

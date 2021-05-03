@@ -1,8 +1,12 @@
 .POSIX:
+
+DIRS =\
+	coff32
+
 PROJECTDIR =../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-TARGET = $(LIBDIR)/libmach.a
+TARGET = $(LIBDIR)/scc/libmach.a
 
 OBJS =\
 	mach.o\
@@ -28,17 +32,12 @@ OBJS =\
 	setindex.o\
 	getindex.o\
 
-DIRS = coff32
-
 
 all: $(OBJS) $(DIRS) objlst.mk
 	+@$(MAKE) -f Makefile.mach
 
-$(DIRS): FORCE
-	+@cd $@ && $(MAKE)
-
 objlst.mk: $(OBJS) $(DIRS)
-	mklst $@
+	./mklst $@
 
 dep: inc-dep
 	$(FORALL)

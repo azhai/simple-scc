@@ -3,7 +3,7 @@
 PROJECTDIR = ../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-MORECFLAGS = -I$(INCDIR)/$(STD)
+MORE_CFLAGS = -I$(INCDIR)/$(STD)
 
 OBJS = \
 	main.o\
@@ -13,16 +13,16 @@ OBJS = \
 	expr.o\
 
 TARGET =\
-	$(LIBEXEC)/as-powerpc64\
-	$(LIBEXEC)/as-powerpc\
-	$(LIBEXEC)/as-amd64\
-	$(LIBEXEC)/as-i386\
-	$(LIBEXEC)/as-i286\
-	$(LIBEXEC)/as-z80 \
+	$(LIBEXEC)/scc/as-powerpc64\
+	$(LIBEXEC)/scc/as-powerpc\
+	$(LIBEXEC)/scc/as-amd64\
+	$(LIBEXEC)/scc/as-i386\
+	$(LIBEXEC)/scc/as-i286\
+	$(LIBEXEC)/scc/as-z80 \
 
 all: $(TARGET)
 
-$(TARGET): $(LIBDIR)/libscc.a
+$(TARGET): $(LIBSCC)
 
 dep: inc-dep
 

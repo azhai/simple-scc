@@ -1,7 +1,4 @@
 .POSIX:
-PROJECTDIR =../..
-include $(PROJECTDIR)/scripts/rules.mk
-include rules.mk
 
 DIRS =\
 	arch\
@@ -13,13 +10,16 @@ DIRS =\
 	string\
 	time\
 
+PROJECTDIR =../..
+include $(PROJECTDIR)/scripts/rules.mk
+include rules.mk
+
+
 all: $(LIBC)
 
 $(LIBC): $(DIRS)
-	mklib -o $@ `cat $(LIBCLST)`;\
-
-$(DIRS): rm-lst
-	+@cd $@ && $(MAKE)
+	$(AR) $(PROJ_ARFLAGS) $@ `cat $(LIBCLST)`
+	$(RL) $(PROJ_RLFLAGS) $@
 
 rm-lst: FORCE
 	rm -f $(LIBCLST)

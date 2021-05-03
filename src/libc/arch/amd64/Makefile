@@ -1,4 +1,12 @@
 .POSIX:
+
+DIRS =\
+	netbsd\
+	openbsd\
+	dragonfly\
+	linux\
+	darwin\
+
 PROJECTDIR =../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../../rules.mk
@@ -12,20 +20,10 @@ OBJS =\
 	memmove.$O\
 	memset.$O\
 
-DIRS =\
-	netbsd\
-	openbsd\
-	dragonfly\
-	linux\
-	darwin\
-
 all: $(LIBC) $(SYS)
 
 $(LIBC): $(OBJS)
 	$(MKLST)
-
-$(SYS): FORCE
-	+@cd $@ && $(MAKE)
 
 dep: inc-dep
 

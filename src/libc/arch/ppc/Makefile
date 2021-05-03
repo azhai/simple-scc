@@ -1,4 +1,8 @@
 .POSIX:
+
+DIRS =\
+	linux\
+
 PROJECTDIR =../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../../rules.mk
@@ -12,15 +16,10 @@ OBJS =\
 	memmove.$O\
 	memset.$O\
 
-DIRS =  linux
-
 all: $(LIBC) $(SYS)
 
 $(LIBC): $(OBJS)
 	$(MKLST)
-
-$(SYS): FORCE
-	+@cd $@ && $(MAKE)
 
 dep: inc-dep
 

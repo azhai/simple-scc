@@ -16,8 +16,8 @@ TARGETS = $(BINDIR)/cc $(BINDIR)/cpp
 
 all: $(TARGETS)
 
-$(BINDIR)/cc: cc.o
-	$(CC) $(SCC_LDFLAGS) cc.o -lscc -o $@
+$(BINDIR)/cc: $(LIBSCC) cc.o
+	$(CC) $(PROJ_LDFLAGS) cc.o -lscc -o $@
 
 $(BINDIR)/cpp: cpp.sh
 	trap "rm -f $$$$.sh" 0 2 3;\
@@ -27,7 +27,7 @@ $(BINDIR)/cpp: cpp.sh
 	mv $$$$.sh $@
 
 config.h:
-	PREFIX=$(PREFIX) mkconf $(SYSLST)
+	PREFIX=$(PREFIX) ./mkconf $(SYSLST)
 
 dep: inc-dep
 
