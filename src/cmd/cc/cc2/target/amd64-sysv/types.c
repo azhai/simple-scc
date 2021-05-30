@@ -48,7 +48,7 @@ Type uint32type = {
 Type uint64type = {
 	.flags  = INTF,
 	.size   = 8,
-	.align  = 2
+	.align  = 8
 };
 
 Type ptrtype = {

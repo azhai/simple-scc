@@ -16,9 +16,10 @@ OBJS =\
 
 TARGET  =\
 	$(LIBEXEC)/scc/cc2-amd64-sysv\
-	$(LIBEXEC)/scc//cc2-i386-sysv\
+	$(LIBEXEC)/scc/cc2-i386-sysv\
 	$(LIBEXEC)/scc/cc2-qbe_amd64-sysv\
-	$(LIBEXEC)/scc//cc2-z80-scc\
+	$(LIBEXEC)/scc/cc2-qbe_arm64-sysv\
+	$(LIBEXEC)/scc/cc2-z80-scc\
 
 all: $(TARGET)
 
