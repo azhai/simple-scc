@@ -3,6 +3,7 @@
 DIRS  =\
 	src\
 	src/libc\
+	src/libcrt\
 	include/scc/scc\
 	tests\
 
@@ -14,14 +15,16 @@ NODEP = 1
 
 all:
 	+@$(MAKE) `$(SCRIPTDIR)/config` toolchain
-	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-linux libc
-	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-openbsd libc
-	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-netbsd libc
-	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-dragonfly libc
+	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-linux libc libcrt
+	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-openbsd libc libcrt
+	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-netbsd libc libcrt
+	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-dragonfly libc libcrt
+	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-darwin libc libcrt
 
 toolchain: dirs src
 
 libc: dirs src/libc
+libcrt: dirs src/libcrt
 
 src: include/scc/scc
 
