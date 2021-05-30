@@ -1,0 +1,10 @@
+__close.s
+__Exit.s
+__getpid.s
+__kill.s
+__lseek.s
+__open.s
+__read.s
+__sigaction.s
+__write.s
+_sys_errlist.c
