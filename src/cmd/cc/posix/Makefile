@@ -29,8 +29,6 @@ $(BINDIR)/cpp: cpp.sh
 config.h:
 	PREFIX=$(PREFIX) ./mkconf $(SYSLST)
 
-dep: inc-dep
-
 clean:
 	rm -f scc scpp *.o
 	rm -f $(TARGETS)

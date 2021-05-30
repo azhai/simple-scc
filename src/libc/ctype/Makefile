@@ -22,11 +22,6 @@ OBJS =\
 	tolower.$O\
 	toupper.$O\
 
-all: $(LIBC)
-
-$(LIBC): $(OBJS)
-	$(MKLST)
-
-dep: inc-dep
+all: $(OBJS)
 
 include deps.mk

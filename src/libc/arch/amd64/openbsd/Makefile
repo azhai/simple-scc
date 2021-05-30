@@ -14,18 +14,12 @@ GENOBJS =\
 	_read.$O\
 	_write.$O\
 	_brk.$O\
-	_sigaction.$O\
+	_sigaction2.$O\
 
 GENSRC = $(GENOBJS:.$O=.s)
 
 OBJS =\
 	$(GENOBJS)\
-	_getheap.$O\
-	_tzone.$O\
-	getenv.$O\
-	raise.$O\
-	signal.$O\
-	time.$O\
 	_sys_errlist.$O\
 
 all: $(LIBC) $(CRT)
@@ -37,8 +31,6 @@ crt.$O: ../crt-posix.s ../openbsd/crt.s
 
 $(GENSRC): syscall.lst
 	./gensys.sh $(@:.s=)
-
-dep: inc-dep
 
 clean:
 	rm -f $(GENSRC)

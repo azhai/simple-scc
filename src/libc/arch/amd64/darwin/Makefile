@@ -20,26 +20,16 @@ GENSRC = $(GENOBJS:.$O=.s)
 OBJS  =\
 	$(GENOBJS)\
 	_getheap.$O\
-	_tzone.$O\
-	getenv.$O\
-	raise.$O\
-	signal.$O\
-	time.$O\
 	_sys_errlist.$O\
 
 # Rules
 
-all: $(LIBC) $(CRT)
-
-$(LIBC): $(OBJS)
-	$(MKLST)
+all: $(OBJS) $(CRT)
 
 crt.$O: ../crt-posix.s
 
 $(GENSRC): syscall.lst
 	./gensys.sh $(@:.s=)
-
-dep: inc-dep
 
 clean:
 	rm -f $(GENSRC)

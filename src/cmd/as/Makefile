@@ -24,8 +24,6 @@ all: $(TARGET)
 
 $(TARGET): $(LIBSCC)
 
-dep: inc-dep
-
 clean:
 	rm -f target/*/*.o target/*/*tbl.c
 

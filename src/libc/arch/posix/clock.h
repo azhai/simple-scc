@@ -1,15 +1,6 @@
-#ifndef CLOCK_H
-#define CLOCK_H
-
-#include <time.h>
-
-#define RUSAGE_SELF	0
-
-typedef long int clock_t;
-
 struct timeval {
-	long int tv_sec;
-	long int tv_usec;
+	time_t tv_sec;
+	suseconds_t tv_usec;
 };
 
 struct rusage {
@@ -30,5 +21,3 @@ struct rusage {
 	long int ru_nvcsw;
 	long int ru_nivcsw;
 };
-
-#endif

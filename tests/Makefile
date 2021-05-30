@@ -10,8 +10,12 @@ DIRS =\
 	libc/execute\
 	cc/execute cc/error\
 
-PROJECTDIR = ..
-include $(PROJECTDIR)/scripts/rules.mk
-
 all clean:
-	$(FORALL)
+	for i in $(DIRS);\
+	do \
+		cd $$i;\
+		$(MAKE) $@;\
+		cd -;\
+	done
+
+dep:

@@ -12,9 +12,8 @@ DIRS  =\
 PROJECTDIR = ..
 include $(PROJECTDIR)/scripts/rules.mk
 
+NODEP = 1
+
 all: cmd
 
 cmd: $(LIBS)
-
-dep clean:
-	$(FORALL)

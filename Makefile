@@ -10,6 +10,7 @@ PROJECTDIR = .
 include $(PROJECTDIR)/scripts/rules.mk
 
 PREFIX= /usr/local
+NODEP = 1
 
 all:
 	+@$(MAKE) `$(SCRIPTDIR)/config` toolchain
@@ -28,20 +29,11 @@ dirs: $(SCRIPTDIR)/libc-proto
 	xargs mkdir -p < $(SCRIPTDIR)/libc-proto
 	touch dirs
 
-dep:
-	$(FORALL)
-
 install: all
 	$(SCRIPTDIR)/install $(PREFIX)
 
-distclean: clean
-	$(MAKE) $(ENVIRON)
-	$(FORALL)
-	rm -f $(ENVIRON)
-
-clean: $(ENVIRON)
-	$(FORALL)
+clean:
 	xargs rm -rf < $(SCRIPTDIR)/libc-proto
-	rm -f dirs $(ENVIRON)
+	rm -f dirs
 
 tests: all

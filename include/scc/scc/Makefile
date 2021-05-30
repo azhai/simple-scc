@@ -10,6 +10,8 @@ SYSHDR =\
 	syslibs.h\
 	cstd.h\
 
+NODEP = 1
+
 all: $(SYSHDR)
 
 cstd.h: cstd-$(STD).h
@@ -27,5 +29,5 @@ sysincludes.h:
 syslibs.h:
 	cp syslibs.def.h $@
 
-distclean:
+clean:
 	rm -f $(SYSHDR)

@@ -1,23 +1,21 @@
+#MORE_CFLAGS = -I$(INCDIR)
+#LIBCDIR = $(PROJECTDIR)/src/libc
+
 CINCLUDES =\
 	-I$(INCDIR)\
 	-I$(INCDIR)/bits/$(SYS)\
 	-I$(INCDIR)/bits/$(ARCH)\
 
+MORE_ARFLAGS = -u
+
 SYSERRNO = $(INCDIR)/bits/$(SYS)/sys/errno.h
 
 LIBC = $(LIBCDIR)/libc.a
 CRT = $(LIBCDIR)/crt.o
-LIBCLST= $(PROJECTDIR)/src/libc/libc.lst
-
-MKLST = \
-	echo $?  |\
-	tr ' ' '\n' |\
-	sed '/^$$/d' |\
-	sed 's@^@$(PWD)/@' >> $(LIBCLST)
 
 # Rules
 
-.SUFFIXES: .6 .7 .8 .z .q
+.SUFFIXES: .6 .7 .8 .z .q .6d
 
 _sys_errlist.c: $(SYSERRNO)
 	../../mkerrstr $(SYSERRNO)
@@ -28,7 +26,7 @@ $(CRT): crt.$O
 clean: clean-libc
 
 clean-libc: FORCE
-	rm -f *.6 *.7 *.8 *.z *.q
+	rm -f *.6d *.6 *.7 *.8 *.z *.q
 
 # amd64-posix objects
 .c.6:

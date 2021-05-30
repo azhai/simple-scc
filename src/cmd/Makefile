@@ -44,9 +44,4 @@ $(BINDIR)/addr2line: addr2line.o $(LIBMACH) $(LIBSCC)
 $(BINDIR)/ar: ar.o $(DRIVER).o
 	$(CC) $(PROJ_LDFLAGS) ar.o $(DRIVER).o -o $@
 
-dep: inc-dep
-
-dep clean:
-	$(FORALL)
-
 include deps.mk

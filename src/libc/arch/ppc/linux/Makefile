@@ -22,21 +22,15 @@ GENSRC = $(GENOBJS:.$O=.s)
 OBJS  = \
 	$(GENOBJS)\
 	_cerrno.$O\
-	_getheap.$O\
 
 # Rules
 
-all: $(LIBC) $(CRT)
-
-$(LIBC): $(OBJS)
-	$(MKLST)
+all: $(OBJS) $(CRT)
 
 crt.$O: ../crt-posix.s
 
 $(GENSRC): syscall.lst
 	./gensys.sh $(@:.s=)
-
-dep: inc-dep
 
 clean:
 	rm -f $(GENSRC)

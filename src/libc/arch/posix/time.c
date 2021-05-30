@@ -1,12 +1,7 @@
 #include <time.h>
 
-struct timeval {
-	time_t tv_sec;
-	int tv_usec; /* TODO use a arch type */
-};
-
 int
-_gettimeofday(struct timeval * restrict tp, void * restrict tzp);
+_gettimeofday(struct timeval *restrict, void *tzp);
 
 time_t
 time(time_t *t)

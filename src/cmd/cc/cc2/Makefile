@@ -29,8 +29,6 @@ error.h: cc2.h
 	trap 'r=$?;rm -f $$$$.h;exit $r' EXIT INT QUIT ;\
 	awk -f generror.awk cc2.h > $$$$.h && mv $$$$.h $@
 
-dep: inc-dep
-
 clean:
 	rm -f target/*/*.o error.h
 

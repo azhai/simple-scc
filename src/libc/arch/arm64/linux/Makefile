@@ -20,20 +20,10 @@ GENSRC = $(GENOBJS:.$O=.s)
 
 OBJS =\
 	$(GENOBJS)\
-	getenv.$O\
-	raise.$O\
-	signal.$O\
-	time.$O\
-	_tzone.$O\
-	_open.$O\
-	_getheap.$O\
 	_cerrno.$O\
 	_sys_errlist.$O\
 
-all: $(LIBC) $(CRT)
-
-$(LIBC): $(OBJS)
-	$(MKLST)
+all: $(OBJS) $(CRT)
 
 crt.$O: ../crt-posix.s
 

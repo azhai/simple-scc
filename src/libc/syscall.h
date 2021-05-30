@@ -1,9 +1,9 @@
-extern void *_brk(void *addr);
-extern int _open(const char *path, int flags, int mode);
-extern int _close(int fd);
-extern int _read(int fd, void *buf, size_t n);
-extern int _write(int fd, void *buf, size_t n);
-extern int _lseek(int fd, long off, int whence);
-extern void _Exit(int status);
-extern int _access(char *path, int mode);
-extern int _unlink(const char *path);
+extern int _brk(void *);
+extern void _exit(int);
+extern int _close(int);
+extern int _getpid(void);
+extern int _kill(int, int);
+extern int _open(const char *, int, int);
+extern int _read(int, void *, size_t);
+extern int _unlink(const char *);
+extern int _write(int, void *, size_t);

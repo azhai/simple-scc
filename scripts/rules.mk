@@ -18,6 +18,7 @@ LIBEXEC   = $(PROJECTDIR)/libexec
 BUILDDIR  = $(PROJECTDIR)/scripts/build
 CRTDIR    = $(PROJECTDIR)/lib/scc
 LIBCDIR   = $(CRTDIR)/$(ARCH)-$(SYS)
+MKDEP     = $(SCRIPTDIR)/mkdep
 
 # library dependences helpers
 LIBMACH = $(LIBDIR)/scc/libmach.a
@@ -95,13 +96,11 @@ GS = gs
 
 # helper macro to run over all the directories
 FORALL = +@set -e ;\
-	pwd=$$PWD; \
-	. $(ENVIRON); \
 	for i in $(DIRS); \
 	do \
 		cd $$i; \
 		$(MAKE) $@; \
-		cd $$pwd; \
+		cd -; \
 	done
 
 $(DIRS): FORCE
@@ -198,10 +197,10 @@ clean-dirs:
 	done
 
 clean-files:
-	rm -f *.i *.d *.o *.a *.ko *.elf $(TARGET)
-	rm -f *.csmes *.csexe
+	rm -f *.i *.d *.o *.a *.elf $(TARGET)
 
-dep:
+dep: inc-dep
+	$(FORALL)
 
 inc-dep: FORCE
-	mkdep
+	test -n "$(NODEP)" || $(MKDEP)

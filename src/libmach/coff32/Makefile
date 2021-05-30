@@ -24,6 +24,4 @@ OBJS =\
 
 all: $(OBJS)
 
-dep: inc-dep
-
 include deps.mk

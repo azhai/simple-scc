@@ -19,9 +19,4 @@ all: $(TARGET)
 $(TARGET): $(OBJS) $(LIBMACH) $(LIBSCC)
 	$(CC) $(PROJ_LDFLAGS) $(OBJS) -lmach -lscc -o $@
 
-dep: inc-dep
-
-clean:
-	rm -f $(OBJS)
-
 include deps.mk

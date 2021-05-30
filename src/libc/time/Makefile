@@ -14,18 +14,12 @@ OBJS =\
 	strftime.$O\
 	tz.$O\
 
-all: $(LIBC)
-
-$(LIBC): $(OBJS)
-	$(MKLST)
-
-$(OBJS): tz.c
+all: $(OBJS)
 
 tz.c: timezone.lst
 	awk -f gentz.awk $? >$@
 
-dep: inc-dep
-
-distclean: tz.c
+clean:
+	rm -f tz.c
 
 include deps.mk

@@ -1,7 +1,15 @@
 .POSIX:
 
+DIRS =\
+	amd64\
+	arm\
+	arm64\
+	i386\
+	ppc\
+
 PROJECTDIR=../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-all clean dep:
-	cd $(ARCH) && $(MAKE) $@
+NODEP = 1
+
+all: $(ARCH)

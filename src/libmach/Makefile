@@ -39,12 +39,7 @@ all: $(OBJS) $(DIRS) objlst.mk
 objlst.mk: $(OBJS) $(DIRS)
 	./mklst $@
 
-dep: inc-dep
-	$(FORALL)
-
 clean:
-	$(FORALL)
 	rm -f $(TBLS) objlst.mk
-
 
 include deps.mk

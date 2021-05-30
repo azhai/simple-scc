@@ -16,5 +16,6 @@
 ./fseek.o: ./../libc.h
 ./fseek.o: ./../syscall.h
 ./ftell.o: ./../syscall.h
+./remove.o: ./../syscall.h
 ./setvbuf.o: ./../libc.h
 ./tmpnam.o: ./../syscall.h

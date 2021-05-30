@@ -30,6 +30,4 @@ all: $(TARGET)
 $(TARGET): $(LIBSCC) $(OBJS)
 	$(CC) $(PROJ_LDFLAGS) $(OBJS) -lscc -o $@
 
-dep: inc-dep
-
 include deps.mk

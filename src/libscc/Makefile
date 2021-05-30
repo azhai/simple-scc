@@ -23,6 +23,4 @@ $(TARGET): $(OBJS)
 	$(AR) $(PROJ_ARFLAGS) $@ $?
 	$(RL) $(PROJ_RLFLAGS) $@
 
-dep: inc-dep
-
 include deps.mk

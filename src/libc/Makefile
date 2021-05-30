@@ -1,7 +1,7 @@
 .POSIX:
 
+PROJECTDIR = ../..
 DIRS =\
-	arch\
 	assert\
 	ctype\
 	locale\
@@ -9,23 +9,18 @@ DIRS =\
 	stdlib\
 	string\
 	time\
+	arch\
 
-PROJECTDIR =../..
 include $(PROJECTDIR)/scripts/rules.mk
 include rules.mk
+include objs/$(ARCH)-$(SYS).mk
 
+NODEP = 1
+TARGET = $(LIBC)
 
-all: $(LIBC)
+all: $(DIRS)
+	$(MAKE) $(LIBC)
 
-$(LIBC): $(DIRS)
-	$(AR) $(PROJ_ARFLAGS) $@ `cat $(LIBCLST)`
-	$(RL) $(PROJ_RLFLAGS) $@
-
-rm-lst: FORCE
-	rm -f $(LIBCLST)
-
-dep:
-	$(FORALL)
-
-clean: rm-lst
-	$(FORALL)
+$(LIBC): $(OBJS)
+	$(AR) $(PROJ_ARFLAGS) $(LIBC) $?
+	$(RL) $(PROJ_RLFLAGS) $(LIBC)

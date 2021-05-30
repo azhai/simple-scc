@@ -11,7 +11,6 @@ PROJECTDIR =../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
-all: $(ARCH)
+NODEP = 1
 
-dep clean:
-	$(FORALL)
+all: $(ARCH)

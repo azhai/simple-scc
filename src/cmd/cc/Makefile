@@ -8,7 +8,6 @@ DIRS =\
 PROJECTDIR = ../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-all: $(DIRS)
+NODEP = 1
 
-dep clean:
-	$(FORALL)
+all: $(DIRS)
