@@ -2,13 +2,13 @@
 
 case `uname` in
 OpenBSD)
-	echo TOOL=clang HOST=bsd
+	echo TOOL=${TOOL:-clang} HOST=bsd
 	;;
 *BSD)
 	echo HOST=bsd
 	;;
 Linux)
-	echo TOOL=gnu HOST=linux
+	echo TOOL=${TOOL:-gnu} HOST=linux
 	;;
 Plan9)
 	echo HOST=plan9
