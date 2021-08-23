@@ -2,7 +2,7 @@
 
 case `uname` in
 OpenBSD)
-	echo TOOL=${TOOL:-clang} HOST=bsd
+	echo TOOL=${TOOL:-clang} HOST=bsd ARFLAGS=${ARFLAGS:--rv}
 	;;
 *BSD)
 	echo HOST=bsd
