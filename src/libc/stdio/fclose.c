@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "../syscall.h"
 #include "../libc.h"
+#include "../syscall.h"
+
 #undef fclose
 
 int

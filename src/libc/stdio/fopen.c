@@ -1,10 +1,9 @@
 #include <errno.h>
 #include <stdio.h>
 
-#include "../syscall.h"
 #include "../libc.h"
-#undef fopen
 
+#undef fopen
 
 FILE *
 fopen(const char * restrict name, const char * restrict mode)
@@ -19,5 +18,6 @@ fopen(const char * restrict name, const char * restrict mode)
 		errno = ENOMEM;
 		return NULL;
 	}
+
 	return _fpopen(name, mode, fp);
 }

@@ -12,6 +12,7 @@ OBJS =\
 	fclose.$O\
 	feof.$O\
 	ferror.$O\
+	fflush.$O\
 	fgetc.$O\
 	fgets.$O\
 	fopen.$O\

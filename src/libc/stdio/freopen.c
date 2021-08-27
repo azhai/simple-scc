@@ -2,6 +2,7 @@
 
 #include "../syscall.h"
 #include "../libc.h"
+
 #undef freopen
 
 FILE *

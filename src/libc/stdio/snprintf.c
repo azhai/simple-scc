@@ -1,9 +1,10 @@
 #include <stdarg.h>
 #include <stdio.h>
+
 #undef snprintf
 
 int
-snprintf(char * restrict s, size_t siz, const char * restrict fmt, ...)
+snprintf(char *restrict s, size_t siz, const char *restrict fmt, ...)
 {
 	int r;
 	va_list va;

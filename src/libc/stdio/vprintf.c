@@ -1,9 +1,10 @@
 #include <stdarg.h>
 #include <stdio.h>
+
 #undef vprintf
 
 int
-vprintf(const char * restrict fmt, va_list ap)
+vprintf(const char *restrict fmt, va_list ap)
 {
 	va_list ap2;
 

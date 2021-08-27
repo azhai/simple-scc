@@ -3,10 +3,11 @@
 #include <stdlib.h>
 
 #include "../libc.h"
+
 #undef setvbuf
 
 int
-setvbuf(FILE * restrict fp, char * restrict buf, int mode, size_t size)
+setvbuf(FILE *restrict fp, char *restrict buf, int mode, size_t size)
 {
 	int flags;
 	char *p;

@@ -1,9 +1,10 @@
 #include <stdarg.h>
 #include <stdio.h>
+
 #undef vsnprintf
 
 int
-vsnprintf(char * restrict s, size_t siz, const char * restrict fmt, va_list ap)
+vsnprintf(char *restrict s, size_t siz, const char *restrict fmt, va_list ap)
 {
 	FILE f;
 	int r;

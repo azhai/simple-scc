@@ -4,7 +4,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <wchar.h>
+
+#define MAXPREC    50
+
 #undef vfprintf
 
 enum {
@@ -19,8 +21,6 @@ enum {
 	UNSIGNED = 1 << 8,
 	ALTFORM  = 1 << 9,
 };
-
-#define MAXPREC    50
 
 struct conv {
 	int sign;
@@ -78,6 +78,7 @@ numtostr(uintmax_t val, int flags, struct conv *conv, char *buf)
 
 	for (*buf = '\0'; val > 0; val /= base)
 		*--buf = conv->digs[val % base];
+
 	while (buf0 - buf < prec)
 		*--buf = '0';
 
@@ -146,7 +147,7 @@ wstrout(wchar_t *ws, size_t len, int width, int fill, FILE * restrict fp)
 }
 
 static size_t
-strout(char *s, size_t len, int width, int fill, FILE * restrict fp)
+strout(char *s, size_t len, int width, int fill, FILE *restrict fp)
 {
 	int left = 0, adjust, ch, prefix;
 	size_t cnt = 0;
@@ -156,7 +157,7 @@ strout(char *s, size_t len, int width, int fill, FILE * restrict fp)
 		width = -width;
 	}
 
-	adjust = (len < width) ? width - len : 0;
+	adjust = (len > 0 && len < width) ? width - len : 0;
 	cnt = adjust + len;
 	if (left)
 		adjust = -adjust;
@@ -177,23 +178,18 @@ strout(char *s, size_t len, int width, int fill, FILE * restrict fp)
 	for ( ; adjust > 0; adjust--)
 		putc(fill, fp);
 
-	while (ch = *s++)
-		putc(ch, fp);
+	if (len == -1) {
+		for (cnt = 0; ch = *s++; ++cnt)
+			putc(ch, fp);
+	} else {
+		while (len-- > 0 && (ch = *s++))
+			putc(ch, fp);
+	}
 
 	for ( ; adjust < 0; adjust++)
 		putc(' ', fp);
 
 	return cnt;
-}
-
-static size_t
-strnlen(const char *s, size_t maxlen)
-{
-	size_t n;
-
-	for (n = 0; n < maxlen && *s++; ++n)
-		;
-	return n;
 }
 
 int
@@ -243,10 +239,11 @@ flags:
 				for (n = 0; isdigit(ch = *fmt); fmt++)
 					n = n * 10 + ch - '0';
 			}
+			if (n < 0)
+				n = 0;
 			if (n > MAXPREC)
 				n = MAXPREC;
-			if (n > 0)
-				conv.prec = n;
+			conv.prec = n;
 			goto flags;
 		case '*':
 			width = va_arg(va2, int);

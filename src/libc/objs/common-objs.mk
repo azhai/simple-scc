@@ -30,6 +30,7 @@ COMMON_OBJS =\
 	stdio/fclose.$O\
 	stdio/feof.$O\
 	stdio/ferror.$O\
+	stdio/fflush.$O\
 	stdio/fgetc.$O\
 	stdio/fgets.$O\
 	stdio/fopen.$O\

@@ -1,9 +1,10 @@
 #include <stdarg.h>
 #include <stdio.h>
+
 #undef sprintf
 
 int
-sprintf(char * restrict s, const char * restrict fmt, ...)
+sprintf(char *restrict s, const char *restrict fmt, ...)
 {
 	int r;
 

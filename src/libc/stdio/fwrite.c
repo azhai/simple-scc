@@ -1,4 +1,5 @@
 #include <stdio.h>
+
 #undef fwrite
 
 size_t

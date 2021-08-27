@@ -1,9 +1,10 @@
 #include <stdarg.h>
 #include <stdio.h>
+
 #undef printf
 
 int
-printf(const char * restrict fmt, ...)
+printf(const char *restrict fmt, ...)
 {
 	int cnt;
 	va_list va;
