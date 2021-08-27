@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 /* minimum amount of required units */
 #define NALLOC 16
 
@@ -13,4 +11,4 @@ union header {
 	_ALIGNTYPE most;
 };
 
-extern void *_prevchunk(Header *hp);
+extern void *_prevchunk(Header *);

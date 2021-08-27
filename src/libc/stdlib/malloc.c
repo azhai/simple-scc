@@ -7,6 +7,8 @@
 #include "../syscall.h"
 #include "../libc.h"
 
+#undef malloc
+
 #define MAXADDR ((char *)-1)
 #define ERRADDR ((char *)-1)
 
@@ -27,6 +29,7 @@ _prevchunk(Header *hp)
 		/* hp between p and p->h.next? */
 		if (p < hp && hp < p->h.next)
 			break;
+
 		/* p before hp and hp at the end of list? */
 		if (p->h.next <= p && (hp < p->h.next || hp > p))
 			break;
@@ -77,9 +80,11 @@ sbrk(uintptr_t inc)
 
 	if (!heap)
 		heap = _getheap();
+
 	old = heap;
 	if (old >= MAXADDR - inc)
 		return ERRADDR;
+
 	new = old + inc;
 	p = _brk(new);
 	if (p == old || p == ERRADDR)
@@ -133,7 +138,7 @@ malloc(size_t nbytes)
 	size_t nunits;
 
 	/* 1 unit for header plus enough units to fit nbytes */
-	nunits = (nbytes+sizeof(Header)-1) / sizeof(Header) + 1;
+	nunits = (nbytes+sizeof(Header)-1) / sizeof(Header)+1;
 
 	for (prev = freep; ; prev = cur) {
 		cur = prev->h.next;

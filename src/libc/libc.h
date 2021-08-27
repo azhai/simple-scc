@@ -28,6 +28,8 @@ struct tzone {
 };
 
 extern void *_getheap(void);
+extern int _dtoi(char c);
+
 
 #ifdef stdin
 extern int _allocbuf(FILE *);
@@ -51,3 +53,6 @@ extern int _tzjulian;
 extern int _daysmon[12];
 extern char *_tzname[2];
 extern struct tzone tzones[];
+
+extern void (*_exitf[_ATEXIT_MAX])(void);
+extern unsigned _exitn;
