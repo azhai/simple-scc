@@ -1,6 +1,6 @@
 #ifdef _NEED_SIZET
 #ifndef _SIZET
-typedef unsigned long size_t;
+typedef unsigned size_t;
 #define _SIZET
 #endif
 #undef _NEED_SIZET

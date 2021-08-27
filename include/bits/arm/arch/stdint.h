@@ -57,7 +57,26 @@
 #define PTRDIFF_MIN INT32_MIN
 #define PTRDIFF_MAX INT32_MAX
 
+#define SIG_ATOMIC_MIN INT32_MIN
+#define SIG_ATOMIC_MAX INT32_MAX
+
 #define SIZE_MAX UINT32_MAX
+
+#define WCHAR_MIN INT32_MIN
+#define WCHAR_MAX INT32_MAX
+
+#define INT8_C(x)  x
+#define INT16_C(x) x
+#define INT32_C(x) x
+#define INT64_C(x) x ## LL
+
+#define UINT8_C(x)  x
+#define UINT16_C(x) x
+#define UINT32_C(x) x ## U
+#define UINT64_C(x) x ## ULL
+
+#define INTMAX_C(x)  x ## LL
+#define UINTMAX_C(x) x ## ULL
 
 typedef signed char int8_t;
 typedef short int16_t;

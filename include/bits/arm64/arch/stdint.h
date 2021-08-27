@@ -57,7 +57,26 @@
 #define PTRDIFF_MIN INT64_MIN
 #define PTRDIFF_MAX INT64_MAX
 
+#define SIG_ATOMIC_MIN INT32_MIN
+#define SIG_ATOMIC_MAX INT32_MAX
+
 #define SIZE_MAX UINT64_MAX
+
+#define WCHAR_MIN INT32_MIN
+#define WCHAR_MAX INT32_MAX
+
+#define INT8_C(x)  x
+#define INT16_C(x) x
+#define INT32_C(x) x
+#define INT64_C(x) x ## LL
+
+#define UINT8_C(x)  x
+#define UINT16_C(x) x
+#define UINT32_C(x) x ## U
+#define UINT64_C(x) x ## ULL
+
+#define INTMAX_C(x)  x ## LL
+#define UINTMAX_C(x) x ## ULL
 
 typedef signed char int8_t;
 typedef short int16_t;
@@ -69,25 +88,25 @@ typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned long long uint64_t;
 
-typedef signed char int8_least_t;
-typedef short int16_least_t;
-typedef int int32_least_t;
-typedef long long int64_least_t;
+typedef signed char int_least8_t;
+typedef short int_least16_t;
+typedef int int_least32_t;
+typedef long long int_least64_t;
 
-typedef unsigned char uint8_least_t;
-typedef unsigned short uint16_least_t;
-typedef unsigned int uint32_least_t;
-typedef unsigned long long uint64_least_t;
+typedef unsigned char uint_least8_t;
+typedef unsigned short uint_least16_t;
+typedef unsigned int uint_least32_t;
+typedef unsigned long long uint_least64_t;
 
-typedef int int8_fast_t;
-typedef int int16_fast_t;
-typedef int int32_fast_t;
-typedef long long int64_fast_t;
+typedef int int_fast8_t;
+typedef int int_fast16_t;
+typedef int int_fast32_t;
+typedef long long int_fast64_t;
 
-typedef unsigned int uint8_fast_t;
-typedef unsigned int uint16_fast_t;
-typedef unsigned int uint32_fast_t;
-typedef unsigned long long uint64_fast_t;
+typedef unsigned int uint_fast8_t;
+typedef unsigned int uint_fast16_t;
+typedef unsigned int uint_fast32_t;
+typedef unsigned long long uint_fast64_t;
 
 typedef long intptr_t;
 typedef unsigned long uintptr_t;
