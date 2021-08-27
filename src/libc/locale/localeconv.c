@@ -1,5 +1,6 @@
-#include <locale.h>
 #include <limits.h>
+#include <locale.h>
+
 #undef localeconv
 
 struct lconv *
@@ -20,10 +21,16 @@ localeconv(void)
 		.p_cs_precedes = CHAR_MAX,
 		.n_cs_precedes = CHAR_MAX,
 		.p_sep_by_space = CHAR_MAX,
-		.p_sign_posn = CHAR_MAX,
 		.n_sep_by_space = CHAR_MAX,
+		.p_sign_posn = CHAR_MAX,
 		.n_sign_posn = CHAR_MAX,
 		.int_frac_digits = CHAR_MAX,
+		.int_p_cs_precedes = CHAR_MAX,
+		.int_n_cs_precedes = CHAR_MAX,
+		.int_p_sep_by_space = CHAR_MAX,
+		.int_n_sep_by_space = CHAR_MAX,
+		.int_p_sign_posn = CHAR_MAX,
+		.int_n_sign_posn = CHAR_MAX,
 	};
 	return &lc;
 }
