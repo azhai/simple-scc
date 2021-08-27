@@ -1,25 +1,26 @@
 #include <string.h>
+
 #undef strtok
 
 char *
-strtok(char * restrict s, const char * restrict delim)
+strtok(char * restrict s1, const char * restrict s2)
 {
 	static char *line;
 
-	if (s)
-		line = s;
-	if (!s && !line)
+	if (s1)
+		line = s1;
+	else if (!line)
 		return NULL;
 
-	s = line + strspn(line, delim);
-	if (*s == '\0')
+	s1 = line + strspn(line, s2);
+	if (*s1 == '\0')
 		return line = NULL;
 
-	line = s + strcspn(s, delim);
-	if (*line != '\0')
-		*line++ = '\0';
-	else
+	line = s1 + strcspn(s1, s2);
+	if (*line == '\0')
 		line = NULL;
+	else
+		*line++ = '\0';
 
-	return s;
+	return s1;
 }

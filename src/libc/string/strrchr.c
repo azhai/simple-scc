@@ -1,4 +1,5 @@
 #include <string.h>
+
 #undef strrchr
 
 char *
@@ -10,5 +11,6 @@ strrchr(const char *s, int c)
 		++t;
 	while (t > s && *t != c)
 		--t;
-	return (*t == c) ? (char *)t : NULL;
+
+	return (*t == c) ? t : NULL;
 }

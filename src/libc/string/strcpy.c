@@ -1,12 +1,14 @@
 #include <string.h>
+
 #undef strcpy
 
 char *
-strcpy(char * restrict dst, const char * restrict src)
+strcpy(char *restrict s1, const char *restrict s2)
 {
-	char *ret = dst;
+	char *ret = s1;
 
-	while (*dst++ = *src++)
+	while ((*s1++ = *s2++) != '\0')
 		;
+
 	return ret;
 }

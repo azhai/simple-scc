@@ -4,7 +4,12 @@ PROJECTDIR =../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
-OBJS = \
+OBJS =\
+	memchr.$O\
+	memcmp.$O\
+	memcpy.$O\
+	memmove.$O\
+	memset.$O\
 	strcat.$O\
 	strchr.$O\
 	strcmp.$O\

@@ -1,4 +1,5 @@
 #include <string.h>
+
 #undef memchr
 
 void *
