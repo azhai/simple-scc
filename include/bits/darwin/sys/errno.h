@@ -1,6 +1,6 @@
 extern int errno;
 extern char *const _sys_errlist[];
-extern const int _sys_nerr;
+
 #define EPERM            1
 #define ENOENT           2
 #define ESRCH            3
