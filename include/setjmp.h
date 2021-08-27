@@ -3,8 +3,8 @@
 
 #include <arch/setjmp.h>
 
-extern int setjmp(jmp_buf env);
-extern void longjmp(jmp_buf env, int val);
+extern int setjmp(jmp_buf);
+extern void longjmp(jmp_buf, int);
 
 #define setjmp setjmp
 

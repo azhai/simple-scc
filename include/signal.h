@@ -3,7 +3,7 @@
 
 #include <sys/signal.h>
 
-void ( *signal(int signum, void (*handler)(int)) ) (int);
-int raise(int sig);
+void (*signal(int, void (*handler)(int)))(int);
+int raise(int);
 
 #endif
