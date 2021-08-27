@@ -38,14 +38,10 @@ localtime(const time_t *timep)
 	tm->tm_zone = _tzname[0];
 	tm->tm_isdst = 0;
 
-	if (_tzjulian	       &&
-	    ((yday + 1) < 60)  ||
-	    (FEBDAYS(tm->tm_year) < 29))
+	if (_tzjulian && yday+1 < 60 || FEBDAYS(tm->tm_year) < 29)
 		yday++;
 
-	if (yday >= _tzstart &&
-	    yday <= _tzend   &&
-	    tm->tm_hour >= 2) {
+	if (yday >= _tzstart && yday <= _tzend && tm->tm_hour >= 2) {
 		tm->tm_gmtoff = _tzdstoff;
 		tm->tm_zone = _tzname[1];
 		tm->tm_isdst = 1;

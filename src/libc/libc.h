@@ -1,20 +1,25 @@
-#define SUN      0
-#define MON      1
-#define TUE      2
-#define WED      3
-#define THU      4
-#define FRI      5
-#define SAT      6
+enum {
+	SUN,
+	MON,
+	TUE,
+	WED,
+	THU,
+	FRI,
+	SAT
+};
 
-#define JAN      0
-#define FEB      1
-#define DEC     11
+#define JAN 0
+#define FEB 1
+#define DEC 11
 
-#define EPOCH 1970
 #define FEBDAYS(y) ((_daysyear(y) == 366) ? 29 : 28)
-#define SECMIN     60
-#define SECHOUR    (60 * SECMIN)    /* 3600 */
-#define SECDAY     (24 * SECHOUR)   /* 86400 */
+#define EPOCH 1970
+#define MINYEAR 1900
+#define SECMIN 60
+#define SECHOUR (60 * SECMIN)    /* 3600 */
+#define SECDAY (24 * SECHOUR)   /* 86400 */
+
+struct tm;
 
 struct tzone {
 	char *name;
@@ -22,28 +27,27 @@ struct tzone {
 	int isdst;
 };
 
-struct tm;
-
-extern void _tzset(void);
-extern int _daysyear(int year);
-extern int _newyear(int year);
 extern void *_getheap(void);
-extern int _dtoi(char);
-
-#ifdef _TIME_H
-extern char *_tzname[2];
-extern time_t _tzstdoff, _tzdstoff;
-extern time_t _tzstart, _tzend;
-extern int _tzjulian;
-extern struct tzone tzones[];
-#endif
 
 #ifdef stdin
-extern int _flsbuf(FILE *fp);
-extern int _allocbuf(FILE *fp);
-extern FILE *_fpopen(const char * restrict fname,
-                     const char * restrict mode,
-                     FILE * restrict fp);
+extern int _allocbuf(FILE *);
+extern int _flsbuf(FILE *);
+extern FILE *_fpopen(const char * restrict, const char *restrict,
+                     FILE *restrict);
 #endif
 
+#ifdef _TIME_H
+extern time_t _tzstdoff, _tzdstoff;
+extern time_t _tzstart, _tzend;
+
+extern time_t _systime(struct tm *);
+#endif
+
+extern void _tzset(void);
+extern int _daysyear(int);
+extern int _newyear(int);
+
+extern int _tzjulian;
 extern int _daysmon[12];
+extern char *_tzname[2];
+extern struct tzone tzones[];

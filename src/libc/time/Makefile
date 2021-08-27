@@ -5,6 +5,7 @@ include ../rules.mk
 
 OBJS =\
 	_daysyear.$O\
+	_newyear.$O\
 	asctime.$O\
 	ctime.$O\
 	difftime.$O\

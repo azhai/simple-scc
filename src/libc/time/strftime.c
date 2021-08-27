@@ -1,7 +1,8 @@
-#include <time.h>
 #include <string.h>
+#include <time.h>
 
 #include "../libc.h"
+
 #undef strftime
 
 static char *days[] = {
@@ -30,9 +31,8 @@ first(int day, int year)
 	return day - ny;
 }
 
-
 static int
-weeknum(struct tm* tm, int day)
+weeknum(struct tm *tm, int day)
 {
 	int fday, val;
 
@@ -48,7 +48,7 @@ weeknum(struct tm* tm, int day)
 }
 
 static int
-isoyear(struct tm* tm)
+isoyear(struct tm *tm)
 {
 	int monday;
 
@@ -65,22 +65,29 @@ isoyear(struct tm* tm)
 }
 
 static int
-isoweek(struct tm* tm)
+isoweek(struct tm *tm)
 {
 	int year, monday, yday, val;
 
 	year = isoyear(tm);
 	monday = first(THU, year) - 3;
 	yday = tm->tm_yday;
-	if (year > tm->tm_year) {
+	if (year > tm->tm_year)
 		yday = tm->tm_mday - 31 + monday;
-	} else if (year < tm->tm_year) {
+	else if (year < tm->tm_year)
 		yday = _daysyear(year) + yday;
-	}
 	val = yday - monday;
 	val /= 7;
 	val++;
 	return val;
+}
+
+static int
+isoday(struct tm *tm)
+{
+	if (tm->tm_wday == 0)
+		return 7;
+	return tm->tm_wday;
 }
 
 static size_t
@@ -134,10 +141,10 @@ timezone(char *s, size_t prec, const struct tm * restrict tm)
 {
 	long off = tm->tm_gmtoff;
 
-	if (prec < 5) {
-		*s = '?';
-		return 1;
-	}
+        if (prec < 5) {
+                *s = '?';
+                return 1;
+        }
 
 	if (off >= 0) {
 		*s++ = '+';
@@ -153,15 +160,14 @@ timezone(char *s, size_t prec, const struct tm * restrict tm)
 }
 
 size_t
-strftime(char * restrict s, size_t siz,
-         const char * restrict fmt,
-         const struct tm * restrict tm)
+strftime(char *restrict s, size_t maxsize,
+	 const char *restrict format, const struct tm *restrict timeptr)
 {
 	int ch, abrev, val, fill, width;
 	size_t n, inc;
 	char *tfmt;
 
-	for (n = siz-1; (ch = *fmt++) && n > 0; s += inc, n -= inc) {
+	for (n = --maxsize; (ch = *format++) && n > 0; s += inc, n -= inc) {
 		if (ch != '%') {
 			*s = ch;
 			inc = 1;
@@ -172,93 +178,53 @@ strftime(char * restrict s, size_t siz,
 		fill = '0';
 		width = 2;
 
-		if (*fmt == 'E' || *fmt == 'O') {
-			fmt++;
-		}
+		if (*format == 'E' || *format == 'O')
+			format++;
 
-		switch (*fmt++) {
-		case 'Z':
-			if (!tm->tm_zone)
-				break;
-			inc = sval(s, n, &tm->tm_zone, 0, 0, 1);
-			break;
+		switch (*format++) {
 		case 'a':
 			abrev = 1;
 		case 'A':
-			inc = sval(s, n, days, abrev, tm->tm_wday, 7);
+			inc = sval(s, n, days, abrev, timeptr->tm_wday, 7);
 			break;
 		case 'h':
 		case 'b':
 			abrev = 1;
 		case 'B':
-			inc = sval(s, n, months, abrev, tm->tm_mon, 12);
-			break;
-		case 'p':
-			inc = sval(s, n, am_pm, 0, tm->tm_hour > 12, 2);
+			inc = sval(s, n, months, abrev, timeptr->tm_mon, 12);
 			break;
 		case 'c':
 			tfmt = "%a %b %e %T %Y";
 			goto recursive;
+		case 'C':
+			val = (timeptr->tm_year + 1900) / 100;
+			goto number;
+		case 'd':
+			val = timeptr->tm_mday;
+			goto number;
 		case 'D':
 			tfmt = "%m/%d/%y";
 			goto recursive;
+		case 'e':
+			fill = ' ';
+			val = timeptr->tm_mday;
+			goto number;
 		case 'F':
 			tfmt = "%Y-%m-%d";
 			goto recursive;
-		case 'R':
-			tfmt = "%H:%M";
-			goto recursive;
-		case 'X':
-		case 'T':
-			tfmt = "%H:%M:%S";
-			goto recursive;
-		case 'r':
-			tfmt = "%I:%M:%S %p";
-			goto recursive;
-		case 'x':
-			tfmt = "%m/%d/%y";
-			goto recursive;
-		recursive:
-			inc = strftime(s, n+1, tfmt, tm) - 1;
-			break;
-		case 'n':
-			val = '\n';
-			goto character;
-		case 't':
-			val = '\t';
-			goto character;
-		case '%':
-			val = '%';
-		character:
-			*s = val;
-			inc = 1;
-			break;
-		case 'e':
-			fill = ' ';
-			val = tm->tm_mday;
-			goto number;
-		case 'd':
-			val = tm->tm_mday;
-			goto number;
-		case 'V':
-			val = isoweek(tm);
-			goto number;
 		case 'g':
-			val = isoyear(tm);
+			val = isoyear(timeptr);
 			goto number;
 		case 'G':
-			val = isoyear(tm);
+			val = isoyear(timeptr);
 			val += 1900;
 			width = 4;
 			goto number;
-		case 'C':
-			val = (tm->tm_year + 1900) / 100;
-			goto number;
 		case 'H':
-			val = tm->tm_hour;
+			val = timeptr->tm_hour;
 			goto number;
 		case 'I':
-			val = tm->tm_hour;
+			val = timeptr->tm_hour;
 			if (val == 0)
 				val = 12;
 			if (val > 12)
@@ -266,50 +232,89 @@ strftime(char * restrict s, size_t siz,
 			goto number;
 		case 'j':
 			width = 3;
-			val = tm->tm_yday+1;
+			val = timeptr->tm_yday+1;
 			goto number;
 		case 'm':
-			val = tm->tm_mon+1;
+			val = timeptr->tm_mon+1;
 			goto number;
 		case 'M':
-			val = tm->tm_min;
+			val = timeptr->tm_min;
 			goto number;
+		case 'n':
+			val = '\n';
+			goto character;
+		case 'p':
+			inc = sval(s, n, am_pm, 0, timeptr->tm_hour > 12, 2);
+			break;
+		case 'r':
+			tfmt = "%I:%M:%S %p";
+			goto recursive;
+		case 'R':
+			tfmt = "%H:%M";
+			goto recursive;
 		case 'S':
-			val = tm->tm_sec;
+			val = timeptr->tm_sec;
 			goto number;
+		case 't':
+			val = '\t';
+			goto character;
 		case 'u':
 			width = 1;
-			val = tm->tm_wday+1;
+			val = isoday(timeptr);
 			goto number;
 		case 'U':
-			val = weeknum(tm, SUN);
+			val = weeknum(timeptr, SUN);
 			goto number;
-		case 'W':
-			val = weeknum(tm, MON);
+		case 'V':
+			val = isoweek(timeptr);
 			goto number;
 		case 'w':
 			width = 1;
-			val = tm->tm_wday;
+			val = timeptr->tm_wday;
 			goto number;
+		case 'W':
+			val = weeknum(timeptr, MON);
+			goto number;
+		case 'X':
+		case 'T':
+			tfmt = "%H:%M:%S";
+			goto recursive;
+		case 'x':
+			tfmt = "%m/%d/%y";
+			goto recursive;
 		case 'y':
-			val = tm->tm_year%100;
+			val = timeptr->tm_year%100;
 			goto number;
 		case 'Y':
 			width = 4;
-			val = 1900 + tm->tm_year;
-		number:
-			inc = dval(s, n, width, fill, val);
-			break;
+			val = 1900 + timeptr->tm_year;
+			goto number;
 		case 'z':
-			inc = timezone(s, n, tm);
+			inc = timezone(s, n, timeptr);
+			break;
+		case 'Z':
+			memcpy(s, timeptr->tm_zone, 3);
+			inc = 3;
 			break;
 		case '\0':
 			inc = 0;
-			--fmt;
+			--format;
+			break;
+		case '%':
+			val = '%';
+		character:
+			*s = val;
+			inc = 1;
+			break;
+		number:
+			inc = dval(s, n, width, fill, val);
+			break;
+		recursive:
+			inc = strftime(s, n+1, tfmt, timeptr);
 			break;
 		}
 	}
 	*s = '\0';
 
-	return siz - n;
+	return maxsize - n;
 }

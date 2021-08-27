@@ -98,6 +98,7 @@ COMMON_OBJS =\
 	string/strtok.$O\
 	string/strxfrm.$O\
 	time/_daysyear.$O\
+	time/_newyear.$O\
 	time/asctime.$O\
 	time/ctime.$O\
 	time/difftime.$O\
@@ -105,3 +106,4 @@ COMMON_OBJS =\
 	time/localtime.$O\
 	time/mktime.$O\
 	time/strftime.$O\
+	time/tz.$O\

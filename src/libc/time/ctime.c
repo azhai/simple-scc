@@ -1,4 +1,5 @@
 #include <time.h>
+
 #undef ctime
 
 char *
