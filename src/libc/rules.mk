@@ -5,6 +5,7 @@ CINCLUDES =\
 	-I$(INCDIR)\
 	-I$(INCDIR)/bits/$(SYS)\
 	-I$(INCDIR)/bits/$(ARCH)\
+	-I$(INCDIR)/bits/$(SYS)/$(ARCH)\
 
 MORE_ARFLAGS = -u
 

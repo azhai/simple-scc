@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#include "../libc.h"
+
 #undef atexit
 
 int
