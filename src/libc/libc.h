@@ -54,5 +54,5 @@ extern int _daysmon[12];
 extern char *_tzname[2];
 extern struct tzone tzones[];
 
-extern void (*_exitf[_ATEXIT_MAX])(void);
+extern void (*_exitf[])(void);
 extern unsigned _exitn;
