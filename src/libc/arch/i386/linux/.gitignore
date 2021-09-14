@@ -1,0 +1,10 @@
+_close.s
+_exit.s
+_getpid.s
+_kill.s
+_lseek.s
+_open.s
+_read.s
+_sigaction.s
+_sys_brk.s
+_write.s
