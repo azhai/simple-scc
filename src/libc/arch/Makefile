@@ -24,6 +24,8 @@ BSD =\
 include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
+NODEP = 1
+
 all: $(ARCH) $(SYS)
 
 linux: posix
