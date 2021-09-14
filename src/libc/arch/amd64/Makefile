@@ -1,20 +1,27 @@
 .POSIX:
 
+PROJECTDIR = ../../../..
 DIRS =\
-	netbsd\
-	openbsd\
+	darwin\
 	dragonfly\
 	linux\
-	darwin\
+	netbsd\
+	openbsd\
 
-PROJECTDIR =../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../../rules.mk
 
 OBJS =\
 	longjmp.$O\
-	setjmp.$O\
+	memchr.$O\
+	memcmp.$O\
 	memcpy.$O\
+	memmove.$O\
+	memset.$O\
+	setjmp.$O\
+	strchr.$O\
+	strcmp.$O\
+	strcpy.$O\
 
 all: $(OBJS) $(SYS)
 
