@@ -11,10 +11,10 @@ setjmp:
 	stp x27, x28, [x0,#64]
 	stp x29, x30, [x0,#80]
 	mov x2, sp
-	str x2, [x0,#104]
-	stp  d8,  d9, [x0,#112]
-	stp d10, d11, [x0,#128]
-	stp d12, d13, [x0,#144]
-	stp d14, d15, [x0,#160]
+	str x2, [x0,#96]
+	stp  d8,  d9, [x0,#104]
+	stp d10, d11, [x0,#120]
+	stp d12, d13, [x0,#136]
+	stp d14, d15, [x0,#152]
 	mov x0, #0
 	ret

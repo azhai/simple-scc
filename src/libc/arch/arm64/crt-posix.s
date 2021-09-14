@@ -6,9 +6,10 @@
 _start:
 	ldr	x0,[sp]		/* argc */
 	add	x1,sp,#8	/* argv */
-	add	x2,x1,x0,lsl #3	/* argv = argc + 8*argc + 8 */
-	add	x2,x2,#8
-	adr	x3,_environ
-	str	x2,[x3]
+	adr	x2,_environ
+	add	x9,x1,x0,lsl #3	/* envp = argc + 8*argc + 8 */
+	add	x9,x9,#8
+	ldr	x9,[x9]
+	str	x9,[x2]
 	bl	main
 	b	exit
