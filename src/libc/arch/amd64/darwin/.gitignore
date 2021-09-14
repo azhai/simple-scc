@@ -1,5 +1,5 @@
 __close.s
-__Exit.s
+__exit.s
 __getpid.s
 __kill.s
 __lseek.s

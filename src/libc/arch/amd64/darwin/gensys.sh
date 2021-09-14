@@ -5,16 +5,20 @@
 # until the 4th parameter, so we only have to set the syscall
 # number in rax
 
-awk 'NF == 2 && $2 == "'$1'" {
-	printf("0x%x\t%s\n", 33554432 + $1, $2)
-}' syscall.lst |
-while read num name
+awk 'BEGIN  {n = 33554432}
+            {gsub(/ *#./, "")}
+     /'$1'/ {printf("0x%x\t%s\t%s\n",  n + $1, $2, $3)}' syscall.lst |
+while read num name nargs
 do
 cat <<EOF > $name.s
 	.file	"$name.s"
 
 	.globl	$name
 $name:
+	`case $nargs in 4|5|6)
+		echo "movq       %rcx,%r10"
+                ;;
+        esac`
 	movq	\$$num,%rax
 	syscall
 	jb	1f

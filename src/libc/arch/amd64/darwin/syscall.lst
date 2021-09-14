@@ -1,9 +1,11 @@
-1	__Exit
-3	__read
-4	__write
-5	__open
-6	__close
-20	__getpid
-46	__sigaction
-37	__kill
-199	__lseek
+#Tab 15
+#number	name	nargs
+1	__exit	1
+3	__read	3
+4	__write	3
+5	__open	3
+6	__close	1
+20	__getpid	0
+46	__sigaction	3
+37	__kill	2
+199	__lseek	3
