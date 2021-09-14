@@ -1,6 +1,3 @@
-#MORE_CFLAGS = -I$(INCDIR)
-#LIBCDIR = $(PROJECTDIR)/src/libc
-
 CINCLUDES =\
 	-I$(INCDIR)\
 	-I$(INCDIR)/bits/$(SYS)\
