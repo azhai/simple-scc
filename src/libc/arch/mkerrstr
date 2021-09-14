@@ -1,6 +1,4 @@
-#!/bin/sh
-
-trap 'r=$?; rm -f $$.tmp; exit $r' EXIT HUP INT QUIT TERM
+trap 'rm -f $$.tmp' EXIT HUP INT QUIT TERM
 
 awk '
 /^#define[ \t]*E/{
@@ -9,8 +7,6 @@ awk '
 		str = str " " $i
 	sub(/^ /, "", str)
 	errstr[$2] = str
-	if ($3 > max)
-		max = $3;
 }
 
 END {
@@ -20,5 +16,4 @@ END {
 		printf "\t%-20.20s = \"%s\",\n", "[" i "]", errstr[i]
 
 	print "};"
-	print "const int _sys_nerr =", max";"
 }' $@ > $$.tmp && mv $$.tmp _sys_errlist.c
