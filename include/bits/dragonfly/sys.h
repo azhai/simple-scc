@@ -6,6 +6,9 @@
 #define O_APPEND  0x00000008
 #define O_CREAT   0x00000200
 
+#define CLOCKS_PER_SEC ((clock_t) 128)
+#define RUSAGE_SELF 0
+
 typedef int pid_t;
 
 struct sigaction {

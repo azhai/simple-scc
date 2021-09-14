@@ -7,8 +7,6 @@
 #include <arch/cdefs.h>
 #include <arch/time.h>
 
-typedef long int clock_t;
-
 struct tm {
 	int tm_sec;
 	int tm_min;
