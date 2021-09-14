@@ -75,7 +75,6 @@ static void *
 sbrk(uintptr_t inc)
 {
 	char *new, *old;
-	void *p;
 	static void *heap;
 
 	if (!heap)
@@ -86,8 +85,7 @@ sbrk(uintptr_t inc)
 		return ERRADDR;
 
 	new = old + inc;
-	p = _brk(new);
-	if (p == old || p == ERRADDR)
+	if (_brk(new) < 0)
 		return ERRADDR;
 	heap = new;
 
