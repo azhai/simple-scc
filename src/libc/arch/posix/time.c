@@ -1,7 +1,8 @@
 #include <time.h>
 
-int
-_gettimeofday(struct timeval *restrict, void *tzp);
+#include "time.h"
+
+extern int _gettimeofday(struct timeval *restrict, void *);
 
 time_t
 time(time_t *t)

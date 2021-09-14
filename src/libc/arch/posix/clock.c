@@ -36,5 +36,5 @@ clock(void)
 	if (_getrusage(RUSAGE_SELF, &ru))
 		return -1;
 
-	return TOCLOCK(ru.ru_utime) + TOCLOCK(ru_ru_stime);
+	return TOCLOCK(ru.ru_utime) + TOCLOCK(ru.ru_stime);
 }

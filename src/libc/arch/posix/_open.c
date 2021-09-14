@@ -1,10 +1,10 @@
 #include <stddef.h>
 
-#include "../../../syscall.h"
+#include <sys.h>
 
-#define AT_FDCWD  -100
+#include "../../syscall.h"
 
-extern int _openat(int fd, const char *fname, int flags, int mode);
+extern int _openat(int, const char *, int, int);
 
 int
 _open(const char *fname, int flags, int mode)
