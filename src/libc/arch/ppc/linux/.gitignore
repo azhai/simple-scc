@@ -1,0 +1,13 @@
+_close.s
+_creat.s
+_exit.s
+_getpid.s
+_kill.s
+_link.s
+_open.s
+_read.s
+_sys_brk.s
+_sys_errlist.c
+_unlink.s
+_waitpid.s
+_write.s

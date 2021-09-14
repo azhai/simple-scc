@@ -1,17 +1,19 @@
 #!/bin/sh
 
-awk '! /^#/ && $2 == "'$1'" {
-	syscall=$2
-	fname=$2".s"
+sed -n "
+     s/[ 	]*#.*//
+     /$1/p" syscall.lst |
+while read num name nargs
+do
+cat <<EOF > $name.s
+	.file "$name.s"
 
-	printf ("\t.file\t"	\
-	       "\"%s\"\n"	\
-	       "\t.globl\t%s\n"	\
-	       "%s:\n",
-	       fname, syscall, syscall)
+	.globl $name
+$name:
+	li	0,$num
+	sc
+	mfcr	0
+	b	_cerrno
+EOF
 
-	printf ("\tli\t0,%d\n"	\
-	       "\tsc\n"		\
-	       "\tmfcr\t0\n"	\
-	       "\tb\t_cerrno\n", $1)
-} ' syscall.lst >$1.s
+done

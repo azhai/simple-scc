@@ -1,38 +1,40 @@
 .POSIX:
 
-PROJECTDIR =../../../../..
+PROJECTDIR = ../../../../..
+RULES = user
+
 include $(PROJECTDIR)/scripts/rules.mk
 include ../../../rules.mk
 
 GENOBJS =\
-	_Exit.$O\
-	_read.$O\
-	_write.$O\
-	_open.$O\
 	_close.$O\
-	_waitpid.$O\
-	_create.$O\
-	_link.$O\
-	_unlink.$O\
+	_creat.$O\
+	_exit.$O\
 	_getpid.$O\
-	_brk.$O\
+	_kill.$O\
+	_link.$O\
+	_open.$O\
+	_read.$O\
+	_sys_brk.$O\
+	_unlink.$O\
+	_waitpid.$O\
+	_write.$O\
 
-GENSRC = $(GENOBJS:.$O=.s)
-
-OBJS  = \
+OBJS =\
+	_cerrno.o\
+	_sys_errlist.o\
 	$(GENOBJS)\
-	_cerrno.$O\
 
-# Rules
+GENSRC = $(GENOBJS:.o=.s)
 
-all: $(OBJS) $(CRT)
+all: $(CRT) $(OBJS)
 
-crt.$O: ../crt-posix.s
+$(CRT): ../crt-posix.s
 
 $(GENSRC): syscall.lst
 	./gensys.sh $(@:.s=)
 
 clean:
-	rm -f $(GENSRC)
+	rm -f $(GENSRC) _sys_errlist.c
 
 include deps.mk
