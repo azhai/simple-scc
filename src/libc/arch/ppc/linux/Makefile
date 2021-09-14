@@ -21,9 +21,9 @@ GENOBJS =\
 	_write.$O\
 
 OBJS =\
+	$(GENOBJS)\
 	_cerrno.o\
 	_sys_errlist.o\
-	$(GENOBJS)\
 
 GENSRC = $(GENOBJS:.o=.s)
 
