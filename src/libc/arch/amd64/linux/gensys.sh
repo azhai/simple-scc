@@ -8,17 +8,19 @@
 sed -n "
      s/[ 	]*#.*//
      /$1/p" syscall.lst |
-while read num name
+while read num name nargs
 do
-
 cat <<EOF > $name.s
 	.file	"$name.s"
 
 	.globl	$name
 $name:
+	`case $nargs in 4|5|6)
+		echo "movq       %rcx,%r10"
+                ;;
+        esac`
 	movq	\$$num,%rax
 	syscall
 	jmp	_cerrno
 EOF
-
 done

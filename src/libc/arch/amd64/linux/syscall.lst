@@ -1,14 +1,15 @@
-#number	name
-0	_read
-1	_write
-2	_open
-3	_close
-8	_lseek
-12	_brk
-13	_sigaction
-39	_getpid
-60	_Exit
-62	_kill
-87	_unlink
-96	_gettimeofday
-98	_getrusage
+#Tab 15
+#number	name	nargs
+0	_read	3
+1	_write	3
+2	_open	3
+3	_close	1
+8	_lseek	3
+12	_sys_brk	1
+13	_sigaction	3
+39	_getpid	0
+60	_exit	1
+62	_kill	2
+87	_unlink	1
+96	_gettimeofday	2
+98	_getrusage	2

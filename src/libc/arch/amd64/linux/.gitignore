@@ -1,6 +1,5 @@
-_Exit.s
-_brk.s
 _close.s
+_exit.s
 _getpid.s
 _getrusage.s
 _gettimeofday.s
@@ -9,6 +8,7 @@ _lseek.s
 _open.s
 _read.s
 _sigaction.s
+_sys_brk.s
 _sys_errlist.c
-_write.s
 _unlink.s
+_write.s
