@@ -5,16 +5,16 @@ include $(PROJECTDIR)/scripts/rules.mk
 include ../../../rules.mk
 
 GENOBJS =\
-	_Exit.$O\
 	_close.$O\
-	_brk.$O\
+	_exit.$O\
 	_getpid.$O\
 	_kill.$O\
 	_lseek.$O\
 	_openat.$O\
 	_read.$O\
-	_write.$O\
 	_sigaction.$O\
+	_sys_brk.$O\
+	_write.$O\
 
 GENSRC = $(GENOBJS:.$O=.s)
 
