@@ -11,12 +11,12 @@
 #define _POSIX_C_SOURCE 200809L
 #undef _ANSI_SOURCE
 
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
 #include <errno.h>
-#include <fcntl.h>
 #include <limits.h>
 #include <signal.h>
 #include <stdio.h>
@@ -53,15 +53,15 @@ static struct tool {
 	int    in, out, init;
 	pid_t  pid;
 } tools[] = {
-	[CC1]    = { .cmd = "cc1" },
-	[TEEIR]  = { .bin = "tee",   .cmd = "tee", },
-	[CC2]    = { .cmd = "cc2" },
-	[TEEQBE] = { .bin = "tee",   .cmd = "tee", },
-	[QBE]    = { .bin = "qbe",   .cmd = "qbe", },
-	[TEEAS]  = { .bin = "tee",   .cmd = "tee", },
-	[AS]     = { .bin = "as",    .cmd = "as", },
-	[LD]     = { .bin = "ld",    .cmd = "ld", },
-	[STRIP]  = { .bin = "strip", .cmd = "strip", },
+	[CC1]    = {.cmd = "cc1"},
+	[TEEIR]  = {.bin = "tee",   .cmd = "tee"},
+	[CC2]    = {.cmd = "cc2"},
+	[TEEQBE] = {.bin = "tee",   .cmd = "tee"},
+	[QBE]    = {.bin = "qbe",   .cmd = "qbe"},
+	[TEEAS]  = {.bin = "tee",   .cmd = "tee"},
+	[AS]     = {.bin = "as",    .cmd = "as"},
+	[LD]     = {.bin = "ld",    .cmd = "ld"},
+	[STRIP]  = {.bin = "strip", .cmd = "strip"},
 };
 
 char *argv0;
