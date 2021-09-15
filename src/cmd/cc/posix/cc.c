@@ -1,4 +1,15 @@
-#define _POSIX_SOURCE 200809L
+/*
+ * FIXME: scc is a pure C99 source code, except this file that is
+ * intended for a POSIX.2008 environment. This situation  creates
+ * a problem where some systems require the macro _ANSI_SOURCE to
+ * limit the namespace to a pure ISO namespace. NetBSD has a  bug
+ * and using POSIX_C_SOURCE  and  _ANSI_SOURCE  at  the same time
+ * generates a syntax  error in the system headers. A  patch  was
+ * sent to NetBSD, but this temporary fix is added here until the
+ * patch  arrives to the stable release.
+ */
+#define _POSIX_C_SOURCE 200809L
+#undef _ANSI_SOURCE
 
 #include <sys/types.h>
 #include <sys/wait.h>
