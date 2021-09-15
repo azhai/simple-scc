@@ -35,6 +35,9 @@ dirs: $(SCRIPTDIR)/libc-proto
 install: all
 	$(SCRIPTDIR)/install $(PREFIX)
 
+uninstall:
+	$(SCRIPTDIR)/uninstall $(PREFIX)
+
 clean:
 	xargs rm -rf < $(SCRIPTDIR)/libc-proto
 	rm -f dirs
