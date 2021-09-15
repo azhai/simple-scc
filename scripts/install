@@ -10,7 +10,6 @@ do
 		shift 2
 		;;
 	-*)
-		echo 1=$1
 		echo usage: install [-p proto] prefix >&2
 		exit 1
 		;;
