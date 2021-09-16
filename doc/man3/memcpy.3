@@ -1,0 +1,30 @@
+.TH memcpy 3
+.SH NAME
+memcpy - copy bytes in memory
+.SH SYNOPSIS
+#include <string.h>
+
+void *memcpy (void *restrict s1, const void *restrict s2, size_t n)
+.SH DESCRIPTION
+The
+.BR memcpy ()
+function copies the first
+.I n
+bytes of the object pointed to by
+.I s2
+into the object pointed to by
+.IR s1 .
+The function does not modify
+.I s1
+if
+.I n
+is equal to 0.
+If copying takes place between objects that overlap,
+the behavior is undefined.
+.SH RETURN VALUE
+The
+.BR memcpy ()
+function shall always return the pointer
+.IR s1 .
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.2.1

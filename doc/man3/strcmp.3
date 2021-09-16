@@ -1,0 +1,35 @@
+.TH strcmp 3
+.SH NAME
+strcmp - compare strings
+.SH SYNOPSIS
+#include <string.h>
+
+int strcmp(const char *s1, const char *s2)
+.SH DESCRIPTION
+The
+.BR strcmp ()
+function compares the string
+pointed to by
+.I s1
+to the string pointed to by
+.IR s2 .
+.PP
+The value returned shall be used to determine
+if a string is lexicographically
+greater than, lesser than or equal to
+the other string.
+.PP
+The function shall not modify either of the strings.
+.SH RETURN VALUE
+The
+.BR strcmp ()
+function shall return an integer
+greater than, equal to or lesser than 0,
+if the string pointed to by
+.I s1
+is greater than, equal to or lesser than
+the string pointed to by
+.IR s2 ,
+respectively.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.4.2

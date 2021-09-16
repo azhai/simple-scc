@@ -1,0 +1,34 @@
+.TH MEMCMP 3
+.SH NAME
+memcmp - compare bytes in memory
+.SH SYNOPSIS
+#include <string.h>
+
+int memcmp (const void *s1, const void *s2, size_t n)
+.SH DESCRIPTION
+The
+.BR memcmp ()
+function compares the first
+.I n
+bytes of the object pointed to by
+.I s1
+to the first
+.I n
+bytes of the object pointed to by
+.IR s2 .
+The value returned shall be used to determine
+if an object is lexicographically greater than,
+lesser than or equal to another object.
+.SH RETURN VALUE
+The
+.BR memcmp ()
+function shall return an integer greater than,
+equal to, or lesser than 0,
+if the object pointed to by
+.I s1
+is greater than,
+equal to, or lesser than the object pointed to by
+.IR s2 ,
+respectively.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.4.1

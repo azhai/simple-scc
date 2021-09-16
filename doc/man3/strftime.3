@@ -1,0 +1,314 @@
+.TH STRFTIME 3
+.SH NAME
+strftime - formats the broken-down time according to specified format
+.SH SYNOPSIS
+#include <time.h>
+
+.nf
+size_t strftime(char * restrict s,
+                size_t maxsize,
+                const char * restrict format,
+                const struct tm * restrict timeptr);
+.fi
+.SH DESCRIPTION
+The
+.BR strftime ()
+function places characters into the array pointed to by
+.I s
+as controlled by the string pointed to by
+.IR format .
+
+The
+.I format
+shall be a multibyte character sequence,
+beginning and ending in its initial shift state.
+The
+.I format
+shall consist of zero or more conversion specifiers and
+ordinary characters.
+A conversion specifier consists of a % character,
+possibly followed by an E or O modifier character,
+followed by a character that determines the behavior of the conversion
+specifier.
+All ordinary characters
+(including the terminating null character) are copied unchanged into the
+array.
+No more than
+.I maxsize
+characters are placed into the array.
+
+The format specification is a null-terminated string and
+shall contain special character sequences, called conversion specifiers,
+which get replaced with the appropriate characters as described in the
+following list:
+.TP
+.B %a
+The abbreviated name of the day of the week according to the current
+locale.
+.TP
+.B %A
+THe full name of the day of the week according to the current locale.
+.TP
+.B %b
+The abbreviated name of the month according to the current locale.
+.TP
+.B %B
+The full name of the month according to the current locale.
+.TP
+.B %c
+The preferred date and time representation for the current locale.
+.TP
+.B %C
+The decimal number representing the year divided by 100 and truncated
+to an integer (century number).
+.TP
+.B %d
+The day of the month as a decimal number between 01 and 31.
+.TP
+.B %D
+Equivalent to "%m/%d/%y"
+.TP
+.B %e
+The day of the month as a decimal number between 0 and 31;
+a single digit is preceded by a space.
+.TP
+.B %F
+Equivalent to "%y-%m-%d"
+(the ISO 8601 date format).
+.TP
+.B %G
+The ISO 8601 week-based-year with century as a decimal number.
+The 4-digit year corresponding to the ISO week number. (Calculated
+from
+.BR tm_year ,
+.BR tm_yday ,
+and
+.BR tm_wday )
+.TP
+.B %g
+Like
+.B %G
+but without century, that is, with a 2-digit year (00-99).
+(Calculated from
+.BR tm_year ,
+.BR tm_yday ,
+and
+.BR tm_wday )
+.TP
+.B %h
+Equivalent to
+.BR %b .
+(Calculated from
+.BR tm_mon )
+.TP
+.B %H
+The hour as a decimal number using a 24-hour clock between
+00 and 23.
+(Calculated from
+.BR tm_hour )
+.TP
+.B %I
+The hour as a decimal number using a 12-hour clock between 01 and 12
+(Calculated from
+.BR tm_hour )
+.TP
+.B %j
+The day of the year as a decimal number between 001 and 366.
+(Calculated from
+.BR tm_yday )
+.TP
+.B %m
+The month as a decimal number between 01 and 12
+(Calculated from
+.BR tm_mon )
+.TP
+.B %M
+The minute as a decimal number between 00 and 59
+.TP
+.B %n
+A newline character.
+.TP
+.B %p
+Either "AM" or "PM" according to the given time value.
+(Calculated from
+.BR tm_hour )
+.B %r
+The locale's 12-hour clock time.
+.TP
+.B %R
+The time in 24-hour notation (%H:%M).
+.TP
+.B %S
+The second as a decimal number between 00 and 60.
+(Calculated from
+.BR tm_sec ).
+.TP
+.B %t
+A tab character.
+.TP
+.B %T
+The time in 24-hour notation (%H:%M:%S).
+.TP
+.B %u
+The day of the week (ISO 8601) as a decimal between 1 and 7,
+Monday being 1.
+(Calculated from
+.BR tm_wday )
+.TP
+.B %U
+The week number of the current year as a decimal number
+between 00 and 53,
+starting with the first Sunday as the first day of week 01. (Calculated from
+.BR tm_year ,
+.BR tm_wday ,
+.BR tm_yday )
+.TP
+.B %V
+The ISO 8601 week (see NOTES) number of the current year as a decimal number
+between 01 and 53,
+where week 1 is the first week that has at least 4 days in the new year.
+.TP
+.B %w
+The day of the week as a decimal between 0 and 6,
+Sunday being 0.
+.TP
+.B %W
+The week number of the current year as a decimal number
+between 00 and 53,
+starting with the first Monday as the first day of week 01.
+(Calculated from
+.B tm_yday
+and
+.BR tm_wday ).
+.TP
+.B %x
+The preferred date representation for the current locale without the
+time.
+.TP
+.B %X
+The preferred time representation for the current locale without the
+date.
+.TP
+.B %y
+The year as a decimal number without a century between 00 and 99.
+.TP
+.B %Y
+The year as a decimal number including the century.
+.TP
+.B %z
+The +hhmm or -hhmm numeric timezone
+(that is, the hour and minute offset from UTC in ISO 8601 format).
+.TP
+.B %Z
+The timezone name or abbreviation.
+.TP
+.B %%
+This is replaced with %.
+.P
+Some conversion specifiers can be modified by the inclusion of an
+.B E
+or
+.B O
+modifier character to indicate an alternative format or specification.
+If the alternative format or character doesn't exist for the current locale,
+the modifier is ignored.
+
+The C Standard mentions the following specifiers:
+.BR %Ec ,
+.BR %EC ,
+.BR %Ex ,
+.BR %EX ,
+.BR %Ey ,
+.BR %EY ,
+.BR %Od ,
+.BR %Oe ,
+.BR %OH ,
+.BR %OI ,
+.BR %Om ,
+.BR %OM ,
+.BR %OS ,
+.BR %Ou ,
+.BR %OU ,
+.BR %OV ,
+.BR %Ow ,
+.BR %OW ,
+.BR %Oy ,
+where the effect of the
+.B O
+modifier is to use
+alternative numeric symbols, and that of the
+.B E
+modifier is to use a locale-dependent alternative representation.
+
+In the "C" locale, the E and O modifiers are ignored and the
+replacement strings for the following specifiers are:
+.TP
+.B %a
+the first three characters of %A
+.TP
+.B %A
+one of Sunday ,Monday, ..., Saturday
+.TP
+.B %b
+the first three characters of %B
+.TP
+.B %B
+one of January, February, ..., December
+.TP
+.B %c
+equivalent to %a %b %e %T %Y
+.TP
+.B %p
+one of AM or PM
+.TP
+.B %r
+equivalent to %I:%M:%S %p
+.TP
+.B %x
+equivalent to %m/%d/%y
+.TP
+.B %X
+equivalent to %T
+.TP
+.B %Z
+The timezone name or abbreviation.
+.SH RETURN VALUE
+If the total number of resulting characters
+including the terminating null character doesn't exceed
+.IR maxsize ,
+then
+.I strftime
+function returns the number of characters
+placed into the array pointed to by
+.I s
+not including the terminating null character. Otherwise, zero is
+returned and the contents of the array are indeterminate.
+.SH NOTES
+In the ISO 8601 week-based year, weeks begin on a Monday and week 1
+of the year is the week that includes January 4th, which also includes
+the first Thursday of the year, and is also the first week that
+contains at least four days in the year. As mentioned above,
+.B %g, %G,
+and
+.B %V
+are dependent on ISO 8601 week-based year, and the following examples
+are provided for illustrative purposes:
+
+If the first Monday of January is the 2nd, 3rd, or 4th,
+the preceding days are part of the last week of the preceding year;
+thus, for Saturday 2nd January 1999,
+.B %G
+is replaced by 1998 and
+.B %V
+is replaced with 53. Similarly,
+if December 29th, 30th or 31st is a Monday,
+it and following days are part of week 1 and hence,
+for Tuesday 30th December 1997,
+.B %G
+is replaced by 1998 and
+.B %V
+is replaced with 01.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.23.3.5 Paragraph 1,2,3,4,5,6,7
+.SH SEE ALSO
+.BR time.h (3)

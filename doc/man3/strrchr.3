@@ -1,0 +1,24 @@
+.TH strrchr 3
+.SH NAME
+strrchr - find character in string
+.SH SYNOPSIS
+#include <string.h>
+
+char *strrchr(const char *s, int c)
+.SH DESCRIPTION
+The
+.BR strrchr ()
+function locates the last occurence of
+.I c
+(converted to a char)
+in the string pointed to by
+.IR s .
+.PP
+The terminating null character is considered to be part of the string.
+.SH RETURN VALUE
+The
+.BR strchr ()
+function shall return a pointer to the located character
+or a null pointer if the character does not occur in the string.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.5.5

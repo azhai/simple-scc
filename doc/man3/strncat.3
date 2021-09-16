@@ -1,0 +1,38 @@
+.TH strncat 3
+.SH NAME
+strncat - concatenate a string with a part of another
+.SH SYNOPSIS
+#include <string.h>
+
+char *strncat(char *restrict s1, const char *restrict s2, size_t n)
+.SH DESCRIPTION
+The
+.BR strncat ()
+function appends not more than n characters
+(a null character and characters that follow are not appended)
+from the array pointed to by
+.I s2
+to the end of the string pointed to by
+.IR s1 .
+.PP
+The initial character of
+.I s2
+overwrites the null character
+at the end of
+.IR s1 .
+.PP
+A terminating null character is always appended to the result.
+The function shall not append anything to
+.I s1
+if
+.I n
+is equal to 0.
+If copying takes place between objects that overlap,
+the behaviour is undefined.
+.SH RETURN VALUE
+The
+.BR strncat ()
+function shall return the pointer
+.IR s1 .
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.3.2

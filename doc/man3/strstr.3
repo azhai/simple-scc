@@ -1,0 +1,32 @@
+.TH strstr 3
+.SH NAME
+strstr - find substring in string
+.SH SYNOPSIS
+#include <string.h>
+
+char *strstr(const char *s1, const char *s2)
+.SH DESCRIPTION
+The
+.BR strstr ()
+function locates the first occurence
+in the string pointed to by
+.I s1
+of the sequence of characters
+(excluding the terminating null character)
+in the string pointed to by
+.IR s2 .
+.SH RETURN VALUE
+The
+.BR strchr ()
+function shall return a pointer to the located string
+or a null pointer if
+.I s2
+is not found.
+.PP
+If
+.I s2
+points to an empty string,
+the function returns
+.IR s1 .
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.5.7

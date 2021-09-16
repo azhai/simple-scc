@@ -1,0 +1,102 @@
+.TH time.h 3
+.SH NAME
+time.h - time types
+.SH SYNOPSIS
+
+#include <time.h>
+
+The time.h header declares the following functions:
+
+.nf
+char asctime(const struct tm *tm);
+clock_t clock(void);
+char ctime(const time_t *timep);
+double difftime(time_t t1, time_t t2);
+struct tm *gmtime(const time_t *timep);
+struct tm *localtime(const time_t *timep);
+time_t mktime(struct tm *tm);
+size_t strftime(char *restrict, size_t, const char *restrict,
+                const struct tm *restrict);
+time_t time(time_t *timer);
+.fi
+.SH DESCRIPTION
+The time.h header defines the following macros:
+
+.B NULL
+
+It expands to an implementation-defined null pointer constant,
+as defined in stddef.h header.
+
+.B CLOCKS_PER_SEC
+
+A number used to convert the value returned by the
+.BR clock ()
+function into seconds. The value is an expression with type
+clock_t.
+
+The time.h header defines the following types:
+.BR clock_t ,
+.BR size_t ,
+.BR time_t .
+
+The
+time.h header declares the
+.B tm
+structure,
+which includes at least the following members:
+
+.nf
+int tm_sec	Seconds[0,60]
+int tm_min	Minutes[0,59]
+int tm_hour 	Hour[0,23]
+int tm_mday 	Day of month [1,31]
+int tm_mon 	Month of year [0,11]
+int tm_year 	Years since 1900
+int tm_wday 	Day of week [0,6] (Sunday =0)
+int tm_yday 	Day of year [0,365]
+int tm_isdst 	Daylight Savings flag
+.fi
+
+The members of the
+.I tm
+structure are:
+.TP 10
+tm_sec
+The number of seconds after the minute, normally in the range 0 to 59,
+but can be up to 60 to allow for leap seconds.
+.TP
+tm_min
+The number of minutes after the hour, in the range 0 to 59.
+.TP
+tm_hour
+The number of hours past midnight, in the range 0 to 23.
+.TP
+tm_mday
+The day of the month, in the range 1 to 31.
+.TP
+tm_mon
+The number of months since January, in the range 0 to 11.
+.TP
+tm_year
+The number of years since 1900.
+.TP
+tm_wday
+The number of days since Sunday, in the range 0 to 6.
+.TP
+tm_yday
+The number of days since January 1, in the range 0 to 365.
+.TP
+tm_isdst
+A flag that indicates whether daylight saving time is
+in effect at the time described.
+The value is positive if daylight saving time is in
+effect, zero if it is not, and negative if the information is not
+available.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.23.1 Paragraph 1,2,3,4
+.SH SEE ALSO
+.BR clock (3)
+.BR ctime (3)
+.BR difftime (3)
+.BR strftime (3)
+.BR time (3)

@@ -1,0 +1,29 @@
+.TH memmove 3
+.SH NAME
+memmove - copy bytes in memory with overlapping areas
+.SH SYNOPSIS
+#include <string.h>
+
+void *memmove (void *s1, const void *s2, size_t n)
+.SH DESCRIPTION
+The
+.BR memmove ()
+function copies the first
+.I n
+bytes of the object pointed to by
+.I s2
+to the object pointed to by
+.IR s1 .
+The
+.BR memmove ()
+function facilitates copying between overlapping memory blocks.
+The function shall not copy anything if
+.I n
+is equal to 0.
+.SH RETURN VALUE
+The
+.BR memmove ()
+function shall return the pointer
+.IR s1 .
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.2.2

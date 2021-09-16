@@ -1,0 +1,25 @@
+.TH strcpy 3
+.SH NAME
+strcpy - copy a string
+.SH SYNOPSIS
+#include <string.h>
+
+char *strcpy(char *restrict s1, const char *restrict s2)
+.SH DESCRIPTION
+The
+.BR strcpy ()
+function copies the string
+pointed to by
+.I s2
+(including the terminating null character)
+into the character array pointed to by
+.IR s1 .
+If copying takes place between objects that overlap,
+behaviour is undefined.
+.SH RETURN VALUE
+The
+.BR strcpy ()
+function shall return the pointer
+.IR s1 .
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.2.3

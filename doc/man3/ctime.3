@@ -1,0 +1,132 @@
+.TH CTIME 3
+.SH NAME
+asctime, ctime, gmtime, localtime, mktime - transform date and time to
+broken-down time
+.SH SYNOPSIS
+#include <time.h>
+
+.nf
+char *asctime(const struct tm *tm);
+char *ctime(const time_t *timep);
+struct tm *gmtime(const time_t *timep);
+struct tm *localtime(const time_t *timep);
+time_t mktime(struct tm *tm);
+.fi
+.SH DESCRIPTION
+The
+.BR ctime ,
+.B gmtime
+and
+.B localtime
+functions all take an argument of data type
+.BR time_t ,
+which represents calendar time.
+
+The
+.B asctime
+and
+.B mktime
+functions both takes an argument representing broken-down time,
+which is a representation separated into year, month, day and so on.
+
+Broken-down time is stored in the struct tm.
+
+The call
+.B ctime(t)
+is equivalent to
+.BR asctime(localtime(t)) .
+It converts the calendar time
+.I t
+into a null-terminated string of the form:
+
+	"Wed Jun 30 21:49:08 1993\\n\\0"
+
+In C locale, the abbreviations for the days of the week are
+"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", and "Sat";
+the abbreviations for the months are "Jan", "Feb", "Mar", "Apr",
+"May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", and "Dec".
+
+The
+.B gmtime
+function converts the calendar time
+.I timep
+into broken-down time representation, expressed as
+Coordinated Universal Time (UTC).
+It may return NULL if the specified time cannot be converted to UTC.
+
+The
+.B localtime
+function converts the calendar time
+.I timep
+to broken-down time representation,
+expressed relative to the user's specified timezone.
+
+The
+.B asctime
+function converts the broken-down time value
+.I tm
+into a null-terminated string with the same format as
+.B ctime
+function.
+
+The
+.B mktime
+function converts a broken-down time structure,
+expressed as local time, to calendar time representation.
+The function ignores
+the values supplied by the caller in the
+.B tm_wday
+and
+.B tm_yday
+fields and the original values of other fields
+are not restricted to the ranges indicated above.
+On successful completion, the values of
+.B tm_wday
+and
+.B tm_yday
+are set appropriately and the other components are set to represent
+the specified calendar time within their respective ranges.
+The final value of
+.B tm_mday
+is not set until
+.B tm_mon
+and
+.B tm_year
+are determined.
+
+.SH RETURN VALUE
+On success,
+.B gmtime
+and
+.B localtime
+functions return a pointer to a struct tm.
+
+On success,
+.B asctime
+and
+.B ctime
+functions return a pointer to a string.
+
+On success,
+.B mktime
+function returns the calendar time, expressed as a value of type
+.BR time_t .
+
+On error,
+.B mktime
+function returns the value
+.BR (time_t)-1 .
+The remaining functions return NULL on error.
+On error,
+.B errno
+is set to indicate the cause of the error.
+.SH STANDARDS
+.nf
+ISO/IEC 9899:1999 7.23.2.3 Paragraph 1,2,3
+ISO/IEC 9899:1999 7.23.3.1 Paragraph 1,2,3
+ISO/IEC 9899:1999 7.23.3.2 Paragraph 1,2,3
+ISO/IEC 9899:1999 7.23.3.3 Paragraph 1,2,3
+ISO/IEC 9899:1999 7.23.3.4 Paragraph 1,2,3
+.fi
+.SH SEE ALSO
+.BR time.h (3)

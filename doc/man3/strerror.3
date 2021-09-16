@@ -1,0 +1,29 @@
+.TH strerror 3
+.SH NAME
+strerror - get error message string
+.SH SYNOPSIS
+#include <string.h>
+
+char *strerror(int errnum)
+.SH DESCRIPTION
+The
+.BR strerror ()
+function maps the number passed with errnum
+to a message string.
+.PP
+Typically, the values for
+.I errnum
+come from errno,
+but strerror shall map any value of type int to a message.
+.PP
+The array pointed to by the pointer returned
+shall not be modified by the program,
+but may be overwritten
+by a subsequent call to the
+.B strerror
+function.
+.SH RETURN VALUE
+The function returns a pointer to the string,
+the contents of which are locale-specific.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.6.2

@@ -1,0 +1,23 @@
+.TH strspn 3
+.SH NAME
+strspn - get length of substring
+.SH SYNOPSIS
+#include <string.h>
+
+size_t strspn(const char *s1, const char *s2)
+.SH DESCRIPTION
+The
+.BR strspn ()
+function computes the length
+of the maximum initial segment
+of string pointed to by
+.I s1
+which consists entirely of characters
+from the string pointed to by
+.IR s2 .
+.SH RETURN VALUE
+The
+.BR strcspn ()
+function shall return the length of the segment.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.5.6

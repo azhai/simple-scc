@@ -1,0 +1,32 @@
+.TH strcat 3
+.SH NAME
+strcat - concatenate two strings
+.SH SYNOPSIS
+#include <string.h>
+
+char *strcat(char *restrict s1, const char *restrict s2)
+.SH DESCRIPTION
+The
+.BR strcat ()
+function appends a copy of the string
+pointed to by
+.I s2
+(including the terminating null character)
+to the end of the string pointed to by
+.IR s1 .
+.PP
+The initial character of
+.I s2
+overwrites the null character
+at the end of
+.I s1
+.PP
+If copying takes place between objects that overlap,
+the behaviour is undefined.
+.SH RETURN VALUE
+The
+.BR strcat ()
+function shall return the pointer
+.IR s1 .
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.3.1

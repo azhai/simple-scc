@@ -1,0 +1,21 @@
+.TH CLOCK 3
+.SH NAME
+clock - determine processor time
+.SH SYNOPSIS
+#include <time.h>
+
+clock_t clock(void)
+.SH DESCRIPTION
+The
+.BR clock ()
+function returns an approximation of processor time used by the program.
+.SH RETURN VALUE
+The value returned is the CPU time used so far as a clock_t.
+In order to get the number of seconds used, divide by
+.BR CLOCKS_PER_SEC .
+If the processor time used is not available or its value cannot
+be represented, the function returns the value (clock_t)-1.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.23.2.1 Paragraph 1,2,3
+.SH SEE ALSO
+.BR time.h (3)

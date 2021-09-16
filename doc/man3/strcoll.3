@@ -1,0 +1,37 @@
+.TH strcoll 3
+.SH NAME
+strcoll - compare two strings using the current locale
+.SH SYNOPSIS
+#include <string.h>
+
+int strcoll (const char *s1, const char *s2)
+.SH DESCRIPTION
+The
+.BR strcoll ()
+function compares the string
+pointed to by
+.I s1
+to the string pointed to by
+.IR s2 ,
+both interpreted
+as appropriate to the
+LC_COLLATE category of the current locale.
+.PP
+The value returned shall be used to determine
+if a string is lexicographically
+greater than, lesser than or equal to
+the other string,
+according to the current locale.
+.SH RETURN VALUE
+The
+.BR strcoll ()
+function shall return an integer
+greater than, equal to or lesser than 0,
+if the string pointed to by
+.I s1
+is greater than, equal to or lesser than
+the string pointed to by
+.IR s2 ,
+respectively.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.4.3

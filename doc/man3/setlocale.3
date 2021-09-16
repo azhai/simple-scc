@@ -1,0 +1,63 @@
+.TH setlocale 3
+.SH NAME
+setlocale - set the current locale
+.SH SYNOPSIS
+#include <locale.h>
+
+char *setlocale(int category, const char *locale);
+.SH DESCRIPTION
+The
+.BR setlocale ()
+function is used to set or query the program's current locale.
+It can be used to set or query the locale entirely or partially.
+If
+.I locale
+is not NULL,
+the program's current locale is modified according to the arguments.
+The argument
+.I category
+determines which parts of the program's current locale
+should be modified.
+
+.nf
+Category   	Governs
+LC_ALL     	All of the locale
+LC_COLLATE 	String collation
+LC_CTYPE   	Character classification
+LC_MONETARY	Formatting of monetary values
+LC_NUMERIC 	Formatting of nonmonetary numeric values
+LC_TIME    	Formatting of date and time values
+.fi
+
+A value of
+.B C
+for
+.I locale
+specifies the minimum environment for C translation;
+a value of " " for
+.I locale
+specifies the locale-specific native environment.
+
+At program startup,
+.BR setlocale (LC_ALL,"C");
+is executed.
+.SH RETURN VALUE
+A pointer to the string associated with the specified
+.I category
+for the new
+.I locale
+is returned if it can be honored.
+A pointer to the string associated with the specified
+.I category
+for the current locale is returned if
+.I locale
+is NULL.
+The string returned is such that a subsequent call
+with that string value and its associated category
+will restore that part of the program's locale.
+The string pointed to shall not be modified by the program,
+but may be overwritten by a subsequent call to the setlocale function.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.11.1.1 Paragraph 1,2,3,4,6,7,8
+.SH SEE ALSO
+.B locale.h(3)

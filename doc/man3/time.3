@@ -1,0 +1,23 @@
+.TH TIME 3
+.SH NAME
+time - determines the current calendar time
+.SH SYNOPSIS
+#include <time.h>
+
+time_t time(time_t *timer)
+.SH DESCRIPTION
+The
+.BR time ()
+function determines the current calendar time.
+.SH RETURN VALUE
+The value returned is the best approximation
+to the current calendar time. The value
+.B (time_t)-1
+is returned if the calendar time is unavailable. If
+.I timer
+is not a null pointer,
+the return value is also assigned to the object it points to.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.23.2.4 Paragraph 1,2,3
+.SH SEE ALSO
+.BR time.h (3)

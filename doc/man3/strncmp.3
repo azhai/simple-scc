@@ -1,0 +1,40 @@
+.TH strncmp 3
+.SH NAME
+strncmp - compare part of two strings
+.SH SYNOPSIS
+#include <string.h>
+
+int strncmp(const char *s1, const char *s2, size_t n)
+.SH DESCRIPTION
+The
+.BR strncmp ()
+function compares not more than
+.I n
+characters
+(characters that follow a null character are not compared)
+from the array pointed to by
+.I s1
+to the array pointed to by
+.IR s2 .
+.PP
+The value returned shall be used to determine
+if a string is lexicographically
+greater than, lesser than or equal to
+the other string.
+.SH RETURN VALUE
+The
+.BR strncmp ()
+function shall return an integer greater than,
+equal to, or lesser than 0,
+if the string pointed to by
+.I s1
+is greater than,
+equal to, or lesser than the string pointed to by
+.IR s2 ,
+respectively.
+.PP
+The function shall return 0 if
+.I n
+is equal to 0.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.4.4

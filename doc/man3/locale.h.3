@@ -1,0 +1,171 @@
+.TH locale.h 3
+.SH NAME
+locale.h - category macros
+.SH SYNOPSIS
+#include <locale.h>
+
+The locale.h header declares the following functions:
+
+.nf
+char *setlocale(int category, const char *locale);
+struct lconv *localeconv(void);
+.fi
+.SH DESCRIPTION
+The locale.h header defines the following macros:
+
+.nf
+LC_ALL
+LC_COLLATE
+LC_CTYPE
+LC_MESSAGES
+LC_MONETARY
+LC_NUMERIC
+LC_TIME
+.fi
+
+These macros expand to integer constant expressions with distinct values,
+suitable for use as the first argument,
+.IR category ,
+to the
+.B setlocale
+function.
+
+The locale.h header declares the lconv structure defined as follows:
+
+.nf
+char *currency_symbol
+char *decimal_point
+char frac_digits
+char *grouping
+char *int_curr_symbol
+char int_frac_digits
+char int_n_cs_precedes
+char int_n_sep_by_space
+char int_n_sign_posn
+char int_p_cs_precedes
+char int_p_sep_by_space
+char int_p_sign_posn
+char *mon_decimal_point
+char *mon_grouping
+char *mon_thousands_sep
+char *negative_sign
+char n_cs_precedes
+char n_sep_by_space
+char n_sign_posn
+char *positive_sign
+char p_cs_precedes
+char p_sep_by_space
+char p_sign_posn
+char *thousands_sep
+.fi
+
+The members of the
+.I lconv
+structure are:
+.TP 10
+currency_symbol
+The local currency symbol applicable to the current locale.
+.TP
+decimal_point
+The decimal-point character used to format monetary quantities.
+.TP
+thousands_sep
+The character used to separate groups of digits
+before the decimal-point character in formatted monetary quantities.
+.TP
+grouping
+A string whose elements indicate the size of each group of digits in
+formatted nonmonetary quantities.
+.TP
+mon_decimal_point
+The decimal-point used to format monetary quantities.
+.TP
+mon_thousands_sep
+The separator for groups of digits before
+the decimal-point in formatted monetary quantities.
+.TP
+mon_grouping
+A string whose elements indicate the size of each group of digits in
+formatted monetary quantities.
+.TP
+positive_sign
+The string used to indicate a nonnegative-valued formatted monetary
+quantity.
+.TP
+negative_sign
+The string used to indicate a negative-valued formatted
+monetary quantity.
+.TP
+frac_digits
+The number of fractional digits (those after the decimal-point)
+to be displayed in a locally formatted monetary quantity.
+.TP
+p_cs_precedes
+Set to 1 or 0 if the currency_symbol respectively precedes or
+succeeds the value for a nonnegative locally formatted
+monetary quantity.
+.TP
+n_cs_precedes
+Set to 1 or 0 if the currency_symbol respectively precedes or
+succeeds the value for a negative locally formatted
+monetary quantity
+.TP
+p_sep_by_space
+Set to a value indicating the separation of the currency_symbol,
+the sign string, and the value for a nonnegative locally formatted
+monetary quantity.
+.TP
+n_sep_by_space
+Set to a value indicating the separation of the currency_symbol,
+the sign string, and the value for a negative locally formatted
+monetary quantity.
+.TP
+p_sign_posn
+Set to a value indicating the positioning of the positive_sign for
+a nonnegative locally formatted monetary quantity.
+.TP
+n_sign_posn
+Set to a value indicating the positioning of the negative_sign for
+a negative locally formatted monetary quantity.
+.TP
+int_curr_symbol
+The international currency symbol applicable to the current locale.
+.TP
+int_frac_digits
+The number of fractional digits (those after the decimal-point) to be
+displayed in an internationally formatted monetary quantity.
+.TP
+int_p_cs_precedes
+Set to 1 or 0 if the int_curr_symbol respectively precedes or
+succeeds the value for a nonnegative internationally formatted
+monetary quantity.
+.TP
+int_n_cs_precedes
+Set to 1 or 0 if the int_curr_symbol respectively precedes or
+succeeds the value for a negative internationally formatted
+monetary quantity.
+.TP
+int_p_sep_by_space
+Set to a value indicating the separation of the int_curr_symbol,
+the sign string, and the value for a nonnegative internationally
+formatted monetary quantity.
+.TP
+int_n_sep_by_space
+Set to a value indicating the separation of the int_curr_symbol,
+the sign string, and the value for a negative internationally
+formatted monetary quantity.
+.TP
+int_p_sign_posn
+Set to a value indicating the positioning of the positive_sign for
+a nonnegative internationally formatted monetary quantity.
+.TP
+int_n_sign_posn
+Set to a value indicating the positioning of the negative_sign for
+a negative internationally formatted monetary quantity.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.11
+
+ISO/IEC 9899:1999 Section 7.11.2.1
+.SH SEE ALSO
+.BR localeconv (3)
+.BR setlocale (3)

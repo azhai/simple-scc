@@ -1,0 +1,71 @@
+.TH SETJMP 3
+.SH NAME
+setjmp - non-local jumps
+.SH SYNOPSIS
+#include <setjmp.h>
+
+.nf
+int setjmp(jmp_buf env)
+void longjmp(jmp_buf env, int val)
+.fi
+.SH DESCRIPTION
+The
+.BR setjmp ()
+function saves it calling environment in its argument
+.I env
+for later use by the
+.BR longjmp .
+
+The
+.BR longjmp ()
+function restores the environment saved
+by the most recent invocation of
+.B setjmp
+in the same invocation of the program
+with the corresponding
+.I env
+as argument.
+
+If there has been no such invocation,
+or if the function containing the invocation of
+.B setjmp
+has terminated execution,
+or if the invocation of
+.B setjmp
+was within the scope of an identifier with variably modified type
+and execution has left that scope in interim,
+the behavior is undefined.
+.SH RETURN VALUE
+If the return is from a direct invocation,
+.B setjmp
+shall return the value zero.
+If the return is from a call to
+.BR longjmp ,
+.B setjmp
+shall return a nonzero value.
+
+After the function
+.B longjmp
+is called,
+program execution continues as
+if the corresponding invocation of
+.B setjmp
+has just returned the value specified by
+.IR val .
+The function
+.B longjmp
+shall not cause the function
+.B setjmp
+to return the value 0.
+If
+.I val
+is set to 0,
+.B setjmp
+shall return the value 1.
+.SH STANDARDS
+.nf
+ISO/IEC 9899:1999 Section 7.13.1.1 Paragraph 1,2,3
+ISO/IEC 9899:1999 Section 7.13.2.1 Paragraph 1,2,3,4
+.fi
+.SH SEE ALSO
+.BR setjmp.h (3)

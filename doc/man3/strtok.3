@@ -1,0 +1,68 @@
+.TH strtok 3
+.SH NAME
+strtok - split a string into tokens
+.SH SYNOPSIS
+#include <string.h>
+
+char *strtok(char *restrict s1, const char *restrict s2)
+.SH DESCRIPTION
+The
+.BR strtok ()
+function, called in sequence,
+breaks the string pointed to by
+.I s1
+into a sequence of tokens,
+each of which is delimited by a character
+from the string pointed to by
+.IR s2 .
+.PP
+The first call in the sequence has a non-null first argument;
+subsequent calls in the sequence have a null first argument.
+.PP
+The separator string pointed to by
+.I s2
+may be different from call to call.
+.PP
+The first call in the sequence
+searches the string pointed to by
+.I s1
+for the first character
+that is not contained in the current separator
+string pointed to by
+.IR s2 .
+If no such character is found,
+then there are
+no tokens in the string pointed to by s1
+and the strtok function returns a null pointer.
+If such a character is found,
+it is the start of the first token.
+.PP
+The strtok function then searches from there
+for a character that is contained
+in the current separator string.
+If no such character is found,
+the current token extends to
+the end of the string pointed to by
+.IR s1 ,
+and subsequent searches for a token will return a null pointer.
+If such a character is found,
+it is overwritten by a null character,
+which terminates the current token.
+The strtok function saves
+a pointer to the following character,
+from which the next search for a token will start.
+.PP
+Each subsequent call,
+with a null pointer as the value of the first argument,
+starts searching from the saved pointer
+and behaves as described above.
+The function returns a pointer to the first
+character of a token,
+or a null pointer if there is no token.
+.SH RETURN VALUE
+The
+.BR strtok ()
+function shall return a pointer to the first character of a token,
+or a null pointer if there is no token.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.5.8

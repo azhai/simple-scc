@@ -1,0 +1,62 @@
+.TH string.h 3
+.SH NAME
+string.h - string operations
+.SH SYNOPSIS
+#include <string.h>
+
+The string.h header declares the following functions:
+
+.nf
+void *memcpy(void *restrict s1, const void *restrict s2, size_t n);
+void *memmove(void *s1, const void *s2, size_t n);
+char *strcpy(char *restrict s1, const char *restrict s2);
+char *strncpy(char *restrict s1, const char *restrict s2, size_t n);
+char *strcat(chaar *restrict s1, const char *restrict s2);
+char *strncat(chaar *restrict s1, const char *restrict s2, size_t n);
+int memcmp(const void *s1, const void *s2, size_t n);
+int strcmp(const char *s1, const char *s2);
+int strcoll(const char *s1, const char *s2);
+int strncmp(const char *s1, const char *s2, size_t n);
+size_t strxfrm(char *restrict s1, const char *restrict s2, size_t n);
+void *memchr(const void *s, int c, size_t n);
+char *strchr(const char *s, int c);
+size_t strcspn(const char *s1, const char *s2);
+char *strpbrk(const char *s1, const char *s2);
+char *strrchr(const char *s, int c);
+size_t strspn(const char *s1, const char *s2);
+char *strstr(const char *s1, const char *s2);
+char *strtok(char *restrict s1, const char *restrict s2);
+void *memset(void *s, int c, size_t n);
+char *strerror(int errnum);
+size_t strlen(const char *s);
+.fi
+.SH DESCRIPTION
+The string.h header defines the macro
+.B NULL
+and the type
+.BR size_t .
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.21.1
+.SH SEE ALSO
+.BR memchr (3)
+.BR memcmp (3)
+.BR memcpy (3)
+.BR memmove (3)
+.BR memset (3)
+.BR strcat (3)
+.BR strchr (3)
+.BR strcmp (3)
+.BR strcoll (3)
+.BR strcpy (3)
+.BR strcspn (3)
+.BR strerror (3)
+.BR strlen (3)
+.BR strncat (3)
+.BR strncmp (3)
+.BR strncpy (3)
+.BR strpbrk (3)
+.BR strrchr (3)
+.BR strspn (3)
+.BR strstr (3)
+.BR strtok (3)
+.BR strxfrm (3)

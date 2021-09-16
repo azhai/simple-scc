@@ -1,0 +1,32 @@
+.TH setjmp.h 3
+.SH NAME
+setjmp.h - non-local jumps
+.SH SYNOPSIS
+
+#include <setjmp.h>
+
+The setjmp.h header declares the following functions:
+
+.nf
+void longjmp(jmp_buf env, int val)
+int setjmp(jmp_buf env)
+.fi
+.SH DESCRIPTION
+The setjmp.h header defines the type
+
+.B jmp_buf
+
+It is an array type suitable for holding
+the information needed to restore a calling environment.
+The environment of a call to
+.B setjmp
+consists of information
+that is essential for a call to
+.B longjmp
+to return execution to the respective block,
+and the invocation of that block, were it called recursively.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.13.1 Paragraph 1,2,3
+.SH SEE ALSO
+.BR setjmp (3)
+.BR longjmp (3)

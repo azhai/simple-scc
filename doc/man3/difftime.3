@@ -1,0 +1,22 @@
+.TH DIFFTIME 3
+.SH NAME
+difftime - calculate time difference
+.SH SYNOPSIS
+#include <time.h>
+
+double difftime(time_t time1, time_t time0)
+.SH DESCRIPTION
+The
+.BR difftime ()
+function returns the difference (time1 - time0)
+between time
+.I time1
+and time
+.IR time0 .
+.SH RETURN VALUE
+The value returned is the number of seconds elapsed,
+represented as a double.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.23.2.2 Paragraph 1,2,3
+.SH SEE ALSO
+.BR time.h (3)

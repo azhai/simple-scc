@@ -1,0 +1,31 @@
+.TH localeconv 3
+.SH NAME
+localeconv - get numeric formatting information
+.SH SYNOPSIS
+#include <locale.h>
+
+struct lconv *localeconv(void);
+.SH DESCRIPTION
+The
+.BR localeconv ()
+function is used to set
+the components of an object with type struct lconv
+with values appropriate for the formatting of numeric quantities
+according to the rules of the current locale and return a pointer to it.
+.SH RETURN VALUE
+The
+.B localeconv
+function returns a pointer to the filled-in object.
+The structure pointed to by the return value
+shall not be modified by the program,
+but may be overwritten by a subsequent call to the
+.B localeconv
+function.
+In addition, calls to
+.B setlocale
+function with categories LC_ALL, LC_MONETARY, or LC_NUMERIC
+may overwrite the contents of the structure.
+.SH STANDARDS
+ISO/IEC 9899:1999 Section 7.11.2.1 Paragraph 1,2,8
+.SH SEE ALSO
+.B locale.h(3)
