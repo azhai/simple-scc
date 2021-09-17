@@ -29,7 +29,7 @@ do
 done
 
 sys=${sys:-`uname | tr 'A-Z' 'a-z'`}
-abi=${abi:-i386}
+abi=${abi:-amd64}
 out=${out:-a.out}
 root=${root:-$SCCPREFIX}
 inc=$root/include
