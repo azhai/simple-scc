@@ -7,6 +7,7 @@
 output:
 First assert
 Second assert, that must fail
+0002-assert.c:32: assertion failed 'sizeof(i) < sizeof(c)'
 end:
 */
 
