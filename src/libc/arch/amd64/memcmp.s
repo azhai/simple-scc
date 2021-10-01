@@ -5,7 +5,7 @@
 _memcmp:
 memcmp:
 	cmpq	$0,%rdx
-	je	EQUA
+	je	equa
 	cld
 	movq	%rdx,%rcx
 	movq	%rdi,%r8
