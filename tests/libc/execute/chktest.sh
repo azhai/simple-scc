@@ -15,7 +15,7 @@ do
 	(echo $i
 	 ./cc.sh $CFLAGS -o $i $i.c
 	 echo '/^output:$/+;/^end:$/-'w $tmp1 | ed -s $i.c
-	 ./$i > $tmp2 2>> test.log
+	 ./$i > $tmp2 2>&1
 	 diff -u $tmp1 $tmp2) >> test.log 2>&1 &&
 
 	printf '[PASS]' || printf '[FAIL]'
