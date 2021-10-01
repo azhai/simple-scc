@@ -19,7 +19,6 @@
 0019-strncat
 0020-strncmp
 0021-strncpy
-0022-strnlen
 0023-strpbrk
 0024-strrchr
 0025-strspn
