@@ -12,11 +12,7 @@
 
 typedef int pid_t;
 
-struct sigaction {
-	void (*sa_handler)(int);
-	int sa_mask;
-	int sa_flags;
-};
+struct sigaction;
 
 extern pid_t _getpid(void);
 extern int _kill(pid_t, int);

@@ -6,6 +6,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 include ../../../rules.mk
 
 GENOBJS =\
+	__sigaction.$O\
 	_close.$O\
 	_exit.$O\
 	_getpid.$O\
@@ -15,7 +16,7 @@ GENOBJS =\
 	_lseek.$O\
 	_open.$O\
 	_read.$O\
-	_sigaction.$O\
+	_sigreturn.$O\
 	_sys_brk.$O\
 	_unlink.$O\
 	_write.$O\

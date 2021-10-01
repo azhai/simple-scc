@@ -8,4 +8,4 @@
 37	_kill
 19	_lseek
 45	_sys_brk
-134	_sigaction
+134	__sigaction

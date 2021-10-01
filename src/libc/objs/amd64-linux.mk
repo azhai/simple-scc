@@ -2,6 +2,7 @@ include objs/common-objs.mk
 
 OBJS =\
 	$(COMMON_OBJS)\
+	arch/amd64/linux/__sigaction.$O\
 	arch/amd64/linux/_cerrno.$O\
 	arch/amd64/linux/_close.$O\
 	arch/amd64/linux/_exit.$O\
@@ -12,7 +13,7 @@ OBJS =\
 	arch/amd64/linux/_lseek.$O\
 	arch/amd64/linux/_open.$O\
 	arch/amd64/linux/_read.$O\
-	arch/amd64/linux/_sigaction.$O\
+	arch/amd64/linux/_sigreturn.$O\
 	arch/amd64/linux/_sys_brk.$O\
 	arch/amd64/linux/_sys_errlist.$O\
 	arch/amd64/linux/_unlink.$O\
@@ -30,6 +31,7 @@ OBJS =\
 	arch/amd64/strcpy.$O\
 	arch/linux/_brk.$O\
 	arch/linux/_getheap.$O\
+	arch/linux/_sigaction.$O\
 	arch/posix/_getheap.$O\
 	arch/posix/_open.$O\
 	arch/posix/_systime.$O\

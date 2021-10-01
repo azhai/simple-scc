@@ -6,6 +6,6 @@
 64	_write
 93	_Exit
 129	_kill
-134	_sigaction
+134	__sigaction
 172	_getpid
 214	_sys_brk

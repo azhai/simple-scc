@@ -1,5 +1,7 @@
 #include <signal.h>
+#include <stddef.h>
 
+#include <arch/sigaction.h>
 #include <sys.h>
 
 #undef signal
