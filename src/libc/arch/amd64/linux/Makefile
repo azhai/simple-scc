@@ -22,8 +22,8 @@ GENOBJS =\
 
 OBJS =\
 	$(GENOBJS)\
-	_cerrno.o\
-	_sys_errlist.o\
+	_cerrno.$O\
+	_sys_errlist.$O\
 
 GENSRC = $(GENOBJS:.$O=.s)
 

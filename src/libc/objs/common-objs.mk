@@ -61,6 +61,7 @@ COMMON_OBJS =\
 	stdio/vprintf.$O\
 	stdio/vsnprintf.$O\
 	stdio/vsprintf.$O\
+	stdlib/_Exit.$O\
 	stdlib/_dtoi.$O\
 	stdlib/abort.$O\
 	stdlib/abs.$O\
