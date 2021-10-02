@@ -32,7 +32,6 @@ OBJS =\
 	arch/linux/_brk.$O\
 	arch/linux/_getheap.$O\
 	arch/linux/_sigaction.$O\
-	arch/posix/_getheap.$O\
 	arch/posix/_open.$O\
 	arch/posix/_systime.$O\
 	arch/posix/_tzone.$O\
