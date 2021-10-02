@@ -41,13 +41,16 @@ obj=${1%.c}.o
 cc=${CROSS_COMPILE}gcc
 ld=${CROSS_COMPILE}ld
 
-includes="-nostdinc -I$inc -I$arch_inc -I$sys_inc"
-flags="-std=c99 -g -w -fno-stack-protector --freestanding -static"
-
 if ${cc} -nopie 2>&1 | grep unrecogn >/dev/null
 then
 	pie=-no-pie
+else
+	pie=-nopie
 fi
 
-${cc} $flags $pie $includes -c $1
-${ld} -g -z nodefaultlib -static -L$lib $obj $crt -lc -lcrt -o $out
+includes="-nostdinc -I$inc -I$arch_inc -I$sys_inc"
+cflags="-std=c99 -g -w -fno-pie -fno-stack-protector -ffreestanding -static"
+ldflags="-g -z nodefaultlib -static $pie -L$lib"
+
+$cc $cflags $includes -c $1
+$ld $ldflags $obj $crt -lc -lcrt -o $out
