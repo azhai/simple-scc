@@ -1,4 +1,6 @@
 #include <stddef.h>
+
+#include <arch/sigaction.h>
 #include <sys.h>
 
 typedef struct ucontext_t ucontext_t;

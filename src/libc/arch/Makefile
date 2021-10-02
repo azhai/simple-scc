@@ -3,16 +3,17 @@
 PROJECTDIR = ../../..
 
 DIRS =\
-	$(ARCHS)\
-	$(SYSTEMS)\
-	posix\
-
-ARCHS =\
 	amd64\
 	arm64\
 	arm\
 	i386\
 	ppc\
+	netbsd\
+	openbsd\
+	darwin\
+	dragonfly\
+	linux\
+	posix\
 
 POSIX =\
 	netbsd\
@@ -20,9 +21,6 @@ POSIX =\
 	darwin\
 	dragonfly\
 	linux\
-
-SYSTEM =\
-	$(POSIX)\
 
 include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk

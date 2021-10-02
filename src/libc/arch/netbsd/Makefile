@@ -4,8 +4,8 @@ include $(PROJECTDIR)/scripts/rules.mk
 include ../../rules.mk
 
 OBJS =\
-	sigaction.$O\
-
-NODEP = 1
+	_sigaction.$O\
 
 all: $(OBJS)
+
+include deps.mk
