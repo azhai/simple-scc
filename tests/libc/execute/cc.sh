@@ -44,7 +44,7 @@ ld=${CROSS_COMPILE}ld
 includes="-nostdinc -I$inc -I$arch_inc -I$sys_inc"
 flags="-std=c99 -g -w -fno-stack-protector --freestanding -static"
 
-if ! ${cc} -nopie 2>&1 | grep unrecogn >/dev/null
+if ${cc} -nopie 2>&1 | grep unrecogn >/dev/null
 then
 	pie=-no-pie
 fi
