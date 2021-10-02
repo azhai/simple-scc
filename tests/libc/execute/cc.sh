@@ -31,7 +31,7 @@ done
 sys=${sys:-`uname | tr 'A-Z' 'a-z'`}
 abi=${abi:-amd64}
 out=${out:-a.out}
-root=${root:-$SCCPREFIX}
+root=${root:-${SCCPREFIX:-../../..}}
 inc=$root/include
 arch_inc=$inc/bits/$abi
 sys_inc=$inc/bits/$sys
