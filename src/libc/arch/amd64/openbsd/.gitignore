@@ -7,6 +7,5 @@ _lseek.s
 _open.s
 _read.s
 _sigaction.s
-_sigaction2.s
 _sys_errlist.c
 _write.s

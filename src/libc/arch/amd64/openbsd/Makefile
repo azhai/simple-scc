@@ -13,27 +13,23 @@ GENOBJS =\
 	_lseek.$O\
 	_open.$O\
 	_read.$O\
-	_sigaction2.$O\
+	_sigaction.$O\
 	_write.$O\
-
-GENSRC = $(GENOBJS:.$O=.s)
 
 OBJS =\
 	$(GENOBJS)\
 	_sys_errlist.$O\
 
-all: $(LIBC) $(CRT)
+GENSRC = $(GENOBJS:.$O=.s)
 
-$(LIBC): $(OBJS)
-	$(MKLST)
+all: $(OBJS) $(CRT)
 
-crt.$O: ../crt-posix.s ../openbsd/crt.s
+$(CRT): ../crt-posix.s ../openbsd/crt.s
 
 $(GENSRC): syscall.lst
 	./gensys.sh $(@:.s=)
 
 clean:
-	rm -f $(GENSRC)
-	rm -f syscall _sys_errlist.c
+	rm -f $(GENSRC) _sys_errlist.c
 
 include deps.mk
