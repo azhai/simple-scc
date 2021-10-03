@@ -68,7 +68,7 @@ normalize(struct tm *tm)
 			if (year == MINYEAR)
 				return 0;
 			year--;
-			_daysmon[FEB] = _febdays(year);
+			_daysmon[FEB] = FEBDAYS(year);
 			mon = DEC+1;
 		}
 		day += _daysmon[mon-1];
@@ -80,7 +80,7 @@ normalize(struct tm *tm)
 			if (year == _MAXYEAR)
 				return 0;
 			year++;
-			_daysmon[FEB] = _febdays(year);
+			_daysmon[FEB] = FEBDAYS(year);
 			mon = JAN-1;
 		}
 	}
