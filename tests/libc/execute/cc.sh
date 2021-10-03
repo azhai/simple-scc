@@ -41,16 +41,15 @@ obj=${1%.c}.o
 cc=${CROSS_COMPILE}gcc
 ld=${CROSS_COMPILE}ld
 
-if ${cc} -nopie 2>&1 | grep unrecogn >/dev/null
-then
-	pie=-no-pie
-else
-	pie=-nopie
-fi
+case `uname` in
+OpenBSD)
+	nopie=-no-pie
+	;;
+esac
 
 includes="-nostdinc -I$inc -I$arch_inc -I$sys_inc"
 cflags="-std=c99 -g -w -fno-pie -fno-stack-protector -ffreestanding -static"
-ldflags="-g -z nodefaultlib -static $pie -L$lib"
+ldflags="-g -z nodefaultlib -static -L$lib"
 
 $cc $cflags $includes -c $1
-$ld $ldflags $obj $crt -lc -lcrt -o $out
+$ld $ldflags $nopie $obj $crt -lc -lcrt -o $out
