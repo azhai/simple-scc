@@ -10,14 +10,14 @@ realloc(void *ptr, size_t nbytes)
 	Header *oh, *prev, *next, *new;
 	size_t nunits, avail, onbytes, n;
 
-	if (!nbytes)
+	if (nbytes == 0)
 		return NULL;
 
 	if (!ptr)
 		return malloc(nbytes);
 
 	nunits = (nbytes + sizeof(Header) - 1) / sizeof(Header) + 1;
-	oh = (Header*)ptr - 1;
+	oh = (Header*) ptr - 1;
 
 	if (oh->h.size == nunits)
 		return ptr;
@@ -28,7 +28,7 @@ realloc(void *ptr, size_t nbytes)
 		new->h.size = oh->h.size - nunits;
 		oh->h.size = nunits;
 		free(new + 1);
-		return oh;
+		return oh + 1;
 	}
 
 	prev = _prevchunk(oh);
@@ -44,7 +44,7 @@ realloc(void *ptr, size_t nbytes)
 		if (avail == nunits) {
 			oh->h.size = nunits;
 			prev->h.next = next->h.next;
-			return oh;
+			return oh + 1;
 		}
 
 		if (avail > nunits) {
@@ -52,7 +52,7 @@ realloc(void *ptr, size_t nbytes)
 			prev->h.next = new;
 			new->h.next = next;
 			new->h.size = avail - nunits;
-			return oh;
+			return oh + 1;
 		}
 	}
 
