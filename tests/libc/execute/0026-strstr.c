@@ -22,8 +22,9 @@ main()
 	strcpy(buf, "ababc");
 	assert(strstr(buf, "abc") == buf+2);
 	assert(strstr("", "abc") == NULL);
-	assert(strstr("abc", "") == NULL);
-	assert(strstr("", "") == NULL);
+	assert(strstr(buf, "") == buf);
+	buf[0] = '\0';
+	assert(strstr(buf, "") == buf);
 	puts("done");
 
 	return 0;
