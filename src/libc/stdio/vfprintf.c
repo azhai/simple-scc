@@ -341,6 +341,7 @@ flags:
 		case 'g':
 		case 'G':
 			/* TODO */
+			break;
 		case 's':
 			if (flags & LONG) {
 				ws = va_arg(va2, wchar_t *);
