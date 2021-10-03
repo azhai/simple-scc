@@ -63,12 +63,17 @@ _fpopen(const char *restrict fname,
 	if (!bin)
 		fp->flags |= _IOTXT;
 
-	if (flags & O_RDWR)
+	switch (flags & O_ACCMODE) {
+	case O_RDWR:
 		fp->flags |= _IORW;
-	else if (flags & O_RDONLY)
+		break;
+	case O_RDONLY:
 		fp->flags |= _IOREAD;
-	else
+		break;
+	case O_WRONLY:
 		fp->flags |= _IOWRITE;
+		break;
+	}
 
 	fp->lp = fp->rp = fp->wp = NULL;
 

@@ -1,6 +1,7 @@
 #define O_RDONLY  0x00000000
 #define O_WRONLY  0x00000001
 #define O_RDWR    0x00000002
+#define O_ACCMODE 0x00000003
 
 #define O_TRUNC   0x00000200
 #define O_APPEND  0x00000400
