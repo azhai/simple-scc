@@ -40,6 +40,7 @@ OBJS =\
 	sprintf.$O\
 	__iob.$O\
 	tmpnam.$O\
+	ungetc.$O\
 	vfprintf.$O\
 	vsnprintf.$O\
 	vsprintf.$O\

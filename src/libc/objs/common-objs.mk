@@ -57,6 +57,7 @@ COMMON_OBJS =\
 	stdio/snprintf.$O\
 	stdio/sprintf.$O\
 	stdio/tmpnam.$O\
+	stdio/ungetc.$O\
 	stdio/vfprintf.$O\
 	stdio/vprintf.$O\
 	stdio/vsnprintf.$O\
