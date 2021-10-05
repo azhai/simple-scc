@@ -16,10 +16,8 @@ fseek(FILE *fp, long off, int whence)
 	else if (whence == SEEK_CUR && (fp->flags & _IOREAD))
 		off -= fp->wp - fp->rp;
 
-	if (_lseek(fp->fd, off, whence) < 0) {
-		fp->flags |= _IOERR;
+	if (_lseek(fp->fd, off, whence) < 0)
 		return EOF;
-	}
 
 	if (fp->flags & _IORW)
 		fp->flags &= ~(_IOREAD | _IOWRITE);
