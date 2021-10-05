@@ -22,7 +22,7 @@ fclose(FILE *fp)
 
 	if (fp->flags & _IOALLOC) {
 		free(fp->buf);
-		fp->buf = NULL;
+		fp->rp = fp->wp = fp->lp = fp->buf = NULL;
 	}
 
 	fp->flags &= ~(_IOWRITE | _IOREAD | _IORW |
