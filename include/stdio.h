@@ -15,17 +15,33 @@
 #define SEEK_CUR 1
 #define SEEK_END 2
 
-#define _IOWRITE (1 << 0)
-#define _IOREAD  (1 << 1)
-#define _IORW    (1 << 2)
-#define _IOEOF   (1 << 3)
-#define _IOERR   (1 << 4)
-#define _IOSTRG  (1 << 5)
-#define _IOTXT   (1 << 6)
-#define _IOFBF   (1 << 7)
-#define _IOLBF   (1 << 8)
-#define _IONBF   (1 << 9)
-#define _IOALLOC (1 <<10)
+/**
+ * enum _file_flags - internal FILE macros used by stdio
+ * @_IOWRITE: write only stream
+ * @_IOREAD: read only stream
+ * @_IORW: read and write stream
+ * @_IOEOF: mark of end of file in the stream
+ * @_IOERR: mark of error in the stream
+ * @_IOSTRG: string stream
+ * @_IOTXT: text stream
+ * @_IOFBF: full buffered stream
+ * @_IOLBF: line buffered stream
+ * @_IONBF: non buffered stream
+ * @_IOALLOC: stream with a dynamic allocated buffer
+ */
+enum _file_flags {
+	_IOWRITE = (1 << 0),
+	_IOREAD =  (1 << 1),
+	_IORW =    (1 << 2),
+	_IOEOF =   (1 << 3),
+	_IOERR =   (1 << 4),
+	_IOSTRG =  (1 << 5),
+	_IOTXT =   (1 << 6),
+	_IOFBF =   (1 << 7),
+	_IOLBF =   (1 << 8),
+	_IONBF =   (1 << 9),
+	_IOALLOC = (1 <<10),
+};
 
 /**
  * struct FILE - opaque structure containing information about a file
