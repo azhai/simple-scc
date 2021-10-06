@@ -14,7 +14,7 @@ PREFIX= /usr/local
 NODEP = 1
 
 all:
-	+@$(MAKE) `$(SCRIPTDIR)/config` toolchain
+	+@PREFIX=$(PREFIX) $(MAKE) `$(SCRIPTDIR)/config` toolchain
 	+@$(MAKE) `$(SCRIPTDIR)/config` `uname -m`
 
 x86_64 amd64: FORCE
