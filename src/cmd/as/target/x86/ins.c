@@ -8,6 +8,13 @@
 
 #define addrbyte(mod, reg, rm) ((mod) << 6 | (reg) << 3 | (rm))
 
+/*
+ * This implementation is based in:
+ *	- x86 Opcode Structure and Instruction Overview - Fraunhofer-Institut
+ *        fÜr kommunikation, informationsverarbeitung und ergonomie fkie.
+ *	- Intel® 64 and IA-32 Architectures Software Developer’s Manual.
+ *	- Encoding Real x86 Instructions - CIS-77 lectures.
+ */
 enum addr_mode {
 	MEM_MODE   = 0,
 	MEM8_MODE  = 1,
