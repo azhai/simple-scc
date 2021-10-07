@@ -10,13 +10,13 @@ do
 		shift 2
 		;;
 	-*)
-		echo usage: uninstall [-p proto] prefix >&2
+		echo usage: uninstall [-p proto] root >&2
 		exit 1
 		;;
 	esac
 done
 
-prefix=${1?'prefix missed'}
+root=${1?'root missed'}
 proto=${proto:-scripts/proto.all}
 
 while read type perm name
@@ -27,7 +27,7 @@ do
 		continue
 		;;
 	f)
-		rm -f $prefix/$name
+		rm -f $root/$name
 		;;
 	*)
 		echo install: wrong entry type >&2
@@ -40,7 +40,10 @@ while read type perm name
 do
 	case $type in
 	d)
-		rmdir $prefix/$name || :
+		if test `ls $root/$name | wc -l` -eq 0
+		then
+			rmdir $root/$name
+		fi
 		;;
 	esac
 done

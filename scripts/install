@@ -10,22 +10,22 @@ do
 		shift 2
 		;;
 	-*)
-		echo usage: install [-p proto] prefix >&2
+		echo usage: install [-p proto] root >&2
 		exit 1
 		;;
 	esac
 done
 
-prefix=${1?'prefix missed'}
+root=${1?'root missed'}
 
 while read type perm name
 do
 	case $type in
 	d)
-		mkdir -p $prefix/$name
+		mkdir -p $root/$name
 		;;
 	f)
-		cp $name $prefix/$name
+		cp $name $root/$name
 		;;
 	*)
 		echo install: wrong entry type >&2
@@ -33,5 +33,5 @@ do
 		;;
 	esac
 
-	chmod $perm $prefix/$name
+	chmod $perm $root/$name
 done < ${proto:-scripts/proto.all}
