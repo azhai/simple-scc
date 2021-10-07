@@ -96,10 +96,10 @@ libcrt: dirs src/libcrt
 src: include/scc/scc
 tests: all
 
-dirs: $(SCRIPTDIR)/libc-proto
-	xargs mkdir -p < $(SCRIPTDIR)/libc-proto
+dirs: $(SCRIPTDIR)/libc-dirs
+	xargs mkdir -p < $(SCRIPTDIR)/libc-dirs
 	touch dirs
 
 clean:
-	xargs rm -rf < $(SCRIPTDIR)/libc-proto
+	xargs rm -rf < $(SCRIPTDIR)/libc-dirs
 	rm -f dirs
