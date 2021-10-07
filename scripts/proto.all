@@ -2,6 +2,7 @@ d 755 bin
 f 755 bin/ld
 f 755 bin/cpp
 f 755 bin/cc
+f 755 bin/qbe
 f 755 bin/nm
 f 755 bin/objdump
 f 755 bin/addr2line
