@@ -1,6 +1,7 @@
 .POSIX:
 
 DIRS   =\
+	qbe\
 	ld\
 	as\
 	cc\
@@ -17,8 +18,20 @@ TARGET =\
 	$(BINDIR)/objdump\
 	$(BINDIR)/objcopy\
 	$(BINDIR)/addr2line\
+	$(BINDIR)/qbe\
 
 all: $(TARGET) $(DIRS)
+
+qbe: qbe/.git
+
+qbe/.git:
+	git submodule init qbe
+	git submodule update
+
+qbe/obj/qbe: qbe
+
+$(BINDIR)/qbe: qbe/obj/qbe
+	cp qbe/obj/qbe $@
 
 $(BINDIR)/nm: nm.o $(LIBMACH) $(LIBSCC)
 	$(CC) $(PROJ_LDFLAGS) nm.o -lmach -lscc -o $@
