@@ -1,0 +1,5 @@
+#!/bin/sh
+
+(scripts/mkproto bin
+ scripts/mkproto libexec
+ scripts/mkproto include | grep -v scc) > scripts/proto.all

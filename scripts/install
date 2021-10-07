@@ -34,4 +34,4 @@ do
 	esac
 
 	chmod $perm $prefix/$name
-done < ${proto:-scripts/proto}
+done < ${proto:-scripts/proto.all}

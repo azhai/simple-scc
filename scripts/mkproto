@@ -1,0 +1,18 @@
+#!/bin/sh
+
+for dir
+do
+	find $dir |
+	while read i
+	do
+		if test -d $i
+		then
+			echo d 755 $i
+		elif test -x $i
+		then
+			echo f 755 $i
+		else
+			echo f 644 $i
+		fi
+	done
+done

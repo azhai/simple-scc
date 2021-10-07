@@ -17,11 +17,13 @@ do
 done
 
 prefix=${1?'prefix missed'}
+proto=${proto:-scripts/proto.all}
 
 while read type perm name
 do
 	case $type in
 	d)
+		echo $type $perm $name
 		continue
 		;;
 	f)
@@ -32,8 +34,8 @@ do
 		exit 1
 		;;
 	esac
-done < ${proto:-scripts/proto}
-
+done < $proto |
+sort -r |
 while read type perm name
 do
 	case $type in
@@ -41,4 +43,4 @@ do
 		rmdir $prefix/$name || :
 		;;
 	esac
-done < ${proto:-scripts/proto}
+done
