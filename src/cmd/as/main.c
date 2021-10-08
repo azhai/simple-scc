@@ -10,7 +10,7 @@
 #include "as.h"
 
 char *argv0;
-char *outfile, *infile;
+char *outfile = "a.out", *infile;
 int endpass;
 
 static void
@@ -30,6 +30,8 @@ writeout(char *fname)
 
 	if (fclose(fp))
 		goto error;
+	outfile = NULL;
+
 	return;
 
 error:
@@ -58,7 +60,7 @@ cmp(const void *f1, const void *f2)
 }
 
 static void
-as(char *text, char *xargs)
+translate(char *text, char *xargs)
 {
 	int c;
 	char *p;
@@ -107,12 +109,27 @@ dopass(char *fname)
 			linesym = deflabel(line.label);
 
 		if (line.op)
-			as(line.op, line.args);
+			translate(line.op, line.args);
 		else if (line.args)
 			error("arguments without an opcode");
 	}
 
 	return nerrors == 0;
+}
+
+static void
+asm(char *argv[])
+{
+	char **p;
+
+	for (pass = 1; pass <= 2; pass++) {
+		for (p = argv; infile = *p; ++p) {
+			if (!dopass(infile))
+				exit(EXIT_FAILURE);
+		}
+		if (pass == 1)
+			killtmp();
+	}
 }
 
 static void
@@ -125,10 +142,6 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
-	char **p;
-
-	outfile = "a.out";
-
 	ARGBEGIN {
 	case 'o':
 		outfile = EARGF(usage());
@@ -143,17 +156,8 @@ main(int argc, char *argv[])
 	atexit(cleanup);
 	iarch();
 	isecs();
-
-	for (pass = 1; pass <= 2; pass++) {
-		for (p = argv; infile = *p; ++p) {
-			if (!dopass(infile))
-				return EXIT_FAILURE;
-		}
-		if (pass == 1)
-			killtmp();
-	}
+	asm(argv);
 	writeout(outfile);
-	outfile = NULL;
 
 	return 0;
 }
