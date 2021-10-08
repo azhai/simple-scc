@@ -53,7 +53,6 @@ lpack(unsigned char *dst, char *fmt, va_list va)
 			*bp++ = q >> 56;
 			break;
 		default:
-			va_end(va);
 			return -1;
 		}
 	}
@@ -108,7 +107,6 @@ bpack(unsigned char *dst, char *fmt, va_list va)
 			*bp++ = q;
 			break;
 		default:
-			va_end(va);
 			return -1;
 		}
 	}

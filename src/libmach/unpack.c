@@ -58,7 +58,6 @@ lunpack(unsigned char *src, char *fmt, va_list va)
 			*qp = q;
 			break;
 		default:
-			va_end(va);
 			return -1;
 		}
 	}
@@ -118,7 +117,6 @@ bunpack(unsigned char *src, char *fmt, va_list va)
 			*qp = q;
 			break;
 		default:
-			va_end(va);
 			return -1;
 		}
 	}
