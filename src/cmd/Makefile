@@ -18,7 +18,7 @@ TARGET =\
 	$(BINDIR)/objdump\
 	$(BINDIR)/objcopy\
 	$(BINDIR)/addr2line\
-	$(BINDIR)/qbe\
+	$(LIBEXEC)/scc/qbe\
 
 all: $(TARGET) $(DIRS)
 
@@ -30,7 +30,7 @@ qbe/.git:
 
 qbe/obj/qbe: qbe
 
-$(BINDIR)/qbe: qbe/obj/qbe
+$(LIBEXEC)/scc/qbe: qbe/obj/qbe
 	cp qbe/obj/qbe $@
 
 $(BINDIR)/nm: nm.o $(LIBMACH) $(LIBSCC)

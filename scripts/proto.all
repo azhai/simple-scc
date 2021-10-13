@@ -2,7 +2,6 @@ d 755 bin
 f 755 bin/ld
 f 755 bin/cpp
 f 755 bin/cc
-f 755 bin/qbe
 f 755 bin/nm
 f 755 bin/objdump
 f 755 bin/addr2line
@@ -25,6 +24,7 @@ f 755 libexec/scc/as-amd64
 f 755 libexec/scc/cc2-amd64-sysv
 f 755 libexec/scc/cc2-z80-scc
 f 755 libexec/scc/as-z80
+f 755 libexec/qbe
 d 755 include
 f 644 include/string.h
 f 644 include/wchar.h
