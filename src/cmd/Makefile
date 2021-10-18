@@ -26,7 +26,7 @@ qbe: qbe/.git
 
 qbe/.git:
 	git submodule init qbe
-	git submodule update
+	git submodule update qbe
 
 qbe/obj/qbe: qbe
 
