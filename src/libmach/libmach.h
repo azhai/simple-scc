@@ -7,6 +7,7 @@
 
 enum objformat {
 	COFF32,
+	ELF64,
 	NFORMATS,
 };
 
@@ -65,3 +66,4 @@ extern int objpos(Obj *obj, FILE *fp, long pos);
 /* globals */
 extern Objops *objops[];
 extern Objops coff32;
+extern Objops elf64;

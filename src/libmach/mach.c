@@ -6,5 +6,6 @@
 
 Objops *objops[] = {
 	[COFF32] = &coff32,
+	[ELF64] = &elf64,
 	[NFORMATS] = NULL,
 };

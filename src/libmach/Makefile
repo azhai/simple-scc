@@ -1,7 +1,8 @@
 .POSIX:
 
 DIRS =\
-	coff32
+	coff32\
+	elf64\
 
 PROJECTDIR =../..
 include $(PROJECTDIR)/scripts/rules.mk
