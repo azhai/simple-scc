@@ -5,10 +5,10 @@
 #include "../libmach.h"
 #include "elf64.h"
 
-struct objops coff32 = {
+struct objops elf64 = {
 	.probe = elf64probe,
 	.new = elf64new,
-	.read = NULL,
+	.read = elf64read,
 	.getidx = NULL,
 	.setidx = NULL,
 	.pc2line = NULL,

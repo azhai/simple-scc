@@ -59,6 +59,9 @@ elf64/elf64new.o: elf64/elf64.h
 elf64/elf64probe.o: $(INCDIR)/scc/scc/mach.h
 elf64/elf64probe.o: elf64/../libmach.h
 elf64/elf64probe.o: elf64/elf64.h
+elf64/elf64read.o: $(INCDIR)/scc/scc/mach.h
+elf64/elf64read.o: elf64/../libmach.h
+elf64/elf64read.o: elf64/elf64.h
 findsec.o: $(INCDIR)/scc/scc/mach.h
 findsec.o: libmach.h
 getindex.o: $(INCDIR)/scc/scc/mach.h
