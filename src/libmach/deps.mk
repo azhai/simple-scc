@@ -50,6 +50,12 @@ coff32/coff32xsetidx.o: $(INCDIR)/scc/scc/mach.h
 coff32/coff32xsetidx.o: coff32/../libmach.h
 delobj.o: $(INCDIR)/scc/scc/mach.h
 delobj.o: libmach.h
+elf64/elf64.o: $(INCDIR)/scc/scc/mach.h
+elf64/elf64.o: elf64/../libmach.h
+elf64/elf64.o: elf64/elf64.h
+elf64/elf64new.o: $(INCDIR)/scc/scc/mach.h
+elf64/elf64new.o: elf64/../libmach.h
+elf64/elf64new.o: elf64/elf64.h
 findsec.o: $(INCDIR)/scc/scc/mach.h
 findsec.o: libmach.h
 getindex.o: $(INCDIR)/scc/scc/mach.h

@@ -1,11 +1,9 @@
 .POSIX:
 
-DIRS =\
-	coff32\
-	elf64\
-
 PROJECTDIR =../..
 include $(PROJECTDIR)/scripts/rules.mk
+include coff32/rules.mk
+include elf64/rules.mk
 
 TARGET = $(LIBDIR)/scc/libmach.a
 
@@ -35,27 +33,10 @@ OBJS =\
 	strip.o\
 	unpack.o\
 	writeobj.o\
-	coff32/coff32.o\
-	coff32/coff32del.o\
-	coff32/coff32getidx.o\
-	coff32/coff32getsec.o\
-	coff32/coff32getsym.o\
-	coff32/coff32loadmap.o\
-	coff32/coff32new.o\
-	coff32/coff32pc2line.o\
-	coff32/coff32probe.o\
-	coff32/coff32read.o\
-	coff32/coff32setidx.o\
-	coff32/coff32strip.o\
-	coff32/coff32write.o\
-	coff32/coff32xgetidx.o\
-	coff32/coff32xsetidx.o\
-	elf64/elf64.o\
-	elf64/elf64new.o\
+	$(COFF32_OBJS)\
+	$(ELF64_OBJS)\
 
 all: $(TARGET)
-
-$(OBJS): $(DIRS)
 
 $(TARGET): $(OBJS)
 	$(AR) $(PROJ_ARFLAGS) $@ $?
