@@ -7,12 +7,6 @@
 
 typedef struct coff32 Coff32;
 
-struct arch {
-	char *name;
-	unsigned char magic[2];
-	int type;
-};
-
 struct coff32 {
 	FILHDR hdr;
 	AOUTHDR aout;
