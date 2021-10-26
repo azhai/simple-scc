@@ -9,36 +9,56 @@ include $(PROJECTDIR)/scripts/rules.mk
 
 TARGET = $(LIBDIR)/scc/libmach.a
 
+all: $(TARGET)
+
 OBJS =\
-	mach.o\
-	newobj.o \
-	delobj.o\
-	objpos.o\
 	archive.o\
 	armember.o\
-	objtype.o\
-	readobj.o\
-	writeobj.o\
-	getsym.o\
-	getsec.o\
-	rebase.o\
-	loadmap.o\
-	newmap.o\
-	setmap.o\
+	delobj.o\
 	findsec.o\
-	strip.o\
-	pc2line.o\
-	pack.o\
-	unpack.o\
-	setindex.o\
 	getindex.o\
+	getsec.o\
+	getsym.o\
+	loadmap.o\
+	mach.o\
+	newmap.o\
+	newobj.o \
+	newobj.o\
+	objpos.o\
+	objtype.o\
+	pack.o\
+	pc2line.o\
+	readobj.o\
+	rebase.o\
+	setindex.o\
+	setmap.o\
+	strip.o\
+	unpack.o\
+	writeobj.o\
+	coff32/coff32.o\
+	coff32/coff32del.o\
+	coff32/coff32getidx.o\
+	coff32/coff32getsec.o\
+	coff32/coff32getsym.o\
+	coff32/coff32loadmap.o\
+	coff32/coff32new.o\
+	coff32/coff32pc2line.o\
+	coff32/coff32probe.o\
+	coff32/coff32read.o\
+	coff32/coff32setidx.o\
+	coff32/coff32strip.o\
+	coff32/coff32write.o\
+	coff32/coff32xgetidx.o\
+	coff32/coff32xsetidx.o\
+	elf64/elf64.o\
 
+all: $(TARGET)
 
-all: $(OBJS) $(DIRS) objlst.mk
-	+@$(MAKE) -f Makefile.mach
+$(OBJS): $(DIRS)
 
-objlst.mk: $(OBJS) $(DIRS)
-	./mklst $@
+$(TARGET): $(OBJS)
+	$(AR) $(PROJ_ARFLAGS) $@ $?
+	$(RL) $(PROJ_RLFLAGS) $@
 
 clean:
 	rm -f $(TBLS) objlst.mk
