@@ -7,7 +7,7 @@
 
 struct objops coff32 = {
 	.probe = NULL,
-	.new = NULL,
+	.new = elf64new,
 	.read = NULL,
 	.getidx = NULL,
 	.setidx = NULL,

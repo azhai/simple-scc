@@ -1,3 +1,12 @@
+#include <scc/elf/elftypes.h>
+#include <scc/elf/elfhdr.h>
+
+#define Elf_Ehdr Elf64_Ehdr
+
+struct elf64 {
+	Elf_Ehdr hdr;
+};
+
 extern int elf64new(Obj *);
 extern int elf64read(Obj *, FILE *);
 extern int elf64setidx(long, char **, long *, FILE *);

@@ -51,6 +51,7 @@ OBJS =\
 	coff32/coff32xgetidx.o\
 	coff32/coff32xsetidx.o\
 	elf64/elf64.o\
+	elf64/elf64new.o\
 
 all: $(TARGET)
 
