@@ -1,4 +1,4 @@
-#define NBYTES 20
+#define NBYTES 32
 #define OBJ(format,arch,order) ((order) << 10 | (arch) << 5 | (format)) 
 #define FORMAT(t) ((t) & 0x1f)
 #define ARCH(t) (((t) >> 5) & 0x1f)

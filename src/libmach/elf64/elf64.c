@@ -6,7 +6,7 @@
 #include "elf64.h"
 
 struct objops coff32 = {
-	.probe = NULL,
+	.probe = elf64probe,
 	.new = elf64new,
 	.read = NULL,
 	.getidx = NULL,
