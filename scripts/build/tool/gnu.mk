@@ -1,5 +1,3 @@
-TOOL_CFLAGS = -std=c99
-
 COMP = gcc
 ASM = as
 LINKER = ld
