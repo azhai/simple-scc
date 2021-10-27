@@ -148,13 +148,15 @@ readstr(Obj *obj, FILE *fp)
 	coff  = obj->data;
 	hdr = &coff->hdr;
 
+	coff->strsiz = 0;
+	coff->strtbl = NULL;
+
 	if (hdr->f_nsyms == 0)
 		return 1;
 
 	if (fread(buf, 4, 1, fp) != 1)
 		return 0;
 	unpack(ORDER(obj->type), buf, "l", &siz);
-	coff->strsiz = 0;
 	if (siz < 4 || siz > SIZE_MAX) {
 		errno = ERANGE;
 		return 0;
@@ -183,6 +185,9 @@ readreloc(Obj *obj, FILE *fp)
 
 	coff  = obj->data;
 	hdr = &coff->hdr;
+
+	if (hdr->f_nscns == 0)
+		return 1;
 
 	rels = calloc(hdr->f_nscns, sizeof(*rels));
 	if (!rels)
@@ -261,12 +266,13 @@ readscns(Obj *obj, FILE *fp)
 	coff  = obj->data;
 	hdr = &coff->hdr;
 
-	if (hdr->f_nscns > 0) {
-		scn = calloc(hdr->f_nscns, sizeof(*scn));
-		if (!scn)
-			return 0;
-		coff->scns = scn;
-	}
+	if (hdr->f_nscns == 0)
+		return 1;
+
+	scn = calloc(hdr->f_nscns, sizeof(*scn));
+	if (!scn)
+		return 0;
+	coff->scns = scn;
 
 	for (i = 0; i < hdr->f_nscns; i++) {
 		if (fread(buf, SCNHSZ, 1, fp) < 0)
@@ -290,7 +296,10 @@ readlines(Obj *obj, FILE *fp)
 	coff  = obj->data;
 	hdr = &coff->hdr;
 
-	lines = calloc(sizeof(lp), hdr->f_nscns);
+	if (hdr->f_nscns == 0)
+		return 1;
+
+	lines = calloc(hdr->f_nscns, sizeof(lp));
 	if (!lines)
 		return 0;
 	coff->lines = lines;
