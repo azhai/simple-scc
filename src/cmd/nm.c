@@ -24,6 +24,7 @@ static int Aflag;
 static int vflag;
 static int gflag;
 static int uflag;
+static int fflag;
 static char *filename, *membname;
 
 static void
@@ -125,8 +126,8 @@ newsym(Symbol *sym, struct symtbl *tbl)
 	size_t n, size;
 	int type = sym->type;
 
-	if (type == '?'
-	|| type == 'N'
+	if (type == '?' && !fflag
+	|| type == 'N' && !fflag
 	|| uflag && type != 'U'
 	|| gflag && !isupper(type)) {
 		return 0;
@@ -238,7 +239,7 @@ nm(char *fname)
 static void
 usage(void)
 {
-	fputs("nm [-APv][ -g| -u][-t format] [file...]\n", stderr);
+	fputs("nm [-APvf][-g|-u][-t format] [file...]\n", stderr);
 	exit(1);
 }
 
@@ -256,6 +257,9 @@ main(int argc, char *argv[])
 		break;
 	case 'g':
 		gflag = 1;
+		break;
+	case 'f':
+		fflag = 1;
 		break;
 	case 'u':
 		uflag = 1;
