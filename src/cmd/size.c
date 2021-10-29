@@ -47,12 +47,12 @@ sizeobj(FILE *fp, int type)
 	Section sec;
 
 	if ((obj = newobj(type)) == NULL) {
-		error(strerror(errno));
+		error("failed allocation");
 		return;
 	}
 
 	if (readobj(obj, fp) < 0) {
-		error(strerror(errno));
+		error("invalid file");
 		goto err;
 	}
 
