@@ -162,10 +162,8 @@ nmobj(FILE *fp, int type)
 		goto err1;
 	}
 
-	if (readobj(obj, fp) < 0) {
-		error(strerror(errno));
+	if (readobj(obj, fp) < 0)
 		goto err2;
-	}
 
 	for (i = 0; getsym(obj, &i, &sym); i++) {
 		if (newsym(&sym, &tbl) < 0)
