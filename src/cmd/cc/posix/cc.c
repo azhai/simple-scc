@@ -183,12 +183,12 @@ inittool(int tool)
 	case CC2:
 		fmt = cc12fmt(tool);
 		n = snprintf(t->bin, sizeof(t->bin), fmt, t->cmd, arch, abi);
-		if (n >= sizeof(t->bin))
+		if (n < 0 || n >= sizeof(t->bin))
 			die("cc: target tool name is too long");
 	case QBE:
 		n = snprintf(t->cmd, sizeof(t->cmd),
 		             "%s/libexec/scc/%s", prefix, t->bin);
-		if (n >= sizeof(t->cmd))
+		if (n < 0 || n >= sizeof(t->cmd))
 			die("cc: target tool path is too long");
 		break;
 	case LD:
@@ -242,7 +242,7 @@ outfname(char *path, char *type)
 	newsz = pathln + 1 + strlen(type) + 1;
 	new = xmalloc(newsz);
 	n = snprintf(new, newsz, "%.*s%c%s", (int)pathln, path, sep, type);
-	if (n >= newsz)
+	if (n < 0 || n >= newsz)
 		die("cc: wrong output filename");
 	if (sep == '/') {
 		if ((tmpfd = mkstemp(new)) < 0)
