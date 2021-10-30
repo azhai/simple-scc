@@ -53,6 +53,9 @@ delobj.o: libmach.h
 elf64/elf64.o: $(INCDIR)/scc/scc/mach.h
 elf64/elf64.o: elf64/../libmach.h
 elf64/elf64.o: elf64/elf64.h
+elf64/elf64del.o: $(INCDIR)/scc/scc/mach.h
+elf64/elf64del.o: elf64/../libmach.h
+elf64/elf64del.o: elf64/elf64.h
 elf64/elf64new.o: $(INCDIR)/scc/scc/mach.h
 elf64/elf64new.o: elf64/../libmach.h
 elf64/elf64new.o: elf64/elf64.h
