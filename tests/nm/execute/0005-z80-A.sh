@@ -13,9 +13,6 @@ ar -qv f.a f.out
 nm -A f.a z80.out > $tmp1
 
 cat <<! > $tmp2
-f.a[z80.out]: 0000000000000000 b .bss
-f.a[z80.out]: 0000000000000000 d .data
-f.a[z80.out]: 0000000000000000 t .text
 f.a[z80.out]: 0000000000000001 B averylongbss
 f.a[z80.out]: 0000000000000001 D averylongdata
 f.a[z80.out]: 0000000000000001 T averylongtext
@@ -32,9 +29,6 @@ f.a[z80.out]: 0000000000000002 t text3
 f.a[z80.out]: 000000000000000a C text4
 f.a[z80.out]: 0000000000000012 C text5
 f.a[z80.out]:                  U text6
-f.a[f.out]: 0000000000000000 b .bss
-f.a[f.out]: 0000000000000000 d .data
-f.a[f.out]: 0000000000000000 t .text
 f.a[f.out]: 0000000000000001 B averylongbss
 f.a[f.out]: 0000000000000001 D averylongdata
 f.a[f.out]: 0000000000000001 T averylongtext
@@ -51,9 +45,6 @@ f.a[f.out]: 0000000000000002 t text3
 f.a[f.out]: 000000000000000a C text4
 f.a[f.out]: 0000000000000012 C text5
 f.a[f.out]:                  U text6
-z80.out: 0000000000000000 b .bss
-z80.out: 0000000000000000 d .data
-z80.out: 0000000000000000 t .text
 z80.out: 0000000000000001 B averylongbss
 z80.out: 0000000000000001 D averylongdata
 z80.out: 0000000000000001 T averylongtext

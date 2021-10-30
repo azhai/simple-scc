@@ -125,9 +125,11 @@ newsym(Symbol *sym, struct symtbl *tbl)
 	Symbol **p, *s;
 	size_t n, size;
 	int type = sym->type;
+	int stype = sym->stype;
 
 	if (type == '?' && !fflag
 	|| type == 'N' && !fflag
+	|| stype != SYMFUNC && stype != SYMOBJECT && !fflag
 	|| uflag && type != 'U'
 	|| gflag && !isupper(type)) {
 		return 0;

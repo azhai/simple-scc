@@ -1,5 +1,6 @@
 #include <ctype.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <scc/mach.h>
 
@@ -7,7 +8,7 @@
 #include "coff32.h"
 
 static int
-typeof(Coff32 *coff, SYMENT *ent)
+typeof(Coff32 *coff, SYMENT *ent, char *name)
 {
 	int c;
 	SCNHDR *scn;
@@ -43,6 +44,19 @@ typeof(Coff32 *coff, SYMENT *ent)
 	return c;
 }
 
+static int
+stypeof(char *name)
+{
+	if (strcmp(name, ".text") == 0
+	||  strcmp(name, ".data") == 0
+	||  strcmp(name, ".bss") == 0
+	||  strcmp(name, ".rdata") == 0) {
+		return SYMSECTION;
+	} else {
+		return SYMOBJECT;
+	}
+}
+
 static char *
 symname(Coff32 *coff, SYMENT *ent)
 {
@@ -65,7 +79,8 @@ coff32getsym(Obj *obj, int *idx, Symbol *sym)
 
 	ent = &coff->ents[n];
 	sym->name = symname(coff, ent);
-	sym->type = typeof(coff, ent);
+	sym->type = typeof(coff, ent, sym->name);
+	sym->stype = stypeof(sym->name);
 	sym->value = ent->n_value;
 	sym->size = (sym->type == 'C') ? ent->n_value : 0;
 	sym->index = n;

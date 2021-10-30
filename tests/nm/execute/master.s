@@ -1,5 +1,5 @@
 	.globl	text1,averylongtext,text5
-	.extern	text6
+	.globl	text6
 	.text
 	.equ	text2,4
 text1:	.byte	0

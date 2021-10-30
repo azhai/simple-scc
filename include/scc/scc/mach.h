@@ -17,6 +17,15 @@ enum sectype {
 	SSHARED = 1 << 7,
 };
 
+enum symtype {
+	SYMNOTYPE,
+	SYMOBJECT,
+	SYMFUNC,
+	SYMSECTION,
+	SYMFILE,
+	SYMCOMMON,
+};
+
 struct obj {
 	char *index;
 	Objops *ops;
@@ -55,6 +64,7 @@ struct symbol {
 	int index;
 	int section;
 	char type;
+	int stype;
 };
 
 extern int archive(FILE *fp);
