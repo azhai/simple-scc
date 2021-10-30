@@ -5,3 +5,4 @@ ELF64_OBJS =\
 	elf64/elf64read.o\
 	elf64/elf64getsec.o\
 	elf64/elf64del.o\
+	elf64/elf64getsym.o\

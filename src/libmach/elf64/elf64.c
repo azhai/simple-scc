@@ -15,6 +15,7 @@ struct objops elf64 = {
 	.strip = NULL,
 	.del = elf64del,
 	.write = NULL,
+	.getsym = elf64getsym,
 	.getsec = elf64getsec,
 	.loadmap = NULL,
 };
