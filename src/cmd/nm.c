@@ -241,7 +241,7 @@ nm(char *fname)
 static void
 usage(void)
 {
-	fputs("nm [-APvf][-g|-u][-t format] [file...]\n", stderr);
+	fputs("nm [-APvfa][-g|-u][-t format] [file...]\n", stderr);
 	exit(1);
 }
 
@@ -260,6 +260,7 @@ main(int argc, char *argv[])
 	case 'g':
 		gflag = 1;
 		break;
+	case 'a':
 	case 'f':
 		fflag = 1;
 		break;
