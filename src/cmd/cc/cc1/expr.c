@@ -242,48 +242,39 @@ Node *
 convert(Node *np, Type *newtp, int iscast)
 {
 	Type *oldtp = np->type;
+	int op = newtp->op;
 
 	if (eqtype(newtp, oldtp, 0))
 		return np;
+	if (iscast && op == VOID)
+		goto good_conv;
 
 	switch (oldtp->op) {
 	case ENUM:
 	case INT:
+		if (op == PTR && (iscast || cmpnode(np, 0)))
+			goto good_conv;
 	case FLOAT:
-		switch (newtp->op) {
-		case PTR:
-			if (oldtp->op == FLOAT || !cmpnode(np, 0) && !iscast)
-				return NULL;
-		case INT:
-		case FLOAT:
-		case ENUM:
-			break;
-		default:
-			return NULL;
-		}
-		break;
+		if (op == INT || op == FLOAT || op == ENUM)
+			goto good_conv;
+		return NULL;
 	case PTR:
-		switch (newtp->op) {
-		case ENUM:
-		case INT:
-		case VOID:
-			if (!iscast)
-				return NULL;
-			break;
-		case PTR:
-			if (eqtype(newtp, oldtp, 1) ||
-			    iscast ||
-			    newtp == pvoidtype || oldtp == pvoidtype) {
-				np->type = newtp;
-				return np;
-			}
-		default:
-			return NULL;
+		if (op == ENUM || op == INT) {
+			if (iscast)
+				goto good_conv;
+		} else if (op == PTR) {
+			if (eqtype(newtp, oldtp, 1))
+				goto good_conv;
+			if (iscast)
+				goto good_conv;
+			if (newtp == pvoidtype || oldtp == pvoidtype)
+				goto good_conv;
 		}
-		break;
 	default:
 		return NULL;
 	}
+
+good_conv:
 	return node(OCAST, newtp, np, NULL);
 }
 
