@@ -42,10 +42,8 @@ elf64getsec(Obj *obj, int *idx, Section *sec)
 		sflags |= SALLOC|SREAD;
 	if (type != SHT_NOBITS)
 		sflags |= SLOAD;
-	if (flags & SHF_MERGE)
-		sflags |= SSHARED; /* TODO: Check SSHARED in coff */
 	if (stype == 'T' || stype == 'D')
-		sflags |= SRELOC;  /* TODO: Check SRELOC in coff */
+		sflags |= SRELOC;
 
 	sec->name = elf64str(obj, SEC_STRTBL, shdr->sh_name);
 	sec->index = n;

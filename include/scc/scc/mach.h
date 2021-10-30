@@ -14,7 +14,6 @@ enum sectype {
 	SALLOC  = 1 << 4,
 	SRELOC  = 1 << 5,
 	SABS    = 1 << 6,
-	SSHARED = 1 << 7,
 };
 
 enum symtype {
