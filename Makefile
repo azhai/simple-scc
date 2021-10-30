@@ -10,8 +10,8 @@ DIRS  =\
 PROJECTDIR = .
 include $(PROJECTDIR)/scripts/rules.mk
 
-PREFIX= $(HOME)
-ROOT=$(DESTDIR)$(PREFIX)
+PREFIX = $(HOME)
+ROOT = $(DESTDIR)$(PREFIX)
 NODEP = 1
 
 all:
@@ -19,11 +19,11 @@ all:
 	+@$(MAKE) `$(SCRIPTDIR)/config` `uname -m`
 
 install:
-	$(SCRIPTDIR)/install $(PREFIX)
+	$(SCRIPTDIR)/install $(ROOT)
 	+@$(MAKE) install-`uname -m`
 
 uninstall:
-	$(SCRIPTDIR)/uninstall $(PREFIX)
+	$(SCRIPTDIR)/uninstall $(ROOT)
 	+@$(MAKE) uninstall-`uname -m`
 
 #############################################################
