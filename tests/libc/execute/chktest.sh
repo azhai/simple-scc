@@ -13,7 +13,7 @@ do
 	rm -f *.o $tmp1 $tmp2
 
 	(echo $i
-	 ./cc.sh $CFLAGS -o $i $i.c
+	 $CC $CFLAGS -o $i $i.c
 	 echo '/^output:$/+;/^end:$/-'w $tmp1 | ed -s $i.c
 	 ./$i > $tmp2 2>&1
 	 diff -u $tmp1 $tmp2) >> test.log 2>&1 &&
