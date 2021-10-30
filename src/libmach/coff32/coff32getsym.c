@@ -55,7 +55,7 @@ symname(Coff32 *coff, SYMENT *ent)
 Symbol *
 coff32getsym(Obj *obj, int *idx, Symbol *sym)
 {
-	long n = *idx;
+	int n = *idx;
 	SYMENT *ent;
 	Coff32 *coff = obj->data;
 	FILHDR *hdr = &coff->hdr;
