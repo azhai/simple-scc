@@ -24,7 +24,7 @@ f 755 libexec/scc/as-amd64
 f 755 libexec/scc/cc2-amd64-sysv
 f 755 libexec/scc/cc2-z80-scc
 f 755 libexec/scc/as-z80
-f 755 libexec/qbe
+f 755 libexec/scc/qbe
 d 755 include
 f 644 include/string.h
 f 644 include/wchar.h
