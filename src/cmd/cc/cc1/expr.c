@@ -398,6 +398,8 @@ negop(int op)
 static Node *
 exp2cond(Node *np, int neg)
 {
+	int op;
+
 	if (np->type->prop & TAGGREG) {
 		errorp("used struct/union type value where scalar is required");
 		return constnode(zero);
@@ -417,7 +419,8 @@ exp2cond(Node *np, int neg)
 			np->op = negop(np->op);
 		return np;
 	default:
-		return compare((neg) ?  OEQ : ONE, np, constnode(zero));
+		op = (neg) ?  OEQ : ONE;
+		return compare(op, np, constnode(zero));
 	}
 }
 
