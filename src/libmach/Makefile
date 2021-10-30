@@ -44,5 +44,6 @@ $(TARGET): $(OBJS)
 
 clean:
 	rm -f $(TBLS) objlst.mk
+	rm -f */*.o
 
 include deps.mk
