@@ -205,8 +205,6 @@ z80_scc(void)
 	arch.valid_va_list = local_valid_va_list;
 	arch.pvoidtype.type = &arch.chartype;
 	arch.va_type.type = &arch.inttype;
-	arch.zero.type = inttype;
-	arch.one.type = inttype;
 
 	return &arch;
 }

@@ -80,4 +80,7 @@ iarch(void)
 	va_type = &arch->va_type;
 	zero = &arch->zero;
 	one = &arch->one;
+
+	zero->type = inttype;
+	one->type = inttype;
 }
