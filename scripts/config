@@ -2,11 +2,11 @@
 
 case `uname` in
 OpenBSD)
-	echo TOOL=${TOOL:-clang} HOST=bsd ARFLAGS=${ARFLAGS:--rv}
+	echo TOOL=${TOOL:-clang} HOST=bsd ARFLAGS="${ARFLAGS:--rv}"
 	;;
 NetBSD)
 	#TODO: send a patch to NetBSD to solve this problem
-	echo HOST=bsd ARFLAGS=${ARFLAGS:--rv}
+	echo HOST=bsd ARFLAGS="${ARFLAGS:--rv}"
 	;;
 *BSD)
 	echo HOST=bsd
