@@ -18,15 +18,20 @@ struct scnhdr {
 #define SCNHDR struct scnhdr
 #define SCNHSZ 40
 
-#define STYP_REG         0
-#define STYP_DSECT       (1 << 0)
-#define STYP_NOLOAD      (1 << 1)
-#define STYP_GROUP       (1 << 2)
-#define STYP_PAD         (1 << 3)
-#define STYP_COPY        (1 << 4)
-#define STYP_TEXT        (1 << 5)
-#define STYP_DATA        (1 << 6)
-#define STYP_BSS         (1 << 7)
-#define STYP_INFO        (1 << 9)
-#define STYP_OVER        (1 << 11)
-#define STYP_LIB         (1 << 12)
+
+#define STYP_REG        0x00
+#define STYP_DSECT      0x01
+#define STYP_NOLOAD     0x02
+#define STYP_GROUP      0x04
+#define STYP_PAD        0x08
+#define STYP_COPY       0x10
+#define STYP_TEXT       0x20
+#define STYP_DATA       0x40
+#define STYP_BSS        0x80
+#define STYP_RDATA      0x100
+#define STYP_INFO       0x200
+#define STYP_OVER       0x400
+#define STYP_LIB        0x800
+#define STYP_MERGE      0x2000
+#define TYP_REVERSE_PAD 0x4000
+#define STYP_LIT        0x8020

@@ -12,7 +12,6 @@ typeof(Coff32 *coff, SYMENT *ent, char *name)
 {
 	int c;
 	SCNHDR *scn;
-	long flags;
 
 	switch (ent->n_scnum) {
 	case N_DEBUG:
@@ -26,35 +25,33 @@ typeof(Coff32 *coff, SYMENT *ent, char *name)
 		break;
 	default:
 		scn = &coff->scns[ent->n_scnum-1];
-		flags = scn->s_flags;
-		if (flags & STYP_TEXT)
+
+		switch (scn->s_flags) {
+		case STYP_TEXT:
 			c = 't';
-		else if (flags & STYP_DATA)
+			break;
+		case STYP_DATA:
 			c = 'd';
-		else if (flags & STYP_BSS)
+			break;
+		case STYP_BSS:
 			c = 'b';
-		else
+			break;
+		case STYP_INFO:
+			c = 'N';
+			break;
+		case STYP_LIT:
+			c = 'r';
+			break;
+		default:
 			c = '?';
-		break;
+			break;
+		}
 	}
 
 	if (ent->n_sclass == C_EXT)
 		c = toupper(c);
 
 	return c;
-}
-
-static int
-stypeof(char *name)
-{
-	if (strcmp(name, ".text") == 0
-	||  strcmp(name, ".data") == 0
-	||  strcmp(name, ".bss") == 0
-	||  strcmp(name, ".rdata") == 0) {
-		return SYMSECTION;
-	} else {
-		return SYMOBJECT;
-	}
 }
 
 static char *
@@ -80,7 +77,7 @@ coff32getsym(Obj *obj, int *idx, Symbol *sym)
 	ent = &coff->ents[n];
 	sym->name = symname(coff, ent);
 	sym->type = typeof(coff, ent, sym->name);
-	sym->stype = stypeof(sym->name);
+	sym->stype = SYMOBJECT;
 	sym->value = ent->n_value;
 	sym->size = (sym->type == 'C') ? ent->n_value : 0;
 	sym->index = n;

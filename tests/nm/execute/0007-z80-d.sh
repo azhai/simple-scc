@@ -9,6 +9,9 @@ trap "rm -f $tmp1 $tmp2; exit" 0 2 3
 nm -t d z80.out > $tmp1
 
 cat <<! > $tmp2
+0000000000000000 b .bss
+0000000000000000 d .data
+0000000000000000 t .text
 0000000000000001 B averylongbss
 0000000000000001 D averylongdata
 0000000000000001 T averylongtext
