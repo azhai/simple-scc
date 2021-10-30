@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <ctype.h>
-#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -157,10 +156,8 @@ readstr(Obj *obj, FILE *fp)
 	if (fread(buf, 4, 1, fp) != 1)
 		return 0;
 	unpack(ORDER(obj->type), buf, "l", &siz);
-	if (siz < 4 || siz > SIZE_MAX) {
-		errno = ERANGE;
+	if (siz < 4 || siz > SIZE_MAX)
 		return 0;
-	}
 	if (siz == 4)
 		return 1;
 
@@ -211,10 +208,8 @@ readreloc(Obj *obj, FILE *fp)
 			if (fread(buf, RELSZ, 1, fp) != 1)
 				return 0;
 			unpack_reloc(ORDER(obj->type), buf, &rp[i]);
-			if (rp[i].r_symndx >= hdr->f_nsyms) {
-				errno = ERANGE;
+			if (rp[i].r_symndx >= hdr->f_nsyms)
 				return 0;
-			}
 		}
 	}
 
@@ -370,10 +365,8 @@ coff32read(Obj *obj, FILE *fp)
 
 	for (i = 0; i < hdr->f_nsyms; i++) {
 		SYMENT *ent = &coff->ents[i];
-		if (ent->n_zeroes != 0 && ent->n_offset > coff->strsiz) {
-			errno = ERANGE;
+		if (ent->n_zeroes != 0 && ent->n_offset > coff->strsiz)
 			return -1;
-		}
 	}
 
 	return 0;
