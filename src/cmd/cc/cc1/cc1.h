@@ -5,8 +5,8 @@
 
 #define NR_USWITCHES 20
 
-#define FAIL   0
-#define NOFAIL 1
+#define FAIL   1
+#define NOFAIL 0
 
 /*
  * Definition of enumerations
