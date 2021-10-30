@@ -51,3 +51,5 @@ extern int elf64xgetidx(int, long *, char ***, long **, FILE *);
 extern Symbol *elf64getsym(Obj *, int *, Symbol *);
 extern Section *elf64getsec(Obj *, int *, Section *);
 extern Map *elf64loadmap(Obj *, FILE *);
+
+extern char *elf64str(Obj *, int n, long);

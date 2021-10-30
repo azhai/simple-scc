@@ -19,3 +19,20 @@ struct objops elf64 = {
 	.getsec = NULL,
 	.loadmap = NULL,
 };
+
+char *
+elf64str(Obj *obj, int n, long stroff)
+{
+	char *tbl;
+	size_t siz;
+	struct elf64 *elf;
+
+	elf = obj->data;
+
+	tbl = elf->strtbl[n];
+	siz = elf->strsiz[n];
+
+	if (!tbl || siz < stroff)
+		return "";
+	return &tbl[stroff];
+}
