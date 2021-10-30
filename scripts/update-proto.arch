@@ -2,6 +2,8 @@
 
 arch=${1?'missed architecture parameter'}
 
-(echo d 755 lib
- echo d 755 lib/scc
- scripts/mkproto lib/scc/$arch-*) > scripts/proto.$arch
+{
+	echo d 755 lib
+	echo d 755 lib/scc
+	scripts/mkproto lib/scc/$arch-*
+} | sort -k 3 > scripts/proto.$arch

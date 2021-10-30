@@ -1,5 +1,7 @@
 #!/bin/sh
 
-(scripts/mkproto bin
- scripts/mkproto libexec
- scripts/mkproto include | grep -v scc) > scripts/proto.all
+{
+	scripts/mkproto bin
+	scripts/mkproto libexec
+	scripts/mkproto include | grep -F -v /scc
+} | sort -k 3 > scripts/proto.all
