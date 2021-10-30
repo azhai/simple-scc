@@ -266,6 +266,8 @@ copy(Type *tp, Node *to, Node *from)
 	int op;
 
 	switch (tp->size) {
+	case 0:
+		return from;
 	case 1:
 		op = ASCOPYB;
 		break;
