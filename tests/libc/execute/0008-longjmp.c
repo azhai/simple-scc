@@ -30,7 +30,7 @@ main()
 	if (!setjmp(recover)) {
 		i = 1;
 		v = 2;
-		test("test 1", 1);	
+		test("test 1", 1);
 	}
 	printf("i = %d, v = %d\n", i, v);
 
@@ -42,4 +42,4 @@ main()
 	printf("i = %d, v = %d\n", i, v);
 
 	return 0;
-} 
+}
