@@ -12,7 +12,7 @@ trap "rm -f file.a $tmp1 $tmp2; exit" 0 2 3
 
 cp master.a file.a
 
-ar -p file.a file1 > $tmp1
+scc-ar -p file.a file1 > $tmp1
 
 cat <<! > $tmp2
 This is the first file,

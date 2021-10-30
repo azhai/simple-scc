@@ -1,8 +1,8 @@
 AS = z80-unknown-coff-as
-AR = ../../../bin/ar
-LD = ../../../bin/ld
-RL = ../../../bin/ranlib
-SZ = ../../../bin/size
+AR = ../../../bin/scc-ar
+LD = ../../../bin/scc-ld
+RL = ../../../bin/scc-ranlib
+SZ = ../../../bin/scc-size
 
 OBJS   = f1.o f2.o
 OBJLIB = f3.o

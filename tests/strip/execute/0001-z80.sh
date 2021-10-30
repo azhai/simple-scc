@@ -8,7 +8,7 @@ tmp2=tmpfile2
 tmp3=tmpfile3
 
 cp z80.out $tmp1
-strip $tmp1 > $tmp2
+scc-strip $tmp1 > $tmp2
 z80-unknown-coff-nm $tmp1 >> $tmp2 2>&1 || true
 
 cat > $tmp3 <<EOF

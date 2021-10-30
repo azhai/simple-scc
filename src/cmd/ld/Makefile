@@ -2,7 +2,7 @@
 PROJECTDIR = ../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-TARGET = $(BINDIR)/ld
+TARGET = $(BINDIR)/scc-ld
 
 OBJS =\
 	main.o\

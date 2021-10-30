@@ -7,10 +7,10 @@ tmp2=`mktemp`
 trap "rm -f f.out f.a $tmp1 $tmp2; exit" 0 2 3
 
 rm -f f.a
-ar -qv f.a z80.out
+scc-ar -qv f.a z80.out
 cp z80.out f.out
-ar -qv f.a f.out
-nm -A f.a z80.out > $tmp1
+scc-ar -qv f.a f.out
+scc-nm -A f.a z80.out > $tmp1
 
 cat <<! > $tmp2
 f.a[z80.out]: 0000000000000000 b .bss

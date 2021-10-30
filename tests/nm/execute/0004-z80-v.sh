@@ -6,7 +6,7 @@ tmp1=`mktemp`
 tmp2=`mktemp`
 trap "rm -f $tmp1 $tmp2; exit" 0 2 3
 
-nm -v z80.out > $tmp1
+scc-nm -v z80.out > $tmp1
 
 cat <<! > $tmp2
                  U text6

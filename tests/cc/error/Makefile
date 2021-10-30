@@ -2,7 +2,7 @@
 
 ROOT=../../..
 SCCPREFIX=$(ROOT)
-CC=$(ROOT)/bin/cc
+CC=$(ROOT)/bin/scc-cc
 
 all: tests
 

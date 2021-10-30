@@ -15,9 +15,9 @@ echo Second > file2
 echo Third > file3
 
 rm -f file.a
-ar -qv file.a file1 file2 file3
+scc-ar -qv file.a file1 file2 file3
 
-ar -t file.a > $tmp1
+scc-ar -t file.a > $tmp1
 
 cat <<EOF > $tmp2
 file1
@@ -27,7 +27,7 @@ EOF
 
 cmp $tmp1 $tmp2
 
-ar -p file.a > $tmp1
+scc-ar -p file.a > $tmp1
 
 cat <<EOF > $tmp2
 First

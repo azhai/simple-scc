@@ -13,9 +13,9 @@ trap "rm -f file* $tmp1 $tmp2; exit" 0 2 3
 echo First > file-1
 
 cp master.a file.a
-ar -rv file.a file-1
+scc-ar -rv file.a file-1
 
-ar -p file.a file-1 > $tmp1
+scc-ar -p file.a file-1 > $tmp1
 
 cat <<EOF > $tmp2
 First

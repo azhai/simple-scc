@@ -11,7 +11,7 @@ trap "rm -f file* $tmp1 $tmp2; exit" 0 2 3
 #extract 1st member
 
 cp master.a file.a
-ar -xv file.a file1
+scc-ar -xv file.a file1
 
 cat <<EOF > $tmp1
 This is the first file,

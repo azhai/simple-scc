@@ -12,14 +12,14 @@ SYSLST  =\
 	i386-sysv-linux-elf\
 	amd64-sysv-openbsd-elf\
 
-TARGETS = $(BINDIR)/cc $(BINDIR)/cpp
+TARGETS = $(BINDIR)/scc-cc $(BINDIR)/scc-cpp
 
 all: $(TARGETS)
 
-$(BINDIR)/cc: $(LIBSCC) cc.o
+$(BINDIR)/scc-cc: $(LIBSCC) cc.o
 	$(CC) $(PROJ_LDFLAGS) cc.o -lscc -o $@
 
-$(BINDIR)/cpp: cpp.sh
+$(BINDIR)/scc-cpp: cpp.sh
 	trap "rm -f $$$$.sh" 0 2 3;\
 	rm -f $@ ;\
 	sed "s%@PREFIX@%$(PREFIX)%" < cpp.sh > $$$$.sh && \

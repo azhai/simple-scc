@@ -11,7 +11,7 @@ cp master.a file.a
 
 last=`ls -l file.a | awk '{print $6,$7,$8}'`
 
-if ! ar -dv file.a
+if ! scc-ar -dv file.a
 then
 	echo ar returned with error when no members
 	exit 1
