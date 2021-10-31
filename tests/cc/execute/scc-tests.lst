@@ -122,7 +122,7 @@
 0128-kr_names.c
 0129-initi.c [TODO]
 0130-mulpars.c
-0131-hello.c [TODO]
+0131-hello.c
 0132-forward.c [TODO]
 0133-ftn-ptr.c [TODO]
 0134-arith.c [TODO]
@@ -131,19 +131,19 @@
 0137-int-cast.c [TODO]
 0138-namespace.c
 0139-ptr-ary.c [TODO]
-0140-int-fold.c [TODO]
-0141-int-iden.c [TODO]
+0140-int-fold.c
+0141-int-iden.c
 0142-char-const.c [TODO]
 0143-int-const.c
 0144-long-const.c
-0145-llong-const.c [TODO]
+0145-llong-const.c
 0146-ifdef.c
 0147-intern-cpp.c
 0148-cpp-string.c
 0149-define.c
 0150-define.c
 0151-vararg.c [TODO]
-0152-cat.c
+0152-cat.c [TODO]
 0153-cpp-string.c [TODO]
 0154-if-defined [TODO]
 0155-struct-compl.c [TODO]
@@ -151,7 +151,7 @@
 0157-list.c [TODO]
 0158-ternary.c [TODO]
 0159-typedef.c [TODO]
-0160-cpp-if.c [TODO]
+0160-cpp-if.c
 0161-struct.c [TODO]
 0162-array.c
 0163-array.c [TODO]
