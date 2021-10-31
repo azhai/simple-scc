@@ -554,8 +554,15 @@ string(void)
 		if (c == '\\')
 			c = escape();
 		if (bp == &yytext[STRINGSIZ+1]) {
-			/* TODO: proper error handling here */
-			error("string too long");
+			for (++input->p; *input->p != '"'; ++input->p) {
+				if (*input->p == '\\')
+					++input->p;
+				if (*input->p == '\0')
+					break;
+			}
+			--bp;
+			errorp("string too long");
+			break;
 		}
 		*bp++ = c;
 	}
