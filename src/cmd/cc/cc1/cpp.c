@@ -805,7 +805,7 @@ outcpp(void)
 			printf("%s ", yytext);
 			continue;
 		}
-		for (s = yytext; c = *s; ++s) {
+		for (s = yytext; (c = *s) != '\0'; ++s) {
 			switch (c) {
 			case '\n':
 				t = "\\n";
@@ -822,9 +822,27 @@ outcpp(void)
 			case '\a':
 				t = "\\a";
 				goto print_str;
+			case '\f':
+				t = "\\f";
+				goto print_str;
+			case '\r':
+				t = "\\r";
+				goto print_str;
+			case '"':
+				if (s == yytext || s[1] == '\0')
+					goto print_chr;
+				t = "\\\"";
+				goto print_str;
+			case '\'':
+				t = "\\'";
+				goto print_str;
+			case '\?':
+				t = "\\\?";
+				goto print_str;
 			case '\\':
 				putchar('\\');
 			default:
+			print_chr:
 				if (!isprint(c))
 					printf("\\x%x", c);
 				else
