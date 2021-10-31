@@ -1,3 +1,4 @@
+0184-esc-macro.c
 0001-sanity.c
 0002-expr.c
 0003-local.c
@@ -174,3 +175,4 @@
 0181-stringize.c [TODO]
 0182-voidcast.c [TODO]
 0183-negenum.c
+0184-esc-macro.c
