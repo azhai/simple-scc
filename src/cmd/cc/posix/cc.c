@@ -337,7 +337,8 @@ spawn(int tool)
 		if (!dflag && tool != CC1 && tool != LD)
 			dup2(devnullfd, 2);
 		if (dflag) {
-			for (ap = t->args.s; *ap; ap++)
+			fprintf(stderr, "%s", t->cmd);
+			for (ap = t->args.s+1; *ap; ap++)
 				fprintf(stderr, " %s", *ap);
 			putc('\n', stderr);
 		}
