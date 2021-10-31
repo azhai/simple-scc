@@ -852,5 +852,14 @@ discard(void)
 	}
 jump:
 	yytoken = c;
+	exit(EXIT_FAILURE);
+
+	/*
+	 * FIXME: We don't have a proper recover mechanism at this moment
+	 * and we don't set the recover point ever, so executing this
+	 * longjmp will generate surely a segmentation fault, so it does
+	 * not make sense to do it. We just exit until we can find time
+	 * to solve this problem.
+	 */
 	longjmp(recover, 1);
 }
