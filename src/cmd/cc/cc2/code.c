@@ -1,7 +1,10 @@
+#include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include <scc/scc.h>
+
 #include "cc2.h"
 
 Inst *pc, *prog;
@@ -54,6 +57,61 @@ addr(Node *np, Addr *addr)
 	default:
 		abort();
 	}
+}
+
+void
+pprint(char *s)
+{
+	int c;
+	char *t;
+
+	putchar('"');
+	while ((c = *s++) != '\0') {
+		switch (c) {
+		case '\n':
+			t = "\\n";
+			goto print_str;
+		case '\v':
+			t = "\\v";
+			goto print_str;
+		case '\b':
+			t = "\\b";
+			goto print_str;
+		case '\t':
+			t = "\\t";
+			goto print_str;
+		case '\a':
+			t = "\\a";
+			goto print_str;
+		case '\f':
+			t = "\\f";
+			goto print_str;
+		case '\r':
+			t = "\\r";
+			goto print_str;
+		case '"':
+			t = "\\\"";
+			goto print_str;
+		case '\'':
+			t = "\\'";
+			goto print_str;
+		case '\?':
+			t = "\\\?";
+			goto print_str;
+		case '\\':
+			putchar('\\');
+		default:
+			if (!isprint(c))
+				printf("\\x%x", c);
+			else
+				putchar(c);
+			break;
+		print_str:
+			fputs(t, stdout);
+			break;
+		}
+	}
+	putchar('"');
 }
 
 Symbol *

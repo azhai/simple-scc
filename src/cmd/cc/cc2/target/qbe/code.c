@@ -232,7 +232,7 @@ emittree(Node *np)
 
 	switch (np->op) {
 	case OSTRING:
-		printf("\"%s\"", np->u.s);
+		pprint(np->u.s);
 		free(np->u.s);
 		np->u.s = NULL;
 		break;

@@ -229,6 +229,7 @@ extern void setlabel(Symbol *sym), getbblocks(void);
 extern Node *label2node(Node *np, Symbol *sym);
 extern Node *constnode(Node *np, TUINT n, Type *tp);
 extern Symbol *newlabel(void);
+extern void pprint(char *s);
 
 /* node.c */
 #define SETCUR  1
