@@ -539,6 +539,14 @@ character(void)
 	return CONSTANT;
 }
 
+/*
+ * string() parses a constant string, and convert all the
+ * escape sequences into single characters. This behaviour
+ * is correct except when we parse a #define, where we want
+ * to preserve the literal content of the string. In that
+ * case cpp.c:/^define( sets the variable disescape to
+ * disable converting escape sequences into characters.
+ */
 static int
 string(void)
 {
@@ -557,14 +565,15 @@ string(void)
 			errorp("missing terminating '\"' character");
 			break;
 		}
-		if (c != '\\') {
+
+		if (c == '\\' && !esc && disescape)
+			esc = 1;
+		else
 			esc = 0;
-		} else {
-			if (!disescape)
-				c = escape();
-			else
-				esc = 1;
-		}
+
+		if (c == '\\' && !esc)
+			c = escape();
+
 		if (bp == &yytext[STRINGSIZ+1]) {
 			for (++input->p; *input->p != '"'; ++input->p) {
 				if (*input->p == '\\')
