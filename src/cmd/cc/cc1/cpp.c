@@ -184,7 +184,7 @@ parsepars(char *buffer, char **listp, int nargs)
 static size_t
 copymacro(char *buffer, char *s, size_t bufsiz, char *arglist[])
 {
-	int delim, prevc, c;
+	int delim, prevc, c, esc;
 	char *p, *arg, *bp = buffer;
 	size_t size;
 
@@ -203,8 +203,16 @@ copymacro(char *buffer, char *s, size_t bufsiz, char *arglist[])
 		case '\"':
 			delim = '"';
 		search_delim:
-			for (p = s; *++s != delim; )
-				;
+			esc = 0;
+			p = s;
+			for (++s; c = *s; ++s) {
+				if (c == '\\' && !esc)
+					esc = 1;
+				else if (c == delim &&!esc)
+					break;
+				else
+					esc = 0;
+			}
 			size = s - p + 1;
 			if (size > bufsiz)
 				goto expansion_too_long;
