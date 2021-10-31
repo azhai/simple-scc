@@ -543,16 +543,28 @@ static int
 string(void)
 {
 	char *bp = yytext;
-	int c;
+	int c, esc;
 
 	*bp++ = '"';
-	for (++input->p; (c = *input->p) != '"'; ++input->p) {
+	esc = 0;
+	for (++input->p; ; ++input->p) {
+		c = *input->p;
+
+		if (c == '"' && !esc)
+			break;
+
 		if (c == '\0') {
 			errorp("missing terminating '\"' character");
 			break;
 		}
-		if (c == '\\')
-			c = escape();
+		if (c != '\\') {
+			esc = 0;
+		} else {
+			if (!disescape)
+				c = escape();
+			else
+				esc = 1;
+		}
 		if (bp == &yytext[STRINGSIZ+1]) {
 			for (++input->p; *input->p != '"'; ++input->p) {
 				if (*input->p == '\\')

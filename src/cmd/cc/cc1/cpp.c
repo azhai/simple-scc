@@ -19,6 +19,7 @@ static struct items dirinclude;
 
 unsigned cppctx;
 int disexpand;
+int disescape;
 
 void
 defdefine(char *macro, char *val, char *source)
@@ -379,6 +380,7 @@ define(void)
 	if (cppoff)
 		return;
 
+	disescape = 1;
 	namespace = NS_CPP;
 	next();
 
@@ -400,6 +402,7 @@ define(void)
 		goto delete;
 	if (n > 0 && !args[n-1])  /* it is a variadic function */
 		--n;
+
 	sprintf(buff, "%02d#", n);
 	if (!getdefs(args, n, buff+3, LINESIZ-3))
 		goto delete;
@@ -761,6 +764,7 @@ cpp(void)
 		errorp("trailing characters after preprocessor directive");
 
 error:
+	disescape = 0;
 	disexpand = 0;
 	lexmode = CCMODE;
 	namespace = ns;

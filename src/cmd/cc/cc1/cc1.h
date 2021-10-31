@@ -514,7 +514,7 @@ extern struct yystype yylval;
 extern char yytext[];
 extern int yytoken;
 extern unsigned short yylen;
-extern int disexpand;
+extern int disexpand, disescape;
 extern unsigned cppctx;
 extern Input *input;
 extern int lexmode, namespace;
