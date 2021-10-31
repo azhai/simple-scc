@@ -422,7 +422,6 @@ fold(Node *np)
 	Node *p, *lp = np->left, *rp = np->right;
 	Type *tp = np->type;
 
-	assert(lp && rp);
 	if ((op == ODIV || op == OMOD) && cmpnode(rp, 0)) {
 		warn("division by 0");
 		return NULL;
@@ -442,12 +441,13 @@ fold(Node *np)
 		rs = rp->sym;
 	}
 
-	if (!(lp->flags & NCONST) || !lp->sym)
+	if ((lp->flags & NCONST) == 0 || !lp->sym)
 		return NULL;
 	optype = lp->type;
 	ls = lp->sym;
 
-	switch (type = optype->op) {
+	type = optype->op;
+	switch (type) {
 	case ENUM:
 	case INT:
 		if (!(optype->prop & TSIGNED))
@@ -671,6 +671,8 @@ simplify(Node *np)
 	case ONEG:
 		assert(!r);
 		if ((p = foldunary(np, l)) != NULL)
+			return p;
+		if ((p = fold(np)) != NULL)
 			return p;
 		return np;
 	default:
