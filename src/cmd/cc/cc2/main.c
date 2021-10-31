@@ -16,6 +16,7 @@ error(unsigned nerror, ...)
 {
 	va_list va;
 	va_start(va, nerror);
+	fputs("cc2:", stderr);
 	vfprintf(stderr, errlist[nerror], va);
 	va_end(va);
 	putc('\n', stderr);
