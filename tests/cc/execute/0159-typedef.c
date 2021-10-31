@@ -14,7 +14,7 @@ f(void)
 }
 
 Clock0link cl0 = {
-	.clock = f;
+	.clock = f
 };
 
 int
