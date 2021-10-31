@@ -12,19 +12,23 @@ SYSLST  =\
 	i386-sysv-linux-elf\
 	amd64-sysv-openbsd-elf\
 
-TARGETS = $(BINDIR)/scc-cc $(BINDIR)/scc-cpp
+TARGETS =\
+	$(BINDIR)/scc-cc\
+	$(BINDIR)/scc-cpp\
+	$(BINDIR)/scc\
 
 all: $(TARGETS)
 
 $(BINDIR)/scc-cc: $(LIBSCC) cc.o
 	$(CC) $(PROJ_LDFLAGS) cc.o -lscc -o $@
 
-$(BINDIR)/scc-cpp: cpp.sh
-	trap "rm -f $$$$.sh" 0 2 3;\
-	rm -f $@ ;\
-	sed "s%@PREFIX@%$(PREFIX)%" < cpp.sh > $$$$.sh && \
-	chmod +x $$$$.sh && \
-	mv $$$$.sh $@
+$(BINDIR)/scc-cpp: scc.sh
+	cp scc.sh $@
+	chmod +x $@
+
+$(BINDIR)/scc: scc.sh
+	cp scc.sh $@
+	chmod +x $@
 
 config.h:
 	PREFIX=$(PREFIX) ./mkconf $(SYSLST)

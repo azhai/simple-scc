@@ -18,7 +18,6 @@ TARGET =\
 	$(BINDIR)/scc-objdump\
 	$(BINDIR)/scc-objcopy\
 	$(BINDIR)/scc-addr2line\
-	$(BINDIR)/scc\
 	$(LIBEXEC)/scc/qbe\
 
 all: $(TARGET) $(DIRS)
@@ -33,10 +32,6 @@ qbe/obj/qbe: qbe
 
 $(LIBEXEC)/scc/qbe: qbe/obj/qbe
 	cp qbe/obj/qbe $@
-
-$(BINDIR)/scc: scc.sh
-	cp scc.sh $@
-	chmod +x $@
 
 $(BINDIR)/scc-nm: nm.o $(LIBMACH) $(LIBSCC)
 	$(CC) $(PROJ_LDFLAGS) nm.o -lmach -lscc -o $@
