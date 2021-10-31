@@ -4,8 +4,11 @@ typedef struct Clock0link Clock0link;
 typedef struct Clock0link {
 	int             (*clock)(void);
 	Clock0link*     link;
-} Clock0link;
+};
 
+#if __STDC_VERSION__ >= 201112L
+typedef struct Clock0link Clock0link;
+#endif
 
 int
 f(void)
