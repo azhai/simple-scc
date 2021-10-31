@@ -132,7 +132,7 @@
 0139-ptr-ary.c [TODO]
 0140-int-fold.c
 0141-int-iden.c
-0142-char-const.c [TODO]
+0142-char-const.c
 0143-int-const.c
 0144-long-const.c
 0145-llong-const.c
