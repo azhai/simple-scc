@@ -357,7 +357,10 @@ emitdesig(Node *np, Type *tp)
 	case PTR:
 	case INT:
 	case ENUM:
-		aux = (sym) ? *sym->u.init : convert(constnode(zero), tp, 0);
+		if (sym)
+			aux = *sym->u.init;
+		else
+			aux = simplify(convert(constnode(zero), tp, 0));
 		emitexp(OEXPR, aux);
 		break;
 	case UNION:
