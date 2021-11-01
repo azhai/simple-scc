@@ -73,13 +73,16 @@ setloc(char *fname, unsigned line)
 {
 	size_t len;
 
-	if ((len = strlen(fname)) >= FILENAME_MAX)
-		die("cc1: %s: file name too long", fname);
-	memmove(filenam, fname, len);
-	filenam[len] = '\0';
+	if (fname) {
+		if ((len = strlen(fname)) >= FILENAME_MAX)
+			die("cc1: %s: file name too long", fname);
+		memmove(filenam, fname, len);
+		filenam[len] = '\0';
 
-	free(input->filenam);
-	input->filenam = xstrdup(fname);
+		free(input->filenam);
+		input->filenam = xstrdup(fname);
+	}
+
 	lineno = input->lineno = line;
 }
 
