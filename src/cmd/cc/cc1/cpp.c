@@ -479,6 +479,7 @@ include(void)
 	if (cppoff)
 		return;
 
+	disexpand = 0;
 	namespace = NS_IDEN;
 	next();
 
