@@ -11,7 +11,7 @@ main(int argc, char *argv[])
         f1 = &main;
         f2 = main;
         if (argc == 0)
-                return 1;
+                return 0;
         if ((****main)(0, 0))
                 return 2;
         if ((****f1)(0, 0))
