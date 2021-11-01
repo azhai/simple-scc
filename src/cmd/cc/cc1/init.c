@@ -327,6 +327,7 @@ repeat:
 		if (!(np->flags & NCONST))
 			abort(); /* TODO */
 		hidden = newsym(NS_IDEN, NULL);
+		hidden->id = newid();
 		hidden->type = sym->type;
 		hidden->flags |= SLOCAL | SHASINIT;
 		emit(ODECL, hidden);
