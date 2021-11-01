@@ -1,7 +1,7 @@
 int
 main(void)
 {
-	int i, *q;
+	int i = 0, *q;
 	void *p;
 
 	i = i ? 0 : 0l;
