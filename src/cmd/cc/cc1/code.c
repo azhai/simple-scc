@@ -164,14 +164,18 @@ emitnode(Node *np)
 		(*opcode[np->op])(np->op, np);
 }
 
-void
+Node *
 prtree(char *s, Node *np)
 {
+	FILE *tmp = outfp;
+
 	outfp = stderr;
 	fprintf(outfp, "DBG prtree %s", s);
 	emitnode(np);
 	putc('\n', outfp);
-	outfp = stdout;
+	outfp = tmp;
+
+	return np;
 }
 
 void
