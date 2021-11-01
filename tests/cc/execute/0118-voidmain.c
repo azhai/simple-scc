@@ -1,7 +1,14 @@
 int main(void);
+int f();
+
+int
+f(int a)
+{
+	return a;
+}
 
 int
 main()
 {
-	return 0;
+	return f(0);
 }
