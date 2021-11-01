@@ -318,7 +318,7 @@ foldcast(Node *np, Node *l)
 	Type *newtp = np->type, *oldtp = l->type;
 	Symbol aux, *sym, *osym = l->sym;
 
-	if (!(l->flags & NCONST))
+	if ((l->flags & NCONST) == 0)
 		return np;
 
 	switch (newtp->op) {
@@ -381,14 +381,7 @@ foldunary(Node *np, Node *l)
 		freetree(np);
 		return l;
 	case OCAST:
-		if (op != OCAST)
-			return foldcast(np, l);
-		/* TODO: This is wrong: (float)(int) 7.2 */
-		DBG("FOLD unary collapse %d", np->op);
-		np->left = l->left;
-		l->left = NULL;
-		freetree(l);
-		return np;
+		return foldcast(np, l);
 	case OSNEG:
 	case OCPL:
 		if (op != np->op)
