@@ -5,10 +5,10 @@ struct List {
 	List *back;
 };
 
+List list;
+
 int
 main(void)
 {
-	List List;
-
-	return List.len;
+	return list.len;
 }
