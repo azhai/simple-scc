@@ -293,6 +293,7 @@ foldconst(int type, int op, Type *tp, Symbol *ls, Symbol *rs)
 		if (!foldint(op, &aux, ls->u.i, i))
 			return NULL;
 		break;
+	case PTR:
 	case UNSIGNED:
 		u = (rs) ? rs->u.u : 0u;
 		if (!folduint(op, &aux, ls->u.u, u))
@@ -303,6 +304,8 @@ foldconst(int type, int op, Type *tp, Symbol *ls, Symbol *rs)
 		if (!foldfloat(op, &aux, ls->u.f, f))
 			return NULL;
 		break;
+	default:
+		abort();
 	}
 	sym = newsym(NS_IDEN, NULL);
 	sym->flags |= SCONSTANT;
@@ -355,6 +358,7 @@ foldcast(Node *np, Node *l)
 	default:
 		return np;
 	}
+
 	DBG("FOLD cast %c->%c", oldtp->letter, newtp->letter);
 	freetree(np);
 	sym = newsym(NS_IDEN, NULL);
