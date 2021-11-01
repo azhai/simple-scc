@@ -508,6 +508,7 @@ escape(void)
 		return ' ';
 	}
 	errno = 0;
+	/* FIXME: We don't check that there is an actual number */
 	c = strtoul(input->p, &input->p, base);
 	if (errno || c > 255)
 		warn("character constant out of range");
