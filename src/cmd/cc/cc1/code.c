@@ -445,7 +445,9 @@ emitbin(int op, void *arg)
 
 	emitnode(np->left);
 	emitnode(np->right);
-	if ((s = optxt[op]) != NULL)  {      /* do not print in OCOLON case */
+
+	/* do not print in OCOLON case */
+	if ((s = optxt[op]) != NULL)  {
 		fprintf(outfp, "\t%s", s);
 		emitletter(np->type);
 	}
