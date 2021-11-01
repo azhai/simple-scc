@@ -169,6 +169,16 @@ redcl(Symbol *sym, Type *tp, int sclass)
 	int flags;
 	char *name = sym->name;
 
+	if (sym->type->op == FTN && tp->op == FTN) {
+		Type *ntp = sym->type;
+		if (eqtype(ntp->type, tp->type, 1) {
+			if (tp->prop & TK_R)
+				tp = ntp;
+			if (sym->type->prop & TK_R)
+				sym->type = tp;
+		}
+	}
+
 	if (!eqtype(sym->type, tp, 1)) {
 		errorp("conflicting types for '%s'", name);
 		return sym;
