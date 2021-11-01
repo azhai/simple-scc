@@ -11,7 +11,7 @@ main()
 {
 	int (*fun)(int,int) = func;
 
-	return (*func)(1, 2);
+	return (*func)(2, 1);
 }
 
 int
