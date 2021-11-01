@@ -419,6 +419,9 @@ fold(Node *np)
 	Node *p, *lp = np->left, *rp = np->right;
 	Type *tp = np->type;
 
+	if (!lp && !rp)
+		return np;
+
 	if ((op == ODIV || op == OMOD) && cmpnode(rp, 0)) {
 		warn("division by 0");
 		return NULL;
@@ -607,7 +610,7 @@ change_to_comma:
 static Node *
 foldternary(Node *np, Node *cond, Node *body)
 {
-	if (!(cond->flags & NCONST))
+	if ((cond->flags & NCONST) == 0)
 		return np;
 	if (cmpnode(cond, 0)) {
 		np = body->right;
@@ -628,18 +631,15 @@ foldternary(Node *np, Node *cond, Node *body)
 /* TODO: fold OCOMMA */
 
 Node *
-simplify(Node *np)
+xsimplify(Node *np)
 {
 	Node *p, *l, *r;
 
 	if (!np)
 		return NULL;
 
-	if (enadebug)
-		prtree("simplify", np);
-
-	l = np->left = simplify(np->left);
-	r = np->right = simplify(np->right);
+	l = np->left = xsimplify(np->left);
+	r = np->right = xsimplify(np->right);
 
 	switch (np->op) {
 	case OASK:
@@ -669,16 +669,27 @@ simplify(Node *np)
 	case ONEG:
 		assert(!r);
 		if ((p = foldunary(np, l)) != NULL)
-			return p;
+			np = p;
 		if ((p = fold(np)) != NULL)
-			return p;
+			np = p;
 		return np;
 	default:
 		commutative(np, l, r);
 		if ((p = fold(np)) != NULL)
-			return p;
+			np = p;
 		if ((p = identity(np)) != NULL)
-			return p;
+			np = p;
 		return np;
 	}
+}
+
+Node *
+simplify(Node *np)
+{
+	if (enadebug)
+		prtree("simplify before", np);
+	np = xsimplify(np);
+	if (enadebug)
+		prtree("simplify after", np);
+	return np;
 }
