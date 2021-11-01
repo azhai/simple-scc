@@ -165,10 +165,10 @@ emitnode(Node *np)
 }
 
 void
-prtree(Node *np)
+prtree(char *s, Node *np)
 {
 	outfp = stderr;
-	fputs("DBG prtree", outfp);
+	fprintf(outfp, "DBG prtree %s", s);
 	emitnode(np);
 	putc('\n', outfp);
 	outfp = stdout;

@@ -637,8 +637,9 @@ simplify(Node *np)
 
 	if (!np)
 		return NULL;
+
 	if (enadebug)
-		prtree(np);
+		prtree("simplify", np);
 
 	l = np->left = simplify(np->left);
 	r = np->right = simplify(np->right);
