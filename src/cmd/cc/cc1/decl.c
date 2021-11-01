@@ -171,7 +171,7 @@ redcl(Symbol *sym, Type *tp, int sclass)
 
 	if (sym->type->op == FTN && tp->op == FTN) {
 		Type *ntp = sym->type;
-		if (eqtype(ntp->type, tp->type, 1) {
+		if (eqtype(ntp->type, tp->type, 1)) {
 			if (tp->prop & TK_R)
 				tp = ntp;
 			if (sym->type->prop & TK_R)
