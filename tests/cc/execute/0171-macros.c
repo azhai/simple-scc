@@ -6,5 +6,5 @@
 int
 main(void)
 {
-	return X == L + H + Q(1);
+	return X == L + H + Q(1) ? 0 : 1;
 }
