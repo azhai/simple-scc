@@ -1,6 +1,6 @@
-void boo(int *p)
+int boo(int *p)
 {
-	return (*p[1] == 2) ? 0 : 1;
+	return (p[1] == 2) ? 0 : 1;
 }
 
 int main()
