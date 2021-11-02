@@ -223,7 +223,7 @@ initlist(Type *tp)
 	if (accept('{'))
 		braces = 1;
 
-	do {
+	for (;;) {
 		curtp = inttype;
 		switch (yytoken) {
 		case '[':
@@ -291,7 +291,11 @@ new_desig:
 			errorp("compound literal too big");
 		if (nelem == in.pos && !braces)
 			break;
-	} while (accept(','));
+		if (!accept(','))
+			break;
+		if (yytoken == '}')
+			break;
+	}
 
 	if (braces)
 		expect('}');
