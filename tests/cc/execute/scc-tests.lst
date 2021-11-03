@@ -146,7 +146,7 @@
 0153-cpp-string.c [TODO]
 0154-if-defined.c
 0155-struct-compl.c [TODO]
-0156-duff2.c [TODO]
+0156-duff2.c
 0157-list.c
 0158-ternary.c
 0159-typedef.c
