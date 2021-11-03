@@ -455,7 +455,8 @@ swtch_if(Node *idx)
 static Node *
 rhs(Node *np, Node *ret)
 {
-	Node aux1, aux2, *phi, *l = np->left, *r = np->right;
+	Node aux1, aux2, aux3;
+	Node *phi, *l = np->left, *r = np->right;
 	Type *tp;
 	int off, op;
 	char *tbl;
@@ -574,7 +575,7 @@ rhs(Node *np, Node *ret)
 			aux2.right = np->right;
 			aux2.left = np->left;
 			r = rhs(&aux2, &aux1);
-			Node aux3;
+
 			if (l->op == OCAST) {
 				aux3.type = l->left->type;
 				aux3.op = OCAST;
