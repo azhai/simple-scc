@@ -531,6 +531,7 @@ rhs(Node *np, Node *ret)
 			rhs(r, &aux2);
 			rhs(l, &aux1);
 		}
+
                 switch (tp->size) {
                 case 4:
                         tbl = (tp->flags & FLOATF) ? opasms : opasmw;
