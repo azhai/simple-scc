@@ -585,9 +585,14 @@ rhs(Node *np, Node *ret)
 				l = l->left;
 			}
 		case 0:
-			/* TODO: see what is the most difficult */
-			lhs(l, &aux2);
-			rhs(r, ret);
+			if (l->complex >= r->complex) {
+				lhs(l, &aux2);
+				rhs(r, ret);
+			} else {
+				rhs(r, ret);
+				lhs(l, &aux2);
+			}
+
 			return assign(tp, &aux2, ret);
 		}
 		return ret;
