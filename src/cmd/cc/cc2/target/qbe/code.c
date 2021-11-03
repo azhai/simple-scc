@@ -294,6 +294,8 @@ defglobal(Symbol *sym)
 void
 defpar(Symbol *sym)
 {
+	if (sym->kind == SREG)
+		sym->kind = SAUTO;
 	sym->type.flags |= PARF;
 }
 

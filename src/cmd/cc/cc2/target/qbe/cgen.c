@@ -318,6 +318,7 @@ static Node *
 lhs(Node *np, Node *new)
 {
 	switch (np->op) {
+	case OREG:
 	case OMEM:
 	case OAUTO:
 		*new = *np;
@@ -477,6 +478,7 @@ rhs(Node *np, Node *ret)
 		*ret = *np;
 		return np;
 	case OMEM:
+	case OREG:
 	case OAUTO:
 		return load(tp, np, ret);
 	case ONEG:

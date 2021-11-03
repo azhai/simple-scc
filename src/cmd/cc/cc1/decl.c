@@ -486,6 +486,7 @@ funbody(Symbol *sym, Symbol *pars[])
 	switch (yytoken) {
 	case '{':
 	case TYPE:
+	case SCLASS:
 	case TYPEIDEN:
 		if (curctx != PARAMCTX)
 			errorp("nested function declaration");
