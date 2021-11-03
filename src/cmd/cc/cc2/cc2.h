@@ -59,6 +59,7 @@ enum op {
 	OTMP     = 'N',
 	OAUTO    = 'A',
 	OREG     = 'R',
+	OMREG    = 'G',
 	OCONST   = '#',
 	OSTRING  = '"',
 	OLOAD    = 'D',

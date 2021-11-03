@@ -34,10 +34,7 @@ addr(Node *np, Addr *addr)
 	Symbol *sym;
 
 	switch (np->op) {
-	case OREG:
-		/* TODO:
-		 * At this moment this op is used also for register variables
-		 */
+	case OMREG:
 		addr->kind = SREG;
 		addr->u.reg = np->u.reg;
 		break;
@@ -46,6 +43,7 @@ addr(Node *np, Addr *addr)
 		/* TODO: Add support for more type of constants */
 		addr->u.i = np->u.i;
 		break;
+	case OREG:
 	case OTMP:
 	case OLABEL:
 	case OAUTO:
