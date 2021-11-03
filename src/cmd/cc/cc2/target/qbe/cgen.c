@@ -556,7 +556,6 @@ rhs(Node *np, Node *ret)
 	case OCAST:
 		return cast(tp, rhs(l, &aux1), ret);
 	case OASSIG:
-		/* TODO: Do this transformations in sethi */
 		switch (np->u.subop) {
 		case OINC:
 			op = OADD;
@@ -578,15 +577,6 @@ rhs(Node *np, Node *ret)
 			aux2.right = np->right;
 			aux2.left = np->left;
 			r = rhs(&aux2, &aux1);
-
-			if (l->op == OCAST) {
-				aux3.type = l->left->type;
-				aux3.op = OCAST;
-				aux3.left = r;
-				aux3.right = NULL;
-				r = &aux3;
-				l = l->left;
-			}
 		case 0:
 			if (l->complex >= r->complex) {
 				lhs(l, &aux2);
@@ -683,6 +673,7 @@ cgen(Node *np)
 Node *
 sethi(Node *np)
 {
+	int op;
 	Node *lp, *rp;
 
 	if (!np)
@@ -700,6 +691,21 @@ sethi(Node *np)
 	case OCONST:
 		np->address = 11;
 		break;
+	case OASSIG:
+		op = np->u.subop;
+		if (op != OINC && op != ODEC) {
+			if (lp->op == OCAST) {
+				Node *tmp = node(OCAST);
+				tmp->type = lp->left->type;
+				tmp->left = rp;
+				tmp->right = NULL;
+				rp = tmp;
+				tmp = lp;
+				lp = lp->left;
+				delnode(tmp);
+			}
+		}
+		goto binary;
 	case OCPL:
 		assert(np->type.flags & INTF);
 		np->op = OBXOR;
