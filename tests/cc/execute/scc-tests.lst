@@ -124,7 +124,7 @@
 0131-hello.c
 0132-forward.c
 0133-ftn-ptr.c
-0134-arith.c [TODO]
+0134-arith.c
 0135-unary.c
 0136-if.c
 0137-int-cast.c [TODO]
