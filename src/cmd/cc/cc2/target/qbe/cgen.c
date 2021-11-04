@@ -120,16 +120,16 @@ complex(Node *np)
 	return np;
 }
 
-static Node *
-load(Type *tp, Node *np, Node *new)
+static Node
+load(Type *tp, Node *np)
 {
 	int op;
+	Node *new;
 	int flags = tp->flags;
 
-	if (flags & (AGGRF|FUNF)) {
-		*new = *np;
-		return new;
-	}
+	if (flags & (AGGRF|FUNF))
+		return *np;
+
 	switch (tp->size) {
 	case 1:
 		op = ASLDSB;
@@ -153,9 +153,10 @@ load(Type *tp, Node *np, Node *new)
 	if ((flags & (INTF|SIGNF)) == INTF && tp->size < 8)
 		++op;
 
-	code(op, tmpnode(new, tp), np, NULL);
+	new = tmpnode(NULL, tp);
+	code(op, new, np, NULL);
 
-	return new;
+	return *new;
 }
 
 static Node *rhs(Node *np, Node *new);
@@ -332,7 +333,7 @@ field(Node *np, Node *ret, int islhs)
 	if (islhs)
 		*ret = *addr;
 	else
-		load(&np->type, addr, ret);
+		*ret = load(&np->type, addr);
 
 	return ret;
 }
@@ -503,7 +504,8 @@ rhs(Node *np, Node *ret)
 	case OMEM:
 	case OREG:
 	case OAUTO:
-		return load(tp, np, ret);
+		*ret = load(tp, np);
+		return ret;
 	case ONEG:
 	case OAND:
 	case OOR:
@@ -618,7 +620,8 @@ rhs(Node *np, Node *ret)
 		rhs(l, &aux1);
 		return rhs(r, ret);
 	case OPTR:
-		return load(tp, rhs(l, &aux1), ret);
+		*ret = load(tp, rhs(l, &aux1));
+		return ret;
 	case OADDR:
 		lhs(l, ret);
 		ret->type = *tp;
