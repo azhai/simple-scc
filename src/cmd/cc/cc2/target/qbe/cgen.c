@@ -162,21 +162,20 @@ load(Type *tp, Node *np)
 static Node *rhs(Node *np, Node *new);
 
 static Node *
-cast(Type *td, Node *ns, Node *nd)
+cast(Type *td, Node *np)
 {
 	Type *ts;
-	Node aux1, aux2;
+	Node *tmp;
 	int op, d_isint, s_isint;
 
-	ts = &ns->type;
+	ts = &np->type;
 	d_isint = (td->flags & INTF) != 0;
 	s_isint = (ts->flags & INTF) != 0;
 
 	if (d_isint && s_isint) {
-		if (td->size <= ts->size) {
-			*nd = *ns;
-			return nd;
-		}
+		if (td->size <= ts->size)
+			return np;
+
 		assert(td->size == 4 || td->size == 8);
 		switch (ts->size) {
 		case 1:
@@ -215,7 +214,7 @@ cast(Type *td, Node *ns, Node *nd)
 		case 1:
 		case 2:
 			ts = (ts->flags&SIGNF) ? &int32type : &uint32type;
-			ns = cast(ts, ns, tmpnode(&aux2, ts));
+			np = cast(ts, np);
 		case 4:
 			op = (td->size == 8) ? ASSWTOD : ASSWTOS;
 			break;
@@ -231,8 +230,10 @@ cast(Type *td, Node *ns, Node *nd)
 		op = (td->size == 4) ? ASEXTS : ASTRUNCD;
 	}
 
-	code(op, tmpnode(nd, td), ns, NULL);
-	return nd;
+	tmp = tmpnode(NULL, td);
+	code(op, tmp, np, NULL);
+
+	return tmp;
 }
 
 static Node *
@@ -579,7 +580,8 @@ rhs(Node *np, Node *ret)
 			l = rhs(l, &aux1);
 		return call(np, l, ret);
 	case OCAST:
-		return cast(tp, rhs(l, &aux1), ret);
+		*ret = *cast(tp, rhs(l, &aux1));
+		return ret;
 	case OASSIG:
 		switch (np->u.subop) {
 		case OINC:
