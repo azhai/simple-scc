@@ -159,7 +159,7 @@ load(Type *tp, Node *np)
 	return new;
 }
 
-static Node *rhs(Node *np, Node *new);
+static Node *rhs(Node *np);
 
 static Node *
 cast(Type *td, Node *np)
@@ -244,7 +244,7 @@ call(Node *np, Node *fun)
 	Node **q, *tmp, *p, *pars[NR_FUNPARAM];
 
 	for (n = 0, p = np->right; p; p = p->right)
-		pars[n++] = rhs(p->left, node(OTMP));
+		pars[n++] = rhs(p->left);
 
 	tp = &np->type;
 	tmp = tmpnode(NULL, tp);
@@ -318,17 +318,17 @@ copy(Type *tp, Node *to, Node *from)
 static Node *
 field(Node *np, int islhs)
 {
-	Node base, node, off, add, *addr;
+	Node *tmp, *addr;
 	TUINT offset = np->right->u.sym->u.off;
 
-	addr = rhs(np->left, &base);
+	addr = rhs(np->left);
 
 	if (offset != 0) {
-		node.op = OADD;
-		node.type = ptrtype;
-		node.left = addr;
-		node.right = constnode(&off, offset, &ptrtype);
-		addr = rhs(&node, &add);
+		tmp = node(OADD);
+		tmp->type = ptrtype;
+		tmp->left = addr;
+		tmp->right = constnode(NULL, offset, &ptrtype);
+		addr = rhs(tmp);
 	}
 
 	if (islhs)
@@ -346,7 +346,7 @@ lhs(Node *np)
 	case OAUTO:
 		return np;
 	case OPTR:
-		return rhs(np->left, node(OTMP));
+		return rhs(np->left);
 	case OFIELD:
 		return field(np, 1);
 	default:
@@ -380,7 +380,7 @@ bool(Node *np, Symbol *true, Symbol *false)
 	default:
 		label2node(&ifyes, true);
 		label2node(&ifno, false);
-		code(ASBRANCH, rhs(np, &ret), &ifyes, &ifno);
+		code(ASBRANCH, rhs(np), &ifyes, &ifno);
 		break;
 	}
 }
@@ -396,14 +396,14 @@ ternary(Node *np)
 	label2node(&phi, NULL);
 
 	colon = np->right;
-	code(ASBRANCH, rhs(np->left, node(OTMP)), &ifyes, &ifno);
+	code(ASBRANCH, rhs(np->left), &ifyes, &ifno);
 
 	setlabel(ifyes.u.sym);
-	copy(&tmp->type, tmp, rhs(colon->left, node(OTMP)));
+	copy(&tmp->type, tmp, rhs(colon->left));
 	code(ASJMP, NULL, &phi, NULL);
 
 	setlabel(ifno.u.sym);
-	copy(&tmp->type, tmp, rhs(colon->right, node(OTMP)));
+	copy(&tmp->type, tmp, rhs(colon->right));
 	setlabel(phi.u.sym);
 
 	return tmp;
@@ -476,9 +476,9 @@ swtch_if(Node *idx)
 }
 
 static Node *
-rhs(Node *np, Node *ret)
+rhs(Node *np)
 {
-	Node aux1, aux2, aux3;
+	Node *tmp, aux1, aux2, aux3;
 	Node *phi, *l = np->left, *r = np->right;
 	Type *tp;
 	int off, op;
@@ -497,32 +497,30 @@ rhs(Node *np, Node *ret)
 		return NULL;
 	case OTMP:
 	case OCONST:
-		*ret = *np;
 		return np;
 	case OMEM:
 	case OREG:
 	case OAUTO:
-		*ret = *load(tp, np);
-		return ret;
+		return load(tp, np);
 	case ONEG:
 	case OAND:
 	case OOR:
 		true = newlabel();
 		false = newlabel();
 		phi = label2node(&aux1, NULL);
-		tmpnode(ret, &int32type);
+		tmp = tmpnode(NULL, &int32type);
 
 		bool(np, true, false);
 
 		setlabel(true);
-		code(ASCOPYW, ret, constnode(&aux2, 1, &int32type), NULL);
+		code(ASCOPYW, tmp, constnode(&aux2, 1, &int32type), NULL);
 		code(ASJMP, NULL, phi, NULL);
 
 		setlabel(false);
-		code(ASCOPYW, ret, constnode(&aux2, 0, &int32type), NULL);
+		code(ASCOPYW, tmp, constnode(&aux2, 0, &int32type), NULL);
 
 		setlabel(phi->u.sym);
-		return ret;
+		return tmp;
         case OMOD:
         case OSHR:
 		assert(tp->flags & INTF);
@@ -550,11 +548,11 @@ rhs(Node *np, Node *ret)
                 off = 0;
         binary:
 		if (l->complex >= r->complex) {
-			rhs(l, &aux1);
-			rhs(r, &aux2);
+			l = rhs(l);
+			r = rhs(r);
 		} else {
-			rhs(r, &aux2);
-			rhs(l, &aux1);
+			r = rhs(r);
+			l = rhs(l);
 		}
 
                 switch (tp->size) {
@@ -567,19 +565,17 @@ rhs(Node *np, Node *ret)
                 default:
                         abort();
                 }
-                op = tbl[np->op] + off;
-		tmpnode(ret, tp);
-                code(op, ret, &aux1, &aux2);
-                return ret;
+		op = tbl[np->op] + off;
+		tmp = tmpnode(NULL, tp);
+		code(op, tmp, l, r);
+		return tmp;
 	case OCALL:
 	case OCALLE:
 		if (l->op == OPTR)
-			l = rhs(l, &aux1);
-		*ret = *call(np, l);
-		return ret;
+			l = rhs(l);
+		return call(np, l);
 	case OCAST:
-		*ret = *cast(tp, rhs(l, &aux1));
-		return ret;
+		return cast(tp, rhs(l));
 	case OASSIG:
 		switch (np->u.subop) {
 		case OINC:
@@ -588,60 +584,62 @@ rhs(Node *np, Node *ret)
 		case ODEC:
 			op = OSUB;
 		post_oper:
+			tmp = rhs(l);
+
 			aux1.op = op;
-			aux1.left = rhs(l, ret);
+			aux1.left = tmp;
 			aux1.right = r;
 			aux1.type = np->type;
-			rhs(&aux1, &aux2);
-			aux1 = *lhs(l);
-			assign(tp, &aux1, &aux2);
-			break;
+			r = &aux1;
+
+			r = rhs(r);
+			l = lhs(l);
+			assign(tp, l, r);
+
+			return tmp;
 		default:
 			aux2.type = np->type;
 			aux2.op = np->u.subop;
 			aux2.right = np->right;
 			aux2.left = np->left;
-			r = rhs(&aux2, &aux1);
+			r = rhs(&aux2);
 		case 0:
 			if (l->complex >= r->complex) {
-				aux2 = *lhs(l);
-				rhs(r, ret);
+				l = lhs(l);
+				r = rhs(r);
 			} else {
-				rhs(r, ret);
-				aux2 = *lhs(l);
+				r = rhs(r);
+				l = lhs(l);
 			}
 
-			return assign(tp, &aux2, ret);
+			return assign(tp, l, r);
 		}
-		return ret;
 	case OASK:
-		*ret = *ternary(np);
-		return ret;
+		return ternary(np);
 	case OCOMMA:
-		rhs(l, &aux1);
-		return rhs(r, ret);
+		rhs(l);
+		return rhs(r);
 	case OPTR:
-		*ret = *load(tp, rhs(l, &aux1));
-		return ret;
+		return load(tp, rhs(l));
 	case OADDR:
-		*ret = *lhs(l);
-		ret->type = *tp;
-		return ret;
+		l = lhs(l);
+		l->type = *tp;
+		return l;
 	case OFIELD:
-		*ret = *field(np, 0);
-		return ret;
+		return field(np, 0);
 	case OBUILTIN:
 		switch (np->u.subop) {
 		case BVA_START:
-			l = rhs(l, &aux1);
+			l = rhs(l);
 			code(ASVSTAR, NULL, l, NULL);
 			return NULL;
 		case BVA_END:
 			return NULL;
 		case BVA_ARG:
-			l = rhs(l, &aux1);
-			code(ASVARG, tmpnode(ret, tp), l, NULL);
-			return ret;
+			l = rhs(l);
+			tmp = tmpnode(NULL, tp);
+			code(ASVARG, tmp, l, NULL);
+			return tmp;
 		case BVA_COPY:
 			/* TODO */
 		default:
@@ -671,15 +669,15 @@ cgen(Node *np)
 		bool(np->left, np->u.sym, next->label);
 		break;
 	case ORET:
-		p = (np->left) ? rhs(np->left, &aux) : NULL;
+		p = (np->left) ? rhs(np->left) : NULL;
 		code(ASRET, NULL, p, NULL);
 		break;
 	case OBSWITCH:
-		p = rhs(np->left, &aux);
+		p = rhs(np->left);
 		swtch_if(p);
 		break;
 	default:
-		rhs(np, &aux);
+		rhs(np);
 		break;
 	}
 	return NULL;
