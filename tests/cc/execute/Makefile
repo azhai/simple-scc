@@ -10,5 +10,4 @@ tests:
 	@CC=$(CC) ./chktest.sh scc-tests.lst
 
 clean:
-	rm -f *.as *.o *.ir *.qbe *core* test.log
-
+	rm -f a.out *.s *.s *.as *.o *.ir *.qbe *core* test.log
