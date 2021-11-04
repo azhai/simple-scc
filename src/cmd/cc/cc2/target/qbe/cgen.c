@@ -316,7 +316,7 @@ copy(Type *tp, Node *to, Node *from)
 /* TODO: Do field() transformation in sethi */
 
 static Node *
-field(Node *np, Node *ret, int islhs)
+field(Node *np, int islhs)
 {
 	Node base, node, off, add, *addr;
 	TUINT offset = np->right->u.sym->u.off;
@@ -332,11 +332,9 @@ field(Node *np, Node *ret, int islhs)
 	}
 
 	if (islhs)
-		*ret = *addr;
+		return addr;
 	else
-		*ret = *load(&np->type, addr);
-
-	return ret;
+		return load(&np->type, addr);
 }
 
 static Node *
@@ -351,7 +349,8 @@ lhs(Node *np, Node *new)
 	case OPTR:
 		return rhs(np->left, new);
 	case OFIELD:
-		return field(np, new, 1);
+		*new = *field(np, 1);
+		return new;
 	default:
 		abort();
 	}
@@ -630,7 +629,8 @@ rhs(Node *np, Node *ret)
 		ret->type = *tp;
 		return ret;
 	case OFIELD:
-		return field(np, ret, 0);
+		*ret = *field(np, 0);
+		return ret;
 	case OBUILTIN:
 		switch (np->u.subop) {
 		case BVA_START:
