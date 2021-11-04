@@ -1,7 +1,7 @@
 int
 foo(void)
 {
-	return 42;
+	return 0;
 }
 
 int
