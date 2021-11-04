@@ -696,7 +696,6 @@ cgen(Node *np)
 Node *
 sethi(Node *np)
 {
-	int op;
 	Node *lp, *rp;
 
 	if (!np)
@@ -715,18 +714,15 @@ sethi(Node *np)
 		np->address = 11;
 		break;
 	case OASSIG:
-		op = np->u.subop;
-		if (op != OINC && op != ODEC) {
-			if (lp->op == OCAST) {
-				Node *tmp = node(OCAST);
-				tmp->type = lp->left->type;
-				tmp->left = rp;
-				tmp->right = NULL;
-				rp = tmp;
-				tmp = lp;
-				lp = lp->left;
-				delnode(tmp);
-			}
+		if (lp->op == OCAST) {
+			Node *tmp = node(OCAST);
+			tmp->type = lp->left->type;
+			tmp->left = rp;
+			tmp->right = NULL;
+			rp = tmp;
+			tmp = lp;
+			lp = lp->left;
+			delnode(tmp);
 		}
 		goto binary;
 	case OCPL:
