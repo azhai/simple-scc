@@ -262,8 +262,6 @@ copy(Type *tp, Node *to, Node *from)
 	return from;
 }
 
-/* TODO: Do field() transformation in sethi */
-
 static Node *
 field(Node *np, int islhs)
 {
@@ -271,19 +269,15 @@ field(Node *np, int islhs)
 	TUINT offset = np->right->u.sym->u.off;
 
 	addr = rhs(np->left);
+	tmp = node(OADD);
+	tmp->type = ptrtype;
+	tmp->left = addr;
+	tmp->right = constnode(NULL, offset, &ptrtype);
+	addr = rhs(tmp);
 
-	if (offset != 0) {
-		tmp = node(OADD);
-		tmp->type = ptrtype;
-		tmp->left = addr;
-		tmp->right = constnode(NULL, offset, &ptrtype);
-		addr = rhs(tmp);
-	}
-
-	if (islhs)
-		return addr;
-	else
-		return load(&np->type, addr);
+	if (!islhs)
+		addr = load(&np->type, addr);
+	return addr;
 }
 
 static Node *
