@@ -98,6 +98,29 @@ tmpnode(Node *np, Type *tp)
 }
 
 static Node *
+complex(Node *np)
+{
+	Node *lp = np->left, *rp = np->right;
+
+	if (np->address > 10)
+		return np;
+	if (lp)
+		np->complex = lp->complex;
+	if (rp) {
+		int d = np->complex - rp->complex;
+
+		if (d == 0)
+			++np->complex;
+		else if (d < 0)
+			np->complex = rp->complex;
+	}
+	if (np->complex == 0)
+		++np->complex;
+
+	return np;
+}
+
+static Node *
 load(Type *tp, Node *np, Node *new)
 {
 	int op;
@@ -726,19 +749,5 @@ sethi(Node *np)
 	np->left = lp;
 	np->right = rp;
 
-	if (np->address > 10)
-		return np;
-	if (lp)
-		np->complex = lp->complex;
-	if (rp) {
-		int d = np->complex - rp->complex;
-
-		if (d == 0)
-			++np->complex;
-		else if (d < 0)
-			np->complex = rp->complex;
-	}
-	if (np->complex == 0)
-		++np->complex;
-	return np;
+	return complex(np);
 }
