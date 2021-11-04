@@ -135,6 +135,25 @@ label2node(Node *np, Symbol *sym)
 }
 
 Node *
+tmpnode(Node *np, Type *tp)
+{
+	char flags;
+	Symbol *sym;
+
+	if (!np)
+		np = node(OTMP);
+	sym = getsym(TMPSYM);
+	sym->type = np->type = *tp;
+	flags = tp->flags & ~(PARF|INITF);
+	sym->type.flags = np->type.flags = flags;
+	sym->kind = STMP;
+	np->left = np->right = NULL;
+	np->u.sym = sym;
+	np->op = OTMP;
+	return np;
+}
+
+Node *
 constnode(Node *np, TUINT n, Type *tp)
 {
 	if (!np)

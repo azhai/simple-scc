@@ -7,11 +7,6 @@
 #include "arch.h"
 #include "../../cc2.h"
 
-enum sflags {
-	ISTMP  = 1,
-	ISCONS = 2
-};
-
 static char opasmw[] = {
 	[OADD] = ASADDW,
 	[OSUB] = ASSUBW,
@@ -76,26 +71,6 @@ static char opasmd[] = {
 };
 
 extern Type int32type, uint32type, ptrtype;
-
-static Node *
-tmpnode(Node *np, Type *tp)
-{
-	char flags;
-	Symbol *sym;
-
-	if (!np)
-		np = node(OTMP);
-	sym = getsym(TMPSYM);
-	sym->type = np->type = *tp;
-	flags = tp->flags & ~(PARF|INITF);
-	sym->type.flags = np->type.flags = flags;
-	sym->kind = STMP;
-	np->left = np->right = NULL;
-	np->u.sym = sym;
-	np->op = OTMP;
-	np->flags |= ISTMP;
-	return np;
-}
 
 static Node *
 complex(Node *np)
