@@ -235,32 +235,6 @@ call(Node *np, Node *fun)
 }
 
 static Node *
-assign(Type *tp, Node *to, Node *from)
-{
-	int op;
-
-	switch (tp->size) {
-	case 1:
-		op = ASSTB;
-		break;
-	case 2:
-		op = ASSTH;
-		break;
-	case 4:
-		op = (tp->flags & FLOATF) ? ASSTS : ASSTW;
-		break;
-	case 8:
-		op = (tp->flags & FLOATF) ? ASSTD : ASSTL;
-		break;
-	default:
-		op = ASSTM;
-		break;
-	}
-	code(op, to, from, NULL);
-	return from;
-}
-
-static Node *
 copy(Type *tp, Node *to, Node *from)
 {
 	int op;
@@ -450,6 +424,69 @@ swtch_if(Node *idx)
 	}
 }
 
+static int
+assignop(Type *tp)
+{
+	switch (tp->size) {
+	case 1:
+		return ASSTB;
+	case 2:
+		return ASSTH;
+	case 4:
+		return (tp->flags & FLOATF) ? ASSTS : ASSTW;
+	case 8:
+		return (tp->flags & FLOATF) ? ASSTD : ASSTL;
+	default:
+		return ASSTM;
+	}
+}
+
+static Node *
+assign(Node *np)
+{
+	Node *tmp, aux;
+	Node *l = np->left, *r = np->right;
+	int op;
+
+	switch (np->u.subop) {
+	case OINC:
+		op = OADD;
+		goto post_oper;
+	case ODEC:
+		op = OSUB;
+	post_oper:
+		tmp = rhs(l);
+		aux.op = op;
+		aux.left = tmp;
+		aux.right = r;
+		aux.type = np->type;
+		r = complex(&aux);
+		break;
+	default:
+		/* assign abbreviation */
+		aux.type = np->type;
+		aux.op = np->u.subop;
+		aux.right = np->right;
+		aux.left = np->left;
+		r = rhs(complex(&aux));
+	case 0:
+		op = 0;
+		break;
+	}
+
+	if (l->complex >= r->complex) {
+		l = lhs(l);
+		r = rhs(r);
+	} else {
+		r = rhs(r);
+		l = lhs(l);
+	}
+
+	code(assignop(&np->type), l, r, NULL);
+
+	return (op == 0) ? r : tmp;
+}
+
 static Node *
 rhs(Node *np)
 {
@@ -552,43 +589,7 @@ rhs(Node *np)
 	case OCAST:
 		return cast(tp, rhs(l));
 	case OASSIG:
-		switch (np->u.subop) {
-		case OINC:
-			op = OADD;
-			goto post_oper;
-		case ODEC:
-			op = OSUB;
-		post_oper:
-			tmp = rhs(l);
-
-			aux1.op = op;
-			aux1.left = tmp;
-			aux1.right = r;
-			aux1.type = np->type;
-			r = &aux1;
-
-			r = rhs(r);
-			l = lhs(l);
-			assign(tp, l, r);
-
-			return tmp;
-		default:
-			aux2.type = np->type;
-			aux2.op = np->u.subop;
-			aux2.right = np->right;
-			aux2.left = np->left;
-			r = rhs(&aux2);
-		case 0:
-			if (l->complex >= r->complex) {
-				l = lhs(l);
-				r = rhs(r);
-			} else {
-				r = rhs(r);
-				l = lhs(l);
-			}
-
-			return assign(tp, l, r);
-		}
+		return assign(np);
 	case OASK:
 		return ternary(np);
 	case OCOMMA:
