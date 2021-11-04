@@ -484,7 +484,7 @@ assign(Node *np)
 static Node *
 rhs(Node *np)
 {
-	Node *tmp, aux1, aux2, aux3;
+	Node *tmp, aux1, aux2;
 	Node *phi, *l = np->left, *r = np->right;
 	Type *tp;
 	int off, op;
