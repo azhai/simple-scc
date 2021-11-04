@@ -914,7 +914,6 @@ cast(int needdecay)
 			if ((rp = convert(lp,  tp, 1)) == NULL)
 				error("bad type conversion requested");
 			rp->flags &= ~NLVAL;
-			rp->flags |= lp->flags & NLVAL;
 		}
 		break;
 	default:
