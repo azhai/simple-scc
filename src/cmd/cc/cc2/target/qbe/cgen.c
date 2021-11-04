@@ -386,27 +386,27 @@ bool(Node *np, Symbol *true, Symbol *false)
 }
 
 static Node *
-ternary(Node *np, Node *ret)
+ternary(Node *np)
 {
-	Node ifyes, ifno, phi, *colon, aux1, aux2, aux3;
+	Node ifyes, ifno, phi, *colon, *tmp;
 
-	tmpnode(ret, &np->type);
+	tmp = tmpnode(NULL, &np->type);
 	label2node(&ifyes, NULL);
 	label2node(&ifno, NULL);
 	label2node(&phi, NULL);
 
 	colon = np->right;
-	code(ASBRANCH, rhs(np->left, &aux1), &ifyes, &ifno);
+	code(ASBRANCH, rhs(np->left, node(OTMP)), &ifyes, &ifno);
 
 	setlabel(ifyes.u.sym);
-	copy(&ret->type, ret, rhs(colon->left, &aux2));
+	copy(&tmp->type, tmp, rhs(colon->left, node(OTMP)));
 	code(ASJMP, NULL, &phi, NULL);
 
 	setlabel(ifno.u.sym);
-	copy(&ret->type, ret, rhs(colon->right, &aux3));
+	copy(&tmp->type, tmp, rhs(colon->right, node(OTMP)));
 	setlabel(phi.u.sym);
 
-	return ret;
+	return tmp;
 }
 
 static Node *
@@ -615,7 +615,8 @@ rhs(Node *np, Node *ret)
 		}
 		return ret;
 	case OASK:
-		return ternary(np, ret);
+		*ret = *ternary(np);
+		return ret;
 	case OCOMMA:
 		rhs(l, &aux1);
 		return rhs(r, ret);
