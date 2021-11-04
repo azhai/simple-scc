@@ -237,26 +237,26 @@ cast(Type *td, Node *np)
 }
 
 static Node *
-call(Node *np, Node *fun, Node *ret)
+call(Node *np, Node *fun)
 {
 	int n, op;
 	Type *tp;
-	Node aux, **q, *p, *pars[NR_FUNPARAM];
+	Node **q, *tmp, *p, *pars[NR_FUNPARAM];
 
 	for (n = 0, p = np->right; p; p = p->right)
 		pars[n++] = rhs(p->left, node(OTMP));
 
 	tp = &np->type;
-	code(ASCALL, tmpnode(ret, tp), fun, NULL);
+	tmp = tmpnode(NULL, tp);
+	code(ASCALL, tmp, fun, NULL);
 
 	for (q = pars; q < &pars[n]; ++q) {
 		op = (q == &pars[n-1]) ? ASPARE : ASPAR;
-		tmpnode(&aux, &(*q)->type);
-		code(op, NULL, *q, &aux);
+		code(op, NULL, *q, tmpnode(NULL, &(*q)->type));
 	}
 	code((np->op == OCALL) ? ASCALLE : ASCALLEX, NULL, NULL, NULL);
 
-	return ret;
+	return tmp;
 }
 
 static Node *
@@ -578,7 +578,8 @@ rhs(Node *np, Node *ret)
 	case OCALLE:
 		if (l->op == OPTR)
 			l = rhs(l, &aux1);
-		return call(np, l, ret);
+		*ret = *call(np, l);
+		return ret;
 	case OCAST:
 		*ret = *cast(tp, rhs(l, &aux1));
 		return ret;
