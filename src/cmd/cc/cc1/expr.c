@@ -778,39 +778,32 @@ sizeexp(void)
 static Node *
 postfix(Node *lp)
 {
+	int op;
 	Node *rp;
 
 	for (;;) {
 		switch (yytoken) {
 		case '[':
+			next();
+			rp = xexpr();
+			expect(']');
+			lp = array(decay(lp), rp);
+			break;
 		case DEC:
 		case INC:
+			op = (yytoken == INC) ? OINC : ODEC;
+			lp = incdec(decay(lp), op);
+			next();
+			break;
+
 		case INDIR:
+			lp = content(OPTR, decay(lp));
 		case '.':
+			lp = field(decay(lp));
+			break;
 		case '(':
-			lp = decay(lp);
-			switch (yytoken) {
-			case '[':
-				next();
-				rp = xexpr();
-				expect(']');
-				lp = array(lp, rp);
-				break;
-			case DEC:
-			case INC:
-				lp = incdec(lp, (yytoken == INC) ? OINC : ODEC);
-				next();
-				break;
-			case INDIR:
-				lp = content(OPTR, lp);
-			case '.':
-				lp = field(lp);
-				break;
-			case '(':
-				lp = arguments(lp);
-				lp->flags |= NEFFECT;
-				break;
-			}
+			lp = arguments(decay(lp));
+			lp->flags |= NEFFECT;
 			break;
 		default:
 			return lp;
