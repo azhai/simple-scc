@@ -17,5 +17,5 @@ main(void)
 
 	for (n = 0, p = &y; p; ++n, p = p->next)
 		;
-	return n;
+	return n-1;
 }
