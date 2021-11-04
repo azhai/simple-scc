@@ -338,19 +338,17 @@ field(Node *np, int islhs)
 }
 
 static Node *
-lhs(Node *np, Node *new)
+lhs(Node *np)
 {
 	switch (np->op) {
 	case OREG:
 	case OMEM:
 	case OAUTO:
-		*new = *np;
-		return new;
+		return np;
 	case OPTR:
-		return rhs(np->left, new);
+		return rhs(np->left, node(OTMP));
 	case OFIELD:
-		*new = *field(np, 1);
-		return new;
+		return field(np, 1);
 	default:
 		abort();
 	}
@@ -595,7 +593,7 @@ rhs(Node *np, Node *ret)
 			aux1.right = r;
 			aux1.type = np->type;
 			rhs(&aux1, &aux2);
-			lhs(l, &aux1);
+			aux1 = *lhs(l);
 			assign(tp, &aux1, &aux2);
 			break;
 		default:
@@ -606,11 +604,11 @@ rhs(Node *np, Node *ret)
 			r = rhs(&aux2, &aux1);
 		case 0:
 			if (l->complex >= r->complex) {
-				lhs(l, &aux2);
+				aux2 = *lhs(l);
 				rhs(r, ret);
 			} else {
 				rhs(r, ret);
-				lhs(l, &aux2);
+				aux2 = *lhs(l);
 			}
 
 			return assign(tp, &aux2, ret);
@@ -625,7 +623,7 @@ rhs(Node *np, Node *ret)
 		*ret = *load(tp, rhs(l, &aux1));
 		return ret;
 	case OADDR:
-		lhs(l, ret);
+		*ret = *lhs(l);
 		ret->type = *tp;
 		return ret;
 	case OFIELD:
