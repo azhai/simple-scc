@@ -889,7 +889,7 @@ chk_decay:
 static Node *
 cast(int needdecay)
 {
-	Node *lp, *rp;
+	Node *tmp, *np;
 	Type *tp;
 	static int nested;
 
@@ -910,24 +910,24 @@ cast(int needdecay)
 		case ARY:
 			error("cast specifies an array type");
 		default:
-			lp = cast(needdecay);
-			if ((rp = convert(lp,  tp, 1)) == NULL)
+			tmp = cast(needdecay);
+			if ((np = convert(tmp,  tp, 1)) == NULL)
 				error("bad type conversion requested");
-			rp->flags &= ~NLVAL;
+			np->flags &= ~NLVAL;
 		}
 		break;
 	default:
 		if (nested == NR_SUBEXPR)
 			error("too many expressions nested by parentheses");
 		++nested;
-		rp = xexpr();
+		np = xexpr();
 		--nested;
 		expect(')');
-		rp = postfix(rp);
+		np = postfix(np);
 		break;
 	}
 
-	return rp;
+	return np;
 }
 
 static Node *
