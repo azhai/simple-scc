@@ -33,10 +33,11 @@ node(int op)
 static void
 prnode(Node *np)
 {
-	if (np->left)
-		prnode(np->left);
-	if (np->right)
-		prnode(np->right);
+	if (!np)
+		return;
+	prnode(np->left);
+	prnode(np->right);
+
 	fprintf(stderr, "\t%c%lu", np->op, np->type.size);
 }
 
