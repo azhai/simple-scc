@@ -12,6 +12,7 @@ enum tflags {
 	PARF    =     1 << 6,  /* parameter */
 	INITF   =     1 << 7,  /* initializer flag */
 	ELLIPS  =     1 << 8,  /* vararg function */
+	ARRF    =     1 << 9,  /* array flag */
 };
 
 enum sclass {

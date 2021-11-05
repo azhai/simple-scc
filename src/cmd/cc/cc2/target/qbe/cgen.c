@@ -102,7 +102,7 @@ load(Type *tp, Node *np)
 	Node *new;
 	int flags = tp->flags;
 
-	if (flags & (AGGRF|FUNF))
+	if (flags & (AGGRF|FUNF|ARRF))
 		return np;
 
 	switch (tp->size) {

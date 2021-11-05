@@ -571,6 +571,7 @@ array(void)
 	size = pop();
 	base = pop();
 	tp = pop();
+	tp->flags = ARRF;
 	tp->size = size->u.i * base->size; /* FIXME check for overflow */
 	tp->align = base->align;
 
