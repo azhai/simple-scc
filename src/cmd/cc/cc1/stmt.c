@@ -365,22 +365,44 @@ compound(Symbol *lbreak, Symbol *lcont, Switch *lswitch)
 static void
 stmt(Symbol *lbreak, Symbol *lcont, Switch *lswitch)
 {
-	void (*fun)(Symbol *, Symbol *, Switch *);
-
 	switch (yytoken) {
-	case '{':      fun = compound; break;
-	case RETURN:   fun = Return;   break;
-	case WHILE:    fun = While;    break;
-	case FOR:      fun = For;      break;
-	case DO:       fun = Dowhile;  break;
-	case IF:       fun = If;       break;
-	case BREAK:    fun = Break;    break;
-	case CONTINUE: fun = Continue; break;
-	case GOTO:     fun = Goto;     break;
-	case SWITCH:   fun = Swtch;    break;
-	case CASE:     fun = Case;     break;
-	case DEFAULT:  fun = Default;  break;
-	default:       fun = stmtexp;  break;
+	case '{':
+		compound(lbreak, lcont, lswitch);
+		break;
+	case RETURN:
+		Return(lbreak, lcont, lswitch);
+		break;
+	case WHILE:
+		While(lbreak, lcont, lswitch);
+		break;
+	case FOR:
+		For(lbreak, lcont, lswitch);
+		break;
+	case DO:
+		Dowhile(lbreak, lcont, lswitch);
+		break;
+	case IF:
+		If(lbreak, lcont, lswitch);
+		break;
+	case BREAK:
+		Break(lbreak, lcont, lswitch);
+		break;
+	case CONTINUE:
+		Continue(lbreak, lcont, lswitch);
+		break;
+	case GOTO:
+		Goto(lbreak, lcont, lswitch);
+		break;
+	case SWITCH:
+		Swtch(lbreak, lcont, lswitch);
+		break;
+	case CASE:
+		Case(lbreak, lcont, lswitch);
+		break;
+	case DEFAULT:
+		Default(lbreak, lcont, lswitch);
+		break;
+	default:
+		stmtexp(lbreak, lcont, lswitch);
 	}
-	(*fun)(lbreak, lcont, lswitch);
 }
