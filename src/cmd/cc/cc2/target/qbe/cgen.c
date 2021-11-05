@@ -421,6 +421,11 @@ swtch_if(Node *idx)
 static int
 assignop(Type *tp)
 {
+	int flags = tp->flags;
+
+	if (flags & (AGGRF|FUNF|ARRF))
+		return ASSTM;
+
 	switch (tp->size) {
 	case 1:
 		return ASSTB;
@@ -431,7 +436,7 @@ assignop(Type *tp)
 	case 8:
 		return (tp->flags & FLOATF) ? ASSTD : ASSTL;
 	default:
-		return ASSTM;
+		abort();
 	}
 }
 

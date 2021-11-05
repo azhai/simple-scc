@@ -12,7 +12,7 @@
 
 static void binary(void), unary(void), store(void), jmp(void), ret(void),
             branch(void), call(void), ecall(void), param(void),
-            asalloc(void), form2local(void), ldir(void), vastart(void),
+            asalloc(void), form2local(void), blit(void), vastart(void),
             vaarg(void);
 
 static struct opdata {
@@ -41,7 +41,7 @@ static struct opdata {
 	[ASSTH]   =  {.fun = store,  .txt = "store", .letter = 'h'},
 	[ASSTW]   =  {.fun = store,  .txt = "store", .letter = 'w'},
 	[ASSTL]   =  {.fun = store,  .txt = "store", .letter = 'l'},
-	[ASSTM]   =  {.fun = ldir},
+	[ASSTM]   =  {.fun = blit},
 	[ASSTS]   =  {.fun = store,  .txt = "store", .letter = 's'},
 	[ASSTD]   =  {.fun = store,  .txt = "store", .letter = 'd'},
 
@@ -416,13 +416,14 @@ binary(void)
 }
 
 static void
-ldir(void)
+blit(void)
 {
-	struct opdata *p = &optbl[pc->op];
+	Type *tp = &pc->to.u.sym->type;
 	char to[ADDR_LEN], from[ADDR_LEN];
-	/* TODO: what type do we use for the size? */
 
-	/* TODO: it is pending */
+	strcpy(to, addr2txt(&pc->to));
+	strcpy(from, addr2txt(&pc->from1));
+	printf("\t\tblit\t(%s,%s,%lu,%lu)\n", to, from, tp->size, tp->align);
 }
 
 static void
@@ -450,7 +451,6 @@ unary(void)
 static void
 call(void)
 {
-	struct opdata *p = &optbl[pc->op];
 	char to[ADDR_LEN], from[ADDR_LEN];
 	Symbol *sym = pc->to.u.sym;
 
