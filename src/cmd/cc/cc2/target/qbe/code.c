@@ -281,14 +281,16 @@ size2asm(Type *tp)
 void
 defglobal(Symbol *sym)
 {
+	Type *tp = &sym->type;
+
 	if (sym->kind == SEXTRN)
 		return;
 	if (sym->kind == SGLOB)
 		fputs("export ", stdout);
-	printf("data %s = {\n", symname(sym));
+	printf("data %s = align %d {\n", symname(sym), tp->align);
 	if (sym->type.flags & INITF)
 		return;
-	printf("\tz\t%lu\n}\n", sym->type.size);
+	printf("\tz\t%lu\n}\n", tp->size);
 }
 
 void
