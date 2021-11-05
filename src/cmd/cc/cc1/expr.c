@@ -470,14 +470,7 @@ content(int op, Node *np)
 	if (BTYPE(np) != PTR) {
 		errorp("invalid argument of memory indirection");
 	} else {
-		if (np->op == OADDR) {
-			Node *new = np->left;
-			new->type = np->type->type;
-			free(np);
-			np = new;
-		} else {
-			np = node(op, np->type->type, np, NULL);
-		}
+		np = node(op, np->type->type, np, NULL);
 		np->flags |= NLVAL;
 	}
 	return np;
