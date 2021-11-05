@@ -170,22 +170,23 @@ Dowhile(Symbol *lbreak, Symbol *lcont, Switch *lswitch)
 static void
 Return(Symbol *lbreak, Symbol *lcont, Switch *lswitch)
 {
-	Node *np;
+	Node *np = NULL;
 	Type *tp = curfun->type->type;
 
 	expect(RETURN);
-	np = (yytoken != ';') ? decay(expr()) : NULL;
+	if (yytoken != ';')
+		np = decay(expr());
 	expect(';');
-	if (!np) {
-		if (tp != voidtype)
-			warn("function returning non void returns no value");
-		tp = voidtype;
-	} else if (np->type != tp) {
+
+	if (!np && tp != voidtype)
+		warn("function returning non void returns no value");
+	else if (np && np->type != tp) {
 		if (tp == voidtype)
 			warn("function returning void returns a value");
 		else if ((np = convert(np, tp, 0)) == NULL)
 			errorp("incorrect type in return");
 	}
+
 	emit(ORET, NULL);
 	emit(OEXPR, np);
 }
