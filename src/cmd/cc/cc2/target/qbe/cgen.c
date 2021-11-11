@@ -170,7 +170,7 @@ load(Type *tp, Node *np)
 	Node *new;
 	int flags = tp->flags;
 
-	if (flags & (AGGRF|FUNF|ARRF))
+	if (flags & (AGGRF|FUNF|ARRF|PTRF))
 		return np;
 
 	switch (tp->size) {
@@ -667,6 +667,7 @@ rhs(Node *np)
 	case OADDR:
 		l = lhs(l);
 		l->type = *tp;
+		l->type.flags |= PTRF;
 		return l;
 	case OFIELD:
 		return field(np, 0);
