@@ -1,6 +1,6 @@
 char s0[] = "foo";
 char s1[7] = "foo";
-char s2[2] = "foo";
+char s2[3] = "foo";
 char s3[] = {"foo"};
 char *p = "foo";
 
