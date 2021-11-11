@@ -229,7 +229,7 @@ typesize(Type *tp)
 		 * alignment.
 		 */
 		if (tp->op == STRUCT && align-- > 1)
-			size += size+align & ~align;
+			size = size+align & ~align;
 		tp->size = size;
 		return;
 	case ENUM:
