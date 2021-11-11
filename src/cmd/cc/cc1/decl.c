@@ -796,12 +796,12 @@ enumdcl(void)
 	tagsym = newtag();
 	tp = tagsym->type;
 
+	namespace = NS_IDEN;
 	if (!accept('{'))
 		goto restore_name;
 	if (tp->prop & TDEFINED)
 		errorp("redefinition of enumeration '%s'", tagsym->name);
 	deftype(tp);
-	namespace = NS_IDEN;
 
 	/* TODO: check incorrect values in val */
 	for (nctes = val = 0; yytoken != '}'; ++nctes, ++val) {
