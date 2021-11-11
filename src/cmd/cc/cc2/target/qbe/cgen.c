@@ -72,6 +72,19 @@ static char opasmd[] = {
 
 extern Type int32type, uint32type, ptrtype;
 
+/*
+ * This is strongly influenced by
+ * http://plan9.bell-labs.com/sys/doc/compiler.ps (/sys/doc/compiler.ps)
+ * calculate addresability as follows
+ *     AUTO => 11          value+fp
+ *     REG => 11           reg
+ *     STATIC => 11        (value)
+ *     CONST => 11         $value
+ * These values of addressability are not used in the code generation.
+ * They are only used to calculate the Sethi-Ullman numbers. Since
+ * QBE is AMD64 targered we could do a better job there, and try to
+ * detect some of the complex addressing modes of these processors.
+ */
 static Node *
 complex(Node *np)
 {
@@ -93,6 +106,61 @@ complex(Node *np)
 		++np->complex;
 
 	return np;
+}
+
+Node *
+sethi(Node *np)
+{
+	Node *lp, *rp;
+
+	if (!np)
+		return np;
+
+	np->complex = 0;
+	np->address = 0;
+	lp = np->left;
+	rp = np->right;
+
+	switch (np->op) {
+	case OAUTO:
+	case OREG:
+	case OMEM:
+	case OCONST:
+		np->address = 11;
+		break;
+	case OASSIG:
+		if (lp->op == OCAST) {
+			Node *tmp = node(OCAST);
+			tmp->type = lp->left->type;
+			tmp->left = rp;
+			tmp->right = NULL;
+			rp = tmp;
+			tmp = lp;
+			lp = lp->left;
+			delnode(tmp);
+		}
+		goto binary;
+	case OCPL:
+		assert(np->type.flags & INTF);
+		np->op = OBXOR;
+		rp = constnode(NULL, ~(TUINT) 0, &np->type);
+		goto binary;
+	case OSNEG:
+		np->op = OSUB;
+		rp = lp;
+		lp = constnode(NULL, 0, &np->type);
+		if ((np->type.flags & INTF) == 0)
+			lp->u.f = 0.0;
+	default:
+	binary:
+		lp = sethi(lp);
+		rp = sethi(rp);
+		break;
+	}
+	np->left = lp;
+	np->right = rp;
+
+	return complex(np);
 }
 
 static Node *
@@ -656,72 +724,4 @@ cgen(Node *np)
 		break;
 	}
 	return NULL;
-}
-
-/*
- * This is strongly influenced by
- * http://plan9.bell-labs.com/sys/doc/compiler.ps (/sys/doc/compiler.ps)
- * calculate addresability as follows
- *     AUTO => 11          value+fp
- *     REG => 11           reg
- *     STATIC => 11        (value)
- *     CONST => 11         $value
- * These values of addressability are not used in the code generation.
- * They are only used to calculate the Sethi-Ullman numbers. Since
- * QBE is AMD64 targered we could do a better job there, and try to
- * detect some of the complex addressing modes of these processors.
- */
-Node *
-sethi(Node *np)
-{
-	Node *lp, *rp;
-
-	if (!np)
-		return np;
-
-	np->complex = 0;
-	np->address = 0;
-	lp = np->left;
-	rp = np->right;
-
-	switch (np->op) {
-	case OAUTO:
-	case OREG:
-	case OMEM:
-	case OCONST:
-		np->address = 11;
-		break;
-	case OASSIG:
-		if (lp->op == OCAST) {
-			Node *tmp = node(OCAST);
-			tmp->type = lp->left->type;
-			tmp->left = rp;
-			tmp->right = NULL;
-			rp = tmp;
-			tmp = lp;
-			lp = lp->left;
-			delnode(tmp);
-		}
-		goto binary;
-	case OCPL:
-		assert(np->type.flags & INTF);
-		np->op = OBXOR;
-		rp = constnode(NULL, ~(TUINT) 0, &np->type);
-		goto binary;
-	case OSNEG:
-		np->op = OSUB;
-		rp = lp;
-		lp = constnode(NULL, 0, &np->type);
-		if ((np->type.flags & INTF) == 0)
-			lp->u.f = 0.0;
-	default:
-	binary:
-		lp = sethi(lp);
-		rp = sethi(rp);
-		break;
-	}
-	np->left = lp;
-	np->right = rp;
-
-	return complex(np);
 }
