@@ -86,7 +86,7 @@
 0091-fptr.c
 0092-fptr.c
 0093-arrayinit.c
-0094-arrayinit.c [TODO]
+0094-arrayinit.c
 0095-arrayselector.c
 0096-inferredarraysize.c
 0097-extern.c
