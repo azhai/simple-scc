@@ -129,7 +129,7 @@
 0136-if.c
 0137-int-cast.c [TODO]
 0138-namespace.c
-0139-ptr-ary.c [TODO]
+0139-ptr-ary.c
 0140-int-fold.c
 0141-int-iden.c
 0142-char-const.c
