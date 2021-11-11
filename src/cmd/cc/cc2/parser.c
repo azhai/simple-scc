@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -572,7 +573,11 @@ array(void)
 	base = pop();
 	tp = pop();
 	tp->flags = ARRF;
-	tp->size = size->u.i * base->size; /* FIXME check for overflow */
+
+	if (size->u.i > LONG_MAX/base->size)
+		error(EOVERFL);
+
+	tp->size = size->u.i * base->size;
 	tp->align = base->align;
 
 	delnode(size);

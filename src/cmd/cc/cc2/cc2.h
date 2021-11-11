@@ -139,6 +139,7 @@ enum nerrors {
 	EWTACKU,       /* switch stack underflow */
 	ENOSWTC,       /* Out of switch statement */
 	EBBUILT,       /* Unknown builtin */
+	EOVERFL,       /* Numerical overflow */
 	ENUMERR
 };
 
