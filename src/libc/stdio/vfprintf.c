@@ -312,7 +312,6 @@ flags:
 			goto numeric;
 		case 'p':
 			flags |= VOIDPTR | ALTFORM;
-			goto numeric16;
 		case 'x':
 			conv.digs = "0123456789abcdefx";
 		case 'X':
