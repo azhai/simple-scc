@@ -6,6 +6,16 @@ typedef struct obj Obj;
 typedef struct map Map;
 typedef struct mapsec Mapsec;
 
+/**
+ * enum sectype - Section property flags
+ * @SREAD: The segment has read rights
+ * @SWRITE: The segment has write rights
+ * @SEXEC: The segment has execution rights
+ * @SLOAD: Segment data is loaded from disk to memory
+ * @SALLOC: Segment is allocated in memory
+ * @SRELOC: Segment has to be relocated
+ * @SABS: Segment is loaded in a specific address
+ */
 enum sectype {
 	SREAD   = 1 << 0,
 	SWRITE  = 1 << 1,
@@ -52,8 +62,8 @@ struct section {
 	unsigned long long size;
 	unsigned flags;
 	int index;
-	int type;
 	int align;
+	char type;
 };
 
 struct symbol {
