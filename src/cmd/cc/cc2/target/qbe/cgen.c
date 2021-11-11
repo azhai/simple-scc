@@ -196,7 +196,7 @@ load(Type *tp, Node *np)
 	if ((flags & (INTF|SIGNF)) == INTF && tp->size < 8)
 		++op;
 
-	new = tmpnode(NULL, tp);
+	new = tmpnode(tp);
 	code(op, new, np, NULL);
 
 	return new;
@@ -273,7 +273,7 @@ cast(Type *td, Node *np)
 		op = (td->size == 4) ? ASEXTS : ASTRUNCD;
 	}
 
-	tmp = tmpnode(NULL, td);
+	tmp = tmpnode(td);
 	code(op, tmp, np, NULL);
 
 	return tmp;
@@ -290,12 +290,12 @@ call(Node *np, Node *fun)
 		pars[n++] = rhs(p->left);
 
 	tp = &np->type;
-	tmp = tmpnode(NULL, tp);
+	tmp = tmpnode(tp);
 	code(ASCALL, tmp, fun, NULL);
 
 	for (q = pars; q < &pars[n]; ++q) {
 		op = (q == &pars[n-1]) ? ASPARE : ASPAR;
-		code(op, NULL, *q, tmpnode(NULL, &(*q)->type));
+		code(op, NULL, *q, tmpnode(&(*q)->type));
 	}
 	code((np->op == OCALL) ? ASCALLE : ASCALLEX, NULL, NULL, NULL);
 
@@ -401,7 +401,7 @@ ternary(Node *np)
 {
 	Node ifyes, ifno, phi, *colon, *tmp;
 
-	tmp = tmpnode(NULL, &np->type);
+	tmp = tmpnode(&np->type);
 	label2node(&ifyes, NULL);
 	label2node(&ifno, NULL);
 	label2node(&phi, NULL);
@@ -587,7 +587,7 @@ rhs(Node *np)
 		true = newlabel();
 		false = newlabel();
 		phi = label2node(&aux1, NULL);
-		tmp = tmpnode(NULL, &int32type);
+		tmp = tmpnode(&int32type);
 
 		bool(np, true, false);
 
@@ -645,7 +645,7 @@ rhs(Node *np)
                         abort();
                 }
 		op = tbl[np->op] + off;
-		tmp = tmpnode(NULL, tp);
+		tmp = tmpnode(tp);
 		code(op, tmp, l, r);
 		return tmp;
 	case OCALL:
@@ -680,7 +680,7 @@ rhs(Node *np)
 			return NULL;
 		case BVA_ARG:
 			l = rhs(l);
-			tmp = tmpnode(NULL, tp);
+			tmp = tmpnode(tp);
 			code(ASVARG, tmp, l, NULL);
 			return tmp;
 		case BVA_COPY:

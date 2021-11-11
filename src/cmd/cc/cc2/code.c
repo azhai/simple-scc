@@ -135,13 +135,13 @@ label2node(Node *np, Symbol *sym)
 }
 
 Node *
-tmpnode(Node *np, Type *tp)
+tmpnode(Type *tp)
 {
 	char flags;
 	Symbol *sym;
+	Node *np;
 
-	if (!np)
-		np = node(OTMP);
+	np = node(OTMP);
 	sym = getsym(TMPSYM);
 	sym->type = np->type = *tp;
 	flags = tp->flags & ~(PARF|INITF);
