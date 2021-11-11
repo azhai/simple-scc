@@ -12,11 +12,11 @@ main()
 	if (arr[1][3] != 2)
 		return 1;
 	if (p[1][3] != 2)
-		return 1;
+		return 2;
 	if (*q != 2)
-		return 1;
+		return 3;
 	if (*v != 2)
-		return 1;
+		return 4;
 
 	return 0;
 }
