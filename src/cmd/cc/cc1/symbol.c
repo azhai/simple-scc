@@ -144,7 +144,7 @@ popctx(void)
 	Symbol *next, *sym;
 	int ns, dangling = 0;
 
-	DBG("SYM: poped context %d", curctx);
+	DBG("SYM: popped context %d", curctx);
 	/*
 	 * we have to be careful before popping the current
 	 * context, because since the parser is one token
