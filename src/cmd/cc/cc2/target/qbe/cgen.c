@@ -511,47 +511,47 @@ assignop(Type *tp)
 static Node *
 assign(Node *np)
 {
-	Node *tmp, aux;
+	Node *ret, aux;
 	Node *l = np->left, *r = np->right;
 	int op;
 
 	switch (np->u.subop) {
+		break;
 	case OINC:
 		op = OADD;
 		goto post_oper;
 	case ODEC:
 		op = OSUB;
 	post_oper:
-		tmp = rhs(l);
+		l = lhs(l);
+		ret = load(&l->type, l);
 		aux.op = op;
-		aux.left = tmp;
+		aux.left = ret;
 		aux.right = r;
 		aux.type = np->type;
-		r = complex(&aux);
+		r = rhs(&aux);
 		break;
 	default:
 		/* assign abbreviation */
-		aux.type = np->type;
 		aux.op = np->u.subop;
-		aux.right = np->right;
-		aux.left = np->left;
-		r = rhs(complex(&aux));
+		aux.left = l;
+		aux.right = r;
+		aux.type = np->type;
+		r = complex(&aux);
 	case 0:
-		op = 0;
+		if (l->complex >= r->complex) {
+			l = lhs(l);
+			r = rhs(r);
+		} else {
+			r = rhs(r);
+			l = lhs(l);
+		}
+		ret = r;
 		break;
 	}
 
-	if (l->complex >= r->complex) {
-		l = lhs(l);
-		r = rhs(r);
-	} else {
-		r = rhs(r);
-		l = lhs(l);
-	}
-
 	code(assignop(&np->type), l, r, NULL);
-
-	return (op == 0) ? r : tmp;
+	return ret;
 }
 
 static Node *
