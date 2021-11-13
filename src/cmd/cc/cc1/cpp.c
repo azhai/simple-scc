@@ -183,18 +183,17 @@ parsepars(char *buffer, char **listp, int nargs)
 static size_t
 copymacro(char *buffer, char *s, size_t bufsiz, char *arglist[])
 {
-	int delim, prevc, c, esc;
+	int delim, c, esc;
 	char *p, *arg, *bp = buffer;
 	size_t size;
 
-	for (prevc = '\0'; c = *s; prevc = c, ++s) {
+	for (; c = *s; ++s) {
 		switch (c) {
 		case '$':
 			while (bp[-1] == ' ')
 				--bp, ++bufsiz;
 			while (s[1] == ' ')
 				++s;
-		case '#':
 			break;
 		case '\'':
 			delim = '\'';
@@ -219,21 +218,41 @@ copymacro(char *buffer, char *s, size_t bufsiz, char *arglist[])
 			bufsiz -= size;
 			bp += size;
 			break;
+		case '#':
+			arg = arglist[atoi(s += 2)];
+			s += 2;
+
+			if (bufsiz < 3)
+				goto expansion_too_long;
+
+			*bp++ = '"';
+			while ((c = *arg++) != '\0') {
+				if (c == '"') {
+					if (bufsiz < 3)
+						goto expansion_too_long;
+					*bp++ = '\\';
+					*bp++ = '"';
+					bufsiz -= 2;
+				} else {
+					if (bufsiz < 2)
+						goto expansion_too_long;
+					*bp++ = c;
+					bufsiz--;
+				}
+			}
+			*bp++ = '"';
+
+			break;
 		case '@':
-			if (prevc == '#')
-				bufsiz -= 2;
 			arg = arglist[atoi(++s)];
+			s += 2;
+
 			size = strlen(arg);
 			if (size > bufsiz)
 				goto expansion_too_long;
-			if (prevc == '#')
-				*bp++ = '"';
 			memcpy(bp, arg, size);
 			bp += size;
-			if (prevc == '#')
-				*bp++ = '"';
 			bufsiz -= size;
-			s += 2;
 			break;
 		default:
 			if (bufsiz-- == 0)
