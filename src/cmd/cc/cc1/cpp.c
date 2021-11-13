@@ -154,7 +154,6 @@ parsepars(char *buffer, char **listp, int nargs)
 	if (ahead() != '(' && nargs > 0)
 		return 0;
 
-	disexpand = 1;
 	next();
 	n = 0;
 	argp = buffer;
@@ -257,7 +256,13 @@ expand(Symbol *sym)
 	size_t elen;
 	int n, i;
 	char *s = sym->u.s;
-	char *arglist[NR_MACROARG], arguments[INPUTSIZ], buffer[INPUTSIZ];
+	char *arglist[NR_MACROARG];
+	char arguments[INPUTSIZ], buffer[INPUTSIZ];
+
+	DBG("MACRO '%s' detected %d %d", sym->name, disexpand, sym->hide);
+
+	if (disexpand || sym->hide)
+		return 0;
 
 	macroname = sym->name;
 	if (sym == symfile) {

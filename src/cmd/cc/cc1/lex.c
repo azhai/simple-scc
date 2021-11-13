@@ -614,7 +614,7 @@ iden(void)
 	input->p = p;
 	tok2str();
 	if ((sym = lookup(NS_CPP, yytext, NOALLOC)) != NULL) {
-		if (!disexpand && !sym->hide && expand(begin, sym))
+		if (expand(sym))
 			return next();
 	}
 	sym = lookup(namespace, yytext, ALLOC);
