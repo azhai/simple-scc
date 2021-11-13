@@ -143,7 +143,7 @@
 0150-define.c
 0151-vararg.c [TODO]
 0152-cat.c
-0153-cpp-string.c [TODO]
+0153-cpp-string.c
 0154-if-defined.c
 0155-struct-compl.c [TODO]
 0156-duff2.c
