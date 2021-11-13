@@ -14,7 +14,7 @@ fflush(FILE *fp)
 
 	err = 0;
 	for (fp = __iob; fp < &__iob[FOPEN_MAX]; ++fp) {
-		if ((fp->flags & _IOWRITE) == 0 && _flsbuf(fp))
+		if ((fp->flags & _IOWRITE) != 0 && _flsbuf(fp))
 			err = EOF;
 	}
 	return err;
