@@ -335,13 +335,35 @@ emitstring(Symbol *sym, Type *tp)
 	}
 }
 
+static Node *
+zeronode(Type *tp)
+{
+	return simplify(convert(constnode(zero), tp, 0));
+}
+
+static int
+emitpadding(Type *tp, SIZET *addr)
+{
+	SIZET n;
+	int i;
+
+	n = *addr & tp->align-1;
+	for (i = 0; i < n; i++)
+		emitexp(OEXPR, zeronode(chartype));
+	*addr += n;
+
+	return n;
+}
+
 static void
-emitdesig(Node *np, Type *tp)
+emitdesig(Node *np, Type *tp, SIZET *addr)
 {
 	Symbol *sym;
-	size_t n; /* TODO: This should be SIZET */
+	SIZET n;
 	Node *aux;
 	Type *p;
+
+	emitpadding(tp, addr);
 
 	if (!np) {
 		sym = NULL;
@@ -351,6 +373,7 @@ emitdesig(Node *np, Type *tp)
 		sym = np->sym;
 		if (sym->flags & SSTRING) {
 			emitstring(sym, tp);
+			*addr += tp->n.elem;
 			return;
 		}
 		if ((sym->flags & SINITLST) == 0)
@@ -361,24 +384,23 @@ emitdesig(Node *np, Type *tp)
 	case PTR:
 	case INT:
 	case ENUM:
-		if (sym)
-			aux = *sym->u.init;
-		else
-			aux = simplify(convert(constnode(zero), tp, 0));
+		aux = sym ? *sym->u.init : zeronode(tp);
+		*addr += aux->type->size;
 		emitexp(OEXPR, aux);
 		break;
 	case UNION:
-		n = tp->n.elem-1;
 		aux = (sym) ? sym->u.init[0] : NULL;
-		emitdesig(aux, aux->type);
+		emitdesig(aux, aux->type, addr);
+		emitpadding(tp, addr);
 		break;
 	case STRUCT:
 	case ARY:
 		for (n = 0; n < tp->n.elem; ++n) {
 			aux = (sym) ? sym->u.init[n] : NULL;
 			p = (tp->op == ARY) ? tp->type : tp->p.fields[n]->type;
-			emitdesig(aux, p);
+			emitdesig(aux, p, addr);
 		}
+		emitpadding(tp, addr);
 		break;
 	default:
 		abort();
@@ -399,9 +421,10 @@ static void
 emitinit(int op, void *arg)
 {
 	Node *np = arg;
+	SIZET addr = 0;
 
 	fputs("\t(\n", outfp);
-	emitdesig(np, np->type);
+	emitdesig(np, np->type, &addr);
 	fputs(")\n", outfp);
 }
 

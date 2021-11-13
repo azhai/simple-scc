@@ -15,6 +15,7 @@ extern int enadebug;
 #define TUINT_MAX   ULLONG_MAX
 #define TINT_MAX    LLONG_MAX
 #define TFLOAT      double
+#define SIZET       size_t
 
 struct items {
 	char **s;
