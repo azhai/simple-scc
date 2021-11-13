@@ -252,7 +252,7 @@ expansion_too_long:
 }
 
 int
-expand(char *begin, Symbol *sym)
+expand(Symbol *sym)
 {
 	size_t elen;
 	int n, i;

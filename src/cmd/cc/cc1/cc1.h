@@ -487,7 +487,7 @@ extern Node *initlist(Type *tp);
 /* cpp.c */
 extern void icpp(void);
 extern int cpp(void);
-extern int expand(char *begin, Symbol *sym);
+extern int expand(Symbol *);
 extern void incdir(char *dir);
 extern void outcpp(void);
 extern void defdefine(char *macro, char *val, char *source);
