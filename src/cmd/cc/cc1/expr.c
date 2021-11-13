@@ -607,7 +607,6 @@ adjstrings(Symbol *sym)
 		s = xrealloc(s, len + n + 1);
 		memcpy(s+len, t, n);
 		s[len + n] = '\0';
-		killsym(yylval.sym);
 	}
 	++len;
 	if (tp->n.elem != len) {
