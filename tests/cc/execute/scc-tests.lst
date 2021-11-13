@@ -177,3 +177,4 @@
 0184-esc-macro.c
 0185-esc-macro2.c
 0186-dec-ary.c
+0187-zero-struct.c
