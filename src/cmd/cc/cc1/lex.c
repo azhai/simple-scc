@@ -544,42 +544,6 @@ character(void)
 }
 
 /*
- * skip all the spaces until the next token. When we are in
- * CPPMODE \n is not considered a whitespace
- */
-static int
-skipspaces(void)
-{
-	int c;
-
-	for (;;) {
-		switch (c = *input->p) {
-		case '\n':
-			if (lexmode == CPPMODE)
-				goto return_byte;
-			++input->p;
-		case '\0':
-			if (!moreinput())
-				return EOF;
-			break;
-		case ' ':
-		case '\t':
-		case '\v':
-		case '\r':
-		case '\f':
-			++input->p;
-			break;
-		default:
-			goto return_byte;
-		}
-	}
-
-return_byte:
-	input->begin = input->p;
-	return c;
-}
-
-/*
  * string() parses a constant string, and convert all the
  * escape sequences into single characters. This behaviour
  * is correct except when we parse a #define, where we want
@@ -595,8 +559,6 @@ string(void)
 
 	*bp++ = '"';
 	esc = 0;
-
-repeat:
 	for (++input->p; ; ++input->p) {
 		c = *input->p;
 
@@ -631,10 +593,6 @@ repeat:
 	}
 
 	input->begin = ++input->p;
-
-	if (skipspaces() == '"')
-		goto repeat;
-
 	*bp = '\0';
 
 	yylen = bp - yytext + 1;
@@ -797,6 +755,42 @@ operator(void)
 }
 
 /* TODO: Ensure that namespace is NS_IDEN after a recovery */
+
+/*
+ * skip all the spaces until the next token. When we are in
+ * CPPMODE \n is not considered a whitespace
+ */
+static int
+skipspaces(void)
+{
+	int c;
+
+	for (;;) {
+		switch (c = *input->p) {
+		case '\n':
+			if (lexmode == CPPMODE)
+				goto return_byte;
+			++input->p;
+		case '\0':
+			if (!moreinput())
+				return EOF;
+			break;
+		case ' ':
+		case '\t':
+		case '\v':
+		case '\r':
+		case '\f':
+			++input->p;
+			break;
+		default:
+			goto return_byte;
+		}
+	}
+
+return_byte:
+	input->begin = input->p;
+	return c;
+}
 
 int
 next(void)
