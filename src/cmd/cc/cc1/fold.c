@@ -321,7 +321,7 @@ foldcast(Node *np, Node *l)
 	Type *newtp = np->type, *oldtp = l->type;
 	Symbol aux, *sym, *osym = l->sym;
 
-	if ((l->flags & NCONST) == 0)
+	if ((l->flags & NCONST) == 0 || !osym)
 		return np;
 
 	switch (newtp->op) {
