@@ -722,7 +722,7 @@ arguments(Node *np)
 			continue;
 		}
 		errorp("incompatible type for argument %d in function call",
-		       tp->n.elem - n + 1);
+		       tp->n.elem - n);
 	} while (accept(','));
 
 no_pars:
