@@ -117,7 +117,10 @@ arydcl(struct declarators *dp)
 {
 	Node *np = NULL;
 	TINT n = 0;
+	int ns;
 
+	ns = namespace;
+	namespace = NS_IDEN;
 	expect('[');
 	if (yytoken != ']') {
 		if ((np = constexpr()) == NULL) {
@@ -130,6 +133,7 @@ arydcl(struct declarators *dp)
 			freetree(np);
 		}
 	}
+	namespace = ns;
 	expect(']');
 
 	push(dp, ARY, n);
@@ -773,9 +777,8 @@ structdcl(void)
 		error("too many levels of nested structure or union definitions");
 
 	++nested;
-	while (yytoken != '}') {
+	while (yytoken != '}')
 		fieldlist(tp);
-	}
 	--nested;
 
 	deftype(tp);
