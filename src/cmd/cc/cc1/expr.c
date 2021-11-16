@@ -347,15 +347,19 @@ pcompare(int op, Node *lp, Node *rp)
 {
 	Node *np;
 
-	if (lp->type->prop & TINTEGER)
-		XCHG(lp, rp, np);
-	else if (eqtype(lp->type, pvoidtype, 1))
-		XCHG(lp, rp, np);
+	if (lp->type->prop&TINTEGER) {
+		if ((np = convert(lp, rp->type, 0)) == NULL)
+			errorp("incompatible types in comparison");
+		else
+			lp = np;
+	}
+	if (rp->type->prop&TINTEGER) {
+		if ((np = convert(rp, lp->type, 0)) == NULL)
+			errorp("incompatible types in comparison");
+		else
+			rp = np;
+	}
 
-	if ((np = convert(rp, lp->type, 0)) != NULL)
-		rp = np;
-	else
-		errorp("incompatible types in comparison");
 	return convert(node(op, pvoidtype, lp, rp), inttype, 1);
 }
 
