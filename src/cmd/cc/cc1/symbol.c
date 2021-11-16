@@ -12,6 +12,11 @@
 #define NR_CPP_HASH 32
 #define NR_LBL_HASH 16
 
+struct keyword {
+	char *str;
+	unsigned char token, value;
+};
+
 unsigned curctx;
 static unsigned short counterid;
 
@@ -321,13 +326,6 @@ keywords(struct keyword *key, int ns)
 		sym->token = key->token;
 		sym->u.token = key->value;
 	}
-	/*
-	 * Remove all the predefined symbols from * the symbol list. It
-	 * will make faster some operations. There is no problem of memory
-	 * leakeage because this memory is not ever freed
-	 */
-	counterid = 0;
-	head = NULL;
 }
 
 void
@@ -341,6 +339,70 @@ builtins(struct builtin *built)
 		sym->token = BUILTIN;
 		sym->u.fun = bp->fun;
 	}
+}
+
+void
+isyms(void)
+{
+	static struct keyword cppkeys[] = {
+		{"define", DEFINE, DEFINE},
+		{"include", INCLUDE, INCLUDE},
+		{"line", LINE, LINE},
+		{"ifdef", IFDEF, IFDEF},
+		{"if", IF, IF},
+		{"elif", ELIF, ELIF},
+		{"else", ELSE, ELSE},
+		{"ifndef", IFNDEF, IFNDEF},
+		{"endif", ENDIF, ENDIF},
+		{"undef", UNDEF, UNDEF},
+		{"pragma", PRAGMA, PRAGMA},
+		{"error", ERROR, ERROR},
+		{NULL, 0, 0}
+	};
+	static struct keyword lexkeys[] = {
+		{"auto", SCLASS, AUTO},
+		{"break", BREAK, BREAK},
+		{"_Bool", TYPE, BOOL},
+		{"__builtin_va_list", TYPE, VA_LIST},
+		{"case", CASE, CASE},
+		{"char", TYPE, CHAR},
+		{"const", TQUALIFIER, CONST},
+		{"continue", CONTINUE, CONTINUE},
+		{"default", DEFAULT, DEFAULT},
+		{"do", DO, DO},
+		{"double", TYPE, DOUBLE},
+		{"else", ELSE, ELSE},
+		{"enum", TYPE, ENUM},
+		{"extern", SCLASS, EXTERN},
+		{"float", TYPE, FLOAT},
+		{"for", FOR, FOR},
+		{"goto", GOTO, GOTO},
+		{"if", IF, IF},
+		{"inline", TQUALIFIER, INLINE},
+		{"int", TYPE, INT},
+		{"long", TYPE, LONG},
+		{"register", SCLASS, REGISTER},
+		{"restrict", TQUALIFIER, RESTRICT},
+		{"return", RETURN, RETURN},
+		{"short", TYPE, SHORT},
+		{"signed", TYPE, SIGNED},
+		{"sizeof", SIZEOF, SIZEOF},
+		{"static", SCLASS, STATIC},
+		{"struct", TYPE, STRUCT},
+		{"switch", SWITCH, SWITCH},
+		{"typedef", SCLASS, TYPEDEF},
+		{"union", TYPE, UNION},
+		{"unsigned", TYPE, UNSIGNED},
+		{"void", TYPE, VOID},
+		{"volatile", TQUALIFIER, VOLATILE},
+		{"while", WHILE, WHILE},
+		{NULL, 0, 0},
+	};
+
+	keywords(lexkeys, NS_KEYWORD);
+	keywords(cppkeys, NS_CPPCLAUSES);
+	ibuilts();
+
 	/*
 	 * Remove all the predefined symbols from * the symbol list. It
 	 * will make faster some operations. There is no problem of memory

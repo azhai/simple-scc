@@ -297,11 +297,6 @@ struct builtin {
 	Node *(*fun)(Symbol *);
 };
 
-struct keyword {
-	char *str;
-	unsigned char token, value;
-};
-
 struct type {
 	unsigned char op;           /* type builder operator */
 	unsigned char ns;           /* namespace for struct members */
@@ -433,10 +428,10 @@ extern Symbol *newsym(int ns, char *name);
 extern void pushctx(void), popctx(void);
 extern void killsym(Symbol *sym);
 extern Symbol *newlabel(void);
-extern void keywords(struct keyword *key, int ns);
 extern void builtins(struct builtin *builts);
 extern Symbol *newstring(char *s, size_t len);
 extern unsigned newid(void);
+extern void isyms(void);
 
 /* stmt.c */
 extern void compound(Symbol *lbreak, Symbol *lcont, Switch *sw);
@@ -453,7 +448,6 @@ extern void discard(void);
 extern int addinput(char *fname, Symbol *hide, char *buffer, int fail);
 extern void delinput(void);
 extern void setsafe(int type);
-extern void ilex(void);
 extern void setloc(char *fname, unsigned line);
 #define accept(t) ((yytoken == (t)) ? next() : 0)
 

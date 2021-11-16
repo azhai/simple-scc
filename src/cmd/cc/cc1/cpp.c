@@ -66,23 +66,6 @@ icpp(void)
 		"__SCC__",
 		NULL
 	};
-	static struct keyword keys[] = {
-		{"define", DEFINE, DEFINE},
-		{"include", INCLUDE, INCLUDE},
-		{"line", LINE, LINE},
-		{"ifdef", IFDEF, IFDEF},
-		{"if", IF, IF},
-		{"elif", ELIF, ELIF},
-		{"else", ELSE, ELSE},
-		{"ifndef", IFNDEF, IFNDEF},
-		{"endif", ENDIF, ENDIF},
-		{"undef", UNDEF, UNDEF},
-		{"pragma", PRAGMA, PRAGMA},
-		{"error", ERROR, ERROR},
-		{NULL, 0, 0}
-	};
-
-	keywords(keys, NS_CPPCLAUSES);
 
 	t = time(NULL);
 	tm = localtime(&t);

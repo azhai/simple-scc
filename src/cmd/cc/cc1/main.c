@@ -77,11 +77,10 @@ main(int argc, char *argv[])
 	if (argc > 1)
 		usage();
 
+	isyms();
 	icode();
 	iarch();
-	ilex();
 	icpp();
-	ibuilts();
 
 	for (i = 0; i < iflags.n; ++i)
 		incdir(iflags.s[i]);

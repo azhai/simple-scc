@@ -24,51 +24,6 @@ static int safe;
 Input *input;
 
 void
-ilex(void)
-{
-	static struct keyword keys[] = {
-		{"auto", SCLASS, AUTO},
-		{"break", BREAK, BREAK},
-		{"_Bool", TYPE, BOOL},
-		{"__builtin_va_list", TYPE, VA_LIST},
-		{"case", CASE, CASE},
-		{"char", TYPE, CHAR},
-		{"const", TQUALIFIER, CONST},
-		{"continue", CONTINUE, CONTINUE},
-		{"default", DEFAULT, DEFAULT},
-		{"do", DO, DO},
-		{"double", TYPE, DOUBLE},
-		{"else", ELSE, ELSE},
-		{"enum", TYPE, ENUM},
-		{"extern", SCLASS, EXTERN},
-		{"float", TYPE, FLOAT},
-		{"for", FOR, FOR},
-		{"goto", GOTO, GOTO},
-		{"if", IF, IF},
-		{"inline", TQUALIFIER, INLINE},
-		{"int", TYPE, INT},
-		{"long", TYPE, LONG},
-		{"register", SCLASS, REGISTER},
-		{"restrict", TQUALIFIER, RESTRICT},
-		{"return", RETURN, RETURN},
-		{"short", TYPE, SHORT},
-		{"signed", TYPE, SIGNED},
-		{"sizeof", SIZEOF, SIZEOF},
-		{"static", SCLASS, STATIC},
-		{"struct", TYPE, STRUCT},
-		{"switch", SWITCH, SWITCH},
-		{"typedef", SCLASS, TYPEDEF},
-		{"union", TYPE, UNION},
-		{"unsigned", TYPE, UNSIGNED},
-		{"void", TYPE, VOID},
-		{"volatile", TQUALIFIER, VOLATILE},
-		{"while", WHILE, WHILE},
-		{NULL, 0, 0},
-	};
-	keywords(keys, NS_KEYWORD);
-}
-
-void
 setloc(char *fname, unsigned line)
 {
 	size_t len;
