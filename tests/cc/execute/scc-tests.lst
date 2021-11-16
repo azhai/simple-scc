@@ -183,3 +183,4 @@
 0190-enum-ary.c
 0191-ary-addr.c
 0192-ptrcmp.c
+0193-incomplete.c
