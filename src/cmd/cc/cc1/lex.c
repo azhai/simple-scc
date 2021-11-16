@@ -689,6 +689,9 @@ operator(void)
 	case '/':
 		t = follow('=', DIV_EQ, '/');
 		break;
+	case '%':
+		t = follow('=', MOD_EQ, '%');
+		break;
 	case '!':
 		t = follow('=', NE, '!');
 		break;
