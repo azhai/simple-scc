@@ -22,16 +22,16 @@ TARGET =\
 
 all: $(TARGET) $(DIRS)
 
-qbe: qbe/.git
-
 qbe/.git:
 	git submodule init qbe
 	git submodule update qbe
 
-qbe/obj/qbe: qbe
+qbe: qbe/.git
 
-$(LIBEXEC)/scc/qbe: qbe/obj/qbe
-	cp qbe/obj/qbe $@
+qbe/qbe: qbe
+
+$(LIBEXEC)/scc/qbe: qbe/qbe
+	cp qbe/qbe $@
 
 $(BINDIR)/scc-nm: nm.o $(LIBMACH) $(LIBSCC)
 	$(CC) $(PROJ_LDFLAGS) nm.o -lmach -lscc -o $@
