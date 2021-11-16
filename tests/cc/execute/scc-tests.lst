@@ -185,3 +185,4 @@
 0192-ptrcmp.c
 0193-incomplete.c
 0194-vararg.c
+0195-unexpected.c
