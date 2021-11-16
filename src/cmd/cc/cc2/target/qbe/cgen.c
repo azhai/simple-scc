@@ -323,7 +323,6 @@ copy(Type *tp, Node *to, Node *from)
 		op = (tp->flags & FLOATF) ? ASCOPYD : ASCOPYL;
 		break;
 	default:
-		/* TODO: Need to handle the general case */
 		abort();
 	}
 	code(op, to, from, NULL);
