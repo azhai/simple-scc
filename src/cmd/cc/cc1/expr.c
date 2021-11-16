@@ -368,7 +368,7 @@ compare(int op, Node *lp, Node *rp)
 	rtp = rp->type;
 
 	if (ltp->op == PTR || rtp->op == PTR) {
-		return pcompare(op, rp, lp);
+		return pcompare(op, lp, rp);
 	} else if ((ltp->prop & TARITH) && (rtp->prop & TARITH)) {
 		arithconv(&lp, &rp);
 		return convert(node(op, lp->type, lp, rp), inttype, 1);;
