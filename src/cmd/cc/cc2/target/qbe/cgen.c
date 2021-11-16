@@ -600,32 +600,32 @@ rhs(Node *np)
 
 		setlabel(phi->u.sym);
 		return tmp;
-        case OMOD:
-        case OSHR:
+	case OMOD:
+	case OSHR:
 		assert(tp->flags & INTF);
-        case ODIV:
-        case OLT:
-        case OGT:
-        case OLE:
-        case OGE:
-                /*
-                 * unsigned version of operations are always +1 the
-                 * signed version
-                 */
-                off = (tp->flags & SIGNF) == 0;
-                goto binary;
-        case OSHL:
-        case OBAND:
-        case OBOR:
-        case OBXOR:
+	case ODIV:
+	case OLT:
+	case OGT:
+	case OLE:
+	case OGE:
+		/*
+		 * unsigned version of operations are always +1 the
+		 * signed version
+		 */
+		off = (tp->flags & SIGNF) == 0;
+		goto binary;
+	case OSHL:
+	case OBAND:
+	case OBOR:
+	case OBXOR:
 		assert(tp->flags & INTF);
-        case OADD:
-        case OSUB:
-        case OMUL:
-        case OEQ:
-        case ONE:
-                off = 0;
-        binary:
+	case OADD:
+	case OSUB:
+	case OMUL:
+	case OEQ:
+	case ONE:
+		off = 0;
+	binary:
 		if (l->complex >= r->complex) {
 			l = rhs(l);
 			r = rhs(r);
@@ -634,15 +634,15 @@ rhs(Node *np)
 			l = rhs(l);
 		}
 
-                switch (tp->size) {
-                case 4:
-                        tbl = (tp->flags & FLOATF) ? opasms : opasmw;
-                        break;
-                case 8:
-                        tbl = (tp->flags & FLOATF) ? opasmd : opasml;
-                        break;
-                default:
-                        abort();
+		switch (tp->size) {
+		case 4:
+			tbl = (tp->flags & FLOATF) ? opasms : opasmw;
+			break;
+		case 8:
+			tbl = (tp->flags & FLOATF) ? opasmd : opasml;
+			break;
+		default:
+			abort();
                 }
 		op = tbl[np->op] + off;
 		tmp = tmpnode(tp);
