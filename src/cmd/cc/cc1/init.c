@@ -138,14 +138,14 @@ initialize(Type *tp)
 static Node *
 mkcompound(Init *ip, Type *tp)
 {
-	Node **v, **p;
+	Node **v, **p, *np;
 	size_t n;
 	struct designator *dp, *next;
 	Symbol *sym;
+	int isconst = 1;
 
 	if (tp->op == UNION) {
-		Node *np = NULL;
-
+		np = NULL;
 		v = xmalloc(sizeof(*v));
 		for (dp = ip->head; dp; dp = next) {
 			freetree(np);
@@ -153,6 +153,8 @@ mkcompound(Init *ip, Type *tp)
 			next = dp->next;
 			free(dp);
 		}
+		if ((np->flags & NCONST) == 0)
+			isconst = 0;
 		*v = np;
 	} else {
 		n = (tp->prop&TDEFINED) ? tp->n.elem : ip->max;
@@ -168,7 +170,10 @@ mkcompound(Init *ip, Type *tp)
 			for (dp = ip->head; dp; dp = next) {
 				p = &v[dp->pos];
 				freetree(*p);
-				*p = dp->expr;
+				np = dp->expr;
+				*p = np;
+				if ((np->flags & NCONST) == 0)
+					isconst = 0;
 				next = dp->next;
 				free(dp);
 			}
@@ -180,7 +185,7 @@ mkcompound(Init *ip, Type *tp)
 	sym->type = tp;
 	sym->flags |= SINITLST;
 
-	return constnode(sym);
+	return (isconst ? constnode : varnode)(sym);
 }
 
 static void
@@ -364,7 +369,7 @@ initializer(Symbol *sym, Type *tp)
 	if (flags & SDEFINED) {
 		errorp("redeclaration of '%s'", sym->name);
 	} else if ((flags & (SGLOBAL|SLOCAL|SPRIVATE)) != 0) {
-		if (!(np->flags & NCONST)) {
+		if ((np->flags & NCONST) == 0) {
 			errorp("initializer element is not constant");
 			return;
 		}

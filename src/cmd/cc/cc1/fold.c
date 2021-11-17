@@ -454,8 +454,10 @@ fold(Node *np)
 			type = UNSIGNED;
 	case PTR:
 	case FLOAT:
-		if ((p = foldconst(type, op, tp, ls, rs)) == NULL)
+		if ((p = foldconst(type, op, tp, ls, rs)) == NULL) {
+			np->flags &= ~NCONST;
 			return NULL;
+		}
 		freetree(np);
 		return p;
 	default:
