@@ -219,9 +219,15 @@ readline(void)
 		peekc = readchar();
 		if (peekc != '*' && peekc != '/')
 			continue;
-		comment((peekc == '/') ? '\n' : '*');
+
+		if (peekc == '/') {
+			comment('\n');
+			break;
+		} else {
+			comment('*');
+			c = ' ';
+		}
 		peekc = 0;
-		c = ' ';
 	}
 
 	input->begin = input->p = input->line;
