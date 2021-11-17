@@ -15,7 +15,7 @@ static int
 addi(TINT l, TINT r, Type *tp)
 {
 	struct limits *lim = getlimits(tp);
-	TINT max = lim->max.i, min = -lim->min.i;
+	TINT max = lim->max.i, min = lim->min.i;
 
 	if (l < 0 && r < 0 && l >= min - r ||
 	    l == 0 ||
@@ -63,7 +63,7 @@ static int
 muli(TINT l, TINT r, Type *tp)
 {
 	struct limits *lim = getlimits(tp);
-	TINT max = lim->max.i, min = -lim->min.i;
+	TINT max = lim->max.i, min = lim->min.i;
 
 	if (l > -1 && l <= 1 ||
 	    r > -1 && r <= 1 ||
