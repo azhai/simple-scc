@@ -187,3 +187,4 @@
 0194-vararg.c
 0195-unexpected.c
 0196-invalidchar.c
+0197-cppcomment.c
