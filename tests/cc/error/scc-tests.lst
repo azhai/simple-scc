@@ -25,3 +25,4 @@
 0025-bad-init.c [TODO]
 0026-numargs.c [TODO]
 0027-constoverflow.c [TODO]
+0028-noconstinit.c [TODO]
