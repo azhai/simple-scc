@@ -415,6 +415,7 @@ emitdesig(Node *np, Type *tp, SIZET *addr)
 
 emit_expression:
 	emitexp(OEXPR, np);
+	*addr += tp->size;
 }
 
 static void
