@@ -186,3 +186,4 @@
 0193-incomplete.c
 0194-vararg.c
 0195-unexpected.c
+0196-invalidchar.c
