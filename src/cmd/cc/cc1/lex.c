@@ -816,6 +816,9 @@ discard(void)
 	extern jmp_buf recover;
 	int c;
 
+	if (!input)
+		return;
+
 	input->begin = input->p;
 	for (c = yytoken; ; c = *input->begin++) {
 		switch (safe) {
