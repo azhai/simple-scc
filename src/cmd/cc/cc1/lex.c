@@ -774,7 +774,7 @@ next(void)
 	else
 		yytoken = operator();
 
-	if (yytoken == EOF) {
+	if (yytoken == EOFTOK) {
 		strcpy(yytext, "<EOF>");
 		if (cppctx)
 			errorp("#endif expected");
