@@ -50,7 +50,7 @@ realloc(void *ptr, size_t nbytes)
 		if (avail > nunits) {
 			oh->h.size = nunits;
 			prev->h.next = new;
-			new->h.next = next;
+			new->h.next = next->h.next;
 			new->h.size = avail - nunits;
 			return oh + 1;
 		}
