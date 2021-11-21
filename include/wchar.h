@@ -1,9 +1,12 @@
 #ifndef _WCHAR_H
 #define _WCHAR_H
 
+#define _NEED_NULL
+#define _NEED_SIZET
+#define _NEED_WCHAR
+#include <arch/cdefs.h>
+
 /* TODO: This is only a placeholder */
-typedef long wchar_t;
-/* typedef long size_t; */
 typedef long mbstate_t;
 typedef long wint_t;
 struct tm;
