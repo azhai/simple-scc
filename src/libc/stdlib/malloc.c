@@ -1,4 +1,3 @@
-#include <errno.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -153,10 +152,8 @@ malloc(size_t nbytes)
 		}
 
 		if (cur == freep) {
-			if ((cur = morecore(nunits)) == NULL) {
-				errno = ENOMEM;
+			if ((cur = morecore(nunits)) == NULL)
 				return NULL;
-			}
 		}
 	}
 }
