@@ -16,51 +16,52 @@ realloc(void *ptr, size_t nbytes)
 	if (!ptr)
 		return malloc(nbytes);
 
-	nunits = (nbytes + sizeof(Header) - 1) / sizeof(Header) + 1;
-	oh = (Header*) ptr - 1;
+	nunits = (nbytes+sizeof(Header)-1)/sizeof(Header) + 1;
+	oh = (Header *) ptr - 1;
 
 	if (oh->h.size == nunits)
 		return ptr;
 
 	new = oh + nunits;
 
-	if (nunits < oh->h.size - 1) {
+	if (nunits < oh->h.size) {
 		new->h.size = oh->h.size - nunits;
 		oh->h.size = nunits;
 		free(new + 1);
-		return oh + 1;
+		return ptr;
 	}
 
 	prev = _prevchunk(oh);
+	next = prev->h.next;
 
-	if (oh + oh->h.size == prev->h.next) {
+	if (oh + oh->h.size == next) {
 		/*
 		 * if there is free space adjacent
 		 * to the current memory
 		 */
-		next = prev->h.next;
 		avail = oh->h.size + next->h.size;
 
 		if (avail == nunits) {
 			oh->h.size = nunits;
 			prev->h.next = next->h.next;
-			return oh + 1;
+			return ptr;
 		}
 
-		if (avail > nunits) {
+		if (nunits < avail) {
 			oh->h.size = nunits;
 			prev->h.next = new;
 			new->h.next = next->h.next;
 			new->h.size = avail - nunits;
-			return oh + 1;
+			return ptr;
 		}
 	}
 
-	onbytes = (oh->h.size - 1) * sizeof(Header);
 	if ((new = malloc(nbytes)) == NULL)
 		return NULL;
 
-	n = (onbytes > nbytes) ? nbytes : onbytes;
+	n = (oh->h.size - 1) * sizeof(Header);
+	if (n > nbytes)
+		n = nbytes;
 	memcpy(new, ptr, n);
 	free(ptr);
 

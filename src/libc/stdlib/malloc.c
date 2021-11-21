@@ -7,6 +7,7 @@
 #include "../libc.h"
 
 #undef malloc
+#undef free
 
 #define MAXADDR ((char *)-1)
 #define ERRADDR ((char *)-1)
@@ -43,20 +44,21 @@ _prevchunk(Header *hp)
 void
 free(void *mem)
 {
-	Header *hp, *prev;
+	Header *hp, *prev, *next;
 
 	if (!mem)
 		return;
 
 	hp = (Header *) mem - 1;
 	prev = _prevchunk(hp);
+	next = prev->h.next;
 
 	/* join to next */
-	if (hp + hp->h.size == prev->h.next) {
-		hp->h.size += prev->h.next->h.size;
-		hp->h.next = prev->h.next->h.next;
+	if (hp + hp->h.size == next) {
+		hp->h.size += next->h.size;
+		hp->h.next = next->h.next;
 	} else {
-		hp->h.next = prev->h.next;
+		hp->h.next = next;
 	}
 
 	/* join to previous */
@@ -94,7 +96,7 @@ sbrk(uintptr_t inc)
 static Header *
 morecore(size_t nunits)
 {
-	char *rawmem;
+	void *rawmem;
 	Header *hp;
 
 	if (nunits < NALLOC)
@@ -104,7 +106,7 @@ morecore(size_t nunits)
 	if (rawmem == ERRADDR)
 		return NULL;
 
-	hp = (Header*)rawmem;
+	hp = (Header *) rawmem;
 	hp->h.size = nunits;
 
 	/* integrate new memory into the list */
@@ -135,7 +137,7 @@ malloc(size_t nbytes)
 	size_t nunits;
 
 	/* 1 unit for header plus enough units to fit nbytes */
-	nunits = (nbytes+sizeof(Header)-1) / sizeof(Header)+1;
+	nunits = (nbytes+sizeof(Header)-1)/sizeof(Header) + 1;
 
 	for (prev = freep; ; prev = cur) {
 		cur = prev->h.next;
@@ -147,7 +149,10 @@ malloc(size_t nbytes)
 				cur += cur->h.size;
 				cur->h.size = nunits;
 			}
+
+			cur->h.next = NULL;
 			freep = prev;
+
 			return cur + 1;
 		}
 
