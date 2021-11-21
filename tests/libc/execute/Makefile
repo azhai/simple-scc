@@ -1,6 +1,6 @@
 .POSIX:
 
-CC     = ./cc.sh
+CC     = gcc-scc
 
 .c:
 	$(CC) $(CFLAGS) -o $@ $<
