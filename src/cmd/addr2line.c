@@ -49,7 +49,7 @@ addr2line(Obj *obj, char *s)
 }
 
 static char *
-getline(void)
+getln(void)
 {
 	size_t len;
 	static char buf[BUFSIZ];
@@ -130,7 +130,7 @@ main(int argc, char *argv[])
 		for ( ; *argv; ++argv)
 			addr2line(obj, *argv);
 	} else {
-		while ((ln = getline()) != NULL)
+		while ((ln = getln()) != NULL)
 			addr2line(obj, ln);
 	}
 

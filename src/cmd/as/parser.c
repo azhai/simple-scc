@@ -386,7 +386,7 @@ extract(char *s, size_t len, struct line *lp)
 }
 
 static size_t
-getline(FILE *fp, char buff[MAXLINE])
+getln(FILE *fp, char buff[MAXLINE])
 {
 	int c;
 	char *bp;
@@ -422,7 +422,7 @@ repeat:
 		delinput();
 		goto repeat;
 	}
-	n = getline(ip->fp, buff);
+	n = getln(ip->fp, buff);
 	if (++ip->lineno == 0)
 		die("as: %s: file too long", infile);
 	if (n == 0)
