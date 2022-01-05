@@ -18,3 +18,27 @@ Plan9)
 	echo HOST=plan9
 	;;
 esac
+
+
+for i
+do
+	case $1 in
+	-c)
+
+		mach=`uname -m`
+
+		case $mach in
+		amd64|x86_64)
+			mach=amd64
+			;;
+		esac
+
+		sys=`uname -s | tr 'A-Z' 'a-z'`
+		echo CONF=$mach-$sys
+		;;
+	*)
+		echo usage: config [-c] >&2
+		exit 1
+		;;
+	esac
+done

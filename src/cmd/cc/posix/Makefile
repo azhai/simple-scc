@@ -3,8 +3,10 @@
 PROJECTDIR = ../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-# SYSLST is a list of backend-arch-abi-sys. First
-# element of the list becomes the default target
+# SYSLST is a list of arch-abi-sys-format.
+# By default the driver uses the configuration
+# inhered from the environment, that in a normal
+# build is derived from the host configuration.
 
 SYSLST  =\
 	amd64-sysv-linux-elf\
@@ -31,7 +33,14 @@ $(BINDIR)/scc: scc.sh
 	chmod +x $@
 
 config.h:
-	PREFIX=$(PREFIX) ./mkconf $(SYSLST)
+	set -e;\
+	rm -f $@;\
+	trap "rm -f $$$$.h" EXIT QUIT HUP TERM;\
+	(echo '#define PREFIX "$(PREFIX)"';\
+	 echo '#define ARCH "$(ARCH)"';\
+	 echo '#define SYS  "$(SYS)"';\
+	 echo '#define ABI  "$(ABI)"';\
+	 echo '#define FORMAT "$(FORMAT)"') > $$$$.h && mv $$$$.h $@
 
 clean:
 	rm -f scc scpp *.o

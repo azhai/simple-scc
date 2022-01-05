@@ -15,7 +15,7 @@ ROOT = $(DESTDIR)$(PREFIX)
 NODEP = 1
 
 all:
-	+@PREFIX=$(PREFIX) $(MAKE) `$(SCRIPTDIR)/config` toolchain
+	+@PREFIX=$(PREFIX) $(MAKE) `$(SCRIPTDIR)/config -c` toolchain
 	+@$(MAKE) `$(SCRIPTDIR)/config` `uname -m`
 
 install:
@@ -90,11 +90,16 @@ install-arm64: arm64
 uninstall-arm64:
 	$(SCRIPTDIR)/uninstall -p $(SCRIPTDIR)/proto.arm64 $(ROOT)
 
-toolchain: dirs src
-libc: dirs src/libc
-libcrt: dirs src/libcrt
-src: include/scc/scc
+toolchain: src
+libc: src/libc
+libcrt: src/libcrt
+
 tests: all
+src: include/scc/scc
+
+src: dirs
+src/libc: dirs
+src/libcrt: dirs
 
 dirs: $(SCRIPTDIR)/libc-dirs
 	xargs mkdir -p < $(SCRIPTDIR)/libc-dirs
