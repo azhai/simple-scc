@@ -8,6 +8,11 @@ can be passed to the command line:
 	- PREFIX: Prefix of the path where scc toolchain is going
 	  to be installed. /usr/local by default.
 
+	- DESTDIR: Temporary directory prepend to PREFIX used in the
+	  install path. It is mainly intended to help package maintainers
+	  to install in a specific directory used as base for the package
+	  generation.
+
 	- CROSS_COMPILE:
           Specify a prefix name for the tools called by the Makefile.
 
@@ -43,11 +48,16 @@ can be passed to the command line:
 The main targets of the Makefile are:
 
 	- all:
-	  Compile the toolchain and all the amd64-posix libc. It automatically
-	  determines what is the best value for HOST.
+	  Compile the toolchain and the libc. It automatically
+	  determines what is the best value for HOST. It sets the
+	  value of CONF for the toolchain that is used by the
+	  toolchain as the default target. It also compiles the libc
+	  for all the available configurations based in the host
+	  architecture.
 
 	- toolchain
-	  Compile the toolchain.
+	  Compile the toolchain with the default configuration
+	  specified in CONF.
 
 	- libc:
 	  Compile the libc for the target specified in CONF.
