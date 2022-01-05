@@ -1,5 +1,6 @@
 .POSIX:
 
+PREFIX = /usr/local
 PROJECTDIR = ../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 

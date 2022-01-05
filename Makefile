@@ -10,7 +10,7 @@ DIRS  =\
 PROJECTDIR = .
 include $(PROJECTDIR)/scripts/rules.mk
 
-PREFIX = $(HOME)
+PREFIX = /usr/local
 ROOT = $(DESTDIR)$(PREFIX)
 NODEP = 1
 
