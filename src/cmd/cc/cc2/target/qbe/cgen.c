@@ -7,67 +7,73 @@
 #include "arch.h"
 #include "../../cc2.h"
 
-static char opasmw[] = {
-	[OADD] = ASADDW,
-	[OSUB] = ASSUBW,
-	[OMUL] = ASMULW,
-	[OMOD] = ASMODW,
-	[ODIV] = ASDIVW,
-	[OSHL] = ASSHLW,
-	[OSHR] = ASSHRW,
-	[OLT] = ASLTW,
-	[OGT] = ASGTW,
-	[OLE] = ASLEW,
-	[OGE] = ASGEW,
-	[OEQ] = ASEQW,
-	[ONE] = ASNEW,
-	[OBAND] = ASBANDW,
-	[OBOR] = ASBORW,
-	[OBXOR] = ASBXORW,
+static char opasmw[][2] = {
+	[OADD] = {ASADDW, ASADDW},
+	[OSUB] = {ASSUBW, ASSUBW},
+	[OMUL] = {ASMULW, ASMULW},
+	[OMOD] = {ASMODW, ASUMODW},
+	[ODIV] = {ASDIVW, ASUDIVW},
+	[OSHL] = {ASSHLW, ASSHLW},
+	[OSHR] = {ASSHRW, ASUSHRW},
+	[OLT] = {ASLTW, ASULTW},
+	[OGT] = {ASGTW, ASUGTW},
+	[OLE] = {ASLEW, ASULEW},
+	[OGE] = {ASGEW, ASUGEW},
+	[OEQ] = {ASEQW, ASEQW},
+	[ONE] = {ASNEW, ASNEW},
+	[OBAND] = {ASBANDW, ASBANDW},
+	[OBOR] = {ASBORW, ASBORW},
+	[OBXOR] = {ASBXORW, ASBXORW},
 };
 
-static char opasml[] = {
-	[OADD] = ASADDL,
-	[OSUB] = ASSUBL,
-	[OMUL] = ASMULL,
-	[OMOD] = ASMODL,
-	[ODIV] = ASDIVL,
-	[OSHL] = ASSHLL,
-	[OSHR] = ASSHRL,
-	[OLT] = ASLTL,
-	[OGT] = ASGTL,
-	[OLE] = ASLEL,
-	[OGE] = ASGEL,
-	[OEQ] = ASEQL,
-	[ONE] = ASNEL,
-	[OBAND] = ASBANDL,
-	[OBOR] = ASBORL,
-	[OBXOR] = ASBXORL,
+static char opasml[][2] = {
+	[OADD] = {ASADDL, ASADDL},
+	[OSUB] = {ASSUBL, ASSUBL},
+	[OMUL] = {ASMULL, ASMULL},
+	[OMOD] = {ASMODL, ASUMODL},
+	[ODIV] = {ASDIVL, ASUDIVL},
+	[OSHL] = {ASSHLL, ASSHLL},
+	[OSHR] = {ASSHRL, ASUSHRL},
+	[OLT] = {ASLTL, ASULTL},
+	[OGT] = {ASGTL, ASUGTL},
+	[OLE] = {ASLEL, ASULEL},
+	[OGE] = {ASGEL, ASUGEL},
+	[OEQ] = {ASEQL, ASEQL},
+	[ONE] = {ASNEL, ASNEL},
+	[OBAND] = {ASBANDL, ASBANDL},
+	[OBOR] = {ASBORL, ASBORL},
+	[OBXOR] = {ASBXORL, ASBXORL},
 };
 
-static char opasms[] = {
-	[OADD] = ASADDS,
-	[OSUB] = ASSUBS,
-	[OMUL] = ASMULS,
-	[ODIV] = ASDIVS,
-	[OLT] = ASLTS,
-	[OGT] = ASGTS,
-	[OLE] = ASLES,
-	[OGE] = ASGES,
-	[OEQ] = ASEQS,
-	[ONE] = ASNES,
+static char opasms[][2] = {
+	[OADD] = {ASADDS, ASADDS},
+	[OSUB] = {ASSUBS, ASSUBS},
+	[OMUL] = {ASMULS, ASMULS},
+	[ODIV] = {ASDIVS, ASDIVS},
+	[OLT] = {ASLTS, ASLTS},
+	[OGT] = {ASGTS, ASGTS},
+	[OLE] = {ASLES, ASLES},
+	[OGE] = {ASGES, ASGES},
+	[OEQ] = {ASEQS, ASEQS},
+	[ONE] = {ASNES, ASNES},
 };
-static char opasmd[] = {
-	[OADD] = ASADDD,
-	[OSUB] = ASSUBD,
-	[OMUL] = ASMULD,
-	[ODIV] = ASDIVD,
-	[OLT] = ASLTD,
-	[OGT] = ASGTD,
-	[OLE] = ASLED,
-	[OGE] = ASGED,
-	[OEQ] = ASEQD,
-	[ONE] = ASNED,
+
+static char opasmd[][2] = {
+	[OADD] = {ASADDD, ASADDD},
+	[OSUB] = {ASSUBD, ASSUBD},
+	[OMUL] = {ASMULD, ASMULD},
+	[ODIV] = {ASDIVD, ASDIVD},
+	[OLT] = {ASLTD, ASLTD},
+	[OGT] = {ASGTD, ASGTD},
+	[OLE] = {ASLED, ASLED},
+	[OGE] = {ASGED, ASGED},
+	[OEQ] = {ASEQD, ASEQD},
+	[ONE] = {ASNED, ASNED},
+};
+
+static char (*opbin[][2])[2] = {
+	{opasmw, opasml},
+	{opasms, opasmd},
 };
 
 extern Type int32type, uint32type, ptrtype;
@@ -559,8 +565,7 @@ rhs(Node *np)
 	Node *tmp, aux1, aux2;
 	Node *phi, *l = np->left, *r = np->right;
 	Type *tp;
-	int off, op;
-	char *tbl;
+	int sign, size, isfloat, op;
 	Symbol *true, *false;
 
 	tp = &np->type;
@@ -600,6 +605,10 @@ rhs(Node *np)
 		setlabel(phi->u.sym);
 		return tmp;
 	case OMOD:
+	case OSHL:
+	case OBAND:
+	case OBOR:
+	case OBXOR:
 	case OSHR:
 		assert(tp->flags & INTF);
 	case ODIV:
@@ -607,24 +616,18 @@ rhs(Node *np)
 	case OGT:
 	case OLE:
 	case OGE:
-		/*
-		 * unsigned version of operations are always +1 the
-		 * signed version
-		 */
-		off = (tp->flags & SIGNF) == 0;
-		goto binary;
-	case OSHL:
-	case OBAND:
-	case OBOR:
-	case OBXOR:
-		assert(tp->flags & INTF);
 	case OADD:
 	case OSUB:
 	case OMUL:
 	case OEQ:
 	case ONE:
-		off = 0;
-	binary:
+		assert(tp->size == 4 || tp->size == 8);
+
+		sign = (tp->flags & SIGNF) == 0;
+		size = tp->size == 8;
+		isfloat = (tp->flags & FLOATF) != 0;
+		op = opbin[isfloat][size][np->op][sign];
+
 		if (l->complex >= r->complex) {
 			l = rhs(l);
 			r = rhs(r);
@@ -633,17 +636,6 @@ rhs(Node *np)
 			l = rhs(l);
 		}
 
-		switch (tp->size) {
-		case 4:
-			tbl = (tp->flags & FLOATF) ? opasms : opasmw;
-			break;
-		case 8:
-			tbl = (tp->flags & FLOATF) ? opasmd : opasml;
-			break;
-		default:
-			abort();
-                }
-		op = tbl[np->op] + off;
 		tmp = tmpnode(tp);
 		code(op, tmp, l, r);
 		return tmp;
