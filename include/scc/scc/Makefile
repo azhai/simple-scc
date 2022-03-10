@@ -21,7 +21,8 @@ ldflags.h:
 	set -e;\
 	rm -f $@;\
 	trap "rm -f $$$$.tmp" INT QUIT TERM HUP;\
-	sed 's/%NOPIE%/"$(NOPIE_LDFLAGS)",/' ldflags.def.h > $$$$.tmp && \
+	sed 's/%NOPIE%/"$(NOPIE_LDFLAGS)",/' ldflags.def.h | \
+	sed 's/"",//' > $$$$.tmp && \
 	mv $$$$.tmp $@
 
 syscrts.h:
