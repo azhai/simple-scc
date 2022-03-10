@@ -18,7 +18,11 @@ cstd.h: cstd-$(STD).h
 	cp cstd-$(STD).h $@
 
 ldflags.h:
-	cp ldflags.def.h $@
+	set -e;\
+	rm -f $@;\
+	trap "rm -f $$$$.tmp" INT QUIT TERM HUP;\
+	sed 's/%NOPIE%/"$(NOPIE_LDFLAGS)",/' ldflags.def.h > $$$$.tmp && \
+	mv $$$$.tmp $@
 
 syscrts.h:
 	cp syscrts.def.h $@

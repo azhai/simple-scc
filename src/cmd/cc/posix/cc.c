@@ -192,8 +192,10 @@ inittool(int tool)
 			die("cc: target tool path is too long");
 		break;
 	case LD:
-		for (n = 0; ldflags[n]; ++n)
-			addarg(tool, ldflags[n]);
+		for (n = 0; ldflags[n]; ++n) {
+			if (ldflags[n][0] != '\n')
+				addarg(tool, ldflags[n]);
+		}
 		addarg(tool, "-o");
 		t->outfile = outfile ? outfile : xstrdup("a.out");
 		addarg(tool, t->outfile);

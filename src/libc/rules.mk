@@ -5,6 +5,7 @@ CINCLUDES =\
 	-I$(INCDIR)/bits/$(SYS)/$(ARCH)\
 
 MORE_ARFLAGS = -u
+MORE_CFLAGS = $(TOOL_LIBC_CFLAGS) $(NOPIE_CFLAGS)
 
 SYSERRNO = $(INCDIR)/bits/$(SYS)/sys/errno.h
 

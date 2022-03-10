@@ -2,7 +2,7 @@
 
 case `uname` in
 OpenBSD)
-	echo TOOL=${TOOL:-clang} HOST=bsd ARFLAGS="${ARFLAGS:--rv}"
+	echo TOOL=${TOOL:-clang} HOST=bsd ARFLAGS="${ARFLAGS:--rv}" NOPIE_LDFLAGS=-no-pie
 	;;
 NetBSD)
 	#TODO: send a patch to NetBSD to solve this problem
