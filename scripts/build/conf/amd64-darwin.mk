@@ -1,5 +1,5 @@
 ARCH = amd64
 SYS = darwin
-ABI = amd64-darwin
+ABI = sysv
 FORMAT = elf
 O = 6d

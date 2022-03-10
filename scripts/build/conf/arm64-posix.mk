@@ -1,3 +1,3 @@
 ARCH = arm64
-ABI = arm64-posix
+ABI = sysv
 O = 6

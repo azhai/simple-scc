@@ -1,3 +1,3 @@
-ABI = ppc32-posix
+ABI = sysv
 ARCH = ppc32
 O = q

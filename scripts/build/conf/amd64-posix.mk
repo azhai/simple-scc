@@ -1,3 +1,3 @@
 ARCH = amd64
-ABI  = amd64-posix
+ABI  = sysv
 O    = 6

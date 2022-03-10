@@ -1,3 +1,3 @@
-ABI = arm32-posix
+ABI = sysv
 ARCH = arm32
 O = 5
