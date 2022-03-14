@@ -534,7 +534,7 @@ assign(Node *np)
 		aux.left = ret;
 		aux.right = r;
 		aux.type = np->type;
-		r = rhs(&aux);
+		r = rhs(sethi(&aux));
 		break;
 	default:
 		/* assign abbreviation */
@@ -542,7 +542,8 @@ assign(Node *np)
 		aux.left = l;
 		aux.right = r;
 		aux.type = np->type;
-		r = complex(&aux);
+		aux.address = np->address;
+		r = sethi(&aux);
 	case 0:
 		if (l->complex >= r->complex) {
 			l = lhs(l);
