@@ -80,7 +80,7 @@ it will have some differences:
 - Type qualifiers are accepted but ignored.
   -----------------------------------------
 
-Type qualifiers make the type system ugly, and their uselessness adds
+Type qualifiers make the type system more complex and they add
 unnecessary complexity to the compiler (and increased compilation time):
 
 	- const: The definition of const is not clear in the standard.
