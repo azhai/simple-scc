@@ -110,3 +110,4 @@ COMMON_OBJS =\
 	time/mktime.$O\
 	time/strftime.$O\
 	time/tz.$O\
+	wchar/wcwidth.$O\
