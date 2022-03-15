@@ -432,19 +432,25 @@ function(void)
 	Symbol *p;
 
 	/* allocate stack space for parameters */
-	for (p = locals; p && (p->type.flags & PARF) != 0; p = p->next)
-		code(ASALLOC, label2node(&aux, p), NULL, NULL);
-
-	/* allocate stack space for local variables) */
-	for ( ; p && p->id != TMPSYM; p = p->next) {
-		if (p->kind != SAUTO)
+	for (p = locals; p; p = p->next) {
+		if ((p->type.flags & PARF) == 0)
 			continue;
 		code(ASALLOC, label2node(&aux, p), NULL, NULL);
 	}
+
+	/* allocate stack space for local variables) */
+	for (p = locals; p; p = p->next) {
+		if ((p->type.flags & PARF) != 0)
+			continue;
+		if (p->kind != SAUTO || p->id == TMPSYM)
+			continue;
+		code(ASALLOC, label2node(&aux, p), NULL, NULL);
+	}
+
 	/* store formal parameters in parameters */
 	for (p = locals; p; p = p->next) {
 		if ((p->type.flags & PARF) == 0)
-			break;
+			continue;
 		code(ASFORM, label2node(&aux, p), NULL, NULL);
 	}
 	return NULL;

@@ -358,10 +358,12 @@ writeout(void)
 	printf("function %s %s(", size2stack(&curfun->rtype), symname(curfun));
 
 	/* declare formal parameters */
-	for (sep = "", p = locals; p; p = p->next, sep = ",") {
+	sep = "";
+	for (p = locals; p; p = p->next) {
 		if ((p->type.flags & PARF) == 0)
-			break;
+			continue;
 		printf("%s%s %s.val", sep, size2stack(&p->type), symname(p));
+		sep = ",";
 	}
 	printf("%s)\n{\n", (curfun->type.flags&ELLIPS) ? ", ..." : "");
 
