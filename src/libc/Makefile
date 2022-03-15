@@ -9,6 +9,7 @@ DIRS =\
 	stdlib\
 	string\
 	time\
+	wchar\
 	arch\
 
 include $(PROJECTDIR)/scripts/rules.mk
