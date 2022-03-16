@@ -783,11 +783,14 @@ cpp(void)
 	next();
 	namespace = NS_IDEN;
 
+	if (yytoken == '\n')
+		goto ret;
+
 	for (bp = clauses; bp->token && bp->token != yytoken; ++bp)
 		;
 	if (!bp->token) {
 		errorp("incorrect preprocessor directive '%s'", yytext);
-		goto error;
+		goto ret;
 	}
 
 	DBG("CPP %s", yytext);
@@ -805,7 +808,7 @@ cpp(void)
 	if (yytoken != '\n' && !cppoff && bp->token != INCLUDE)
 		errorp("trailing characters after preprocessor directive");
 
-error:
+ret:
 	disescape = 0;
 	disexpand = 0;
 	lexmode = CCMODE;
