@@ -10,6 +10,7 @@
 #define NR_SYMHASH  64
 
 Symbol *locals;
+static Symbol *tail;
 
 static Symbol *symtab[NR_SYMHASH];
 static int infunction;
@@ -31,11 +32,11 @@ pushctx(void)
 void
 popctx(void)
 {
-	Symbol *sym, *next;
+	Symbol *sym, *prev;
 
 	infunction = 0;
-	for (sym = locals; sym; sym = next) {
-		next = sym->next;
+	for (sym = tail; sym; sym = prev) {
+		prev = sym->prev;
 		/*
 		 * Symbols are inserted in the hash in the inverted
 		 * order they are found in locals and it is impossible
@@ -51,7 +52,7 @@ popctx(void)
 			symtab[sym->id & NR_SYMHASH-1] = sym->h_next;
 		freesym(sym);
 	}
-	locals = NULL;
+	locals = tail = NULL;
 }
 
 Symbol *
@@ -74,8 +75,13 @@ getsym(unsigned id)
 	sym = xcalloc(1, sizeof(*sym));
 	sym->id = id;
 	if (infunction) {
-		sym->next = locals;
-		locals = sym;
+		sym->next = NULL;
+		sym->prev = tail;
+		if (tail)
+			tail->next = sym;
+		tail = sym;
+		if (!locals)
+			locals = sym;
 	}
 	if (id != TMPSYM) {
 		sym->h_next = *htab;

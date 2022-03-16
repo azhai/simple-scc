@@ -168,7 +168,7 @@ struct symbol {
 		Node *stmt;
 		Inst *inst;
 	} u;
-	Symbol *next;
+	Symbol *next, *prev;
 	Symbol *h_next;
 };
 
