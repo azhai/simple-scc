@@ -5,7 +5,7 @@
 int
 mbtowc(wchar_t *restrict pwc, const char *restrict s, size_t n)
 {
-	const char *t = s;
+	unsigned char *t = (unsigned char *) s;
 	unsigned long wc;
 	unsigned c;
 	size_t len;
@@ -30,5 +30,7 @@ mbtowc(wchar_t *restrict pwc, const char *restrict s, size_t n)
 return_code:
 	if (pwc)
 		*pwc = wc;
-	return (*s) ? t - s : 0;
+	if (*s == '\0')
+		return 0;
+	return t - (unsigned char *) s;
 }
