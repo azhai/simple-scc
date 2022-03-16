@@ -11,7 +11,7 @@
 
 #define _ATEXIT_MAX 32
 
-#define MB_CUR_MAX 1
+#define MB_CUR_MAX 6
 #define RAND_MAX 32767
 
 typedef struct {
