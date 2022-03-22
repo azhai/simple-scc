@@ -55,6 +55,7 @@ addinput(char *fname, Symbol *hide, char *buffer, int fail)
 		fp = NULL;
 		if (hide->hide == UCHAR_MAX)
 			die("cc1: too many macro expansions");
+		DBG("SYM: hidding symbol %s %d\n", hide->name, hide->hide);
 		++hide->hide;
 		flags = IMACRO;
 	} else  if (fname) {
@@ -115,6 +116,7 @@ delinput(void)
 		break;
 	case IMACRO:
 		assert(hide->hide == 1);
+		DBG("SYM: unhidding symbol %s %d\n", hide->name, hide->hide);
 		--hide->hide;
 		break;
 	}
