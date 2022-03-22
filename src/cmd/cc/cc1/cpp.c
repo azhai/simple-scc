@@ -148,6 +148,7 @@ parsepars(struct macroctx *mp)
 	if (ahead() != '(' && mp->npars > 0)
 		return 0;
 
+	disexpand = 1;
 	next();
 	n = 0;
 	if (ahead() == ')') {
