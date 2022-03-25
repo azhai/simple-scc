@@ -26,7 +26,7 @@ gmtime(const time_t *tim)
 	tm.tm_yday = day;
 
 	_daysmon[FEB] = FEBDAYS(tm.tm_year);
-	for (i = JAN; day > _daysmon[i]; i++)
+	for (i = JAN; day >= _daysmon[i]; i++)
 		day -= _daysmon[i];
 	tm.tm_mon = i;
 	tm.tm_mday = day + 1;
