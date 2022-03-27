@@ -200,7 +200,7 @@ static int
 readline(void)
 {
 	char *bp, *lim;
-	int c, peekc = 0;
+	int c, peekc = 0, delim = 0;
 
 	if (feof(input->fp)) {
 		input->flags |= IEOF;
@@ -214,7 +214,23 @@ readline(void)
 		peekc = 0;
 		if (c == '\n' || c == EOF)
 			break;
-		if (c != '/')
+		if (c == '\\') {
+			peekc = readchar();
+			if (peekc == '\n' || peekc == EOF)
+				continue;
+			if (bp == lim-2)
+				break;
+			*bp++ = c;
+			c = peekc;
+			peekc = 0;
+			continue;
+		}
+
+		if (delim && c == delim)
+			delim = 0;
+		else if (!delim && (c == '"' || c == '\''))
+			delim = c;
+		if (c != '/' || delim)
 			continue;
 
 		/* check for /* or // */
