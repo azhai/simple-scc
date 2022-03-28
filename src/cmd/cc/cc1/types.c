@@ -206,17 +206,18 @@ typesize(Type *tp)
 		offset = align = size = 0;
 		n = tp->n.elem;
 		for (sp = tp->p.fields; n--; ++sp) {
-			(*sp)->u.i = offset;
 			type = (*sp)->type;
 			a = type->align;
 			if (a > align)
 				align = a;
 			if (tp->op == STRUCT) {
 				if (--a != 0)
-					size = (size + a) & ~a;
-				size += type->size;
+					offset = (offset + a) & ~a;
+				(*sp)->u.i = offset;
+				size = offset + type->size;
 				offset = size;
 			} else {
+				(*sp)->u.i = 0;
 				if (type->size > size)
 					size = type->size;
 			}
