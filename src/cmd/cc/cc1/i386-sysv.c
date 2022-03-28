@@ -204,7 +204,7 @@ i386_sysv(void)
 	};
 
 	arch.valid_va_list = local_valid_va_list;
-	arch.pvoidtype.type = &arch.chartype;
+	arch.pvoidtype.type = &arch.voidtype;
 	arch.va_list_type.type = &arch.longtype;
 
 	return &arch;

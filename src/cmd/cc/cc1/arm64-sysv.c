@@ -198,7 +198,7 @@ arm64_sysv(void)
 
 	sizettype = &arch.sizettype;
 	arch.va_list_type = *mktype(&arch.va_type, ARY, 1, NULL);
-	arch.pvoidtype.type = &arch.chartype;
+	arch.pvoidtype.type = &arch.voidtype;
 	arch.valid_va_list = local_valid_va_list;
 	arch.zero.type = inttype;
 	arch.one.type = inttype;
