@@ -15,7 +15,7 @@ Linux)
 	echo TOOL=${TOOL:-gnu} HOST=linux
 	;;
 Plan9)
-	echo HOST=plan9
+	echo TOOL=${TOOL:-plan9} HOST=plan9
 	;;
 esac
 
