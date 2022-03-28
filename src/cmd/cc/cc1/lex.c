@@ -558,6 +558,7 @@ string(void)
 			c = escape();
 
 		if (bp == &yytext[STRINGSIZ+1]) {
+			/* too long, ignore everything until next quote */
 			for (++input->p; *input->p != '"'; ++input->p) {
 				if (*input->p == '\\')
 					++input->p;
