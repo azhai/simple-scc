@@ -26,7 +26,7 @@ do
 		shift
 		;;
 	-*)
-		echo usage: cc.sh [-o outfile][-c][-r root][-a abi][-s sys] file
+		echo usage: gcc-scc [-o outfile][-c][-r root][-a abi][-s sys] file
 		exit 1
 		;;
 	esac
