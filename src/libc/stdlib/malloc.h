@@ -12,3 +12,5 @@ union header {
 };
 
 extern void *_prevchunk(Header *);
+
+extern Header *_freep;

@@ -13,7 +13,7 @@
 #define ERRADDR ((char *)-1)
 
 static Header base = { .h.next = &base };
-static Header *freep = &base;
+Header *_freep = &base;
 
 /*
  * Run over the free list looking for the nearest previous
@@ -25,7 +25,7 @@ _prevchunk(Header *hp)
 {
 	Header *p;
 
-	for (p = freep; ;p = p->h.next) {
+	for (p = _freep; ;p = p->h.next) {
 		/* hp between p and p->h.next? */
 		if (p < hp && hp < p->h.next)
 			break;
@@ -69,7 +69,7 @@ free(void *mem)
 		prev->h.next = hp;
 	}
 
-	freep = prev;
+	_freep = prev;
 }
 
 static void *
@@ -112,7 +112,7 @@ morecore(size_t nunits)
 	/* integrate new memory into the list */
 	free(hp + 1);
 
-	return freep;
+	return _freep;
 }
 
 /*
@@ -142,7 +142,7 @@ malloc(size_t nbytes)
 	/* 1 unit for header plus enough units to fit nbytes */
 	nunits = (nbytes+sizeof(Header)-1)/sizeof(Header) + 1;
 
-	for (prev = freep; ; prev = cur) {
+	for (prev = _freep; ; prev = cur) {
 		cur = prev->h.next;
 		if (cur->h.size >= nunits) {
 			if (cur->h.size == nunits) {
@@ -154,12 +154,12 @@ malloc(size_t nbytes)
 			}
 
 			cur->h.next = NULL;
-			freep = prev;
+			_freep = prev;
 
 			return cur + 1;
 		}
 
-		if (cur == freep) {
+		if (cur == _freep) {
 			if ((cur = morecore(nunits)) == NULL)
 				return NULL;
 		}
