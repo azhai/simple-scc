@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,8 +12,15 @@ realloc(void *ptr, size_t nbytes)
 	Header *oh, *prev, *next, *new;
 	size_t nunits, avail, onbytes, n;
 
-	if (nbytes == 0 || nbytes > SIZE_MAX - sizeof(Header)-1)
+	if (nbytes == 0) {
+		errno = EINVAL;
 		return NULL;
+	}
+
+	if (nbytes > SIZE_MAX - sizeof(Header)-1) {
+		errno = ENOMEM;
+		return NULL;
+	}
 
 	if (!ptr)
 		return malloc(nbytes);
