@@ -375,7 +375,7 @@ compare(int op, Node *lp, Node *rp)
 		return pcompare(op, lp, rp);
 	} else if ((ltp->prop & TARITH) && (rtp->prop & TARITH)) {
 		arithconv(&lp, &rp);
-		return convert(node(op, lp->type, lp, rp), inttype, 1);;
+		return convert(node(op, lp->type, lp, rp), inttype, 1);
 	} else {
 		errorp("incompatible types in comparison");
 		freetree(lp);
