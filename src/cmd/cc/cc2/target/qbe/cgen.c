@@ -222,8 +222,10 @@ cast(Type *td, Node *np)
 	s_isint = (ts->flags & INTF) != 0;
 
 	if (d_isint && s_isint) {
-		if (td->size <= ts->size)
+		if (td->size <= ts->size) {
+			np->type = *td;
 			return np;
+		}
 
 		assert(td->size == 4 || td->size == 8);
 		switch (ts->size) {
