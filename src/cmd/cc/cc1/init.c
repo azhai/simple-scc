@@ -80,7 +80,7 @@ static Node *
 str2ary(Type *tp)
 {
 	Node *np;
-	Type *btp = tp->type;;
+	Type *btp = tp->type;
 	Symbol *sym;
 	size_t len;
 	char *s;

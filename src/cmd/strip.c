@@ -29,7 +29,7 @@ error(char *fmt, ...)
 static void
 doit(char *fname)
 {
-	int type;;
+	int type;
 	size_t r;
 	FILE *src, *dst;
 	Map *map;

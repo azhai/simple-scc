@@ -334,7 +334,7 @@ void
 ld8(Op *op, Node **args)
 {
 	Node *par1 = args[0], *par2 = args[1];
-	int n = op->size, i = n;;
+	int n = op->size, i = n;
 	unsigned regval = 0;
 	unsigned char buf[4];
 

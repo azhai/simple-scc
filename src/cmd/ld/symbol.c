@@ -98,7 +98,7 @@ lookupsym(char *name)
 	sp->hash = symtab[h];
 	symtab[h] = sp;
 
-	return linksym(&undef, sym);;
+	return linksym(&undef, sym);
 }
 
 

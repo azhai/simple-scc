@@ -356,7 +356,7 @@ oreturn(char *token, union tokenop u)
 static void
 waft(Node *np)
 {
-	Node *lastcase, *next;;
+	Node *lastcase, *next;
 	struct swtch *cur;
 	extern Node *curstmt;
 
@@ -490,7 +490,7 @@ builtin(char *token, union tokenop u)
 		nchilds = 2;
 		subop = BVA_COPY;
 	} else {
-		error(EBBUILT);;
+		error(EBBUILT);
 	}
 
 	np->u.subop = subop;
