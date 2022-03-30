@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdlib.h>
 
 void *
@@ -16,10 +17,12 @@ bsearch(const void *key, const void *ary, size_t n, size_t size,
 
 		if ((t = (*cmp)(key, cur)) == 0)
 			return cur;
-		else if (t > 0)
+		else if (t > 0 && mid < SIZE_MAX)
 			low = mid + 1;
-		else
+		else if (t < 0 && mid > 0)
 			high = mid - 1;
+		else
+			break;
 	}
 
 	return NULL;
