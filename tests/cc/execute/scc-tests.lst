@@ -105,7 +105,7 @@
 0112-cond.c
 0113-externredecl.c
 0114-shortassig.c [TODO]
-0115-null-comparision.c
+0115-null_comparision.c
 0116-floatcmp.c [TODO]
 0117-pointarith.c
 0118-voidmain.c
@@ -123,34 +123,34 @@
 0130-mulpars.c
 0131-hello.c
 0132-forward.c
-0133-ftn-ptr.c
+0133-ftn_ptr.c
 0134-arith.c
 0135-unary.c
 0136-if.c
-0137-int-cast.c [TODO]
+0137-int_cast.c [TODO]
 0138-namespace.c
-0139-ptr-ary.c
-0140-int-fold.c
-0141-int-iden.c
-0142-char-const.c
-0143-int-const.c
-0144-long-const.c
-0145-llong-const.c
+0139-ptr_ary.c
+0140-int_fold.c
+0141-int_iden.c
+0142-char_const.c
+0143-int_const.c
+0144-long_const.c
+0145-llong_const.c
 0146-ifdef.c
-0147-intern-cpp.c
-0148-cpp-string.c
+0147-intern_cpp.c
+0148-cpp_string.c
 0149-define.c
 0150-define.c
 0151-vararg.c [TODO]
 0152-cat.c [TODO]
-0153-cpp-string.c
-0154-if-defined.c
-0155-struct-compl.c [TODO]
+0153-cpp_string.c
+0154-if_defined.c
+0155-struct_compl.c [TODO]
 0156-duff2.c
 0157-list.c
 0158-ternary.c
 0159-typedef.c
-0160-cpp-if.c
+0160-cpp_if.c
 0161-struct.c [TODO]
 0162-array.c
 0163-array.c
@@ -174,14 +174,14 @@
 0181-stringize.c [TODO]
 0182-voidcast.c
 0183-negenum.c
-0184-esc-macro.c
-0185-esc-macro2.c
-0186-dec-ary.c
-0187-zero-struct.c
-0188-multi-string.c [TODO]
+0184-esc_macro.c
+0185-esc_macro2.c
+0186-dec_ary.c
+0187-zero_struct.c
+0188-multi_string.c [TODO]
 0189-cpp.c [TODO]
-0190-enum-ary.c
-0191-ary-addr.c
+0190-enum_ary.c
+0191-ary_addr.c
 0192-ptrcmp.c
 0193-incomplete.c
 0194-vararg.c

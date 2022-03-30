@@ -1,1 +1,4 @@
 test.log
+tests.h
+tmp_*.c
+a.out
