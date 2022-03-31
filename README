@@ -151,10 +151,11 @@ way of writing such code).
   ---------------------------------------------
 
 C89 allows the definition of variables with incomplete type that
-have external linkage and file scope. The type of the variable
-is the composition of all the definitions found in the file. The exact
-rules are a bit complex (3.7.2) so SCC ignores them at this moment
-by simply not allowing any definition of variables with incomplete type.
+have external linkage and file scope. The type of the variable is the
+composition of all the definitions found in the file. The exact rules
+are a bit complex (ANSI 3.7.2, or ISO C99 6.2.5p22) so SCC ignores them
+at this moment by simply not allowing any definition of variables with
+incomplete type.
 
 If you don't believe me try this code:
 
