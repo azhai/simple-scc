@@ -2,6 +2,7 @@ _brk.s
 _close.s
 _exit.s
 _getpid.s
+_gettimeofday.s
 _kill.s
 _lseek.s
 _open.s

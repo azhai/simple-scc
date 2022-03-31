@@ -6,6 +6,7 @@ OBJS =\
 	arch/amd64/openbsd/_close.$O\
 	arch/amd64/openbsd/_exit.$O\
 	arch/amd64/openbsd/_getpid.$O\
+	arch/amd64/openbsd/_gettimeofday.$O\
 	arch/amd64/openbsd/_kill.$O\
 	arch/amd64/openbsd/_lseek.$O\
 	arch/amd64/openbsd/_open.$O\

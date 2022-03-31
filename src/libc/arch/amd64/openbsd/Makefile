@@ -9,6 +9,7 @@ GENOBJS =\
 	_close.$O\
 	_exit.$O\
 	_getpid.$O\
+	_gettimeofday.$O\
 	_kill.$O\
 	_lseek.$O\
 	_open.$O\

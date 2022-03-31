@@ -8,5 +8,6 @@
 17	_brk	1
 20	_getpid	0
 46	_sigaction	3
+67	_gettimeofday	2
 122	_kill	2
 198	_lseek	3
