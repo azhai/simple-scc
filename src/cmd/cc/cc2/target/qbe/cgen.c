@@ -7,7 +7,7 @@
 #include "arch.h"
 #include "../../cc2.h"
 
-static char opasmw[][2] = {
+static unsigned char opasmw[][2] = {
 	[OADD] = {ASADDW, ASADDW},
 	[OSUB] = {ASSUBW, ASSUBW},
 	[OMUL] = {ASMULW, ASMULW},
@@ -26,7 +26,7 @@ static char opasmw[][2] = {
 	[OBXOR] = {ASBXORW, ASBXORW},
 };
 
-static char opasml[][2] = {
+static unsigned char opasml[][2] = {
 	[OADD] = {ASADDL, ASADDL},
 	[OSUB] = {ASSUBL, ASSUBL},
 	[OMUL] = {ASMULL, ASMULL},
@@ -45,7 +45,7 @@ static char opasml[][2] = {
 	[OBXOR] = {ASBXORL, ASBXORL},
 };
 
-static char opasms[][2] = {
+static unsigned char opasms[][2] = {
 	[OADD] = {ASADDS, ASADDS},
 	[OSUB] = {ASSUBS, ASSUBS},
 	[OMUL] = {ASMULS, ASMULS},
@@ -58,7 +58,7 @@ static char opasms[][2] = {
 	[ONE] = {ASNES, ASNES},
 };
 
-static char opasmd[][2] = {
+static unsigned char opasmd[][2] = {
 	[OADD] = {ASADDD, ASADDD},
 	[OSUB] = {ASSUBD, ASSUBD},
 	[OMUL] = {ASMULD, ASMULD},
@@ -71,7 +71,7 @@ static char opasmd[][2] = {
 	[ONE] = {ASNED, ASNED},
 };
 
-static char (*opbin[][2])[2] = {
+static unsigned char (*opbin[][2])[2] = {
 	{opasmw, opasml},
 	{opasms, opasmd},
 };
