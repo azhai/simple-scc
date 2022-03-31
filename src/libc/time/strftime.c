@@ -154,7 +154,7 @@ timezone(char *s, size_t prec, const struct tm * restrict tm)
 	}
 
 	dval(s, 2, 2, '0', off / 3600);
-	dval(s, 2, 2, '0', (off % 3600) / 60);
+	dval(s + 2, 2, 2, '0', (off % 3600) / 60);
 
 	return 5;
 }
