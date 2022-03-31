@@ -12,6 +12,6 @@ time(time_t *t)
 	if (_gettimeofday(&tv, NULL) == -1)
 		return -1;
 	if (t)
-		*t =tv.tv_sec;
+		*t = tv.tv_sec;
 	return tv.tv_sec;
 }
