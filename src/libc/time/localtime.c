@@ -7,9 +7,12 @@
 static time_t
 gmtoff(char *tz)
 {
-	for (struct tzone *t = tzones; t->name; t++)
+	struct tzone *t;
+
+	for (t = tzones; t->name; t++) {
 		if (!strcmp(t->name, tz))
 			return t->gmtoff;
+	}
 	return 0;
 }
 
