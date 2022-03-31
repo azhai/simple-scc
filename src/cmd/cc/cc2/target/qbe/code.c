@@ -125,14 +125,22 @@ static struct opdata {
 	[ASUEXTWL]=  {.fun = unary, .txt = "extuw", .letter = 'l'},
 
 	[ASSTOL] = {.fun = unary, .txt = "stosi", .letter = 'l'},
+	[ASSTOUL] = {.fun = unary, .txt = "stoui", .letter = 'l'},
 	[ASSTOW] = {.fun = unary, .txt = "stosi", .letter = 'w'},
+	[ASSTOUW] = {.fun = unary, .txt = "stoui", .letter = 'w'},
 	[ASDTOL] = {.fun = unary, .txt = "dtosi", .letter = 'l'},
+	[ASDTOUL] = {.fun = unary, .txt = "dtoui", .letter = 'l'},
 	[ASDTOW] = {.fun = unary, .txt = "dtosi", .letter = 'w'},
+	[ASDTOUW] = {.fun = unary, .txt = "dtoui", .letter = 'w'},
 
 	[ASSWTOD] = {.fun = unary, .txt = "swtof", .letter = 'd'},
+	[ASUWTOD] = {.fun = unary, .txt = "uwtof", .letter = 'd'},
 	[ASSWTOS] = {.fun = unary, .txt = "swtof", .letter = 's'},
+	[ASUWTOS] = {.fun = unary, .txt = "uwtof", .letter = 's'},
 	[ASSLTOD] = {.fun = unary, .txt = "sltof", .letter = 'd'},
+	[ASULTOD] = {.fun = unary, .txt = "ultof", .letter = 'd'},
 	[ASSLTOS] = {.fun = unary, .txt = "sltof", .letter = 's'},
+	[ASULTOS] = {.fun = unary, .txt = "ultof", .letter = 's'},
 
 	[ASEXTS] = {.fun = unary, .txt = "exts", .letter = 'd'},
 	[ASTRUNCD] = {.fun = unary, .txt = "truncd", .letter = 's'},

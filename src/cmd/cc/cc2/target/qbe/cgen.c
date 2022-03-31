@@ -258,7 +258,11 @@ cast(Type *td, Node *np)
 		default:
 			abort();
 		}
-		/* TODO: Add signess */
+		/*
+		 * unsigned version of operations are always +1 the
+		 * signed version
+		 */
+		op += (td->flags & SIGNF) == 0;
 	} else if (s_isint) {
 		/* conversion from int to float */
 		switch (ts->size) {
@@ -275,7 +279,11 @@ cast(Type *td, Node *np)
 		default:
 			abort();
 		}
-		/* TODO: Add signess */
+		/*
+		 * unsigned version of operations are always +1 the
+		 * signed version
+		 */
+		op += (ts->flags & SIGNF) == 0;
 	} else {
 		/* conversion from float to float */
 		op = (td->size == 4) ? ASEXTS : ASTRUNCD;
