@@ -7,6 +7,11 @@
 #include "arch.h"
 #include "../../cc2.h"
 
+#define I1BYTES 0
+#define I2BYTES 1
+#define I4BYTES 2
+#define I8BYTES 3
+
 static unsigned char opasmw[][2] = {
 	[OADD] = {ASADDW, ASADDW},
 	[OSUB] = {ASSUBW, ASSUBW},
@@ -74,6 +79,42 @@ static unsigned char opasmd[][2] = {
 static unsigned char (*opbin[][2])[2] = {
 	{opasmw, opasml},
 	{opasms, opasmd},
+};
+
+static unsigned char i2i_conv[4][4][2] = {
+	[I1BYTES] = {
+		[I4BYTES] = {ASEXTBW, ASUEXTBW},
+		[I8BYTES] = {ASEXTBL, ASUEXTBL},
+	},
+	[I2BYTES] = {
+		[I4BYTES] = {ASEXTHW, ASUEXTHW},
+		[I8BYTES] = {ASEXTHL, ASUEXTHL},
+	},
+	[I4BYTES] = {
+		[I8BYTES] = {ASEXTWL, ASUEXTWL},
+	}
+};
+
+static unsigned char f2i_conv[4][4][2] = {
+	[I4BYTES] = {
+		[I4BYTES] = {ASSTOW, ASSTOUW},
+		[I8BYTES] = {ASSTOL, ASDTOUL},
+	},
+	[I8BYTES] = {
+		[I4BYTES] = {ASDTOW, ASDTOUW},
+		[I8BYTES] = {ASDTOL, ASDTOUL},
+	}
+};
+
+static unsigned char i2f_conv[4][4][2] = {
+	[I4BYTES] = {
+		[I4BYTES] = {ASSWTOS, ASUWTOS},
+		[I8BYTES] = {ASSWTOD, ASUWTOD},
+	},
+	[I8BYTES] = {
+		[I4BYTES] = {ASSLTOS, ASULTOS},
+		[I8BYTES] = {ASSLTOD, ASULTOD},
+	}
 };
 
 extern Type int32type, uint32type, ptrtype;
@@ -169,6 +210,21 @@ sethi(Node *np)
 	return complex(np);
 }
 
+static int
+bytes2idx(int nbytes)
+{
+	if (nbytes== 1)
+		return I1BYTES;
+	else if (nbytes == 2)
+		return I2BYTES;
+	else if (nbytes == 4)
+		return I4BYTES;
+	else if (nbytes == 8)
+		return I8BYTES;
+	else
+		abort();
+}
+
 static Node *
 load(Type *tp, Node *np)
 {
@@ -215,77 +271,42 @@ cast(Type *td, Node *np)
 {
 	Type *ts;
 	Node *tmp;
-	int op, d_isint, s_isint;
+	int op, d_isint, s_isint, sidx, didx;
 
 	ts = &np->type;
 	d_isint = (td->flags & INTF) != 0;
 	s_isint = (ts->flags & INTF) != 0;
 
+	sidx = bytes2idx(ts->size);
+	didx = bytes2idx(td->size);
+
 	if (d_isint && s_isint) {
+		/* conversion from int to int */
 		if (td->size <= ts->size) {
 			np->type = *td;
 			return np;
 		}
-
+		assert(ts->size == 1 || ts->size == 2 || ts->size == 4);
 		assert(td->size == 4 || td->size == 8);
-		switch (ts->size) {
-		case 1:
-			op = (td->size == 4) ? ASEXTBW : ASEXTBL;
-			break;
-		case 2:
-			op = (td->size == 4) ? ASEXTHW : ASEXTHL;
-			break;
-		case 4:
-			op = ASEXTWL;
-			break;
-		default:
-			abort();
-		}
-		/*
-		 * unsigned version of operations are always +1 the
-		 * signed version
-		 */
-		op += (ts->flags & SIGNF) == 0;
+		op = i2i_conv[sidx][didx] [ (ts->flags & SIGNF) == 0];
 	} else if (d_isint) {
 		/* conversion from float to int */
-		switch (ts->size) {
-		case 4:
-			op = (td->size == 8) ? ASSTOL : ASSTOW;
-			break;
-		case 8:
-			op = (td->size == 8) ? ASDTOL : ASDTOW;
-			break;
-		default:
-			abort();
-		}
-		/*
-		 * unsigned version of operations are always +1 the
-		 * signed version
-		 */
-		op += (td->flags & SIGNF) == 0;
+		assert(ts->size == 4 || ts->size == 8);
+		assert(td->size == 4 || td->size == 8);
+		op = f2i_conv[sidx][didx] [ (ts->flags & SIGNF) == 0];
 	} else if (s_isint) {
 		/* conversion from int to float */
-		switch (ts->size) {
-		case 1:
-		case 2:
+		if (ts->size == 1 || ts->size == 2) {
 			ts = (ts->flags&SIGNF) ? &int32type : &uint32type;
 			np = cast(ts, np);
-		case 4:
-			op = (td->size == 8) ? ASSWTOD : ASSWTOS;
-			break;
-		case 8:
-			op = (td->size == 8) ? ASSLTOD : ASSLTOS;
-			break;
-		default:
-			abort();
 		}
-		/*
-		 * unsigned version of operations are always +1 the
-		 * signed version
-		 */
-		op += (ts->flags & SIGNF) == 0;
+		assert(ts->size == 4 || ts->size == 8);
+		assert(td->size == 4 || td->size == 8);
+		op = i2f_conv[sidx][didx] [ (ts->flags & SIGNF) == 0];
 	} else {
 		/* conversion from float to float */
+		assert(ts->size == 4 || ts->size == 8);
+		assert(td->size == 4 || td->size == 8);
 		op = (td->size == 4) ? ASEXTS : ASTRUNCD;
 	}
 
