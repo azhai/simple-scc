@@ -10,7 +10,7 @@
 #include "cc1.h"
 
 struct macroctx {
-	char *name;
+	Symbol *sym;
 	char *argp;
 	char **arglist;
 	char **listp;
@@ -92,10 +92,10 @@ nextcpp(struct macroctx *mp)
 	next();
 	if (yytoken == EOFTOK)
 		error("unterminated argument list invoking macro \"%s\"",
-		      mp->name);
+		      mp->sym->name);
 	if (yylen + 1 > mp->arglen)
 		error("argument overflow invoking macro \"%s\"",
-		      mp->name);
+		      mp->sym->name);
 	if (yytoken == IDEN)
 		yylval.sym->flags |= SUSED;
 	memcpy(mp->argp, yytext, yylen);
@@ -164,10 +164,10 @@ parsepars(struct macroctx *mp)
 	disexpand = 0;
 
 	if (n == NR_MACROARG)
-		error("too many parameters in macro \"%s\"", mp->name);
+		error("too many parameters in macro \"%s\"", mp->sym->name);
 	if (n != mp->npars) {
 		error("macro \"%s\" received %d arguments, but it takes %d",
-		      mp->name, n, mp->npars);
+		      mp->sym->name, n, mp->npars);
 	}
 
 	return 1;
@@ -264,7 +264,7 @@ copymacro(struct macroctx *mp)
 	return bp - mp->buffer;
 
 expansion_too_long:
-	error("macro expansion of \"%s\" too long", mp->name);
+	error("macro expansion of \"%s\" too long", mp->sym->name);
 }
 
 int
@@ -281,7 +281,7 @@ expand(Symbol *sym)
 	if (disexpand || sym->hide)
 		return 0;
 
-	macro.name = sym->name;
+	macro.sym = sym;
 	macro.argp = arguments;
 	macro.listp = arglist;
 	macro.arglist = arglist;
@@ -305,14 +305,11 @@ expand(Symbol *sym)
 	macro.npars = atoi(sym->u.s);
 	if (!parsepars(&macro))
 		return 0;
-	for (i = 0; i < macro.npars; ++i)
-		DBG("MACRO par%d:%s", i, arglist[i]);
-
 	elen = copymacro(&macro);
 
 substitute:
 	buffer[elen] = '\0';
-	DBG("MACRO '%s' expanded to :'%s'", macro.name, buffer);
+	DBG("MACRO '%s' expanded to :'%s'", macro.sym->name, buffer);
 	addinput(filenam, sym, xstrdup(buffer), FAIL);
 
 	return 1;
