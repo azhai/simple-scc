@@ -396,7 +396,7 @@ struct input {
 	unsigned lineno;
 	char *filenam;
 	FILE *fp;
-	Symbol *hide;
+	Symbol *macro;
 	char *line, *begin, *p;
 	struct input *next;
 };

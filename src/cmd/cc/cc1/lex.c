@@ -41,8 +41,24 @@ setloc(char *fname, unsigned line)
 	lineno = input->lineno = line;
 }
 
+static void
+hide(Symbol *sym)
+{
+	assert(sym->hide == 0);
+	sym->hide = 1;
+	DBG("SYM: hidding symbol %s %d", sym->name, sym->hide);
+}
+
+static void
+unhide(Symbol *sym)
+{
+	assert(sym->hide == 1);
+	DBG("SYM: unhidding symbol %s %d", sym->name, sym->hide);
+	sym->hide = 0;
+}
+
 int
-addinput(char *fname, Symbol *hide, char *buffer, int fail)
+addinput(char *fname, Symbol *sym, char *buffer, int fail)
 {
 	FILE *fp;
 	char *extp;
@@ -50,13 +66,14 @@ addinput(char *fname, Symbol *hide, char *buffer, int fail)
 	int infileln;
 	Input *newip, *curip = input;
 
-	if (hide) {
+	if (curip)
+		curip->lineno = lineno;
+
+	if (sym) {
 		/* this is a macro expansion */
 		fp = NULL;
-		if (hide->hide == UCHAR_MAX)
-			die("cc1: too many macro expansions");
-		DBG("SYM: hidding symbol %s %d\n", hide->name, hide->hide);
-		++hide->hide;
+		DBG("MACRO: %s expanded to '%s'", sym->name, buffer);
+		hide(sym);
 		flags = IMACRO;
 	} else  if (fname) {
 		/* a new file */
@@ -73,33 +90,31 @@ addinput(char *fname, Symbol *hide, char *buffer, int fail)
 			printf("%.*s.o: %s %s\n",
 			       infileln, infile, infile, fname);
 		}
+		lineno = 0;
 	} else {
 		/* reading from stdin */
 		fp = stdin;
 		fname = "<stdin>";
 		flags = ISTDIN;
+		lineno = 0;
 	}
-
-	newip = xmalloc(sizeof(*newip));
 
 	if (!buffer) {
 		buffer = xmalloc(INPUTSIZ);
 		buffer[0] = '\0';
 	}
 
-	if (curip)
-		curip->lineno = lineno;
-
+	newip = xmalloc(sizeof(*newip));
+	newip->next = curip;
+	newip->macro = sym;
+	newip->lineno = lineno;
 	newip->p = newip->begin = newip->line = buffer;
 	newip->filenam = NULL;
-	newip->lineno = 0;
-	newip->next = curip;
 	newip->fp = fp;
-	newip->hide = hide;
 	newip->flags = flags;
 	input = newip;
 
-	setloc(fname, (curip) ? curip->lineno : newip->lineno);
+	setloc(fname, lineno);
 	return 1;
 }
 
@@ -107,7 +122,6 @@ void
 delinput(void)
 {
 	Input *ip = input;
-	Symbol *hide = ip->hide;
 
 	switch (ip->flags & ITYPE) {
 	case IFILE:
@@ -115,18 +129,16 @@ delinput(void)
 			die("cc1: %s: %s", ip->filenam, strerror(errno));
 		break;
 	case IMACRO:
-		assert(hide->hide == 1);
-		DBG("SYM: unhidding symbol %s %d\n", hide->name, hide->hide);
-		--hide->hide;
+		unhide(ip->macro);
 		break;
 	}
+
 	input = ip->next;
 	free(ip->filenam);
 	free(ip->line);
-	if (input) {
-		lineno = input->lineno;
-		strcpy(filenam, input->filenam);
-	}
+	free(ip);
+	if (input)
+		setloc(input->filenam, input->lineno);
 }
 
 static void
