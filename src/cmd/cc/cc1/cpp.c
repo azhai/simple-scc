@@ -276,7 +276,8 @@ expand(Symbol *sym)
 	char *arglist[NR_MACROARG];
 	char arguments[INPUTSIZ], buffer[INPUTSIZ];
 
-	DBG("MACRO '%s' detected %d %d", sym->name, disexpand, sym->hide);
+	DBG("MACRO '%s' detected disexpand=%d hide=%d",
+	    sym->name, disexpand, sym->hide);
 
 	if (disexpand || sym->hide)
 		return 0;
