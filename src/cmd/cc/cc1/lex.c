@@ -204,6 +204,7 @@ readline(void)
 
 	if (feof(input->fp)) {
 		input->flags |= IEOF;
+		*input->p = '\0';
 		return 0;
 	}
 
@@ -284,7 +285,11 @@ repeat:
 			delinput();
 			goto repeat;
 		}
-		if (!readline() || cpp()) {
+		if (!readline()) {
+			*input->p = '\0';
+			goto repeat;
+		}
+		if (cpp()) {
 			*input->p = '\0';
 			goto repeat;
 		}
