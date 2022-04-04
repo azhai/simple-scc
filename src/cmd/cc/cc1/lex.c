@@ -82,7 +82,12 @@ addinput(char *fname, Symbol *sym, char *buffer, int fail)
 		DBG("MACRO: %s expanded to '%s'", sym->name, buffer);
 		hide(sym);
 		flags = IMACRO;
-	} else  if (fname) {
+	} else if (buffer) {
+		/* this is a macro parameter */
+		fp = NULL;
+		DBG("MACRO parameter '%s'", buffer);
+		flags = IPARAM;
+	} else if (fname) {
 		/* a new file */
 		if ((fp = fopen(fname, "r")) == NULL) {
 			if (!fail)
@@ -296,7 +301,12 @@ repeat:
 		return 0;
 
 	if (*input->p == '\0') {
-		if ((input->flags&ITYPE) == IMACRO) {
+		int t = input->flags & ITYPE;
+		if (t == IPARAM) {
+			input->flags |= IEOF;
+			return 0;
+		}
+		if (t == IMACRO) {
 			wasexpand = 1;
 			input->flags |= IEOF;
 		}

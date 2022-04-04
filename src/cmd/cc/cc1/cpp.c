@@ -173,12 +173,38 @@ parsepars(struct macroctx *mp)
 	return 1;
 }
 
-static size_t
+static int
+expandarg(char *arg, char *buf, int bufsiz)
+{
+	int siz, n;
+	char *s = buf;
+
+	addinput(filenam, NULL, xstrdup(arg), FAIL);
+
+	for (siz = 0; next() != EOFTOK; siz += yylen) {
+		if (yylen > bufsiz-1) {
+			siz = -1;
+			break;
+		}
+		memcpy(buf, yytext, yylen);
+		bufsiz -= yylen;
+		buf += yylen;
+	}
+	*buf = '\0';
+
+	delinput();
+
+	DBG("MACRO parameter '%s' expanded to '%s'", arg, s);
+
+	return siz;
+}
+
+static int
 copymacro(struct macroctx *mp)
 {
 	int delim, c, esc;
 	char *s, *p, *arg, *bp;
-	size_t size, bufsiz;
+	int size, bufsiz;
 
 	bp = mp->buffer;
 	bufsiz = mp->bufsiz;
@@ -243,14 +269,12 @@ copymacro(struct macroctx *mp)
 		case '@':
 			/* parameter substitution */
 			arg = mp->arglist[atoi(++s)];
-			s += 2;
-
-			size = strlen(arg);
-			if (size > bufsiz)
+			size = expandarg(arg, bp, bufsiz);
+			if (size < 0)
 				goto expansion_too_long;
-			memcpy(bp, arg, size);
 			bp += size;
 			bufsiz -= size;
+			s += 2;
 			break;
 		default:
 			if (bufsiz-- == 0)
@@ -270,7 +294,7 @@ expansion_too_long:
 int
 expand(Symbol *sym)
 {
-	size_t elen;
+	int elen;
 	int i;
 	struct macroctx macro;
 	char *arglist[NR_MACROARG];

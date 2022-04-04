@@ -31,8 +31,9 @@ enum inputtype {
 	IMACRO = 1 << 0,      /* macro expansion type */
 	IFILE  = 1 << 1,      /* input file type */
 	ISTDIN = 1 << 2,      /* stdin type */
-	IEOF   = 1 << 3,      /* EOF mark */
-	ITYPE  = IMACRO | IFILE | ISTDIN,
+	IPARAM = 1 << 3,      /* macro param expansion */
+	IEOF   = 1 << 4,      /* EOF mark */
+	ITYPE  = IMACRO | IFILE | ISTDIN | IPARAM,
 };
 
 /* data type letters */

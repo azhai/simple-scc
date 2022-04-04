@@ -142,7 +142,7 @@
 0149-define.c
 0150-define.c
 0151-vararg.c [TODO]
-0152-cat.c [TODO]
+0152-cat.c
 0153-cpp_string.c
 0154-if_defined.c
 0155-struct_compl.c [TODO]
@@ -171,7 +171,7 @@
 0178-include.c
 0179-sizeof.c [TODO]
 0180-incomplete.c
-0181-stringize.c [TODO]
+0181-stringize.c
 0182-voidcast.c
 0183-negenum.c
 0184-esc_macro.c
