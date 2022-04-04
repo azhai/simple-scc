@@ -35,7 +35,7 @@ void
 defdefine(char *macro, char *val, char *source)
 {
 	char *def, *fmt = "#define %s %s\n";
-	Symbol dummy = {.flags = SDECLARED};
+	Symbol dummy = {.name = macro, .flags = SDECLARED};
 
 	if (!val)
 		val = "";
