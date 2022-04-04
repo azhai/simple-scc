@@ -34,8 +34,15 @@ setloc(char *fname, unsigned line)
 		memmove(filenam, fname, len);
 		filenam[len] = '\0';
 
-		free(input->filenam);
-		input->filenam = xstrdup(fname);
+		/*
+		 * There are cases where we want to call setloc()
+		 * with the data in input, and then we have t be
+		 * careful about freeing input->filenam
+		 */
+		if (fname != input->filenam) {
+			free(input->filenam);
+			input->filenam = xstrdup(fname);
+		}
 	}
 
 	lineno = input->lineno = line;
