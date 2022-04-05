@@ -93,15 +93,8 @@ nextcpp(struct macroctx *mp)
 	if (yytoken == EOFTOK)
 		error("unterminated argument list invoking macro \"%s\"",
 		      mp->sym->name);
-	if (yylen + 1 > mp->arglen)
-		error("argument overflow invoking macro \"%s\"",
-		      mp->sym->name);
 	if (yytoken == IDEN)
 		yylval.sym->flags |= SUSED;
-	memcpy(mp->argp, yytext, yylen);
-	mp->argp += yylen;
-	mp->arglen -= yylen + 1;
-	*mp->argp++ = ' ';
 }
 
 static void
@@ -122,14 +115,29 @@ paren(struct macroctx *mp)
 static void
 parameter(struct macroctx *mp)
 {
+	int siz;
+	char *begin, *end;
+
+	begin = input->begin;
 	for (;;) {
 		nextcpp(mp);
 		switch (yytoken) {
 		case ')':
 		case ',':
-			/* remove " , "  or " ) "*/
-			mp->argp -= 3;
+			/* remove ","  or ")"*/
+			end = input->begin - 1;
+			while (end > begin && isspace(end[-1]))
+				--end;
+
+			siz = end - begin;
+			if (siz+1 > mp->arglen) {
+				error("argument overflow invoking macro \"%s\"",
+				      mp->sym->name);
+			}
+			memcpy(mp->argp, begin, siz);
+			mp->argp += siz;
 			*mp->argp++ = '\0';
+			mp->arglen -= siz + 1;
 			return;
 		case '(':
 			paren(mp);

@@ -116,7 +116,7 @@
 0123-doubleconst.c [TODO]
 0124-enumstruct.c
 0125-fundcl.c
-0126-macropar.c [TODO]
+0126-macropar.c
 0127-doublecte.c [TODO]
 0128-kr_names.c
 0129-initi.c [TODO]
@@ -178,7 +178,7 @@
 0185-esc_macro2.c
 0186-dec_ary.c
 0187-zero_struct.c
-0188-multi_string.c [TODO]
+0188-multi_string.c
 0189-cpp.c [TODO]
 0190-enum_ary.c
 0191-ary_addr.c
@@ -191,7 +191,7 @@
 0198-nullcpp.c
 0199-voidpcast.c
 0200-cpp.c [TODO]
-0201-cpp.c [TODO]
+0201-cpp.c
 0202-variadic.c [TODO]
 0203-comment.c
 0204-cast.c
