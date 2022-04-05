@@ -45,31 +45,34 @@ undefmacro(char *s)
 void
 icpp(void)
 {
-	static char sdate[14], stime[11];
 	struct tm *tm;
 	time_t t;
-	static char **bp, *list[] = {
-		"__STDC__",
-		"__STDC_HOSTED__",
-		"__SCC__",
-		NULL
+	static char sdate[14], stime[11];
+	static struct {
+		char *name;
+		char *value;
+	} *bp, list[] = {
+		{"__STDC__", "1"},
+		{"__STDC_HOSTED__", "1"},
+		{"__SCC__", "1"},
+		{"__DATE__", sdate},
+		{"__TIME__", stime},
+		{"__STDC_VERSION__", STDC_VERSION},
+		{"__LINE__", NULL},
+		{"__FILE__", NULL},
+		{NULL, NULL}
 	};
 
 	t = time(NULL);
 	tm = localtime(&t);
 	strftime(sdate, sizeof(sdate), "\"%b %d %Y\"", tm);
 	strftime(stime, sizeof(stime), "\"%H:%M:%S\"", tm);
-	defdefine("__DATE__", sdate, "built-in");
-	defdefine("__TIME__", stime, "built-in");
-	defdefine("__STDC_VERSION__", STDC_VERSION, "built-in");
-	defdefine("__LINE__", NULL, "built-in");
-	defdefine("__FILE__", NULL, "built-in");
+
+	for (bp = list; bp->name; ++bp)
+		defdefine(bp->name, bp->value, "built-in");
 
 	symline = lookup(NS_CPP, "__LINE__", ALLOC);
 	symfile = lookup(NS_CPP, "__FILE__", ALLOC);
-
-	for (bp = list; *bp; ++bp)
-		defdefine(*bp, "1", "built-in");
 
 	ncmdlines = 0;
 }
