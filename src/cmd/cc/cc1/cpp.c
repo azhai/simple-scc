@@ -181,14 +181,15 @@ expandarg(char *arg, char *buf, int bufsiz)
 
 	addinput(filenam, NULL, xstrdup(arg), FAIL);
 
-	for (siz = 0; next() != EOFTOK; siz += yylen) {
-		if (yylen > bufsiz-1) {
+	for (siz = 0; next() != EOFTOK; siz += yylen+1) {
+		if (yylen > bufsiz-2) {
 			siz = -1;
 			break;
 		}
 		memcpy(buf, yytext, yylen);
-		bufsiz -= yylen;
+		bufsiz -= yylen + 1;
 		buf += yylen;
+		*buf++ = ' ';
 	}
 	*buf = '\0';
 
