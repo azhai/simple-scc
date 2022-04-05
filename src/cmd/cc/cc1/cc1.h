@@ -282,6 +282,7 @@ typedef struct type Type;
 typedef struct symbol Symbol;
 typedef struct swtch Switch;
 typedef struct node Node;
+typedef struct macro Macro;
 typedef struct input Input;
 typedef struct arch Arch;
 
@@ -394,6 +395,15 @@ struct yystype {
 	unsigned char token;
 };
 
+struct macro {
+	Symbol *sym;
+	char **arglist;
+	char *buffer;
+	char *def;
+	int bufsiz;
+	int npars;
+};
+
 #ifdef stdin
 struct input {
 	char flags;
@@ -491,6 +501,9 @@ extern void outcpp(void);
 extern void defdefine(char *macro, char *val, char *source);
 extern void undefmacro(char *s);
 extern void ppragmaln(void);
+extern void delmacro(Macro *);
+extern Macro *newmacro(Symbol *);
+
 
 /* builtin.c */
 extern void ibuilts(void);

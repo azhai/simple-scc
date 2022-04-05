@@ -9,18 +9,6 @@
 #include <scc/scc.h>
 #include "cc1.h"
 
-struct macroctx {
-	Symbol *sym;
-	char *argp;
-	char **arglist;
-	char **listp;
-	char *buffer;
-	char *def;
-	size_t bufsiz;
-	int arglen;
-	int npars;
-};
-
 static unsigned ncmdlines;
 static Symbol *symline, *symfile;
 static unsigned char ifstatus[NR_COND];
@@ -87,7 +75,7 @@ icpp(void)
 }
 
 static void
-nextcpp(struct macroctx *mp)
+nextcpp(Macro *mp)
 {
 	next();
 	if (yytoken == EOFTOK)
@@ -98,7 +86,7 @@ nextcpp(struct macroctx *mp)
 }
 
 static void
-paren(struct macroctx *mp)
+paren(Macro *mp)
 {
 	for (;;) {
 		nextcpp(mp);
@@ -112,11 +100,11 @@ paren(struct macroctx *mp)
 	}
 }
 
-static void
-parameter(struct macroctx *mp)
+static char *
+parameter(Macro *mp)
 {
 	int siz;
-	char *begin, *end;
+	char *s, *begin, *end;
 
 	begin = input->begin;
 	for (;;) {
@@ -130,15 +118,9 @@ parameter(struct macroctx *mp)
 				--end;
 
 			siz = end - begin;
-			if (siz+1 > mp->arglen) {
-				error("argument overflow invoking macro \"%s\"",
-				      mp->sym->name);
-			}
-			memcpy(mp->argp, begin, siz);
-			mp->argp += siz;
-			*mp->argp++ = '\0';
-			mp->arglen -= siz + 1;
-			return;
+			s = memcpy(xmalloc(siz+1), begin, siz);
+			s[siz] = '\0';
+			return s;
 		case '(':
 			paren(mp);
 			break;
@@ -147,7 +129,7 @@ parameter(struct macroctx *mp)
 }
 
 static int
-parsepars(struct macroctx *mp)
+parsepars(Macro *mp)
 {
 	int n;
 
@@ -163,8 +145,8 @@ parsepars(struct macroctx *mp)
 		next();
 	} else {
 		do {
-			*mp->listp++ = mp->argp;
-			parameter(mp);
+			mp->arglist = xrealloc(mp->arglist, n*sizeof(char *));
+			mp->arglist[n] = parameter(mp);
 		} while (++n < NR_MACROARG && yytoken == ',');
 	}
 	if (yytoken != ')')
@@ -209,7 +191,7 @@ expandarg(char *arg, char *buf, int bufsiz)
 }
 
 static int
-copymacro(struct macroctx *mp)
+copymacro(Macro *mp)
 {
 	int delim, c, esc;
 	char *s, *p, *arg, *bp;
@@ -300,14 +282,43 @@ expansion_too_long:
 	error("macro expansion of \"%s\" too long", mp->sym->name);
 }
 
+void
+delmacro(Macro *mp)
+{
+	int i;
+
+	if (!mp)
+		return;
+
+	if (mp->arglist) {
+		for (i = 0; i < mp->npars; i++)
+			free(mp->arglist[i]);
+	}
+	free(mp->arglist);
+	free(mp);
+}
+
+Macro *
+newmacro(Symbol *sym)
+{
+	Macro *mp;
+
+	mp = xmalloc(sizeof(*mp));
+	mp->sym = sym;
+	mp->arglist = NULL;
+	mp->def = sym->u.s + 3;
+	mp->npars = 0;
+	mp->npars = atoi(sym->u.s);
+
+	return mp;
+}
+
 int
 expand(Symbol *sym)
 {
 	int elen;
-	int i;
-	struct macroctx macro;
-	char *arglist[NR_MACROARG];
-	char arguments[INPUTSIZ], buffer[INPUTSIZ];
+	Macro *mp;
+	char buffer[INPUTSIZ];
 
 	DBG("MACRO '%s' detected disexpand=%d hide=%d",
 	    sym->name, disexpand, sym->hide);
@@ -315,15 +326,9 @@ expand(Symbol *sym)
 	if (disexpand || sym->hide)
 		return 0;
 
-	macro.sym = sym;
-	macro.argp = arguments;
-	macro.listp = arglist;
-	macro.arglist = arglist;
-	macro.arglen = INPUTSIZ;
-	macro.buffer = buffer;
-	macro.npars = atoi(sym->u.s);
-	macro.def = sym->u.s + 3;
-	macro.bufsiz = INPUTSIZ-1;
+	mp = newmacro(sym);
+	mp->buffer = buffer;
+	mp->bufsiz = INPUTSIZ-1;
 
 	if (sym == symfile) {
 		elen = sprintf(buffer, "\"%s\" ", filenam);
@@ -334,14 +339,19 @@ expand(Symbol *sym)
 		goto substitute;
 	}
 
-	if (!parsepars(&macro))
+	if (!parsepars(mp)) {
+		delmacro(mp);
 		return 0;
-	elen = copymacro(&macro);
+	}
+	elen = copymacro(mp);
 
 substitute:
+	mp->buffer = NULL;
+	mp->bufsiz = 0;
 	buffer[elen] = '\0';
-	DBG("MACRO '%s' expanded to :'%s'", macro.sym->name, buffer);
-	addinput(filenam, sym, xstrdup(buffer), FAIL);
+	DBG("MACRO '%s' expanded to :'%s'", mp->sym->name, buffer);
+	addinput(filenam, mp->sym, xstrdup(buffer), FAIL);
+	delmacro(mp);
 
 	return 1;
 }
