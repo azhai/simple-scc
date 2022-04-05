@@ -410,7 +410,7 @@ struct input {
 	unsigned lineno;
 	char *filenam;
 	FILE *fp;
-	Symbol *macro;
+	Macro *macro;
 	char *line, *begin, *p;
 	struct input *next;
 };
@@ -459,7 +459,7 @@ extern int ahead(void);
 extern int next(void);
 extern void expect(int tok);
 extern void discard(void);
-extern int addinput(char *fname, Symbol *hide, char *buffer, int fail);
+extern int addinput(char *, Macro *, char *, int);
 extern void delinput(void);
 extern void setsafe(int type);
 extern void setloc(char *fname, unsigned line);

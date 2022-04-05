@@ -65,20 +65,22 @@ unhide(Symbol *sym)
 }
 
 int
-addinput(char *fname, Symbol *sym, char *buffer, int fail)
+addinput(char *fname, Macro *mp, char *buffer, int fail)
 {
 	FILE *fp;
 	char *extp;
 	unsigned flags;
 	int infileln;
+	Symbol *sym;
 	Input *newip, *curip = input;
 
 	if (curip)
 		curip->lineno = lineno;
 
-	if (sym) {
+	if (mp) {
 		/* this is a macro expansion */
 		fp = NULL;
+		sym = mp->sym;
 		DBG("MACRO: %s expanded to '%s'", sym->name, buffer);
 		hide(sym);
 		flags = IMACRO;
@@ -118,7 +120,7 @@ addinput(char *fname, Symbol *sym, char *buffer, int fail)
 
 	newip = xmalloc(sizeof(*newip));
 	newip->next = curip;
-	newip->macro = sym;
+	newip->macro = mp;
 	newip->lineno = lineno;
 	newip->p = newip->begin = newip->line = buffer;
 	newip->filenam = NULL;
@@ -141,11 +143,12 @@ delinput(void)
 			die("cc1: %s: %s", ip->filenam, strerror(errno));
 		break;
 	case IMACRO:
-		unhide(ip->macro);
+		unhide(ip->macro->sym);
 		break;
 	}
 
 	input = ip->next;
+	delmacro(ip->macro);
 	free(ip->filenam);
 	free(ip->line);
 	free(ip);

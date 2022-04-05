@@ -20,18 +20,23 @@ int disexpand;
 int disescape;
 
 void
-defdefine(char *macro, char *val, char *source)
+defdefine(char *name, char *val, char *source)
 {
 	char *def, *fmt = "#define %s %s\n";
-	Symbol dummy = {.name = macro, .flags = SDECLARED};
+	Symbol *sym = &(Symbol) {
+		.name = name,
+		.flags = SDECLARED,
+	};
+	Macro *mp;
 
 	if (!val)
 		val = "";
-	def = xmalloc(strlen(fmt) + strlen(macro) + strlen(val));
+	def = xmalloc(strlen(fmt) + strlen(name) + strlen(val));
+	sprintf(def, fmt, name, val);
+	mp = newmacro(sym);
 
-	sprintf(def, fmt, macro, val);
 	lineno = ++ncmdlines;
-	addinput(source, &dummy, def, FAIL);
+	addinput(source, mp, def, FAIL);
 	cpp();
 	delinput();
 }
@@ -311,7 +316,8 @@ newmacro(Symbol *sym)
 	mp->arglist = NULL;
 	mp->def = sym->u.s + 3;
 	mp->npars = 0;
-	mp->npars = atoi(sym->u.s);
+	if (sym->u.s)
+		mp->npars = atoi(sym->u.s);
 
 	return mp;
 }
@@ -353,8 +359,7 @@ substitute:
 	mp->bufsiz = 0;
 	buffer[elen] = '\0';
 	DBG("MACRO '%s' expanded to :'%s'", mp->sym->name, buffer);
-	addinput(filenam, mp->sym, xstrdup(buffer), FAIL);
-	delmacro(mp);
+	addinput(filenam, mp, xstrdup(buffer), FAIL);
 
 	return 1;
 }
