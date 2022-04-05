@@ -397,6 +397,7 @@ struct yystype {
 
 struct macro {
 	Symbol *sym;
+	char *fname;
 	char **arglist;
 	char *buffer;
 	char *def;
@@ -459,7 +460,7 @@ extern int ahead(void);
 extern int next(void);
 extern void expect(int tok);
 extern void discard(void);
-extern int addinput(char *, Macro *, char *, int);
+extern int addinput(int, void *, int);
 extern void delinput(void);
 extern void setsafe(int type);
 extern void setloc(char *fname, unsigned line);
@@ -532,7 +533,6 @@ extern int lexmode, namespace;
 extern int onlycpp, onlyheader;
 extern unsigned curctx;
 extern Symbol *curfun, *zero, *one;
-extern char *infile;
 extern unsigned lineno;
 extern char filenam[];
 extern char *architecture;

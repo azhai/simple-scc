@@ -8,7 +8,7 @@
 #include <scc/scc.h>
 #include "cc1.h"
 
-char *argv0, *infile;
+char *argv0;
 
 int warnings;
 jmp_buf recover;
@@ -91,8 +91,10 @@ main(int argc, char *argv[])
 	for (i = 0; i < uflags.n; ++i)
 		undefmacro(uflags.s[i]);
 
-	infile = (*argv) ? *argv : "<stdin>";
-	addinput(*argv, NULL, NULL, FAIL);
+	if (*argv)
+		addinput(IFILE, *argv, FAIL);
+	else
+		addinput(ISTDIN, NULL, FAIL);
 
 	if (onlycpp || onlyheader) {
 		outcpp();

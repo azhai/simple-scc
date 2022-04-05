@@ -22,6 +22,7 @@ int disescape;
 void
 defdefine(char *name, char *val, char *source)
 {
+	char buffer[INPUTSIZ+1];
 	char *def, *fmt = "#define %s %s\n";
 	Symbol *sym = &(Symbol) {
 		.name = name,
@@ -31,12 +32,18 @@ defdefine(char *name, char *val, char *source)
 
 	if (!val)
 		val = "";
-	def = xmalloc(strlen(fmt) + strlen(name) + strlen(val));
-	sprintf(def, fmt, name, val);
+	if (strlen(fmt) + strlen(name) + strlen(val) > INPUTSIZ) {
+		errorp("macro definition '%s' too big", name);
+		return;
+	}
+
+	sprintf(buffer, fmt, name, val);
 	mp = newmacro(sym);
+	mp->buffer = buffer;
+	mp->fname = source;
 
 	lineno = ++ncmdlines;
-	addinput(source, mp, def, FAIL);
+	addinput(IMACRO, mp, FAIL);
 	cpp();
 	delinput();
 }
@@ -177,8 +184,7 @@ expandarg(char *arg, char *buf, int bufsiz)
 	int siz, n;
 	char *s = buf;
 
-	addinput(filenam, NULL, xstrdup(arg), FAIL);
-
+	addinput(IPARAM, arg, FAIL);
 	for (siz = 0; next() != EOFTOK; siz += yylen+1) {
 		if (yylen > bufsiz-2) {
 			siz = -1;
@@ -336,6 +342,7 @@ expand(Symbol *sym)
 		return 0;
 
 	mp = newmacro(sym);
+	mp->fname = filenam;
 	mp->buffer = buffer;
 	mp->bufsiz = INPUTSIZ-1;
 
@@ -355,11 +362,9 @@ expand(Symbol *sym)
 	elen = copymacro(mp);
 
 substitute:
-	mp->buffer = NULL;
-	mp->bufsiz = 0;
 	buffer[elen] = '\0';
 	DBG("MACRO '%s' expanded to :'%s'", mp->sym->name, buffer);
-	addinput(filenam, mp, xstrdup(buffer), FAIL);
+	addinput(IMACRO, mp, FAIL);
 
 	return 1;
 }
@@ -533,7 +538,7 @@ includefile(char *dir, char *file, size_t filelen)
 	memcpy(path+dirlen, file, filelen);
 	path[dirlen + filelen] = '\0';
 
-	return addinput(path, NULL, NULL, NOFAIL);
+	return addinput(IFILE, path, NOFAIL);
 }
 
 static char *

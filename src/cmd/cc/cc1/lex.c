@@ -65,67 +65,84 @@ unhide(Symbol *sym)
 }
 
 int
-addinput(char *fname, Macro *mp, char *buffer, int fail)
+addinput(int type, void *arg, int fail)
 {
 	FILE *fp;
-	char *extp;
-	unsigned flags;
+	char *extp, *fname, *buffer, *infile;;
 	int infileln;
+	Macro *mp;
 	Symbol *sym;
 	Input *newip, *curip = input;
 
 	if (curip)
 		curip->lineno = lineno;
 
-	if (mp) {
-		/* this is a macro expansion */
+	switch (type) {
+	case IMACRO:
 		fp = NULL;
+		mp = arg;
 		sym = mp->sym;
-		DBG("MACRO: %s expanded to '%s'", sym->name, buffer);
+		fname = mp->fname;
+		buffer = mp->buffer;
 		hide(sym);
-		flags = IMACRO;
-	} else if (buffer) {
-		/* this is a macro parameter */
+		DBG("INPUT: macro %s expanded to '%s'", sym->name, buffer);
+		break;
+	case IPARAM:
 		fp = NULL;
-		DBG("MACRO parameter '%s'", buffer);
-		flags = IPARAM;
-	} else if (fname) {
-		/* a new file */
+		mp = NULL;
+		buffer = arg;
+		fname = filenam;
+		DBG("INPUT: macro parameter '%s'", buffer);
+		break;
+	case IFILE:
+		fname = arg;
+		mp = NULL;
+		buffer = NULL;
+
 		if ((fp = fopen(fname, "r")) == NULL) {
 			if (!fail)
 				return 0;
 			die("cc1: %s: %s", fname, strerror(errno));
 		}
-		flags = IFILE;
 		if (curip && onlyheader) {
+			infile = curip->filenam;
 			infileln = strlen(infile);
 			if (extp = strrchr(infile, '.'))
 				infileln -= strlen(extp);
+			/* TODO: is this C99? */
 			printf("%.*s.o: %s %s\n",
 			       infileln, infile, infile, fname);
 		}
 		lineno = 0;
-	} else {
-		/* reading from stdin */
+		DBG("INPUT: file input '%s'", fname);
+		break;
+	case ISTDIN:
 		fp = stdin;
+		mp = NULL;
 		fname = "<stdin>";
-		flags = ISTDIN;
+		buffer = NULL;
 		lineno = 0;
+		DBG("INPUT: file input 'stdin'");
+		break;
+	default:
+		abort();
 	}
 
 	if (!buffer) {
 		buffer = xmalloc(INPUTSIZ);
 		buffer[0] = '\0';
+	} else {
+		buffer = xstrdup(buffer);
 	}
 
 	newip = xmalloc(sizeof(*newip));
 	newip->next = curip;
 	newip->macro = mp;
-	newip->lineno = lineno;
 	newip->p = newip->begin = newip->line = buffer;
 	newip->filenam = NULL;
+	newip->lineno = 0;
 	newip->fp = fp;
-	newip->flags = flags;
+	newip->flags = type;
 	input = newip;
 
 	setloc(fname, lineno);
@@ -139,12 +156,22 @@ delinput(void)
 
 	switch (ip->flags & ITYPE) {
 	case IFILE:
+		DBG("INPUT: file finished '%s'", ip->filenam);
 		if (fclose(ip->fp))
 			die("cc1: %s: %s", ip->filenam, strerror(errno));
 		break;
 	case IMACRO:
+		DBG("INPUT: macro %s finished", ip->macro->sym->name);
 		unhide(ip->macro->sym);
 		break;
+	case IPARAM:
+		DBG("INPUT: macro param finished");
+		break;
+	case ISTDIN:
+		DBG("INPUT: stdin finished");
+		break;
+	default:
+		abort();
 	}
 
 	input = ip->next;
