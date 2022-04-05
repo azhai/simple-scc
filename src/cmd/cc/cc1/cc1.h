@@ -129,8 +129,11 @@ enum tokens {
 	RESTRICT   = 1 << 1,
 	VOLATILE   = 1 << 2,
 	INLINE     = 1 << 3,
-	TQUALIFIER = 1 << 7,      /* this value is picked outside of ASCII range */
-	TYPE,
+	TQUALIFIER = 1 << 7,
+	MACROPAR   = 17,
+	CONCAT     = 18,
+	STRINGIZE  = 19,
+	TYPE       = 129,
 	IDEN,
 	SCLASS,
 	CONSTANT,

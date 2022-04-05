@@ -755,7 +755,7 @@ operator(void)
 		t = follow('=', NE, '!');
 		break;
 	case '#':
-		t = follow('#', '$', '#');
+		t = follow('#', CONCAT, STRINGIZE);
 		break;
 	case '-':
 		t = minus();
