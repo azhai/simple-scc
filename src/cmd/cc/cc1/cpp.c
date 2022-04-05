@@ -333,10 +333,7 @@ expand(Symbol *sym)
 		elen = sprintf(buffer, "%d ", lineno);
 		goto substitute;
 	}
-	if (!sym->u.s)
-		return 1;
 
-	macro.npars = atoi(sym->u.s);
 	if (!parsepars(&macro))
 		return 0;
 	elen = copymacro(&macro);
