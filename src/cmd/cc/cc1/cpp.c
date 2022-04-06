@@ -181,7 +181,7 @@ parsepars(Macro *mp)
 static int
 expandarg(char *arg, char *buf, int bufsiz)
 {
-	int siz, n;
+	int siz;
 	char *s = buf;
 
 	addinput(IPARAM, arg, FAIL);
