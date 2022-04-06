@@ -902,8 +902,7 @@ discard(void)
 	if (!input)
 		return;
 
-	input->begin = input->p;
-	for (c = yytoken; ; c = *input->begin++) {
+	for (c = yytoken; ; c = *input->p++) {
 		switch (safe) {
 		case END_COMP:
 			if (c == '}')
@@ -926,7 +925,10 @@ discard(void)
 			exit(1);
 	}
 jump:
+	input->begin = input->p;
 	yytoken = c;
+	yytext[0] = c;
+	yytext[1] = '\0';
 	exit(EXIT_FAILURE);
 
 	/*
