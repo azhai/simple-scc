@@ -344,6 +344,10 @@ builtins(struct builtin *built)
 void
 isyms(void)
 {
+	static struct keyword cppoper[] = {
+		{"defined", DEFINED, DEFINED},
+		{NULL, 0, 0}
+	};
 	static struct keyword cppkeys[] = {
 		{"define", DEFINE, DEFINE},
 		{"include", INCLUDE, INCLUDE},
@@ -401,6 +405,7 @@ isyms(void)
 
 	keywords(lexkeys, NS_KEYWORD);
 	keywords(cppkeys, NS_CPPCLAUSES);
+	keywords(cppoper, NS_CPP);
 	ibuilts();
 
 	/*

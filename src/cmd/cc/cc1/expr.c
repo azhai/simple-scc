@@ -568,32 +568,6 @@ negation(int op, Node *np)
 }
 
 static Symbol *
-notdefined(Symbol *sym)
-{
-	int isdef;
-
-	if (namespace == NS_CPP && !strcmp(sym->name, "defined")) {
-		disexpand = 1;
-		next();
-		expect('(');
-		sym = yylval.sym;
-		expect(IDEN);
-		expect(')');
-
-		isdef = (sym->flags & SDECLARED) != 0;
-		sym = newsym(NS_IDEN, NULL);
-		sym->type = inttype;
-		sym->flags |= SCONSTANT;
-		sym->u.i = isdef;
-		disexpand = 0;
-		return sym;
-	}
-	errorp("'%s' undeclared", yytext);
-	sym->type = inttype;
-	return install(sym->ns, yylval.sym);
-}
-
-static Symbol *
 adjstrings(Symbol *sym)
 {
 	char *s, *t;
@@ -650,17 +624,23 @@ primary(void)
 	case CONSTANT:
 		np = constnode(sym);
 		break;
+	case DEFINED:
+		np = defined();
+		break;
 	case IDEN:
 		assert((sym->flags & SCONSTANT) == 0);
-		if ((sym->flags & SDECLARED) == 0) {
-			if (namespace == NS_CPP) {
-				np = constnode(zero);
-				break;
-			}
-			sym = notdefined(sym);
+		if ((sym->flags & SDECLARED) != 0) {
+			sym->flags |= SUSED;
+			np = varnode(sym);
+		} else if (namespace == NS_CPP) {
+			np = constnode(zero);
+		} else {
+			errorp("'%s' undeclared", yytext);
+			sym->type = inttype;
+			sym = install(sym->ns, yylval.sym);
+			sym->flags |= SUSED;
+			np = varnode(sym);
 		}
-		sym->flags |= SUSED;
-		np = varnode(sym);
 		break;
 	default:
 		unexpected();
@@ -807,28 +787,6 @@ postfix(Node *lp)
 	}
 }
 
-static Node *
-defined(void)
-{
-	Symbol *sym;
-	int paren;
-
-	disexpand = 1;
-	next();
-	paren = accept('(');
-	if (yytoken != IDEN && yytoken != TYPEIDEN)
-		cpperror("operator 'defined' requires an identifier");
-	if (yytoken == TYPEIDEN || !(yylval.sym->flags & SDECLARED))
-		sym = zero;
-	else
-		sym = one;
-	disexpand = 0;
-	next();
-	if (paren)
-		expect(')');
-	return constnode(sym);
-}
-
 static Node *cast(int);
 
 static Node *
@@ -857,10 +815,8 @@ unary(int needdecay)
 		next();
 		np = incdec(unary(1), op);
 		goto chk_decay;
-	case IDEN:
-	case TYPEIDEN:
-		if (lexmode == CPPMODE && !strcmp(yylval.sym->name, "defined"))
-			return defined();
+	case DEFINED:
+		return defined();
 	default:
 		np = postfix(primary());
 		goto chk_decay;

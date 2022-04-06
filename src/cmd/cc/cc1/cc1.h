@@ -196,6 +196,7 @@ enum tokens {
 	BREAK,
 	RETURN,
 	DEFINE,
+	DEFINED,
 	INCLUDE,
 	LINE,
 	PRAGMA,
@@ -504,6 +505,7 @@ extern void undefmacro(char *s);
 extern void ppragmaln(void);
 extern void delmacro(Macro *);
 extern Macro *newmacro(Symbol *);
+extern Node *defined(void);
 
 
 /* builtin.c */

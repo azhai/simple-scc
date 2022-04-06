@@ -338,7 +338,7 @@ expand(Symbol *sym)
 	DBG("MACRO '%s' detected disexpand=%d hide=%d",
 	    sym->name, disexpand, sym->hide);
 
-	if (disexpand || sym->hide)
+	if (disexpand || sym->hide || sym->token != IDEN)
 		return 0;
 
 	mp = newmacro(sym);
@@ -678,6 +678,29 @@ usererr(void)
 	cpperror("#error %s", input->p);
 	*input->p = '\0';
 	next();
+}
+
+
+Node *
+defined(void)
+{
+	Symbol *sym;
+	int paren;
+
+	disexpand = 1;
+	next();
+	paren = accept('(');
+	if (yytoken != IDEN && yytoken != TYPEIDEN)
+		cpperror("operator 'defined' requires an identifier");
+	if (yytoken == TYPEIDEN || !(yylval.sym->flags & SDECLARED))
+		sym = zero;
+	else
+		sym = one;
+	disexpand = 0;
+	next();
+	if (paren)
+		expect(')');
+	return constnode(sym);
 }
 
 static void
