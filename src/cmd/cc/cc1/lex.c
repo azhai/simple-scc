@@ -85,7 +85,7 @@ addinput(int type, void *arg, int fail)
 		fname = mp->fname;
 		buffer = mp->buffer;
 		hide(sym);
-		DBG("INPUT: macro %s expanded to '%s'", sym->name, buffer);
+		DBG("INPUT: expanding macro %s", sym->name);
 		break;
 	case IPARAM:
 		fp = NULL;

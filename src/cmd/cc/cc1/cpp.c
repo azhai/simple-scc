@@ -211,6 +211,11 @@ copymacro(Macro *mp)
 	char *s, *p, *arg, *bp;
 	int size, bufsiz;
 
+	if (mp->sym == symfile)
+		return sprintf(mp->buffer, "\"%s\" ", filenam);
+	if (mp->sym == symline)
+		return sprintf(mp->buffer, "%d ", lineno);
+
 	bp = mp->buffer;
 	bufsiz = mp->bufsiz;
 	for (s = mp->def; c = *s; ++s) {
@@ -322,6 +327,7 @@ newmacro(Symbol *sym)
 	mp->arglist = NULL;
 	mp->def = sym->u.s + 3;
 	mp->npars = 0;
+	mp->buffer = NULL;
 	if (sym->u.s)
 		mp->npars = atoi(sym->u.s);
 
@@ -333,7 +339,6 @@ expand(Symbol *sym)
 {
 	int elen;
 	Macro *mp;
-	char buffer[INPUTSIZ];
 
 	DBG("MACRO '%s' detected disexpand=%d hide=%d",
 	    sym->name, disexpand, sym->hide);
@@ -343,28 +348,20 @@ expand(Symbol *sym)
 
 	mp = newmacro(sym);
 	mp->fname = filenam;
-	mp->buffer = buffer;
-	mp->bufsiz = INPUTSIZ-1;
-
-	if (sym == symfile) {
-		elen = sprintf(buffer, "\"%s\" ", filenam);
-		goto substitute;
-	}
-	if (sym == symline) {
-		elen = sprintf(buffer, "%d ", lineno);
-		goto substitute;
-	}
 
 	if (!parsepars(mp)) {
 		delmacro(mp);
 		return 0;
 	}
-	elen = copymacro(mp);
 
-substitute:
-	buffer[elen] = '\0';
-	DBG("MACRO '%s' expanded to :'%s'", mp->sym->name, buffer);
 	addinput(IMACRO, mp, FAIL);
+	mp->buffer = input->line;
+	mp->bufsiz = INPUTSIZ-1;
+
+	elen = copymacro(mp);
+	mp->buffer[elen] = '\0';
+
+	DBG("MACRO '%s' expanded to :'%s'", mp->sym->name, mp->buffer);
 
 	return 1;
 }
