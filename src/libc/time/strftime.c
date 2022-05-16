@@ -293,8 +293,13 @@ strftime(char *restrict s, size_t maxsize,
 			inc = timezone(s, n, timeptr);
 			break;
 		case 'Z':
-			memcpy(s, timeptr->tm_zone, 3);
-			inc = 3;
+			inc = strlen(timeptr->tm_zone);
+			if (inc > n) {
+				*s = '?';
+				inc = 1;
+			} else {
+				memcpy(s, timeptr->tm_zone, inc);
+			}
 			break;
 		case '\0':
 			inc = 0;
