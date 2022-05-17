@@ -15,11 +15,14 @@ DIRS =\
 	linux\
 	posix\
 
-POSIX =\
+BSD =\
 	netbsd\
 	openbsd\
 	darwin\
 	dragonfly\
+
+POSIX =\
+	$(BSD)\
 	linux\
 
 include $(PROJECTDIR)/scripts/rules.mk
@@ -30,3 +33,4 @@ NODEP = 1
 all: $(ARCH) $(SYS)
 
 $(POSIX): posix
+$(BSD): bsd

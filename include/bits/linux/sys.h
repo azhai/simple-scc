@@ -27,3 +27,4 @@ extern pid_t _getpid(void);
 extern int _kill(pid_t, int);
 extern int _sigaction(int, struct sigaction *, struct sigaction *);
 extern pid_t _wait4(pid_t, int *, int, struct rusage *);
+extern pid_t _waitpid(pid_t, int *, int);
