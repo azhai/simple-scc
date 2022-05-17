@@ -12,6 +12,7 @@ OBJS =\
 	arch/amd64/openbsd/_open.$O\
 	arch/amd64/openbsd/_read.$O\
 	arch/amd64/openbsd/_sigaction.$O\
+	arch/amd64/openbsd/_wait4.$O\
 	arch/amd64/openbsd/_write.$O\
 	arch/amd64/openbsd/crt.$O\
 	arch/amd64/openbsd/_sys_errlist.$O\

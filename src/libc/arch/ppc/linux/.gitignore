@@ -10,5 +10,6 @@ _read.s
 _sys_brk.s
 _sys_errlist.c
 _unlink.s
+_wait4.s
 _waitpid.s
 _write.s

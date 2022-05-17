@@ -9,4 +9,5 @@
 37	_kill
 19	_lseek
 45	_sys_brk
+114	_wait4
 134	__sigaction

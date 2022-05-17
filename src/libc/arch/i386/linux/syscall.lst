@@ -10,3 +10,4 @@
 37	_kill		2
 45	_sys_brk	1
 67	__sigaction	4
+114	_wait4	4

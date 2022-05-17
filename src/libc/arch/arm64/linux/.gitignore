@@ -7,4 +7,5 @@ _lseek.s
 _openat.s
 _read.s
 _sys_errlist.c
+_wait4.s
 _write.s

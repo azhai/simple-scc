@@ -17,6 +17,7 @@ GENOBJS =\
 	_read.$O\
 	_sigaction.$O\
 	_write.$O\
+	_wait4.$O\
 
 OBJS =\
 	$(GENOBJS)\

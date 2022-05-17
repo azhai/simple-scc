@@ -18,8 +18,8 @@ GENOBJS =\
 	_read.$O\
 	_sys_brk.$O\
 	_unlink.$O\
-	_waitpid.$O\
 	_write.$O\
+	_wait4.$O\
 
 OBJS =\
 	$(GENOBJS)\

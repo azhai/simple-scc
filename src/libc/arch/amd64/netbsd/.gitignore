@@ -11,4 +11,5 @@ _read.s
 _setcontext.s
 _sigaction2.s
 _sys_errlist.c
+_wait4.s
 _write.s

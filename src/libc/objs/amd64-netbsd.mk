@@ -19,6 +19,7 @@ OBJS =\
 	arch/amd64/netbsd/_setcontext.$O\
 	arch/amd64/netbsd/_sigaction2.$O\
 	arch/amd64/netbsd/_sys_errlist.$O\
+	arch/amd64/netbsd/_wait4.$O\
 	arch/amd64/netbsd/_write.$O\
 	arch/amd64/netbsd/crt.$O\
 	arch/amd64/setjmp.$O\

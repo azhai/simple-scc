@@ -5,10 +5,10 @@
 4	_write
 5	_open
 6	_close
-7	_waitpid
 8	_creat
 9	_link
 10	_unlink
 20	_getpid
 37	_kill
 45	_sys_brk
+114	_wait4

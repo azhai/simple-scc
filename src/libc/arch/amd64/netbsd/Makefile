@@ -18,6 +18,7 @@ GENOBJS  =\
 	_setcontext.$O\
 	_sigaction2.$O\
 	_write.$O\
+	_wait4.$O\
 
 OBJS =\
 	$(GENOBJS)\

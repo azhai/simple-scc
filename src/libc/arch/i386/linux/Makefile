@@ -16,6 +16,7 @@ GENOBJS =\
 	_sigaction.$O\
 	_sys_brk.$O\
 	_write.$O\
+	_wait4.$O\
 
 GENSRC = $(GENOBJS:.$O=.s)
 

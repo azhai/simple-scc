@@ -13,4 +13,5 @@ _sigreturn.s
 _sys_brk.s
 _sys_errlist.c
 _unlink.s
+_wait4.s
 _write.s

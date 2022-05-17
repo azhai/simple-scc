@@ -8,4 +8,5 @@ _open.s
 _read.s
 _sigaction.s
 _sys_brk.s
+_wait4.s
 _write.s

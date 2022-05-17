@@ -13,3 +13,4 @@
 308	_setcontext	1
 340	_sigaction2	5
 418	_gettimeofday	2
+449	_wait4	4

@@ -17,6 +17,7 @@ OBJS =\
 	arch/amd64/linux/_sys_brk.$O\
 	arch/amd64/linux/_sys_errlist.$O\
 	arch/amd64/linux/_unlink.$O\
+	arch/amd64/linux/_wait4.$O\
 	arch/amd64/linux/_write.$O\
 	arch/amd64/linux/crt.$O\
 	arch/amd64/longjmp.$O\
