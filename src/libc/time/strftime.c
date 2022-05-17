@@ -169,9 +169,10 @@ strftime(char *restrict s, size_t maxsize,
 {
 	int ch, abrev, val, fill, width;
 	size_t n, inc;
-	char *tfmt;
+	char *tfmt, *begin;
 
-	for (n = --maxsize; (ch = *format++) && n > 0; s += inc, n -= inc) {
+	begin = s;
+	for (n = maxsize; (ch = *format++) && n > 0; s += inc, n -= inc) {
 		if (ch != '%') {
 			*s = ch;
 			inc = 1;
@@ -320,7 +321,11 @@ strftime(char *restrict s, size_t maxsize,
 			break;
 		}
 	}
+
+	n = s - begin;
+	if (n == maxsize)
+		return 0;
 	*s = '\0';
 
-	return maxsize - n;
+	return n;
 }
