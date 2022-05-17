@@ -11,6 +11,11 @@
 #define CLOCKS_PER_SEC ((clock_t) 1000000)
 #define RUSAGE_SELF 0
 
+#define F_OK    0
+#define X_OK    1
+#define R_OK    4
+#define W_OK    2
+
 typedef int pid_t;
 
 extern pid_t _getpid(void);

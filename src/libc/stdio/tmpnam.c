@@ -1,3 +1,5 @@
+#include <sys.h>
+
 #include <stdio.h>
 #include <string.h>
 
@@ -24,7 +26,8 @@ tmpnam(char *s)
 		if (*p == '\0')
 			return NULL;
 		++*p;
-		if (_access(buf, 0) != 0)
+
+		if (_access(buf, F_OK) != 0)
 			break;
 	}
 	if (s)
