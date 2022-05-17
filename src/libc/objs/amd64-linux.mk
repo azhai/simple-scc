@@ -7,6 +7,7 @@ OBJS =\
 	arch/amd64/linux/_close.$O\
 	arch/amd64/linux/_execve.$O\
 	arch/amd64/linux/_exit.$O\
+	arch/amd64/linux/_fork.$O\
 	arch/amd64/linux/_getpid.$O\
 	arch/amd64/linux/_getrusage.$O\
 	arch/amd64/linux/_gettimeofday.$O\

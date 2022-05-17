@@ -11,6 +11,7 @@ OBJS =\
 	arch/amd64/netbsd/_brk.$O\
 	arch/amd64/netbsd/_close.$O\
 	arch/amd64/netbsd/_exit.$O\
+	arch/amd64/netbsd/_fork.$O\
 	arch/amd64/netbsd/_getpid.$O\
 	arch/amd64/netbsd/_kill.$O\
 	arch/amd64/netbsd/_lseek.$O\
