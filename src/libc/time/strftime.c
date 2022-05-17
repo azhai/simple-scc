@@ -32,7 +32,7 @@ first(int day, int year)
 }
 
 static int
-weeknum(struct tm *tm, int day)
+weeknum(const struct tm *tm, int day)
 {
 	int fday, val;
 
@@ -48,7 +48,7 @@ weeknum(struct tm *tm, int day)
 }
 
 static int
-isoyear(struct tm *tm)
+isoyear(const struct tm *tm)
 {
 	int monday;
 
@@ -65,7 +65,7 @@ isoyear(struct tm *tm)
 }
 
 static int
-isoweek(struct tm *tm)
+isoweek(const struct tm *tm)
 {
 	int year, monday, yday, val;
 
@@ -83,7 +83,7 @@ isoweek(struct tm *tm)
 }
 
 static int
-isoday(struct tm *tm)
+isoday(const struct tm *tm)
 {
 	if (tm->tm_wday == 0)
 		return 7;
