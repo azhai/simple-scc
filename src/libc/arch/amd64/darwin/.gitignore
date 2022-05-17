@@ -1,5 +1,6 @@
 __close.s
 __exit.s
+__fork.s
 __getpid.s
 __kill.s
 __lseek.s

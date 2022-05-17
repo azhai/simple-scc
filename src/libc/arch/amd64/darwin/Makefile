@@ -7,6 +7,7 @@ include ../../../rules.mk
 GENOBJS =\
 	__close.$O\
 	__exit.$O\
+	__fork.$O\
 	__getpid.$O\
 	__kill.$O\
 	__lseek.$O\

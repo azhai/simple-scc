@@ -1,5 +1,6 @@
 #number name
 322	_openat
+2	_fork
 6	_close
 3	_read
 4	_write

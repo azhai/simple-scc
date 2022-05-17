@@ -8,6 +8,7 @@ GENOBJS =\
 	_brk.$O\
 	_close.$O\
 	_exit.$O\
+	_fork.$O\
 	_getpid.$O\
 	_gettimeofday.$O\
 	_kill.$O\

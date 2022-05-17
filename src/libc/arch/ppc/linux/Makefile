@@ -10,6 +10,7 @@ GENOBJS =\
 	_close.$O\
 	_creat.$O\
 	_exit.$O\
+	_fork.$O\
 	_getpid.$O\
 	_kill.$O\
 	_link.$O\

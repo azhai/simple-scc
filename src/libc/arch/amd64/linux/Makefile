@@ -9,6 +9,7 @@ GENOBJS =\
 	__sigaction.$O\
 	_close.$O\
 	_exit.$O\
+	_fork.$O\
 	_getpid.$O\
 	_getrusage.$O\
 	_gettimeofday.$O\

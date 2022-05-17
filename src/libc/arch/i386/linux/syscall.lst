@@ -1,5 +1,6 @@
 #number	name		num_of_op
 1	_exit		1
+2	_fork		0
 3	_read		3
 4	_write		3
 5	_open		2

@@ -1,6 +1,7 @@
 _brk.s
 _close.s
 _exit.s
+_fork.s
 _getpid.s
 _gettimeofday.s
 _kill.s

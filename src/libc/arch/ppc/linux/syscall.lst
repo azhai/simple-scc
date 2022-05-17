@@ -1,5 +1,6 @@
 #number	name
 1	_exit
+2	_fork
 3	_read
 4	_write
 5	_open
