@@ -8,6 +8,7 @@ include ../../../rules.mk
 GENOBJS =\
 	__sigaction.$O\
 	_close.$O\
+	_execve.$O\
 	_exit.$O\
 	_fork.$O\
 	_getpid.$O\

@@ -5,6 +5,7 @@
 3	_read
 4	_write
 1	_exit
+11	_execve
 20	_getpid
 37	_kill
 19	_lseek

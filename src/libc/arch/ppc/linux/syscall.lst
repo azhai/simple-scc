@@ -8,6 +8,7 @@
 8	_creat
 9	_link
 10	_unlink
+11	_execve
 20	_getpid
 37	_kill
 45	_sys_brk

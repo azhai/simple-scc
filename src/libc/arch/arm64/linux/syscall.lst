@@ -9,4 +9,5 @@
 134	__sigaction
 172	_getpid
 214	_sys_brk
+221	_execve
 260	_wait4

@@ -21,6 +21,7 @@ typedef int pid_t;
 struct sigaction;
 struct rusage;
 
+extern int _execve(char *, char *[], char *[]);
 extern int _fork(void);
 extern pid_t _getpid(void);
 extern int _kill(pid_t, int);
