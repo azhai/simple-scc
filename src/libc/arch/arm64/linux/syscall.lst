@@ -4,7 +4,7 @@
 62	_lseek
 63	_read
 64	_write
-93	_Exit
+93	_exit
 129	_kill
 134	__sigaction
 172	_getpid
