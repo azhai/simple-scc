@@ -96,20 +96,21 @@ sval(char *s, size_t siz, char **strs, int abrev, int idx, int max)
 	char *str;
 	size_t len;
 
-	if (idx < 0 && idx >= max)
-		goto wrong;
+	if (siz == 0)
+		return 0;
+
+	if (idx < 0 && idx >= max) {
+		*s = '?';
+		return 1;
+	}
 
 	str = strs[idx];
 	len = (!abrev) ? strlen(str) : 3;
 	if (len > siz)
-		goto wrong;
+		len = siz;
 
 	memcpy(s, str, len);
 	return len;
-
-wrong:
-	*s = '?';
-	return 1;
 }
 
 static size_t
@@ -119,7 +120,13 @@ dval(char *s, size_t siz, int prec, int fill, int val)
 	int n;
 	static char digits[] = "0123456789";
 
-	if (prec > siz || val < 0) {
+	if (siz == 0)
+		return 0;
+
+	if (prec > siz)
+		prec = siz;
+
+	if (val < 0) {
 		*s = '?';
 		return 1;
 	}
@@ -137,14 +144,10 @@ dval(char *s, size_t siz, int prec, int fill, int val)
 }
 
 static size_t
-timezone(char *s, size_t prec, const struct tm * restrict tm)
+timezone(char *s, size_t siz, const struct tm * restrict tm)
 {
+	size_t n;
 	long off = tm->tm_gmtoff;
-
-        if (prec < 5) {
-                *s = '?';
-                return 1;
-        }
 
 	if (off >= 0) {
 		*s++ = '+';
@@ -153,10 +156,11 @@ timezone(char *s, size_t prec, const struct tm * restrict tm)
 		off = -off;
 	}
 
-	dval(s, 2, 2, '0', off / 3600);
-	dval(s + 2, 2, 2, '0', (off % 3600) / 60);
+	n = 1;
+	n += dval(s, siz-n, 2, '0', off / 3600);
+	n += dval(s + n, siz-n, 2, '0', (off % 3600) / 60);
 
-	return 5;
+	return n;
 }
 
 size_t
@@ -294,12 +298,9 @@ strftime(char *restrict s, size_t maxsize,
 			break;
 		case 'Z':
 			inc = strlen(timeptr->tm_zone);
-			if (inc > n) {
-				*s = '?';
-				inc = 1;
-			} else {
-				memcpy(s, timeptr->tm_zone, inc);
-			}
+			if (inc > n)
+				inc = n;
+			memcpy(s, timeptr->tm_zone, inc);
 			break;
 		case '\0':
 			inc = 0;
