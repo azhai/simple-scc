@@ -10,6 +10,7 @@
 10	_unlink
 11	_execve
 20	_getpid
+33	_access
 37	_kill
 45	_sys_brk
 114	_wait4

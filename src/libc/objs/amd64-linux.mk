@@ -3,6 +3,7 @@ include objs/common-objs.mk
 OBJS =\
 	$(COMMON_OBJS)\
 	arch/amd64/linux/__sigaction.$O\
+	arch/amd64/linux/_access.$O\
 	arch/amd64/linux/_cerrno.$O\
 	arch/amd64/linux/_close.$O\
 	arch/amd64/linux/_execve.$O\

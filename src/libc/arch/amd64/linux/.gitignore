@@ -1,4 +1,5 @@
 __sigaction.s
+_access.s
 _close.s
 _exit.s
 _execve.s

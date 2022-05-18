@@ -8,6 +8,7 @@
 12	_sys_brk	1
 13	__sigaction	4
 15	_sigreturn	0
+21	_access	2
 39	_getpid	0
 57	_fork	0
 59	_execve	3

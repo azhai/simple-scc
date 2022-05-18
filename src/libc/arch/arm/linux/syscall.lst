@@ -7,6 +7,7 @@
 11	_execve
 19	_lseek
 20	_getpid
+33	_access
 37	_kill
 45	_sys_brk
 114	_wait4

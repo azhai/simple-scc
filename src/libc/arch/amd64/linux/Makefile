@@ -6,6 +6,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 include ../../../rules.mk
 
 GENOBJS =\
+	_access.$O\
 	__sigaction.$O\
 	_close.$O\
 	_execve.$O\
