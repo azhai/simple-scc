@@ -36,5 +36,6 @@ OBJS =\
 	arch/posix/getenv.$O\
 	arch/posix/raise.$O\
 	arch/posix/signal.$O\
+	arch/posix/system.$O\
 	arch/posix/time.$O\
 	string/strlen.$O\

@@ -13,6 +13,7 @@ OBJS=\
 	getenv.$O\
 	raise.$O\
 	signal.$O\
+	system.$O\
 	time.$O\
 
 all: $(OBJS)
