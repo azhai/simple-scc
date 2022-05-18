@@ -160,7 +160,7 @@ parsepars(Macro *mp)
 		next();
 	} else {
 		do {
-			mp->arglist = xrealloc(mp->arglist, n*sizeof(char *));
+			mp->arglist = xrealloc(mp->arglist, (n+1)*sizeof(char *));
 			mp->arglist[n] = parameter(mp);
 		} while (++n < NR_MACROARG && yytoken == ',');
 	}
