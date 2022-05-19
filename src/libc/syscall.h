@@ -7,3 +7,4 @@ extern int _unlink(const char *);
 extern int _write(int, void *, size_t);
 extern int _access(const char *, int);
 extern long _lseek(int, long, int);
+extern int _rename(const char *, const char *);

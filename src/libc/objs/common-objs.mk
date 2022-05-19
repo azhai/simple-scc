@@ -51,6 +51,7 @@ COMMON_OBJS =\
 	stdio/putchar.$O\
 	stdio/puts.$O\
 	stdio/remove.$O\
+	stdio/rename.$O\
 	stdio/rewind.$O\
 	stdio/setbuf.$O\
 	stdio/setvbuf.$O\

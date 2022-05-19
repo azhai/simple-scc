@@ -15,6 +15,7 @@ OBJS =\
 	arch/amd64/openbsd/_lseek.$O\
 	arch/amd64/openbsd/_open.$O\
 	arch/amd64/openbsd/_read.$O\
+	arch/amd64/openbsd/_rename.$O\
 	arch/amd64/openbsd/_sigaction.$O\
 	arch/amd64/openbsd/_unlink.$O\
 	arch/amd64/openbsd/_wait4.$O\
