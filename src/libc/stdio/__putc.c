@@ -24,10 +24,8 @@ __putc(int ch, FILE *fp)
 		return EOF;
 	}
 
-	if (fp->flags & _IOSTRG) {
-		fp->flags |= _IOERR;
-		return EOF;
-	}
+	if (fp->flags & _IOSTRG)
+		return ch & 0xFF;
 
 	if (fp->buf == NULL && _allocbuf(fp))
 		return EOF;
