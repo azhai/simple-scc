@@ -5,6 +5,7 @@ _execve.s
 _exit.s
 _fork.s
 _getpid.s
+_getrusage.s
 _gettimeofday.s
 _kill.s
 _lseek.s
@@ -12,5 +13,6 @@ _open.s
 _read.s
 _sigaction.s
 _sys_errlist.c
+_unlink.s
 _wait4.s
 _write.s

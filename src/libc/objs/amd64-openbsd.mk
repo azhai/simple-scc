@@ -9,12 +9,14 @@ OBJS =\
 	arch/amd64/openbsd/_exit.$O\
 	arch/amd64/openbsd/_fork.$O\
 	arch/amd64/openbsd/_getpid.$O\
+	arch/amd64/openbsd/_getrusage.$O\
 	arch/amd64/openbsd/_gettimeofday.$O\
 	arch/amd64/openbsd/_kill.$O\
 	arch/amd64/openbsd/_lseek.$O\
 	arch/amd64/openbsd/_open.$O\
 	arch/amd64/openbsd/_read.$O\
 	arch/amd64/openbsd/_sigaction.$O\
+	arch/amd64/openbsd/_unlink.$O\
 	arch/amd64/openbsd/_wait4.$O\
 	arch/amd64/openbsd/_write.$O\
 	arch/amd64/openbsd/crt.$O\

@@ -12,12 +12,14 @@ GENOBJS =\
 	_exit.$O\
 	_fork.$O\
 	_getpid.$O\
+	_getrusage.$O\
 	_gettimeofday.$O\
 	_kill.$O\
 	_lseek.$O\
 	_open.$O\
 	_read.$O\
 	_sigaction.$O\
+	_unlink.$O\
 	_write.$O\
 	_wait4.$O\
 

@@ -6,8 +6,10 @@
 4	_write	3
 5	_open	3
 6	_close	1
+10	_unlink	1
 11	_wait4	4
 17	_brk	1
+19	_getrusage	2
 20	_getpid	0
 33	_access	2
 46	_sigaction	3
