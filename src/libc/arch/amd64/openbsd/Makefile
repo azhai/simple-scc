@@ -5,8 +5,10 @@ include $(PROJECTDIR)/scripts/rules.mk
 include ../../../rules.mk
 
 GENOBJS =\
+	_access.$O\
 	_brk.$O\
 	_close.$O\
+	_execve.$O\
 	_exit.$O\
 	_fork.$O\
 	_getpid.$O\

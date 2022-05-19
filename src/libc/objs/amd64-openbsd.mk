@@ -2,8 +2,10 @@ include objs/common-objs.mk
 
 OBJS =\
 	$(COMMON_OBJS)\
+	arch/amd64/openbsd/_access.$O\
 	arch/amd64/openbsd/_brk.$O\
 	arch/amd64/openbsd/_close.$O\
+	arch/amd64/openbsd/_execve.$O\
 	arch/amd64/openbsd/_exit.$O\
 	arch/amd64/openbsd/_fork.$O\
 	arch/amd64/openbsd/_getpid.$O\

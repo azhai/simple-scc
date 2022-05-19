@@ -9,7 +9,9 @@
 11	_wait4	4
 17	_brk	1
 20	_getpid	0
+33	_access	2
 46	_sigaction	3
+59	_execve	3
 67	_gettimeofday	2
 122	_kill	2
 198	_lseek	3

@@ -1,5 +1,7 @@
+_access.s
 _brk.s
 _close.s
+_execve.s
 _exit.s
 _fork.s
 _getpid.s
