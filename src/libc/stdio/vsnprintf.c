@@ -19,7 +19,8 @@ vsnprintf(char *restrict s, size_t siz, const char *restrict fmt, va_list ap)
 	if (s) {
 		if (f.wp == f.rp)
 			--f.wp;
-		*f.wp = '\0';
+		if (siz != 0)
+			*f.wp = '\0';
 	}
 
 	return r;
