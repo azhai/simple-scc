@@ -15,6 +15,7 @@ GENOBJS =\
 	_lseek.$O\
 	_open.$O\
 	_read.$O\
+	_rename.$O\
 	_sigaction.$O\
 	_sys_brk.$O\
 	_write.$O\

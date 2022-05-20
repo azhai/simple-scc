@@ -16,6 +16,7 @@ OBJS =\
 	arch/amd64/linux/_lseek.$O\
 	arch/amd64/linux/_open.$O\
 	arch/amd64/linux/_read.$O\
+	arch/amd64/linux/_rename.$O\
 	arch/amd64/linux/_sigreturn.$O\
 	arch/amd64/linux/_sys_brk.$O\
 	arch/amd64/linux/_sys_errlist.$O\

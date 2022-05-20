@@ -15,6 +15,7 @@
 60	_exit	1
 61	_wait4	4
 62	_kill	2
+82	_rename	2
 87	_unlink	1
 96	_gettimeofday	2
 98	_getrusage	2

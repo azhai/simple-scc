@@ -11,6 +11,7 @@ _kill.s
 _lseek.s
 _open.s
 _read.s
+_rename.s
 _sigreturn.s
 _sys_brk.s
 _sys_errlist.c

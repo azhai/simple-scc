@@ -7,6 +7,7 @@ _kill.s
 _lseek.s
 _open.s
 _read.s
+_rename.s
 _sigaction.s
 _sys_brk.s
 _wait4.s

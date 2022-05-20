@@ -19,6 +19,7 @@ GENOBJS =\
 	_lseek.$O\
 	_open.$O\
 	_read.$O\
+	_rename.$O\
 	_sigreturn.$O\
 	_sys_brk.$O\
 	_unlink.$O\

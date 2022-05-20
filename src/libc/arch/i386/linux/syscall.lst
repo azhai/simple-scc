@@ -11,6 +11,7 @@
 20	_getpid	0
 33	_access	2
 37	_kill	2
+38	_rename	2
 45	_sys_brk	1
 67	__sigaction	4
 114	_wait4	4
