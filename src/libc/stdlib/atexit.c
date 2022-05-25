@@ -5,15 +5,25 @@
 
 #undef atexit
 
+static void (*funs[_ATEXIT_MAX])(void);
+static unsigned nfuns;
+
+static void
+callhdls(void)
+{
+	while (nfuns > 0)
+		(*funs[--nfuns])();
+}
+
 int
 atexit(void (*fun)(void))
 {
-	if (_exitn == _ATEXIT_MAX) {
+	if (nfuns == _ATEXIT_MAX) {
 		errno = ENOMEM;
 		return -1;
 	}
-
-	_exitf[_exitn++] = fun;
+	funs[nfuns++] = fun;
+	_atexithdl = callhdls;
 
 	return 0;
 }

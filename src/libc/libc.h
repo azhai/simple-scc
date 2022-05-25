@@ -57,3 +57,4 @@ extern struct tzone tzones[];
 extern void (*_exitf[])(void);
 extern unsigned _exitn;
 extern void (*_flushall)(void);
+extern void (*_atexithdl)(void);
