@@ -13,8 +13,6 @@ cleanup(void)
 int
 __putc(int ch, FILE *fp)
 {
-	static int first = 1;
-
 	if (fp->flags & _IOERR)
 		return EOF;
 
@@ -29,15 +27,7 @@ __putc(int ch, FILE *fp)
 
 	if (fp->buf == NULL && _allocbuf(fp))
 		return EOF;
-
-	if (first) {
-		if (atexit(cleanup)) {
-			fp->flags |= _IOERR;
-			errno = ENOMEM;
-			return EOF;
-		}
-		first = 0;
-	}
+	_flushall = cleanup;
 
 	if (fp->flags & _IOLBF) {
 		if (fp->wp == fp->lp && _flsbuf(fp))
