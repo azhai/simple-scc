@@ -1,5 +1,5 @@
-include $(BUILDDIR)/conf/ppc32-posix.mk
-
+ABI = sysv
+ARCH = ppc32
 SYS = linux
 FORMAT = elf
 O = ql

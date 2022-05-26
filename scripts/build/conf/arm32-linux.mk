@@ -1,5 +1,5 @@
-include $(BUILDDIR)/conf/arm32-posix.mk
-
+ABI = sysv
+ARCH = arm32
 SYS = linux
 FORMAT = elf
 O = 5l

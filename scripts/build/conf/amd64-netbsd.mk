@@ -1,5 +1,5 @@
-include $(BUILDDIR)/conf/amd64-posix.mk
-
+ARCH = amd64
+ABI  = sysv
 SYS = netbsd
 FORMAT = elf
 O = 6n
