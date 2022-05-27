@@ -39,4 +39,5 @@ OBJS =\
 	arch/posix/signal.$O\
 	arch/posix/system.$O\
 	arch/posix/time.$O\
+	arch/posix/tmpfile.$O\
 	string/strlen.$O\
