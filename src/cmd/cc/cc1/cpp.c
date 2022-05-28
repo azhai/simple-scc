@@ -128,6 +128,8 @@ parameter(Macro *mp)
 			end = input->begin - 1;
 			while (end > begin && isspace(end[-1]))
 				--end;
+			while (begin < end && isspace(begin[0]))
+				++begin;
 
 			siz = end - begin;
 			s = memcpy(xmalloc(siz+1), begin, siz);
@@ -153,7 +155,8 @@ parsepars(Macro *mp)
 	disexpand = 1;
 	next();
 	n = 0;
-	if (ahead() == ')') {
+
+	if (mp->npars == 0 && ahead() == ')') {
 		next();
 	} else {
 		do {
@@ -161,6 +164,7 @@ parsepars(Macro *mp)
 			mp->arglist[n] = parameter(mp);
 		} while (++n < NR_MACROARG && yytoken == ',');
 	}
+
 	if (yytoken != ')')
 		error("incorrect macro function-alike invocation");
 	disexpand = 0;
