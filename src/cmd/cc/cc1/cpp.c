@@ -146,8 +146,8 @@ parsepars(Macro *mp)
 	int n;
 
 	if (mp->npars == -1)
-		return -1;
-	if (ahead() != '(' && mp->npars > 0)
+		return 1;
+	if (ahead() != '(')
 		return 0;
 
 	disexpand = 1;
