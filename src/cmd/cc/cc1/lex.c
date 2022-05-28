@@ -48,22 +48,6 @@ setloc(char *fname, unsigned line)
 	lineno = input->lineno = line;
 }
 
-static void
-hide(Symbol *sym)
-{
-	assert(sym->hide == 0);
-	sym->hide = 1;
-	DBG("SYM: hidding symbol %s %d", sym->name, sym->hide);
-}
-
-static void
-unhide(Symbol *sym)
-{
-	assert(sym->hide == 1);
-	DBG("SYM: unhidding symbol %s %d", sym->name, sym->hide);
-	sym->hide = 0;
-}
-
 int
 addinput(int type, void *arg, int fail)
 {
@@ -84,7 +68,6 @@ addinput(int type, void *arg, int fail)
 		sym = mp->sym;
 		fname = mp->fname;
 		buffer = mp->buffer;
-		hide(sym);
 		DBG("INPUT: expanding macro %s", sym->name);
 		break;
 	case IPARAM:
@@ -162,7 +145,7 @@ delinput(void)
 		break;
 	case IMACRO:
 		DBG("INPUT: macro %s finished", ip->macro->sym->name);
-		unhide(ip->macro->sym);
+		delmacro(ip->macro);
 		break;
 	case IPARAM:
 		DBG("INPUT: macro param finished");
@@ -175,7 +158,6 @@ delinput(void)
 	}
 
 	input = ip->next;
-	delmacro(ip->macro);
 	free(ip->filenam);
 	free(ip->line);
 	free(ip);

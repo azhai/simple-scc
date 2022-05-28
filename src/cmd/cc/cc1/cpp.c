@@ -28,7 +28,6 @@ defdefine(char *name, char *val, char *source)
 		.name = name,
 		.flags = SDECLARED,
 	};
-	Macro *mp;
 
 	if (!val)
 		val = "";
@@ -38,12 +37,9 @@ defdefine(char *name, char *val, char *source)
 	}
 
 	sprintf(buffer, fmt, name, val);
-	mp = newmacro(sym);
-	mp->buffer = buffer;
-	mp->fname = source;
-
 	lineno = ++ncmdlines;
-	addinput(IMACRO, mp, FAIL);
+
+	addinput(IPARAM, buffer, FAIL);
 	cpp();
 	delinput();
 }
@@ -120,6 +116,7 @@ parameter(Macro *mp)
 {
 	int siz;
 	char *s, *begin, *end;
+	Input *ip = input;
 
 	begin = input->begin;
 	for (;;) {
@@ -301,10 +298,45 @@ expansion_too_long:
 	error("macro expansion of \"%s\" too long", mp->sym->name);
 }
 
+static void
+addhideset(Input *ip,  Symbol *sym)
+{
+	Symbol **set;
+	Symbol **p;
+
+	set = ip->macro->hideset;
+	for (p = set; p < &set[NR_MACROARG] && *p; ++p) {
+		if (*p == sym)
+			return;
+	}
+
+	if (p == &set[NR_MACROARG])
+		error("too complex macro expansion");
+
+	*p = sym;
+	DBG("MACRO Adding %s to hideset of %s",
+	    sym->name, ip->macro->sym->name);
+}
+
+static void
+hide(Symbol *sym)
+{
+	DBG("SYM: hidding symbol %s %d", sym->name, sym->hide);
+	sym->hide = 1;
+}
+
+static void
+unhide(Symbol *sym)
+{
+	DBG("SYM: unhidding symbol %s %d", sym->name, sym->hide);
+	sym->hide = 0;
+}
+
 void
 delmacro(Macro *mp)
 {
 	int i;
+	Symbol **p;
 
 	if (!mp)
 		return;
@@ -313,6 +345,10 @@ delmacro(Macro *mp)
 		for (i = 0; i < mp->npars; i++)
 			free(mp->arglist[i]);
 	}
+
+	for (p = mp->hideset; p < &mp->hideset[NR_MACROARG] && *p; ++p)
+		unhide(*p);
+
 	free(mp->arglist);
 	free(mp);
 }
@@ -323,11 +359,9 @@ newmacro(Symbol *sym)
 	Macro *mp;
 
 	mp = xmalloc(sizeof(*mp));
+	*mp = (Macro) {0};
 	mp->sym = sym;
-	mp->arglist = NULL;
 	mp->def = sym->u.s + 3;
-	mp->npars = 0;
-	mp->buffer = NULL;
 	if (sym->u.s)
 		mp->npars = atoi(sym->u.s);
 
@@ -337,8 +371,10 @@ newmacro(Symbol *sym)
 int
 expand(Symbol *sym)
 {
-	int elen;
+	int siz;
 	Macro *mp;
+	Input *ip;
+	Symbol **p;
 
 	DBG("MACRO '%s' detected disexpand=%d hide=%d",
 	    sym->name, disexpand, sym->hide);
@@ -358,8 +394,16 @@ expand(Symbol *sym)
 	mp->buffer = input->line;
 	mp->bufsiz = INPUTSIZ-1;
 
-	elen = copymacro(mp);
-	mp->buffer[elen] = '\0';
+	siz = copymacro(mp);
+	mp->buffer[siz] = '\0';
+
+	for (ip = input; ip; ip = ip->next) {
+                if ((ip->flags & ITYPE) == IMACRO)
+			addhideset(ip, sym);
+	}
+
+	for (p = mp->hideset; p < &mp->hideset[NR_MACROARG] && *p; ++p)
+		hide(*p);
 
 	DBG("MACRO '%s' expanded to :'%s'", mp->sym->name, mp->buffer);
 
