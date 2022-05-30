@@ -201,8 +201,8 @@ inittool(int tool)
 			addarg(tool, "-L");
 			addarg(tool, path(syslibs[n]));
 		}
-		for (n = 0; syscrts[n]; ++n)
-			addarg(tool, path(syscrts[n]));
+		for (n = 0; syscrtsb[n]; ++n)
+			addarg(tool, path(syscrtsb[n]));
 		break;
 	case AS:
 		addarg(tool, "-o");
@@ -525,7 +525,7 @@ int
 main(int argc, char *argv[])
 {
 	struct items linkchain = { .n = 0, };
-	int link;
+	int link, n;
 
 	atexit(terminate);
 
@@ -652,6 +652,8 @@ operand:
 	if (link && !failure) {
 		addarg(LD, xstrdup("-lc"));
 		addarg(LD, xstrdup("-lcrt"));
+		for (n = 0; syscrtse[n]; ++n)
+			addarg(LD, path(syscrtse[n]));
 		spawn(settool(LD, NULL, LAST_TOOL));
 		validatetools();
 	}
