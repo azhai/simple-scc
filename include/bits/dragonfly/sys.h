@@ -3,9 +3,11 @@
 #define O_RDWR    0x00000002
 #define O_ACCMODE 0x00000003
 
+#define O_CLOEXEC 0x00400000
+#define O_EXCL    0x00000800
 #define O_TRUNC   0x00000400
-#define O_APPEND  0x00000008
 #define O_CREAT   0x00000200
+#define O_APPEND  0x00000008
 
 #define AT_FDCWD  -100
 #define CLOCKS_PER_SEC ((clock_t) 128)

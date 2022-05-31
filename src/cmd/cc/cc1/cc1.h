@@ -396,6 +396,7 @@ struct yystype {
 	unsigned char token;
 };
 
+#ifdef NR_MACROARG
 struct macro {
 	Symbol *sym;
 	char *fname;
@@ -404,7 +405,9 @@ struct macro {
 	char *def;
 	int bufsiz;
 	int npars;
+	Symbol *hideset[NR_MACROARG];
 };
+#endif
 
 #ifdef stdin
 struct input {

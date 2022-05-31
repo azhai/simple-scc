@@ -15,6 +15,7 @@ OBJS=\
 	signal.$O\
 	system.$O\
 	time.$O\
+	tmpfile.$O\
 
 all: $(OBJS)
 

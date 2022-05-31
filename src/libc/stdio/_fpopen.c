@@ -12,9 +12,10 @@ _fpopen(const char *restrict fname,
         const char *restrict mode,
         FILE * restrict fp)
 {
-	int i, flags, fd, rw, bin;
+	int i, flags, fd, rw, bin, rights;;
 
 	flags = rw = bin = 0;
+	rights = 0666;
 
 	if (mode[0] == '\0')
 		goto einval;
@@ -31,6 +32,10 @@ _fpopen(const char *restrict fname,
 				goto einval;
 			bin = 1;
 			break;
+		case 't':
+			flags |= O_EXCL | O_CLOEXEC;
+			rights = 0600;
+			break;
 		default:
 			goto einval;
 		}
@@ -46,7 +51,7 @@ _fpopen(const char *restrict fname,
 		flags |= (rw) ? O_RDWR : O_WRONLY;
 		break;
 	case 'r':
-		flags = (rw) ? O_RDWR : O_RDONLY;
+		flags |= (rw) ? O_RDWR : O_RDONLY;
 		break;
 	default:
 	einval:
@@ -54,7 +59,7 @@ _fpopen(const char *restrict fname,
 		return NULL;
 	}
 
-	if ((fd = _open(fname, flags, 0666)) < 0)
+	if ((fd = _open(fname, flags, rights)) < 0)
 		return NULL;
 
 	fp->buf = NULL;
