@@ -10,21 +10,23 @@ SYSHDR =\
 
 NODEP = 1
 
-all: $(SYSHDR)
+all: cstd.h
 
 cstd.h: cstd-$(STD).h
 	cp cstd-$(STD).h $@
+
+config: sysld.h sysincludes.h
 
 sysld.h:
 	set -e;\
 	rm -f $@;\
 	trap "rm -f $$$$.tmp" INT QUIT TERM HUP;\
 	sed -e 's/%NOPIE%/"$(NOPIE_LDFLAGS)",/' \
-	    -e 's/"",//'  sysld.def.h > $$$$.tmp && \
+	    -e 's/"",//' sysld.$(LIBPROFILE).h > $$$$.tmp && \
 	mv $$$$.tmp $@
 
 sysincludes.h:
-	cp sysincludes.def.h $@
+	cp sysincludes.$(LIBPROFILE).h $@
 
 clean:
-	rm -f $(SYSHDR)
+	rm -f cstd.h

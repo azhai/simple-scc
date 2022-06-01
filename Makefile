@@ -13,9 +13,12 @@ include $(PROJECTDIR)/scripts/rules.mk
 ROOT = $(DESTDIR)$(PREFIX)
 NODEP = 1
 
-all:
+all: config
 	+@$(MAKE) `$(SCRIPTDIR)/config -c` toolchain
 	+@$(MAKE) `$(SCRIPTDIR)/config` `uname -m`
+
+config:
+	cd include/scc/scc && $(MAKE) $@
 
 install:
 	$(SCRIPTDIR)/install $(ROOT)
@@ -109,3 +112,7 @@ dirs: $(SCRIPTDIR)/libc-dirs
 clean:
 	xargs rm -rf < $(SCRIPTDIR)/libc-dirs
 	rm -f dirs
+
+distclean: clean
+	rm -f include/scc/scc/sysld.h
+	rm -f include/scc/scc/sysincludes.h

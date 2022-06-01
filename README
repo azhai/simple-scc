@@ -8,6 +8,10 @@ can be passed to the command line:
 	- PREFIX: Prefix of the path where scc toolchain is going
 	  to be installed. /usr/local by default.
 
+	- LIBPREFIX: Prefix of the path where scc searchs for
+	  headers and libraries when scc is executed. $PREFIX
+	  by default.
+
 	- DESTDIR: Temporary directory prepend to PREFIX used in the
 	  install path. It is mainly intended to help package maintainers
 	  to install in a specific directory used as base for the package
@@ -55,6 +59,9 @@ The main targets of the Makefile are:
 	  for all the available configurations based in the host
 	  architecture.
 
+	- config
+	  Generate headers supposed to be customized by the user.
+
 	- toolchain
 	  Compile the toolchain with the default configuration
 	  specified in CONF.
@@ -71,6 +78,28 @@ The main targets of the Makefile are:
 
 	- distclean
 	  Remove all the generated files.
+
+Musl libc support
+=================
+The Scc libc is a C99 library and cannot used to compile POSIX compliant
+programs. Scc includes a template that can be used to use a musl libc
+compiled by gcc:
+
+	$ make LIBPROFILE=musl config
+
+It will generate the files sysld.h and sysincludes.h configured to be used
+with a musl libc. Beware that it is likely that those files have to be
+customized to fit your system because the macro GCCLIBPATH depends heavily
+of the toolchain used to compile musl. As the musl libc is likely
+will be installed in a different prefix the scc compilation must be modified
+to:
+
+	$ make LIBPREFIX=/usr/local/musl
+
+If the helper scc shell script is used instead of scc-cc then the
+environment variable SCCLIBPREFIX must be set:
+
+	$ SCCLIBPREFIX=/usr/local/musl scc hello.c
 
 Deviations from standard C
 ===========================

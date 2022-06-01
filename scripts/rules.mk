@@ -4,6 +4,7 @@ all:
 # Define default configuration variables
 PREFIX = /usr/local
 LIBPREFIX = $(PREFIX)
+LIBPROFILE = scc
 CONF = amd64-linux
 TOOL = unix
 HOST = posix
