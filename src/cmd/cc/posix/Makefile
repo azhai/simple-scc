@@ -4,17 +4,6 @@ PREFIX = /usr/local
 PROJECTDIR = ../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-# SYSLST is a list of arch-abi-sys-format.
-# By default the driver uses the configuration
-# inhered from the environment, that in a normal
-# build is derived from the host configuration.
-
-SYSLST  =\
-	amd64-sysv-linux-elf\
-	z80-scc-none-none\
-	i386-sysv-linux-elf\
-	amd64-sysv-openbsd-elf\
-
 TARGETS =\
 	$(BINDIR)/scc-cc\
 	$(BINDIR)/scc-cpp\
