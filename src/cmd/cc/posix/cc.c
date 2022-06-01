@@ -193,7 +193,7 @@ inittool(int tool)
 		for (n = 0; ldflags[n]; ++n)
 			addarg(tool, ldflags[n]);
 		addarg(tool, "-o");
-		t->outfile = outfile ? outfile : xstrdup("a.out");
+		t->outfile = outfile ? outfile : "a.out";
 		addarg(tool, t->outfile);
 		for (n = 0; syslibs[n]; ++n) {
 			addarg(tool, "-L");
@@ -283,7 +283,7 @@ settool(int tool, char *infile, int nexttool)
 			objfile = (cflag || kflag) ? infile : NULL;
 			objfile = outfname(objfile, "o");
 		}
-		t->outfile = xstrdup(objfile);
+		t->outfile = objfile;
 		addarg(tool, t->outfile);
 		break;
 	default:
@@ -296,7 +296,7 @@ settool(int tool, char *infile, int nexttool)
 	} else {
 		t->in = -1;
 		if (infile)
-			addarg(tool, xstrdup(infile));
+			addarg(tool, infile);
 	}
 
 	if (nexttool < LAST_TOOL) {
@@ -415,15 +415,11 @@ validatetools(void)
 			failed = tool;
 		if (tool >= failed && t->outfile)
 			unlink(t->outfile);
-		for (i = t->nparams; i < t->args.n; ++i)
-			free(t->args.s[i]);
 		t->args.n = t->nparams;
 		t->pid = 0;
 	}
 	if (failed < LAST_TOOL) {
 		unlink(objfile);
-		free(objfile);
-		objfile = NULL;
 		return 0;
 	}
 
@@ -576,7 +572,7 @@ main(int argc, char *argv[])
 		arch = EARGF(usage());
 		break;
 	case 'o':
-		outfile = xstrdup(EARGF(usage()));
+		outfile = EARGF(usage());
 		break;
 	case 's':
 		sflag = 1;
@@ -638,8 +634,8 @@ operand:
 		for (n = 0; n < linkargs.n; ++n)
 			addarg(LD, linkargs.s[n]);
 
-		addarg(LD, xstrdup("-lc"));
-		addarg(LD, xstrdup("-lcrt"));
+		addarg(LD, "-lc");
+		addarg(LD, "-lcrt");
 
 		for (n = 0; syscrtse[n]; ++n)
 			addarg(LD, path(syscrtse[n]));
