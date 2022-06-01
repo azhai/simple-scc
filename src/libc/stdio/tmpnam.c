@@ -10,16 +10,9 @@
 char *
 tmpnam(char *s)
 {
-	static char *tmpl, buf[L_tmpnam];
+	static char tmpl[] = _TMPNAME;
 	char *p;
 
-	if (*buf == '\0') {
-		for (tmpl = buf, p = _TMPNAME; *tmpl++ = *p++; )
-			;
-		for (p = tmpl; p < &buf[L_tmpnam-1]; ++p)
-			*p = '0';
-		*p = '\0';
-	}
 	for (;;) {
 		for (p = tmpl; *p && *p != '9'; ++p)
 			;
@@ -27,10 +20,10 @@ tmpnam(char *s)
 			return NULL;
 		++*p;
 
-		if (_access(buf, F_OK) != 0)
+		if (_access(tmpl, F_OK) != 0)
 			break;
 	}
 	if (s)
-		strcpy(s, buf);
-	return buf;
+		strcpy(s, tmpl);
+	return tmpl;
 }
