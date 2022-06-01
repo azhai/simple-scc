@@ -40,7 +40,6 @@ enum {
 	TEEAS,
 	AS,
 	LD,
-	STRIP,
 	LAST_TOOL,
 };
 
@@ -61,7 +60,6 @@ static struct tool {
 	[TEEAS]  = {.bin = "tee",   .cmd = "tee"},
 	[AS]     = {.bin = "as",    .cmd = "as"},
 	[LD]     = {.bin = "ld",    .cmd = "ld"},
-	[STRIP]  = {.bin = "strip", .cmd = "strip"},
 };
 
 char *argv0;
@@ -201,6 +199,9 @@ inittool(int tool)
 			addarg(tool, "-L");
 			addarg(tool, path(syslibs[n]));
 		}
+		if (sflag)
+			addarg(tool, "-s");
+
 		for (n = 0; syscrtsb[n]; ++n)
 			addarg(tool, path(syscrtsb[n]));
 		break;
@@ -284,14 +285,6 @@ settool(int tool, char *infile, int nexttool)
 		}
 		t->outfile = xstrdup(objfile);
 		addarg(tool, t->outfile);
-		break;
-	case STRIP:
-		if (cflag || kflag) {
-			for (i = 0; i < objout.n; ++i)
-				addarg(tool, xstrdup(objout.s[i]));
-		}
-		if (!cflag && tools[LD].outfile)
-			addarg(tool, tools[LD].outfile);
 		break;
 	default:
 		break;
@@ -654,12 +647,8 @@ operand:
 		addarg(LD, xstrdup("-lcrt"));
 		for (n = 0; syscrtse[n]; ++n)
 			addarg(LD, path(syscrtse[n]));
-		spawn(settool(LD, NULL, LAST_TOOL));
-		validatetools();
-	}
 
-	if (sflag) {
-		spawn(settool(inittool(STRIP), NULL, LAST_TOOL));
+		spawn(settool(LD, NULL, LAST_TOOL));
 		validatetools();
 	}
 
