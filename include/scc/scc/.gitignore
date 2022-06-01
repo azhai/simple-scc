@@ -1,5 +1,3 @@
 cstd.h
-ldflags.h
-syscrts.h
 sysincludes.h
-syslibs.h
+sysld.h

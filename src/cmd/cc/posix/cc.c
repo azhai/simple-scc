@@ -26,10 +26,8 @@
 #include "config.h"
 #include <scc/arg.h>
 #include <scc/scc.h>
-#include <scc/syscrts.h>
 #include <scc/sysincludes.h>
-#include <scc/syslibs.h>
-#include <scc/ldflags.h>
+#include <scc/sysld.h>
 
 enum {
 	CC1,
@@ -85,58 +83,67 @@ terminate(void)
 	}
 }
 
-static char *
-path(char *s)
-{
-	char *arg, buff[FILENAME_MAX];
-	size_t len, cnt;
-
-	for (cnt = 0 ; *s && cnt < FILENAME_MAX; ++s) {
-		if (*s != '%') {
-			buff[cnt++] = *s;
-			continue;
-		}
-
-		switch (*++s) {
-		case 'a':
-			arg = arch;
-			break;
-		case 's':
-			arg = sys;
-			break;
-		case 'p':
-			arg = prefix;
-			break;
-		case 'b':
-			arg = abi;
-			break;
-		default:
-			buff[cnt++] = *s;
-			continue;
-		}
-
-		len = strlen(arg);
-		if (len + cnt >= FILENAME_MAX)
-			die("cc: pathname too long");
-		memcpy(buff+cnt, arg, len);
-		cnt += len;
-	}
-
-	if (cnt < FILENAME_MAX) {
-		buff[cnt] = '\0';
-		return xstrdup(buff);
-	}
-}
-
 static void
 addarg(int tool, char *arg)
 {
 	struct tool *t = &tools[tool];
+	char *p, buff[FILENAME_MAX];
+	size_t len, cnt;
+	int n;
 
 	if (t->args.n < 1)
 		t->args.n = 1;
 
-	newitem(&t->args, arg);
+	if (!arg || arg[0] == '-') {
+		newitem(&t->args, arg);
+		return;
+	}
+
+	if (!strcmp(arg, "%c")) {
+		for (n = 0; n < linkargs.n; ++n)
+			newitem(&t->args, linkargs.s[n]);
+		return;
+	}
+
+	for (cnt = 0 ; *arg && cnt < FILENAME_MAX; ++arg) {
+		if (*arg != '%') {
+			buff[cnt++] = *arg;
+			continue;
+		}
+
+		switch (*++arg) {
+		case 'a':
+			p = arch;
+			break;
+		case 's':
+			p = sys;
+			break;
+		case 'p':
+			p = libprefix;
+			break;
+		case 'b':
+			p = abi;
+			break;
+		case 'o':
+			p = outfile;
+			break;
+		default:
+			buff[cnt++] = *arg;
+			continue;
+		}
+
+		len = strlen(p);
+		if (len + cnt >= FILENAME_MAX)
+			die("cc: pathname too long");
+		memcpy(buff+cnt, p, len);
+		cnt += len;
+	}
+
+	if (cnt >= FILENAME_MAX)
+		abort();
+
+	buff[cnt] = '\0';
+	newitem(&t->args, xstrdup(buff));
 }
 
 static void
@@ -176,7 +183,7 @@ inittool(int tool)
 			addarg(tool, "-w");
 		for (n = 0; sysincludes[n]; ++n) {
 			addarg(tool, "-I");
-			addarg(tool, path(sysincludes[n]));
+			addarg(tool, sysincludes[n]);
 		}
 	case CC2:
 		fmt = cc12fmt(tool);
@@ -190,20 +197,11 @@ inittool(int tool)
 			die("cc: target tool path is too long");
 		break;
 	case LD:
-		for (n = 0; ldflags[n]; ++n)
-			addarg(tool, ldflags[n]);
-		addarg(tool, "-o");
-		t->outfile = outfile ? outfile : "a.out";
-		addarg(tool, t->outfile);
-		for (n = 0; syslibs[n]; ++n) {
-			addarg(tool, "-L");
-			addarg(tool, path(syslibs[n]));
-		}
+		t->outfile = outfile;
 		if (sflag)
 			addarg(tool, "-s");
-
-		for (n = 0; syscrtsb[n]; ++n)
-			addarg(tool, path(syscrtsb[n]));
+		for (n = 0; ldcmd[n]; n++)
+			addarg(tool, ldcmd[n]);
 		break;
 	case AS:
 		addarg(tool, "-o");
@@ -620,6 +618,9 @@ operand:
 			fputs("cc: could not open /dev/null\n", stderr);
 	}
 
+	if (!outfile)
+		outfile = "a.out";
+
 	if (!(tmpdir = getenv("TMPDIR")) || !tmpdir[0])
 		tmpdir = ".";
 	tmpdirln = strlen(tmpdir);
@@ -631,15 +632,6 @@ operand:
 
 	if (link && !failure) {
 		inittool(LD);
-		for (n = 0; n < linkargs.n; ++n)
-			addarg(LD, linkargs.s[n]);
-
-		addarg(LD, "-lc");
-		addarg(LD, "-lcrt");
-
-		for (n = 0; syscrtse[n]; ++n)
-			addarg(LD, path(syscrtse[n]));
-
 		spawn(settool(LD, NULL, LAST_TOOL));
 		validatetools();
 	}
