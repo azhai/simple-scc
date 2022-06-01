@@ -67,7 +67,7 @@ static char *arch, *sys, *abi, *format;
 static char *prefix, *objfile, *outfile;
 static char *tmpdir;
 static size_t tmpdirln;
-static struct items objtmp, objout;
+static struct items objtmp, objout, linkargs;
 static int Mflag, Eflag, Sflag, Wflag,
            cflag, dflag, kflag, sflag, Qflag = 1; /* TODO: Remove Qflag */
 static int devnullfd = -1;
@@ -480,28 +480,19 @@ build(struct items *chain, int link)
 {
 	int i, tool;
 
-	if (link)
-		inittool(LD);
-
 	for (i = 0; i < chain->n; ++i) {
 		if (!strcmp(chain->s[i], "-l")) {
-			if (link) {
-				addarg(LD, xstrdup(chain->s[i++]));
-				addarg(LD, xstrdup(chain->s[i]));
-			} else {
-				++i;
-			}
+			newitem(&linkargs, chain->s[i++]);
+			newitem(&linkargs, chain->s[i]);
 			continue;
 		}
 		tool = toolfor(chain->s[i]);
 		if (tool == LD) {
-			if (link)
-				addarg(LD, xstrdup(chain->s[i]));
+			newitem(&linkargs, chain->s[i]);
 			continue;
 		}
 		if (buildfile(chain->s[i], tool)) {
-			if (link)
-				addarg(LD, xstrdup(objfile));
+			newitem(&linkargs, objfile);
 			newitem((!link || kflag) ? &objout : &objtmp, objfile);
 		}
 	}
@@ -643,8 +634,13 @@ operand:
 		return failure;
 
 	if (link && !failure) {
+		inittool(LD);
+		for (n = 0; n < linkargs.n; ++n)
+			addarg(LD, linkargs.s[n]);
+
 		addarg(LD, xstrdup("-lc"));
 		addarg(LD, xstrdup("-lcrt"));
+
 		for (n = 0; syscrtse[n]; ++n)
 			addarg(LD, path(syscrtse[n]));
 
