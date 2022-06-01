@@ -92,7 +92,6 @@ addinput(int type, void *arg, int fail)
 			infileln = strlen(infile);
 			if (extp = strrchr(infile, '.'))
 				infileln -= strlen(extp);
-			/* TODO: is this C99? */
 			printf("%.*s.o: %s %s\n",
 			       infileln, infile, infile, fname);
 		}
