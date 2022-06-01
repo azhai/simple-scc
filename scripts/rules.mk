@@ -2,6 +2,8 @@
 all:
 
 # Define default configuration variables
+PREFIX = /usr/local
+LIBPREFIX = $(PREFIX)
 CONF = amd64-linux
 TOOL = unix
 HOST = posix

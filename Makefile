@@ -10,12 +10,11 @@ DIRS  =\
 PROJECTDIR = .
 include $(PROJECTDIR)/scripts/rules.mk
 
-PREFIX = /usr/local
 ROOT = $(DESTDIR)$(PREFIX)
 NODEP = 1
 
 all:
-	+@PREFIX=$(PREFIX) $(MAKE) `$(SCRIPTDIR)/config -c` toolchain
+	+@$(MAKE) `$(SCRIPTDIR)/config -c` toolchain
 	+@$(MAKE) `$(SCRIPTDIR)/config` `uname -m`
 
 install:
@@ -89,6 +88,8 @@ install-arm64: arm64
 
 uninstall-arm64:
 	$(SCRIPTDIR)/uninstall -p $(SCRIPTDIR)/proto.arm64 $(ROOT)
+
+#############################################################
 
 toolchain: src
 libc: src/libc

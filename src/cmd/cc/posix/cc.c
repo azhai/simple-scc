@@ -62,7 +62,8 @@ static struct tool {
 
 char *argv0;
 static char *arch, *sys, *abi, *format;
-static char *prefix, *objfile, *outfile;
+static char *objfile, *outfile;
+static char *prefix, *libprefix;
 static char *tmpdir;
 static size_t tmpdirln;
 static struct items objtmp, objout, linkargs;
@@ -517,6 +518,8 @@ main(int argc, char *argv[])
 		format = FORMAT;
 	if (!(prefix = getenv("SCCPREFIX")))
 		prefix = PREFIX;
+	if (!(libprefix = getenv("SCCLIBPREFIX")))
+		libprefix = LIBPREFIX;
 
 	ARGBEGIN {
 	case 'D':

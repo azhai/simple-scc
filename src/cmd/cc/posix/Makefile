@@ -30,6 +30,7 @@ config.h:
 	 echo '#define ARCH "$(ARCH)"';\
 	 echo '#define SYS  "$(SYS)"';\
 	 echo '#define ABI  "$(ABI)"';\
+	 echo '#define LIBPREFIX "$(LIBPREFIX)"';\
 	 echo '#define FORMAT "$(FORMAT)"') > $$$$.h && mv $$$$.h $@
 
 clean:

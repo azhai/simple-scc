@@ -6,6 +6,12 @@ then
 	export SCCPREFIX
 fi
 
+if test -z $SCCLIBPREFIX
+then
+	SCCLIBPREFIX=`dirname $0`/..
+	export SCCLIBPREFIX
+fi
+
 case $0 in
 *cpp)
 	exec $SCCPREFIX/bin/scc-cc -E $@
