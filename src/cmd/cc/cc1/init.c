@@ -209,19 +209,15 @@ newdesig(Init *ip, Node *np)
 		ip->max = ip->pos+1;
 }
 
-Node *
-initlist(Type *tp)
+static Node *
+initlist_helper(Type *tp)
 {
 	Init in;
 	Node *np;
 	Type *curtp;
 	int braces, scalar, toomany, outbound;
 	TINT nelem = tp->n.elem;
-	static int depth;
 
-	if (depth == NR_SUBTYPE)
-		error("too many nested initializers");
-	++depth;
 	init(&in);
 	braces = scalar = toomany = 0;
 
@@ -316,6 +312,22 @@ new_desig:
 	}
 
 	return mkcompound(&in, tp);
+}
+
+Node *
+initlist(Type *tp)
+{
+	Node *np;
+	static int depth;
+
+	if (depth == NR_SUBTYPE)
+		error("too many nested initializers");
+
+	++depth;
+	np = initlist_helper(tp);
+	--depth;
+
+	return np;
 }
 
 static void
