@@ -48,7 +48,7 @@ struct decl {
 static void
 endfundcl(Type *tp, Symbol **pars)
 {
-	if (tp->prop&TK_R && *pars)
+	if ((tp->prop&TK_R) != 0 && *pars)
 		warn("parameter names (without types) in function declaration");
 	/*
 	 * avoid non used warnings in prototypes
