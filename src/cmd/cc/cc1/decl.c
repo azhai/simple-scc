@@ -48,13 +48,19 @@ struct decl {
 static void
 endfundcl(Type *tp, Symbol **pars)
 {
-	if ((tp->prop&TK_R) != 0 && *pars)
-		warn("parameter names (without types) in function declaration");
 	/*
-	 * avoid non used warnings in prototypes
+	 * If endfundcl is called from a type built from a typedef then
+	 * we do not have any parameters because in that case we only
+	 * care about the type.
 	 */
-	while (*pars)
-		(*pars++)->flags |= SUSED;
+	if (pars) {
+		if ((tp->prop&TK_R) != 0 && *pars)
+			warn("parameter names (without types) in function declaration");
+
+		/* avoid non used warnings in prototypes */
+		while (*pars)
+			(*pars++)->flags |= SUSED;
+	}
 	popctx();
 }
 
@@ -104,6 +110,13 @@ pop(struct declarators *dp, struct decl *dcl)
 		return 1;
 	}
 
+	/*
+	 * We have a type derived from a function type. We don't care
+	 * about the parameters because they were used only in the
+	 * process of building a final type. Prototype arguments are
+	 * discarded in funbody() because the final type of the decl
+	 * is an actual function.
+	 */
 	if (dcl->type->op == FTN)
 		endfundcl(dcl->type, dcl->pars);
 	dcl->pars = p->pars;
@@ -935,6 +948,7 @@ dodcl(int rep, Symbol *(*fun)(struct decl *), unsigned ns, Type *parent)
 
 	do {
 		dcl.type = base;
+		dcl.pars = NULL;
 		stack.nr_types = stack.nr = 0;
 		stack.tpars = dcl.buftpars;
 		stack.pars = dcl.bufpars;
