@@ -865,7 +865,6 @@ field(struct decl *dcl)
 	char *name = (sym->name) ? sym->name : anon;
 	Type *structp = dcl->parent, *tp = dcl->type;
 	TINT n = structp->n.elem;
-	int err = 0;
 
 	if (accept(':')) {
 		Node *np;
@@ -890,28 +889,30 @@ field(struct decl *dcl)
 		return sym;
 	}
 
+	if (sym->flags & SDECLARED) {
+		errorp("duplicated member '%s'", name);
+		return sym;
+	}
+
+	if ((tp->prop & TDEFINED) == 0) {
+		errorp("field '%s' has incomplete type", name);
+		tp = inttype;
+	}
 	if (tp->op == FTN) {
 		errorp("invalid type '%s' in struct/union", name);
-		err = 1;
+		tp = inttype;
 	}
-	if (dcl->sclass) {
+	if (dcl->sclass)
 		errorp("storage class in struct/union field '%s'", name);
-		err = 1;
-	}
-	if (!(tp->prop & TDEFINED)) {
-		error("field '%s' has incomplete type", name);
-		err = 1;
-	}
-	if (err)
-		return sym;
 
-	if (sym->flags & SDECLARED)
-		error("duplicated member '%s'", name);
-	sym->flags |= SFIELD|SDECLARED;
 	sym->type = tp;
+	sym->flags |= SFIELD|SDECLARED;
 
-	if (n == NR_FIELDS)
-		error("too many fields in struct/union");
+	if (n == NR_FIELDS) {
+		errorp("too many fields in struct/union");
+		return sym;
+	}
+
 	DBG("New field '%s' in namespace %d\n", name, structp->ns);
 	structp->p.fields = xrealloc(structp->p.fields, ++n * sizeof(*sym));
 	structp->p.fields[n-1] = sym;
