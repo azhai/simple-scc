@@ -899,7 +899,7 @@ field(struct decl *dcl)
 		tp = inttype;
 	}
 	if (tp->op == FTN) {
-		errorp("invalid type '%s' in struct/union", name);
+		errorp("field '%s' declared as a function", name);
 		tp = inttype;
 	}
 	if (dcl->sclass)
