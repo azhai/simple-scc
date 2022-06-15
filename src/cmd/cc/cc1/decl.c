@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -505,8 +506,16 @@ funbody(Symbol *sym, Symbol *pars[])
 	case TYPE:
 	case SCLASS:
 	case TYPEIDEN:
+		if (curctx < PARAMCTX) {
+			assert(!pars);
+			errorp("typedef'ed function type cannot be instantiated");
+			curctx = PARAMCTX;
+			pars = (Symbol *[]) {NULL};
+		}
+
 		if (curctx != PARAMCTX)
 			errorp("nested function declaration");
+
 		if (sym && sym->ns == NS_IDEN)
 			break;
 	default:
