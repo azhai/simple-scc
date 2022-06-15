@@ -60,8 +60,8 @@ endfundcl(Type *tp, Symbol **pars)
 		/* avoid non used warnings in prototypes */
 		while (*pars)
 			(*pars++)->flags |= SUSED;
+		popctx();
 	}
-	popctx();
 }
 
 static void
