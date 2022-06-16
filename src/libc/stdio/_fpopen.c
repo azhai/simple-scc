@@ -12,7 +12,7 @@ _fpopen(const char *restrict fname,
         const char *restrict mode,
         FILE * restrict fp)
 {
-	int i, flags, fd, rw, bin, rights;;
+	int i, flags, fd, rw, bin, rights;
 
 	flags = rw = bin = 0;
 	rights = 0666;

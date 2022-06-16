@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -48,14 +49,20 @@ struct decl {
 static void
 endfundcl(Type *tp, Symbol **pars)
 {
-	if (tp->prop&TK_R && *pars)
-		warn("parameter names (without types) in function declaration");
 	/*
-	 * avoid non used warnings in prototypes
+	 * If endfundcl is called from a type built from a typedef then
+	 * we do not have any parameters because in that case we only
+	 * care about the type.
 	 */
-	while (*pars)
-		(*pars++)->flags |= SUSED;
-	popctx();
+	if (pars) {
+		if ((tp->prop&TK_R) != 0 && *pars)
+			warn("parameter names (without types) in function declaration");
+
+		/* avoid non used warnings in prototypes */
+		while (*pars)
+			(*pars++)->flags |= SUSED;
+		popctx();
+	}
 }
 
 static void
@@ -104,6 +111,13 @@ pop(struct declarators *dp, struct decl *dcl)
 		return 1;
 	}
 
+	/*
+	 * We have a type derived from a function type. We don't care
+	 * about the parameters because they were used only in the
+	 * process of building a final type. Prototype arguments are
+	 * discarded in funbody() because the final type of the decl
+	 * is an actual function.
+	 */
 	if (dcl->type->op == FTN)
 		endfundcl(dcl->type, dcl->pars);
 	dcl->pars = p->pars;
@@ -492,8 +506,16 @@ funbody(Symbol *sym, Symbol *pars[])
 	case TYPE:
 	case SCLASS:
 	case TYPEIDEN:
+		if (curctx < PARAMCTX) {
+			assert(!pars);
+			errorp("typedef'ed function type cannot be instantiated");
+			curctx = PARAMCTX;
+			pars = (Symbol *[]) {NULL};
+		}
+
 		if (curctx != PARAMCTX)
 			errorp("nested function declaration");
+
 		if (sym && sym->ns == NS_IDEN)
 			break;
 	default:
@@ -742,7 +764,7 @@ newtag(void)
 		tp->ns = tpns++;
 		sym->type = tp;
 		tp->tag = sym;
-		DBG("declared tag '%s' with ns = %d\n",
+		DBG("DECL: declared tag '%s' with ns = %d\n",
 		    (sym->name) ? sym->name : "anonymous", tp->ns);
 	}
 
@@ -865,7 +887,6 @@ field(struct decl *dcl)
 	char *name = (sym->name) ? sym->name : anon;
 	Type *structp = dcl->parent, *tp = dcl->type;
 	TINT n = structp->n.elem;
-	int err = 0;
 
 	if (accept(':')) {
 		Node *np;
@@ -890,29 +911,31 @@ field(struct decl *dcl)
 		return sym;
 	}
 
-	if (tp->op == FTN) {
-		errorp("invalid type '%s' in struct/union", name);
-		err = 1;
-	}
-	if (dcl->sclass) {
-		errorp("storage class in struct/union field '%s'", name);
-		err = 1;
-	}
-	if (!(tp->prop & TDEFINED)) {
-		error("field '%s' has incomplete type", name);
-		err = 1;
-	}
-	if (err)
+	if (sym->flags & SDECLARED) {
+		errorp("duplicated member '%s'", name);
 		return sym;
+	}
 
-	if (sym->flags & SDECLARED)
-		error("duplicated member '%s'", name);
-	sym->flags |= SFIELD|SDECLARED;
+	if ((tp->prop & TDEFINED) == 0) {
+		errorp("field '%s' has incomplete type", name);
+		tp = inttype;
+	}
+	if (tp->op == FTN) {
+		errorp("field '%s' declared as a function", name);
+		tp = inttype;
+	}
+	if (dcl->sclass)
+		errorp("storage class in struct/union field '%s'", name);
+
 	sym->type = tp;
+	sym->flags |= SFIELD|SDECLARED;
 
-	if (n == NR_FIELDS)
-		error("too many fields in struct/union");
-	DBG("New field '%s' in namespace %d\n", name, structp->ns);
+	if (n == NR_FIELDS) {
+		errorp("too many fields in struct/union");
+		return sym;
+	}
+
+	DBG("DECL: New field '%s' in namespace %d\n", name, structp->ns);
 	structp->p.fields = xrealloc(structp->p.fields, ++n * sizeof(*sym));
 	structp->p.fields[n-1] = sym;
 	structp->n.elem = n;
@@ -934,6 +957,7 @@ dodcl(int rep, Symbol *(*fun)(struct decl *), unsigned ns, Type *parent)
 
 	do {
 		dcl.type = base;
+		dcl.pars = NULL;
 		stack.nr_types = stack.nr = 0;
 		stack.tpars = dcl.buftpars;
 		stack.pars = dcl.bufpars;

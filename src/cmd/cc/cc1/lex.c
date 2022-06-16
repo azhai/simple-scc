@@ -52,7 +52,7 @@ int
 addinput(int type, void *arg, int fail)
 {
 	FILE *fp;
-	char *extp, *fname, *buffer, *infile;;
+	char *extp, *fname, *buffer, *infile;
 	int infileln;
 	Macro *mp;
 	Symbol *sym;
