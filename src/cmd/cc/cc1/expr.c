@@ -627,6 +627,13 @@ primary(void)
 	case DEFINED:
 		np = defined();
 		break;
+	case '(':
+		next();
+		np = xexpr();
+		expect(')');
+
+		/* do not call to next */
+		return np;
 	case IDEN:
 		assert((sym->flags & SCONSTANT) == 0);
 		if ((sym->flags & SDECLARED) != 0) {
