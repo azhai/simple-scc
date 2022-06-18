@@ -8,8 +8,6 @@
 
 #define XCHG(lp, rp, np) (np = lp, lp = rp, rp = np)
 
-static Node *xexpr(void), *xassign(void);
-
 int
 cmpnode(Node *np, TUINT val)
 {
@@ -634,7 +632,7 @@ primary(void)
 		break;
 	case '(':
 		next();
-		np = xexpr();
+		np = expr();
 		expect(')');
 
 		/* do not call to next */
@@ -690,7 +688,7 @@ arguments(Node *np)
 	toomany = 0;
 
 	do {
-		arg = xassign();
+		arg = assign();
 		argtype = *targs;
 		if (argtype == ellipsistype) {
 			n = 0;
@@ -773,7 +771,7 @@ postfix(Node *lp)
 		switch (yytoken) {
 		case '[':
 			next();
-			rp = xexpr();
+			rp = expr();
 			expect(']');
 			lp = array(decay(lp), rp);
 			break;
@@ -877,7 +875,7 @@ cast(int needdecay)
 		if (nested == NR_SUBEXPR)
 			error("too many expressions nested by parentheses");
 		++nested;
-		np = xexpr();
+		np = expr();
 		--nested;
 		expect(')');
 		np = postfix(np);
@@ -1045,7 +1043,7 @@ ternary(void)
 		Node *ifyes, *ifno, *np;
 
 		cond = exp2cond(cond, 0);
-		ifyes = xexpr();
+		ifyes = expr();
 		expect(':');
 		ifno = ternary();
 		np = chkternary(ifyes, ifno);
@@ -1054,8 +1052,8 @@ ternary(void)
 	return cond;
 }
 
-static Node *
-xassign(void)
+Node *
+assign(void)
 {
 	Node *np, *(*fun)(int , Node *, Node *);
 	int op;
@@ -1074,7 +1072,7 @@ xassign(void)
 		case AND_EQ: op = OA_AND;  fun = integerop;  break;
 		case XOR_EQ: op = OA_XOR;  fun = integerop;  break;
 		case OR_EQ:  op = OA_OR;   fun = integerop;  break;
-		default: return np;
+		default: return simplify(np);
 		}
 		chklvalue(np);
 		np->flags |= NEFFECT;
@@ -1083,23 +1081,21 @@ xassign(void)
 	}
 }
 
-static Node *
-xexpr(void)
+Node *
+expr(void)
 {
 	Node *lp, *rp;
 
-	lp = xassign();
-	while (accept(',')) {
-		rp = xassign();
-		lp = node(OCOMMA, rp->type, lp, rp);
-	}
-	return lp;
-}
+	lp = assign();
+	if (!accept(','))
+		return lp;
 
-Node *
-assign(void)
-{
-	return simplify(xassign());
+	do {
+		rp = assign();
+		lp = node(OCOMMA, rp->type, lp, rp);
+	} while (accept(','));
+
+	return simplify(lp);
 }
 
 Node *
@@ -1118,17 +1114,11 @@ constexpr(void)
 }
 
 Node *
-expr(void)
-{
-	return simplify(xexpr());
-}
-
-Node *
 condexpr(int neg)
 {
 	Node *np;
 
-	np = exp2cond(xexpr(), neg);
+	np = exp2cond(expr(), neg);
 	if (np->flags & NCONST)
 		warn("conditional expression is constant");
 	return simplify(np);
