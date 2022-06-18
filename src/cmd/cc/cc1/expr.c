@@ -194,6 +194,7 @@ decay(Node *np)
 
 	switch (tp->op) {
 	case ARY:
+		DBG("EXPR decay ary");
 		tp = tp->type;
 		if (np->op == OPTR) {
 			new = np->left;
@@ -201,14 +202,18 @@ decay(Node *np)
 			new->type = mktype(tp, PTR, 0, NULL);
 			return new;
 		}
+		break;
 	case FTN:
-		new = node(OADDR, mktype(tp, PTR, 0, NULL), np, NULL);
-		if (np->sym && np->sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
-			new->flags |= NCONST;
-		return new;
+		DBG("EXPR decay function");
+		break;
 	default:
 		return np;
 	}
+
+	new = node(OADDR, mktype(tp, PTR, 0, NULL), np, NULL);
+	if (np->sym && np->sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
+		new->flags |= NCONST;
+	return new;
 }
 
 static Node *
