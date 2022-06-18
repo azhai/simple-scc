@@ -540,8 +540,15 @@ static Node *
 address(int op, Node *np)
 {
 	Node *new;
-	Type *tp = np->type;
+	Type *tp;
 	Symbol *sym = np->sym;
+
+	if ((np->flags & NDECAY) != 0) {
+		new = np->left;
+		free(np);
+		np = new;
+	}
+	tp = np->type;
 
 	/*
 	 * ansi c accepts & applied to a function name, and it generates
@@ -732,7 +739,7 @@ no_pars:
 	return node(op, rettype, np, par);
 }
 
-static Node *unary(int);
+static Node *unary(void);
 
 static Type *
 typeof(Node *np)
@@ -764,7 +771,7 @@ sizeexp(void)
 		tp = typename();
 		break;
 	default:
-		tp = typeof(unary(0));
+		tp = typeof(unary());
 		break;
 	}
 	expect(')');
@@ -807,10 +814,10 @@ postfix(Node *lp)
 	}
 }
 
-static Node *cast(int);
+static Node *cast(void);
 
 static Node *
-unary(int needdecay)
+unary(void)
 {
 	Node *(*fun)(int, Node *), *np;
 	int op;
@@ -825,7 +832,7 @@ unary(int needdecay)
 	case '*': op = OPTR;  fun = content;      break;
 	case SIZEOF:
 		next();
-		tp = (yytoken == '(') ? sizeexp() : typeof(unary(0));
+		tp = (yytoken == '(') ? sizeexp() : typeof(unary());
 		if (!(tp->prop & TDEFINED))
 			errorp("sizeof applied to an incomplete type");
 		return sizeofnode(tp);
@@ -833,33 +840,31 @@ unary(int needdecay)
 	case DEC:
 		op = (yytoken == INC) ? OA_ADD : OA_SUB;
 		next();
-		np = incdec(unary(1), op);
-		goto chk_decay;
+		np = incdec(unary(), op);
+		goto decay;
 	case DEFINED:
 		return defined();
 	default:
 		np = postfix(primary());
-		goto chk_decay;
+		goto decay;
 	}
 
 	next();
-	np = (*fun)(op, cast(op != OADDR));
+	np = (*fun)(op, cast());
 
-chk_decay:
-	if (needdecay)
-		np = decay(np);
-	return np;
+decay:
+	return decay(np);
 }
 
 static Node *
-cast(int needdecay)
+cast(void)
 {
 	Node *tmp, *np;
 	Type *tp;
 	static int nested;
 
 	if (!accept('('))
-		return unary(needdecay);
+		return unary();
 
 	switch (yytoken) {
 	case TQUALIFIER:
@@ -875,7 +880,7 @@ cast(int needdecay)
 		case ARY:
 			error("cast specifies an array type");
 		default:
-			tmp = cast(needdecay);
+			tmp = cast();
 			if ((np = convert(tmp,  tp, 1)) == NULL)
 				error("bad type conversion requested");
 			np->flags &= ~NLVAL;
@@ -901,7 +906,7 @@ mul(void)
 	Node *np, *(*fun)(int, Node *, Node *);
 	int op;
 
-	np = cast(1);
+	np = cast();
 	for (;;) {
 		switch (yytoken) {
 		case '*': op = OMUL; fun = arithmetic; break;
@@ -910,7 +915,7 @@ mul(void)
 		default: return np;
 		}
 		next();
-		np = (*fun)(op, np, cast(1));
+		np = (*fun)(op, np, cast());
 	}
 }
 
