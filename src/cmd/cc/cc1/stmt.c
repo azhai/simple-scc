@@ -156,9 +156,12 @@ Dowhile(Symbol *lbreak, Symbol *lcont, Switch *lswitch)
 
 	emit(OBLOOP, NULL);
 	emit(OLABEL, begin);
+
 	stmt(lbreak, lcont, lswitch);
 	expect(WHILE);
 	np = condition(NONEGATE);
+	expect(';');
+
 	emit(OLABEL, lcont);
 	emit(OBRANCH, begin);
 	emit(OEXPR, np);
