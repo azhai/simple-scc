@@ -114,7 +114,8 @@ enum {
 enum {
 	NLVAL   = 1 << 0,
 	NCONST  = 1 << 1,
-	NEFFECT = 1 << 2
+	NEFFECT = 1 << 2,
+	NDECAY  = 1 << 3,
 };
 
 /* lexer mode, compiler or preprocessor directive */

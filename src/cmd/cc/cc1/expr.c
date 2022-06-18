@@ -211,6 +211,8 @@ decay(Node *np)
 	new = node(OADDR, mktype(tp, PTR, 0, NULL), np, NULL);
 	if (np->sym && np->sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
 		new->flags |= NCONST;
+	new->flags |= NDECAY;
+
 	return new;
 }
 
@@ -733,10 +735,16 @@ static Node *unary(int);
 static Type *
 typeof(Node *np)
 {
+	Node *new;
 	Type *tp;
 
 	if (np == NULL)
 		unexpected();
+	if ((np->flags & NDECAY) != 0) {
+		new = np->left;
+		free(np);
+		np = new;
+	}
 	tp = np->type;
 	freetree(np);
 	return tp;
