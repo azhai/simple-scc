@@ -739,8 +739,6 @@ no_pars:
 	return node(op, rettype, np, par);
 }
 
-static Node *unary(void);
-
 static Type *
 typeof(Node *np)
 {
@@ -759,6 +757,8 @@ typeof(Node *np)
 	return tp;
 }
 
+static Node *cast(void);
+
 static Type *
 sizeexp(void)
 {
@@ -771,7 +771,7 @@ sizeexp(void)
 		tp = typename();
 		break;
 	default:
-		tp = typeof(unary());
+		tp = typeof(cast());
 		break;
 	}
 	expect(')');
@@ -813,8 +813,6 @@ postfix(Node *lp)
 		}
 	}
 }
-
-static Node *cast(void);
 
 static Node *
 unary(void)
