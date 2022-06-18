@@ -540,24 +540,26 @@ static Node *
 address(int op, Node *np)
 {
 	Node *new;
+	Type *tp = np->type;
+	Symbol *sym = np->sym;
 
 	/*
 	 * ansi c accepts & applied to a function name, and it generates
 	 * a function pointer
 	 */
 	if (np->op == OSYM) {
-		if (np->type->op == FTN)
+		if (tp->op == FTN)
 			return decay(np);
-		if (np->type->op == ARY)
+		if (tp->op == ARY)
 			goto dont_check_lvalue;
 	}
 	chklvalue(np);
 
 dont_check_lvalue:
-	if (np->sym && (np->sym->flags & SREGISTER))
+	if (sym && (sym->flags & SREGISTER))
 		errorp("address of register variable '%s' requested", yytext);
-	new = node(op, mktype(np->type, PTR, 0, NULL), np, NULL);
-	if (np->sym && np->sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
+	new = node(op, mktype(tp, PTR, 0, NULL), np, NULL);
+	if (sym && sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
 		new->flags |= NCONST;
 	return new;
 }
