@@ -764,7 +764,9 @@ sizeexp(void)
 {
 	Type *tp;
 
-	expect('(');
+	if (!accept('('))
+		return typeof(cast());
+
 	switch (yytoken) {
 	case TYPE:
 	case TYPEIDEN:
@@ -775,6 +777,7 @@ sizeexp(void)
 		break;
 	}
 	expect(')');
+
 	return tp;
 }
 
@@ -830,7 +833,7 @@ unary(void)
 	case '*': op = OPTR;  fun = content;      break;
 	case SIZEOF:
 		next();
-		tp = (yytoken == '(') ? sizeexp() : typeof(unary());
+		tp = sizeexp();
 		if (!(tp->prop & TDEFINED))
 			errorp("sizeof applied to an incomplete type");
 		return sizeofnode(tp);
