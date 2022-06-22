@@ -8,8 +8,6 @@
 
 #define XCHG(lp, rp, np) (np = lp, lp = rp, rp = np)
 
-static Node *xexpr(void), *xassign(void);
-
 int
 cmpnode(Node *np, TUINT val)
 {
@@ -194,6 +192,7 @@ decay(Node *np)
 
 	switch (tp->op) {
 	case ARY:
+		DBG("EXPR decay ary");
 		tp = tp->type;
 		if (np->op == OPTR) {
 			new = np->left;
@@ -201,14 +200,20 @@ decay(Node *np)
 			new->type = mktype(tp, PTR, 0, NULL);
 			return new;
 		}
+		break;
 	case FTN:
-		new = node(OADDR, mktype(tp, PTR, 0, NULL), np, NULL);
-		if (np->sym && np->sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
-			new->flags |= NCONST;
-		return new;
+		DBG("EXPR decay function");
+		break;
 	default:
 		return np;
 	}
+
+	new = node(OADDR, mktype(tp, PTR, 0, NULL), np, NULL);
+	if (np->sym && np->sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
+		new->flags |= NCONST;
+	new->flags |= NDECAY;
+
+	return new;
 }
 
 static Node *
@@ -535,24 +540,33 @@ static Node *
 address(int op, Node *np)
 {
 	Node *new;
+	Type *tp;
+	Symbol *sym = np->sym;
+
+	if ((np->flags & NDECAY) != 0) {
+		new = np->left;
+		free(np);
+		np = new;
+	}
+	tp = np->type;
 
 	/*
 	 * ansi c accepts & applied to a function name, and it generates
 	 * a function pointer
 	 */
 	if (np->op == OSYM) {
-		if (np->type->op == FTN)
+		if (tp->op == FTN)
 			return decay(np);
-		if (np->type->op == ARY)
+		if (tp->op == ARY)
 			goto dont_check_lvalue;
 	}
 	chklvalue(np);
 
 dont_check_lvalue:
-	if (np->sym && (np->sym->flags & SREGISTER))
+	if (sym && (sym->flags & SREGISTER))
 		errorp("address of register variable '%s' requested", yytext);
-	new = node(op, mktype(np->type, PTR, 0, NULL), np, NULL);
-	if (np->sym && np->sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
+	new = node(op, mktype(tp, PTR, 0, NULL), np, NULL);
+	if (sym && sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
 		new->flags |= NCONST;
 	return new;
 }
@@ -629,7 +643,7 @@ primary(void)
 		break;
 	case '(':
 		next();
-		np = xexpr();
+		np = expr();
 		expect(')');
 
 		/* do not call to next */
@@ -685,7 +699,7 @@ arguments(Node *np)
 	toomany = 0;
 
 	do {
-		arg = xassign();
+		arg = assign();
 		argtype = *targs;
 		if (argtype == ellipsistype) {
 			n = 0;
@@ -725,36 +739,45 @@ no_pars:
 	return node(op, rettype, np, par);
 }
 
-static Node *unary(int);
-
 static Type *
 typeof(Node *np)
 {
+	Node *new;
 	Type *tp;
 
 	if (np == NULL)
 		unexpected();
+	if ((np->flags & NDECAY) != 0) {
+		new = np->left;
+		free(np);
+		np = new;
+	}
 	tp = np->type;
 	freetree(np);
 	return tp;
 }
+
+static Node *cast(void);
 
 static Type *
 sizeexp(void)
 {
 	Type *tp;
 
-	expect('(');
+	if (!accept('('))
+		return typeof(cast());
+
 	switch (yytoken) {
 	case TYPE:
 	case TYPEIDEN:
 		tp = typename();
 		break;
 	default:
-		tp = typeof(unary(0));
+		tp = typeof(cast());
 		break;
 	}
 	expect(')');
+
 	return tp;
 }
 
@@ -768,7 +791,7 @@ postfix(Node *lp)
 		switch (yytoken) {
 		case '[':
 			next();
-			rp = xexpr();
+			rp = expr();
 			expect(']');
 			lp = array(decay(lp), rp);
 			break;
@@ -794,10 +817,8 @@ postfix(Node *lp)
 	}
 }
 
-static Node *cast(int);
-
 static Node *
-unary(int needdecay)
+unary(void)
 {
 	Node *(*fun)(int, Node *), *np;
 	int op;
@@ -812,7 +833,7 @@ unary(int needdecay)
 	case '*': op = OPTR;  fun = content;      break;
 	case SIZEOF:
 		next();
-		tp = (yytoken == '(') ? sizeexp() : typeof(unary(0));
+		tp = sizeexp();
 		if (!(tp->prop & TDEFINED))
 			errorp("sizeof applied to an incomplete type");
 		return sizeofnode(tp);
@@ -820,33 +841,31 @@ unary(int needdecay)
 	case DEC:
 		op = (yytoken == INC) ? OA_ADD : OA_SUB;
 		next();
-		np = incdec(unary(1), op);
-		goto chk_decay;
+		np = incdec(unary(), op);
+		goto decay;
 	case DEFINED:
 		return defined();
 	default:
 		np = postfix(primary());
-		goto chk_decay;
+		goto decay;
 	}
 
 	next();
-	np = (*fun)(op, cast(op != OADDR));
+	np = (*fun)(op, cast());
 
-chk_decay:
-	if (needdecay)
-		np = decay(np);
-	return np;
+decay:
+	return decay(np);
 }
 
 static Node *
-cast(int needdecay)
+cast(void)
 {
 	Node *tmp, *np;
 	Type *tp;
 	static int nested;
 
 	if (!accept('('))
-		return unary(needdecay);
+		return unary();
 
 	switch (yytoken) {
 	case TQUALIFIER:
@@ -862,7 +881,7 @@ cast(int needdecay)
 		case ARY:
 			error("cast specifies an array type");
 		default:
-			tmp = cast(needdecay);
+			tmp = cast();
 			if ((np = convert(tmp,  tp, 1)) == NULL)
 				error("bad type conversion requested");
 			np->flags &= ~NLVAL;
@@ -872,7 +891,7 @@ cast(int needdecay)
 		if (nested == NR_SUBEXPR)
 			error("too many expressions nested by parentheses");
 		++nested;
-		np = xexpr();
+		np = expr();
 		--nested;
 		expect(')');
 		np = postfix(np);
@@ -888,7 +907,7 @@ mul(void)
 	Node *np, *(*fun)(int, Node *, Node *);
 	int op;
 
-	np = cast(1);
+	np = cast();
 	for (;;) {
 		switch (yytoken) {
 		case '*': op = OMUL; fun = arithmetic; break;
@@ -897,7 +916,7 @@ mul(void)
 		default: return np;
 		}
 		next();
-		np = (*fun)(op, np, cast(1));
+		np = (*fun)(op, np, cast());
 	}
 }
 
@@ -1040,7 +1059,7 @@ ternary(void)
 		Node *ifyes, *ifno, *np;
 
 		cond = exp2cond(cond, 0);
-		ifyes = xexpr();
+		ifyes = expr();
 		expect(':');
 		ifno = ternary();
 		np = chkternary(ifyes, ifno);
@@ -1049,8 +1068,8 @@ ternary(void)
 	return cond;
 }
 
-static Node *
-xassign(void)
+Node *
+assign(void)
 {
 	Node *np, *(*fun)(int , Node *, Node *);
 	int op;
@@ -1069,7 +1088,7 @@ xassign(void)
 		case AND_EQ: op = OA_AND;  fun = integerop;  break;
 		case XOR_EQ: op = OA_XOR;  fun = integerop;  break;
 		case OR_EQ:  op = OA_OR;   fun = integerop;  break;
-		default: return np;
+		default: return simplify(np);
 		}
 		chklvalue(np);
 		np->flags |= NEFFECT;
@@ -1078,23 +1097,21 @@ xassign(void)
 	}
 }
 
-static Node *
-xexpr(void)
+Node *
+expr(void)
 {
 	Node *lp, *rp;
 
-	lp = xassign();
-	while (accept(',')) {
-		rp = xassign();
-		lp = node(OCOMMA, rp->type, lp, rp);
-	}
-	return lp;
-}
+	lp = assign();
+	if (!accept(','))
+		return lp;
 
-Node *
-assign(void)
-{
-	return simplify(xassign());
+	do {
+		rp = assign();
+		lp = node(OCOMMA, rp->type, lp, rp);
+	} while (accept(','));
+
+	return simplify(lp);
 }
 
 Node *
@@ -1113,17 +1130,11 @@ constexpr(void)
 }
 
 Node *
-expr(void)
-{
-	return simplify(xexpr());
-}
-
-Node *
 condexpr(int neg)
 {
 	Node *np;
 
-	np = exp2cond(xexpr(), neg);
+	np = exp2cond(expr(), neg);
 	if (np->flags & NCONST)
 		warn("conditional expression is constant");
 	return simplify(np);

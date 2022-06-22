@@ -169,7 +169,7 @@
 0176-macro.c
 0177-literal.c [TODO]
 0178-include.c
-0179-sizeof.c [TODO]
+0179-sizeof.c
 0180-incomplete.c
 0181-stringize.c
 0182-voidcast.c
@@ -199,4 +199,5 @@
 0206-initializer.c
 0207-structcb.c
 0208-sizeof.c
-0209-flexible.c
+0209-dowhile.c
+0210-flexible.c
