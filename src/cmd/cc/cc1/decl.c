@@ -917,8 +917,15 @@ field(struct decl *dcl)
 	}
 
 	if ((tp->prop & TDEFINED) == 0) {
-		errorp("field '%s' has incomplete type", name);
-		tp = inttype;
+		if (tp->op == ARY && tp->n.elem == 0) {
+			if (n == 0)
+				errorp("flexible array member in a struct with no named members");
+			if (ahead() != '}')
+				errorp("flexible array member not at end of struct");
+		} else {
+			errorp("field '%s' has incomplete type", name);
+			tp = inttype;
+		}
 	}
 	if (tp->op == FTN) {
 		errorp("field '%s' declared as a function", name);

@@ -266,6 +266,9 @@ newtype(Type *base)
 	if (tp->op == FTN) {
 		siz = tp->n.elem * sizeof(Type *);
 		tp->p.pars = memcpy(xmalloc(siz), tp->p.pars, siz);
+	} else if (tp->op == ARY) {
+		/* We need alignment for flexible array members */
+		tp->align = tp->type->align;
 	}
 
 	if (curfun) {
