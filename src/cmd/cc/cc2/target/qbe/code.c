@@ -295,10 +295,11 @@ defglobal(Symbol *sym)
 		return;
 	if (sym->kind == SGLOB)
 		fputs("export ", stdout);
+	if ((tp->flags & INITF) == 0)
+		fputs("common ", stdout);
 
-	printf("data %s = %s align %d {\n",
+	printf("data %s = align %d {\n",
 	       symname(sym),
-	       (tp->flags & INITF) ? "" : "common",
 	       tp->align);
 	if ((tp->flags & INITF) == 0)
 		printf("\tz\t%lu\n}\n", tp->size);
