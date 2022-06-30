@@ -1,6 +1,6 @@
 #!/bin/sh
 
-trap "rm -rf file*; exit" 0 2 3 15
+trap "rm -rf file*" EXIT HUP INT QUIT TERM
 ulimit -c 0
 rm -f test.log
 rm -rf file*
