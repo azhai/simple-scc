@@ -16,5 +16,5 @@ strpbrk(const char *s1, const char *s2)
 	while ((ch = *s) != 0 && !map[ch])
 		s++;
 
-	return (ch == '\0') ? NULL : s;
+	return (ch == '\0') ? NULL : (char *) s;
 }

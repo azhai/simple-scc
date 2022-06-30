@@ -7,7 +7,7 @@ bsearch(const void *key, const void *ary, size_t n, size_t size,
 {
 	int t;
 	size_t mid, low, high;
-	char *cur, *base = ary;
+	char *cur, *base = (char *) ary;
 
 	low = 0;
 	high = n - 1;

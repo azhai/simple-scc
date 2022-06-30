@@ -8,5 +8,5 @@ strchr(const char *s, int c)
 	while (*s && *s != c)
 		++s;
 
-	return (*s == c) ? s : NULL;
+	return (*s == c) ? (char *) s : NULL;
 }

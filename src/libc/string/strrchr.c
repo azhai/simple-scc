@@ -12,5 +12,5 @@ strrchr(const char *s, int c)
 	while (t > s && *t != c)
 		--t;
 
-	return (*t == c) ? t : NULL;
+	return (*t == c) ? (char *) t : NULL;
 }

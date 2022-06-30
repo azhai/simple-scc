@@ -9,11 +9,11 @@
 #undef strtoll
 
 long long
-strtoll(const char * restrict s, char ** restrict end, int base)
+strtoll(const char * restrict ptr, char ** restrict end, int base)
 {
 	int d, sign = -1;
 	long long n;
-	const char *t;
+	char *t, *s = (char *) ptr;
 
 	if (end)
 		*end = s;

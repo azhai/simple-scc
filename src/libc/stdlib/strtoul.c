@@ -9,11 +9,11 @@
 #undef strtoul
 
 unsigned long
-strtoul(const char * restrict s, char ** restrict end, int base)
+strtoul(const char * restrict ptr, char ** restrict end, int base)
 {
 	int d, sign = 1;
 	unsigned long n;
-	const char *t;
+	char *t, *s = (char *) ptr;
 
 	if (end)
 		*end = s;

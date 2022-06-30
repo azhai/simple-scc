@@ -9,7 +9,7 @@
 
 #undef system
 
-extern char **_environ;
+extern const char **_environ;
 
 int
 system(const char *cmd)
@@ -24,7 +24,7 @@ system(const char *cmd)
 	case -1:
 		return -1;
 	case 0:
-		_execve(SHELL, (char*[]) {"sh", "-c", cmd, NULL}, _environ);
+		_execve(SHELL, (const char*[]) {"sh", "-c", cmd, NULL}, _environ);
 		_exit(127);
 	default:
 		while (_waitpid(pid, &st, 0) < 0 && errno == EINTR)

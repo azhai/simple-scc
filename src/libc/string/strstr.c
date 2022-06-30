@@ -11,11 +11,11 @@ strstr(const char *s1, const char *s2)
 	int len;
 
 	if ((len = strlen(s2)) == 0)
-		return s1;
+		return (char *) s1;
 
 	for (p = s1; p = strchr(p, c); ++p) {
 		if (!strncmp(p, s2, len))
-			return p;
+			return (char *) p;
 	}
 
 	return NULL;
