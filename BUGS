@@ -1,4 +1,3 @@
-libc: signal functions are known to be broken
 scc: Remove TINT and TUINT
 
 # compiling sbase
