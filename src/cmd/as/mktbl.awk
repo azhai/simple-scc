@@ -18,7 +18,8 @@ $7 !~ cpu	{next}
 /^$/		{next}
 
 		{
-		if (opstart[$1] == 0) {
+		if (op[$1] == 0) {
+			op[$1] = 1
 			opstart[$1] = nvar
 			opnames[nop++] = $1
 		}
