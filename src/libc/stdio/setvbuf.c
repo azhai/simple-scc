@@ -10,14 +10,14 @@ int
 setvbuf(FILE *restrict fp, char *restrict buf, int mode, size_t size)
 {
 	int flags;
-	char *p;
+	unsigned char *p;
 	size_t l;
 
 	if (_flsbuf(fp) == EOF)
 		return EOF;
 
 	if (buf)
-		p = buf, l = size;
+		p = (unsigned char *) buf, l = size;
 	else
 		p = fp->buf, l = fp->len;
 
