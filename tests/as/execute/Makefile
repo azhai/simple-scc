@@ -2,10 +2,14 @@
 
 ROOT=../../../
 
-all: tests
+all:
+	@PATH=$(ROOT)/libexec/scc/:$(ROOT)/bin:$$PATH ./chktest.sh
 
 tests:
-	@PATH=$(ROOT)/libexec/scc/:$(ROOT)/bin:$$PATH ./chktest.sh
+	@$(MAKE) |\
+	grep -v TODO |\
+	grep FAIL >/dev/null &&\
+	printf '[FAIL]' || printf '[PASS]'; printf '\tas/execute\n'
 
 clean:
 	rm -f test.log

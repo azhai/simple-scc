@@ -98,7 +98,6 @@ toolchain: src
 libc: src/libc
 libcrt: src/libcrt
 
-tests: all
 src: include/scc/scc
 
 src: dirs

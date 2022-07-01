@@ -10,12 +10,15 @@ DIRS =\
 	libc/execute\
 	cc/execute cc/error\
 
-all clean:
-	for i in $(DIRS);\
+PROJECTDIR = ..
+include $(PROJECTDIR)/scripts/rules.mk
+
+all:
+	@for i in $(DIRS);\
 	do \
 		cd $$i;\
-		$(MAKE) $@;\
+		$(MAKE) tests;\
 		cd -;\
-	done
+	done | grep -e PASS -e FAIL -e SKIP;\
 
 dep:

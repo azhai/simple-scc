@@ -3,14 +3,13 @@
 file=${1?' empty input file'}
 tmp1=`mktemp`
 tmp2=`mktemp`
-trap "rm -f *.o  $tmp1 $tmp2" EXIT INT QUIT TERM
+#trap "rm -f *.o  $tmp1 $tmp2" EXIT INT QUIT TERM
 ulimit -c 0
 rm -f test.log
 
 while read i state
 do
-	state=${state:-"\t"}
-	rm -f *.o $tmp1 $tmp2
+	rm -f *.o $i $tmp1 $tmp2
 
 	(echo $i
 	 $CC $CFLAGS -o $i $i.c
@@ -19,5 +18,5 @@ do
 	 diff -u $tmp1 $tmp2) >> test.log 2>&1 &&
 
 	printf '[PASS]' || printf '[FAIL]'
-	printf "$state\t%s\n" $i
+        printf '\t%s\t%s\n' $i $state
 done < $file
