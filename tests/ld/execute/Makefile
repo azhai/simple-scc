@@ -7,7 +7,14 @@ SZ = ../../../bin/scc-size
 OBJS   = f1.o f2.o
 OBJLIB = f3.o
 
-all test: a.out
+all:
+	@if $(AS) /dev/null 2>/dev/null;\
+	then\
+		$(MAKE) test;\
+	fi
+
+
+tests: a.out
 
 a.out: $(OBJS) f.a
 	$(LD) $(OBJS) f.a

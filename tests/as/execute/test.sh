@@ -25,7 +25,7 @@ sed -n '/^\#/ ! {
 nl -b a > $tmp1
 
 
-objdump |
+scc-objdump |
 sed -n '/^data:/,$ {
 	/^data:/ ! {
 		s%.*:%%
