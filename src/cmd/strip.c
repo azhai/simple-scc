@@ -44,7 +44,7 @@ doit(char *fname)
 	}
 	if ((src = fopen(fname, "rb")) == NULL) {
 		error("opening src file");
-		goto err0;
+		return;
 	}
 	if ((type = objtype(src, NULL)) < 0) {
 		error("getting object type");
@@ -99,8 +99,6 @@ err2:
 	delobj(obj);
 err1:
 	fclose(src);
-err0:
-	error("cannot strip it");
 }
 
 static void
