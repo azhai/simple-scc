@@ -10,9 +10,9 @@ OBJLIB = f3.o
 all: a.out
 
 tests:
-	@if $(AS) 2>/dev/null;\
+	@if $(AS) /dev/null 2>/dev/null;\
 	then\
-		$(MAKE);\
+		$(MAKE) |\
 		grep -v TODO |\
 		grep FAIL >/dev/null &&\
 		printf '[FAIL]' || printf '[PASS]';\
