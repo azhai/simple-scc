@@ -22,7 +22,7 @@ tests:
 	printf '\tld/execute\n'
 
 a.out: $(OBJS) f.a
-	$(LD) $(OBJS) f.a
+	$(LD) $(OBJS) f.a >/dev/null 2>&1 || true
 
 f.a: $(OBJLIB)
 	$(AR) -rv $@ $?
