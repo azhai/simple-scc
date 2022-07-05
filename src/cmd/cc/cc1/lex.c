@@ -494,6 +494,8 @@ escape(void)
 	switch (*++input->p) {
 	case 'a':
 		return '\a';
+	case 'b':
+		return '\b';
 	case 'f':
 		return '\f';
 	case 'n':
