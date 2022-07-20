@@ -25,7 +25,7 @@ a.out: $(OBJS) f.a
 	$(LD) $(OBJS) f.a >/dev/null 2>&1 || true
 
 f.a: $(OBJLIB)
-	$(AR) -rv $@ $?
+	$(AR) -rv $@ $? >/dev/null 2>&1
 
 size:
 	$(SZ) *.o *.a
