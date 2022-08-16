@@ -1,4 +1,5 @@
 #include <ctype.h>
+
 #undef toupper
 
 int
