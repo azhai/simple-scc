@@ -117,11 +117,11 @@ morecore(size_t nunits)
 
 /*
  * Run over the list of free blocks trying to find a block
- * big enough for nbytes. If the block fit perfectly with
+ * big enough for nbytes. If the block fits perfectly with
  * the required size then we only have to unlink
  * the block. Otherwise we have to split the block and
  * return the right part. If we run over the full list
- * without a fit then we have to require more memory
+ * without a fit then we have to acquire more memory
  *
  *              ______________________________________
  * ___________./______________________________________\_____
