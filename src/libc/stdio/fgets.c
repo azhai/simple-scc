@@ -11,7 +11,7 @@ fgets(char *restrict s, int n, FILE *restrict fp)
 	for (--n; n > 0; --n) {
 		if ((ch = getc(fp)) == EOF)
 			break;
-		if  ((*t++ = ch) == '\n')
+		if ((*t++ = ch) == '\n')
 			break;
 	}
 	if (ch == EOF && s == t)

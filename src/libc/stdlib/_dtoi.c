@@ -2,6 +2,8 @@
 #include <limits.h>
 #include <string.h>
 
+#include "../libc.h"
+
 int
 _dtoi(char c)
 {

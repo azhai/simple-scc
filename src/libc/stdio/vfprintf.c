@@ -151,15 +151,16 @@ static size_t
 strout(char *s, size_t len, int width, int fill, FILE *restrict fp)
 {
 	int left = 0, adjust, ch, prefix;
-	size_t cnt = 0;
+	size_t cnt;
 
 	if (width < 0) {
 		left = 1;
 		width = -width;
 	}
 
-	adjust = (len > 0 && len < width) ? width - len : 0;
+	adjust = len < width ? width - len : 0;
 	cnt = adjust + len;
+
 	if (left)
 		adjust = -adjust;
 
@@ -179,13 +180,8 @@ strout(char *s, size_t len, int width, int fill, FILE *restrict fp)
 	for ( ; adjust > 0; adjust--)
 		putc(fill, fp);
 
-	if (len == -1) {
-		for (cnt = 0; ch = *s++; ++cnt)
-			putc(ch, fp);
-	} else {
-		while (len-- > 0 && (ch = *s++))
-			putc(ch, fp);
-	}
+	for ( ; len-- > 0 && (ch = *s) != '\0'; ++s)
+		putc(ch, fp);
 
 	for ( ; adjust < 0; adjust++)
 		putc(' ', fp);
@@ -240,11 +236,8 @@ flags:
 				for (n = 0; isdigit(ch = *fmt); fmt++)
 					n = n * 10 + ch - '0';
 			}
-			if (n < 0)
-				n = 0;
-			if (n > MAXPREC)
-				n = MAXPREC;
-			conv.prec = n;
+			if (n >= 0)
+				conv.prec = n;
 			goto flags;
 		case '*':
 			width = va_arg(va2, int);
@@ -323,8 +316,11 @@ flags:
 			conv.base = 8;
 			flags |= UNSIGNED;
 		numeric:
-			if (conv.prec != -1)
+			if (conv.prec != -1) {
+				if (conv.prec > MAXPREC)
+					conv.prec = MAXPREC;
 				fill = ' ';
+			}
 			s = numtostr(getnum(&va2, flags, &conv.sign),
 			             flags,
 			             &conv,
@@ -347,6 +343,10 @@ flags:
 				/* len = wcsnlen(ws, conv.prec); */
 				goto wstrout;
 			} else {
+				if (conv.prec != -1)
+					len = conv.prec;
+				else
+					len = SIZE_MAX;
 				s = va_arg(va2, char *);
 				if ((len = strlen(s)) > conv.prec)
 					len = conv.prec;

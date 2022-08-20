@@ -1,6 +1,7 @@
 #include <stdlib.h>
-#undef rand
+
 #undef srand
+#undef rand
 
 static unsigned long next;
 
@@ -11,8 +12,13 @@ srand(unsigned seed)
 }
 
 int
-rand(void)  /* RAND_MAX assumed to be 32767. */
+rand(void)
 {
+	/*
+	 * next is just an arbitrary number
+	 * used to generate a random number
+	 * which is <= RAND_MAX
+	 */
 	next = next * 1103515245 + 12345;
-	return (unsigned)(next/65536) % 32768;
+	return (unsigned)(next/65536) % (RAND_MAX + 1);
 }

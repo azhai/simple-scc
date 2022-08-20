@@ -1,4 +1,5 @@
 extern void __assert(char *, char *, long);
+extern void assert(int);
 
 #undef assert
 #ifndef NDEBUG
