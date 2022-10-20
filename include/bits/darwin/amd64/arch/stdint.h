@@ -1,11 +1,3 @@
-#define INT8_C(c)  c
-#define INT16_C(c) c
-#define INT32_C(c) c
-
-#define UINT8_C(c)  c
-#define UINT16_C(c) c
-#define UINT32_C(c) c ## U
-
 #define INT8_MAX  0x7F
 #define INT8_MIN  (-INT8_MAX-1)
 #define UINT8_MAX 0xFF
