@@ -201,3 +201,4 @@
 0208-sizeof.c
 0209-dowhile.c
 0210-flexible.c
+0211-enum.c
