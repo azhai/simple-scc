@@ -822,8 +822,10 @@ enumdcl(void)
 	tp = tagsym->type;
 
 	namespace = NS_IDEN;
-	if (!accept('{'))
-		goto restore_name;
+	if (!accept('{')) {
+		namespace = ns;
+		return tp;
+	}
 	if (tp->prop & TDEFINED)
 		errorp("redefinition of enumeration '%s'", tagsym->name);
 	deftype(tp);
@@ -858,10 +860,8 @@ enumdcl(void)
 		if (!accept(','))
 			break;
 	}
-	expect('}');
-
-restore_name:
 	namespace = ns;
+	expect('}');
 	return tp;
 }
 
