@@ -290,11 +290,12 @@ mktype(Type *tp, int op, TINT nelem, Type *pars[])
 	if (op == PTR && tp == voidtype)
 		return pvoidtype;
 
-	memset(&type, 0, sizeof(type));
-	type.type = tp;
-	type.op = op;
-	type.p.pars = pars;
-	type.n.elem = nelem;
+	type = (Type) {
+		.type = tp,
+		.op = op,
+		.p.pars = pars,
+		.n.elem = nelem,
+	};
 
 	switch (op) {
 	case ARY:
