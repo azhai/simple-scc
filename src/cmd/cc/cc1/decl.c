@@ -490,6 +490,20 @@ ansifun(struct declarators *dp)
 }
 
 static int
+isfunbody(int tok)
+{
+	switch (tok) {
+	case '{':
+	case TYPE:
+	case SCLASS:
+	case TYPEIDEN:
+		return 1;
+	default:
+		return 0;
+	}
+}
+
+static int
 funbody(Symbol *sym, Symbol *pars[])
 {
 	Type *tp;
@@ -502,28 +516,21 @@ funbody(Symbol *sym, Symbol *pars[])
 	if (tp->op != FTN)
 		return 0;
 
-	switch (yytoken) {
-	case '{':
-	case TYPE:
-	case SCLASS:
-	case TYPEIDEN:
-		if (curctx < PARAMCTX) {
-			assert(!pars);
-			errorp("typedef'ed function type cannot be instantiated");
-			curctx = PARAMCTX;
-			pars = emptypars;
-		}
-
-		if (curctx != PARAMCTX)
-			errorp("nested function declaration");
-
-		if (sym && sym->ns == NS_IDEN)
-			break;
-	default:
+	if (!isfunbody(yytoken) || sym->ns != NS_IDEN) {
 		emit(ODECL, sym);
 		endfundcl(tp, pars);
 		return  0;
 	}
+
+	if (curctx < PARAMCTX) {
+		assert(!pars);
+		errorp("typedef'ed function type cannot be instantiated");
+		curctx = PARAMCTX;
+		pars = emptypars;
+	}
+
+	if (curctx != PARAMCTX)
+		errorp("nested function declaration");
 
 	tp->prop |= TFUNDEF;
 	curfun = sym;
