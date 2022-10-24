@@ -194,6 +194,8 @@ repeat:
 	case '\n':
 		newline();
 		break;
+	case EOF:
+		break;
 	default:
 		if (!isprint(c) && !ispunct(c) && !isspace(c))
 			warn("invalid input character. The shame of UB is yours");
