@@ -494,6 +494,7 @@ funbody(Symbol *sym, Symbol *pars[])
 {
 	Type *tp;
 	Symbol **bp, *p;
+	Symbol *emptypars[] = {NULL};
 
 	if (!sym)
 		return 0;
@@ -510,7 +511,7 @@ funbody(Symbol *sym, Symbol *pars[])
 			assert(!pars);
 			errorp("typedef'ed function type cannot be instantiated");
 			curctx = PARAMCTX;
-			pars = (Symbol *[]) {NULL};
+			pars = emptypars;
 		}
 
 		if (curctx != PARAMCTX)
