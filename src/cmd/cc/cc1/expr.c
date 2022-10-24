@@ -676,14 +676,14 @@ arguments(Node *np)
 {
 	int toomany, n, op;
 	Node *par = NULL, *arg;
-	Type *argtype, **targs, *tp = np->type, *rettype;
+	Type *argtype, *tp = np->type, *rettype;
+	Type **targs = (Type *[]) {ellipsistype};
 
 	if (tp->op == PTR && tp->type->op == FTN) {
 		np = content(OPTR, np);
 		tp = np->type;
 	}
 	if (tp->op != FTN) {
-		targs = (Type *[]) {ellipsistype};
 		n = 1;
 		rettype = inttype;
 		errorp("function or function pointer expected");
