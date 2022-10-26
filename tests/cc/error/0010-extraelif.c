@@ -1,6 +1,6 @@
 /*
 PATTERN:
-
+0010-extraelif.c:11: error: #elif without #ifdef/ifndef
 .
 */
 
