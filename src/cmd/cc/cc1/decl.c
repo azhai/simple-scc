@@ -405,7 +405,6 @@ krpars(struct declarators *dp)
 			*dp->pars++ = sym;
 			continue;
 		}
-		if (!toomany)
 		toomany = 1;
 	} while (accept(','));
 
