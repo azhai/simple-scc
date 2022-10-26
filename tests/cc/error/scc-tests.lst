@@ -4,7 +4,7 @@
 0004-macroredef.c
 0005-fmacro.c
 0006-endif.c
-0007-unmatchedcppif.c [TODO]
+0007-unmatchedcppif.c
 0008-unmatchedcppelse.c
 0009-unmatchedcppelif.c [TODO]
 0010-extraelif.c [TODO]
