@@ -15,7 +15,7 @@
 0015-macro.c
 0016-arrayinitsize.c [TODO]
 0017-duplicatefunc.c
-0018-voidparam.c [TODO]
+0018-voidparam.c
 0019-kr_names.c
 0020-storage.c [TODO]
 0021-void.c [TODO]

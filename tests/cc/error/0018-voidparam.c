@@ -8,13 +8,13 @@ PATTERN:
 int
 a(void, int i)
 {
-	return 0;
+	return i;
 }
 
 int
 b(int i, void)
 {
-	return 0;
+	return i;
 }
 
 int
