@@ -1,7 +1,7 @@
 0001-sanity.c
 0002-missinginclude.c
 0003-junkinclude.c
-0004-macroredef.c [TODO]
+0004-macroredef.c
 0005-fmacro.c
 0006-endif.c
 0007-unmatchedcppif.c [TODO]
@@ -16,7 +16,7 @@
 0016-arrayinitsize.c [TODO]
 0017-duplicatefunc.c
 0018-voidparam.c [TODO]
-0019-kr_names.c [TODO]
+0019-kr_names.c
 0020-storage.c [TODO]
 0021-void.c [TODO]
 0022-cpp-if.c [TODO]
