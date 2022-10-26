@@ -1,6 +1,6 @@
 /*
 PATTERN:
-0012-ifnoexpr.c:7: error: unexpected '
+0012-ifnoexpr.c:8: error: unexpected '
 '
 .
 */

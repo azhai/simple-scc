@@ -9,7 +9,7 @@
 0009-unmatchedcppelif.c
 0010-extraelif.c
 0011-extraelse.c
-0012-ifnoexpr.c [TODO]
+0012-ifnoexpr.c
 0013-macro.c [TODO]
 0014-macro.c
 0015-macro.c [TODO]
