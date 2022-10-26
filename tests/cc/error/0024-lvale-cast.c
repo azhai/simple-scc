@@ -1,3 +1,9 @@
+/*
+PATTERN:
+0024-lvale-cast.c:12: error: lvalue required in operation
+.
+*/
+
 int
 main()
 {
