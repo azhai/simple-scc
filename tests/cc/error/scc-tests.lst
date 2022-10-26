@@ -6,7 +6,7 @@
 0006-endif.c
 0007-unmatchedcppif.c
 0008-unmatchedcppelse.c
-0009-unmatchedcppelif.c [TODO]
+0009-unmatchedcppelif.c
 0010-extraelif.c [TODO]
 0011-extraelse.c [TODO]
 0012-ifnoexpr.c [TODO]
@@ -29,3 +29,4 @@
 0029-eof.c
 0030-krtypes.c
 0031-krtypes.c
+0032-krtypes.c
