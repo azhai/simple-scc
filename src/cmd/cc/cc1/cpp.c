@@ -834,6 +834,11 @@ cppelse(void)
 static void
 elif(void)
 {
+	if (cppctx == 0) {
+		cpperror("#elif without #ifdef/ifndef");
+		return;
+	}
+
 	elseclause();
 	if (ifstatus[cppctx-1]) {
 		--cppctx;
