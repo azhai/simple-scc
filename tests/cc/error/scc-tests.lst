@@ -20,7 +20,7 @@
 0020-storage.c
 0021-void.c
 0022-cpp-if.c [TODO]
-0023-include.c [TODO]
+0023-include.c
 0024-lvale-cast.c [TODO]
 0025-bad-init.c [TODO]
 0026-numargs.c [TODO]
