@@ -1001,10 +1001,10 @@ decl(void)
 
 	if (accept(';'))
 		return;
+
 	sym = dodcl(REP, identifier, NS_IDEN, NULL);
-	if (sym->type->prop & TFUNDEF)
-		return;
-	expect(';');
+	if ((sym->type->prop & TFUNDEF) == 0)
+		expect(';');
 }
 
 static void
