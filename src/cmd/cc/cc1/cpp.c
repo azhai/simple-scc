@@ -449,9 +449,12 @@ getpars(Symbol *args[NR_MACROARG])
 			cpperror("macro arguments must be identifiers");
 			return NR_MACROARG;
 		}
-		sym = install(NS_IDEN, yylval.sym);
-		sym->flags |= SUSED;
-		args[n++] = sym;
+		if ((sym = install(NS_IDEN, yylval.sym)) == NULL) {
+			errorp("duplicated macro parameter '%s'", yytext);
+		} else {
+			sym->flags |= SUSED;
+			args[n++] = sym;
+		}
 		next();
 	} while (accept(','));
 	expect(')');
