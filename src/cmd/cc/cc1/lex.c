@@ -797,6 +797,9 @@ skipspaces(void)
 {
 	int c;
 
+	if (!input)
+		return EOF;
+
 	for (;;) {
 		switch (c = *input->p) {
 		case '\n':
