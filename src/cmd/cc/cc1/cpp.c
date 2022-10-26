@@ -9,9 +9,14 @@
 #include <scc/scc.h>
 #include "cc1.h"
 
+struct ifstate {
+	unsigned char enabled;
+	unsigned char iselse;
+};
+
 static unsigned ncmdlines;
 static Symbol *symline, *symfile;
-static unsigned char ifstatus[NR_COND];
+static struct ifstate ifstate[NR_COND];
 static int cppoff;
 static struct items dirinclude;
 
@@ -785,8 +790,10 @@ ifclause(int negate, int isifdef)
 
 	if (negate)
 		status = !status;
-	if ((ifstatus[n] = status) == 0)
+	if (status == 0)
 		++cppoff;
+	ifstate[n].enabled = status;
+	ifstate[n].iselse = 0;
 }
 
 static void
@@ -813,19 +820,20 @@ elseclause(void)
 {
 	int status;
 
-	if (cppctx == 0) {
-		cpperror("#else without #ifdef/ifndef");
-		return;
-	}
-
-	status = ifstatus[cppctx-1];
-	ifstatus[cppctx-1] = !status;
+	status = ifstate[cppctx-1].enabled;
+	ifstate[cppctx-1].enabled = !status;
 	cppoff += (status) ? 1 : -1;
 }
 
 static void
 cppelse(void)
 {
+	if (cppctx == 0 || ifstate[cppctx-1].iselse) {
+		cpperror("#else without #ifdef/ifndef");
+		return;
+	}
+
+	ifstate[cppctx-1].iselse = 1;
 	elseclause();
 	next();
 }
@@ -833,13 +841,13 @@ cppelse(void)
 static void
 elif(void)
 {
-	if (cppctx == 0) {
+	if (cppctx == 0 || ifstate[cppctx-1].iselse) {
 		cpperror("#elif without #ifdef/ifndef");
 		return;
 	}
 
 	elseclause();
-	if (ifstatus[cppctx-1]) {
+	if (ifstate[cppctx-1].enabled) {
 		--cppctx;
 		cppif();
 	}
@@ -850,7 +858,7 @@ endif(void)
 {
 	if (cppctx == 0)
 		error("#endif without #if");
-	if (!ifstatus[--cppctx])
+	if (!ifstate[--cppctx].enabled)
 		--cppoff;
 	next();
 }
