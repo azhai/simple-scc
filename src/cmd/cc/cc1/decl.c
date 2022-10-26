@@ -530,7 +530,7 @@ funbody(Symbol *sym, Symbol *pars[])
 	}
 
 	if (curctx != PARAMCTX)
-		errorp("nested function declaration");
+		error("nested function declaration");
 
 	tp->prop |= TFUNDEF;
 	curfun = sym;
