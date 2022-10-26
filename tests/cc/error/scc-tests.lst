@@ -27,3 +27,4 @@
 0027-constoverflow.c [TODO]
 0028-noconstinit.c [TODO]
 0029-eof.c
+0030-krtypes.c
