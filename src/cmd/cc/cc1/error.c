@@ -72,7 +72,8 @@ cpperror(char *fmt, ...)
 	va_end(va);
 
 	/* discard input until the end of the line */
-	*input->p = '\0';
+	if (input)
+		*input->p = '\0';
 	next();
 }
 

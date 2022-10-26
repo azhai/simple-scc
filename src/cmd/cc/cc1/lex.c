@@ -331,10 +331,8 @@ repeat:
 			*input->p = '\0';
 			goto repeat;
 		}
-		if (cpp()) {
-			*input->p = '\0';
+		if (cpp())
 			goto repeat;
-		}
 	}
 
 	if (onlycpp && !wasexpand)

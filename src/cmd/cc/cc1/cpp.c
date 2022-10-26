@@ -721,7 +721,6 @@ usererr(void)
 	if (cppoff)
 		return;
 	cpperror("#error %s", input->p);
-	*input->p = '\0';
 	next();
 }
 
@@ -899,8 +898,11 @@ cpp(void)
 	for (p = input->p; isspace(*p); ++p)
 		;
 
-	if (*p != '#')
+	if (*p != '#') {
+		if (cppoff)
+			*input->p = '\0';
 		return cppoff;
+	}
 	input->p = p+1;
 
 	disexpand = 1;
@@ -932,14 +934,26 @@ cpp(void)
 	 * to skip this tests. For the same reason include() is the only
 	 * function which does not prepare the next token
 	 */
-	if (yytoken != '\n' && !cppoff && bp->token != INCLUDE)
-		errorp("trailing characters after preprocessor directive");
+	if (bp->token == INCLUDE)
+		goto ret;
+
+	if (yytoken != '\n' && yytoken != EOFTOK && !cppoff)
+		cpperror("trailing characters after preprocessor directive");
 
 ret:
 	disescape = 0;
 	disexpand = 0;
 	lexmode = CCMODE;
 	namespace = ns;
+
+	/*
+	 * at this point we know that the cpp line is processed, and any error
+	 * is generated but as next is called we cannot be sure that input is
+	 * valid anymore, but in case of begin valid we want to discard any
+	 * pending input in the current line
+	 */
+	if (input)
+		*input->p = '\0';
 
 	return 1;
 }
