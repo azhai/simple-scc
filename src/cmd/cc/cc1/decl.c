@@ -187,20 +187,14 @@ redcl(Symbol *sym, Type *tp, int sclass)
 	int flags;
 	char *name = sym->name;
 
-	if (sym->type->op == FTN && tp->op == FTN) {
-		Type *ntp = sym->type;
-		if (eqtype(ntp->type, tp->type, 1)) {
-			if (tp->prop & TK_R)
-				tp = ntp;
-			if (sym->type->prop & TK_R)
-				sym->type = tp;
-		}
-	}
-
 	if (!eqtype(sym->type, tp, 1)) {
 		errorp("conflicting types for '%s'", name);
 		return sym;
 	}
+
+	/* we prefere ansi types over k&r types */
+	if ((sym->type->prop & TK_R) == 0 && (tp->prop & TK_R) != 0)
+		sym->type = tp;
 
 	if (sym->token == TYPEIDEN && sclass != TYPEDEF ||
 	    sym->token != TYPEIDEN && sclass == TYPEDEF) {
@@ -416,7 +410,6 @@ krfun(struct declarators *dp)
 {
 	int toomany = 0;
 
-
 	if (yytoken != ')')
 		toomany = krpars(dp);
 
@@ -511,10 +504,10 @@ funbody(Symbol *sym, Symbol *pars[])
 
 	if (!sym)
 		return 0;
+
 	tp = sym->type;
 	if (tp->op != FTN)
 		return 0;
-
 	if (!isfunbody(yytoken) || sym->ns != NS_IDEN) {
 		emit(ODECL, sym);
 		endfundcl(tp, pars);
@@ -533,7 +526,7 @@ funbody(Symbol *sym, Symbol *pars[])
 
 	tp->prop |= TFUNDEF;
 	curfun = sym;
-	if (sym->type->prop & TK_R) {
+	if (tp->prop & TK_R) {
 		while (yytoken != '{') {
 			dodcl(REP, parameter, NS_IDEN, sym->type);
 			expect(';');
@@ -562,6 +555,17 @@ funbody(Symbol *sym, Symbol *pars[])
 	popctx();
 	flushtypes();
 	curfun = NULL;
+
+	/*
+	 * A function declaration without arguments is a k&r function,
+	 * but when it is a definition is a function with 0 arguments
+	 */
+	if ((tp->prop & TK_R) && *pars == NULL) {
+		tp = mktype(tp->type, FTN, 0, NULL);
+		tp->prop |= TFUNDEF;
+		sym->type = tp;
+	}
+
 	return 1;
 }
 

@@ -353,11 +353,77 @@ mktype(Type *tp, int op, TINT nelem, Type *pars[])
 	return bp;
 }
 
+/*
+ * If one type has a parameter type list and the other type is specified by
+ * a function declarator that is not part of a function definition and that
+ * contains an empty identifier list, the parameter list shall not have an
+ * ellipsis terminator and the type of each parameter shall be compatible
+ * with the type that results from the application of the default argument
+ * promotions.
+ */
+static int
+eqfuns(Type *tp1, Type *tp2, int equiv)
+{
+	TINT n;
+	int f1kr, f2kr;
+	Type *krf, *ansi, **pp, *p;
+
+	f1kr = (tp1->prop&TK_R) != 0;
+	f2kr = (tp2->prop&TK_R) != 0;
+
+	/* 1: 2 ansi functions */
+	if (!f1kr && !f2kr) {
+		Type **p1, **p2;
+		if (tp1->n.elem != tp2->n.elem)
+			return 0;
+		p1 = tp1->p.pars, p2 = tp2->p.pars;
+		for (n = tp1->n.elem; n > 0; --n) {
+			if (!eqtype(*p1++, *p2++, equiv))
+				return 0;
+		}
+		goto check_base;
+	}
+
+	/* 2: 2 k&r functions */
+	if (f1kr && f2kr)
+		goto check_base;
+
+	/* 3: 1 k&r function + 1 ansi function */
+	if (!equiv)
+		return 0;
+
+	if (f1kr) {
+		krf = tp1;
+		ansi = tp2;
+	} else {
+		ansi = tp1;
+		krf = tp2;
+	}
+
+	for (pp = ansi->p.pars; p = *pp; ++pp) {
+		switch (p->op) {
+		case ELLIPSIS:
+			return 0;
+		case INT:
+		case ENUM:
+			if (p->n.rank < inttype->n.rank)
+				return 0;
+			break;
+		case FLOAT:
+			if (p == floattype)
+				return 0;
+			break;
+		}
+	}
+
+check_base:
+	return eqtype(tp1->type, tp2->type, equiv);
+}
+
 int
 eqtype(Type *tp1, Type *tp2, int equiv)
 {
 	TINT n;
-	Type **p1, **p2;
 	Symbol **s1, **s2;
 
 	if (tp1 == tp2)
@@ -385,14 +451,7 @@ eqtype(Type *tp1, Type *tp2, int equiv)
 		}
 		return 1;
 	case FTN:
-		if (tp1->n.elem != tp2->n.elem)
-			return 0;
-		p1 = tp1->p.pars, p2 = tp2->p.pars;
-		for (n = tp1->n.elem; n > 0; --n) {
-			if (!eqtype(*p1++, *p2++, equiv))
-				return 0;
-		}
-		goto check_base;
+		return eqfuns(tp1, tp2, equiv);
 	case ARY:
 		if (equiv && (tp1->n.elem == 0 || tp2->n.elem == 0))
 			goto check_base;
