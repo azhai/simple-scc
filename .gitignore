@@ -4,3 +4,5 @@ bin/
 lib/
 libexec/
 dirs
+*.gcno
+*.gcda
