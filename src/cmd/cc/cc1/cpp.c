@@ -924,9 +924,13 @@ cpp(void)
 
 	DBG("CPP %s", yytext);
 
-	pushctx();              /* create a new context to avoid polish */
-	(*bp->fun)();           /* the current context, and to get all  */
-	popctx();               /* the symbols freed at the  end        */
+	/*
+	 * create a new context to avoid polish the current context,
+	 * and to get all the symbols freed at the end
+	 */
+	pushctx();
+	(*bp->fun)();
+	popctx();
 
 	/*
 	 * #include changes the content of input->line, so the correctness
