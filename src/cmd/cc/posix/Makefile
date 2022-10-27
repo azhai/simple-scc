@@ -12,7 +12,7 @@ TARGETS =\
 all: $(TARGETS)
 
 $(BINDIR)/scc-cc: $(LIBSCC) cc.o
-	$(CC) $(PROJ_LDFLAGS) cc.o -lscc -o $@
+	$(CC) $(PROJ_LDFLAGS) cc.o -lscc $(PROJ_LDLIBS) -o $@
 
 $(BINDIR)/scc-cpp: scc.sh
 	cp scc.sh $@

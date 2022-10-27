@@ -8,4 +8,4 @@ target/x86/i386tbl.c: target/x86/ops.dat target/x86/opers.dat
 	./mktbl -f x86 -c i386
 
 $(LIBEXEC)/scc/as-i386: $(I386_OBJ)
-	$(CC) $(PROJ_LDFLAGS) $(I386_OBJ) -lscc -o $@
+	$(CC) $(PROJ_LDFLAGS) $(I386_OBJ) -lscc $(PROJ_LDLIBS) -o $@

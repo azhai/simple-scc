@@ -28,6 +28,6 @@ TARGET   = $(LIBEXEC)/scc/cc1
 all: $(TARGET)
 
 $(TARGET): $(LIBSCC) $(OBJS)
-	$(CC) $(PROJ_LDFLAGS) $(OBJS) -lscc -o $@
+	$(CC) $(PROJ_LDFLAGS) $(OBJS) -lscc $(PROJ_LDLIBS) -o $@
 
 include deps.mk
