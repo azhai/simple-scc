@@ -20,7 +20,7 @@ all: config
 config:
 	cd include/scc/scc && $(MAKE) $@
 
-install:
+install: all
 	$(SCRIPTDIR)/install $(ROOT)
 	+@$(MAKE) install-`uname -m`
 
