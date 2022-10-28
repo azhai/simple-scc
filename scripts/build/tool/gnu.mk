@@ -1,4 +1,6 @@
 COMP = gcc
+OBJCOPY = objcopy
+OBJDUMP = objdump
 ASM = as
 LINKER = ld
 RANLIB = ranlib
