@@ -121,6 +121,8 @@ static struct opdata {
 	[ASUEXTBL]=  {.fun = unary, .txt = "extub", .letter = 'l'},
 	[ASEXTHW] =  {.fun = unary, .txt = "extsh", .letter = 'w'},
 	[ASUEXTHW]=  {.fun = unary, .txt = "extuh", .letter = 'w'},
+	[ASEXTHL] =  {.fun = unary, .txt = "extsh", .letter = 'l'},
+	[ASUEXTHL]=  {.fun = unary, .txt = "extuh", .letter = 'l'},
 	[ASEXTWL] =  {.fun = unary, .txt = "extsw", .letter = 'l'},
 	[ASUEXTWL]=  {.fun = unary, .txt = "extuw", .letter = 'l'},
 
