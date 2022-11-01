@@ -260,3 +260,12 @@ extern void freesym(Symbol *sym);
 extern Symbol *curfun;
 extern Symbol *locals;
 extern Inst *pc, *prog;
+
+/* target */
+extern Type int8type, int16type, int32type, int64type,
+            uint8type, uint16type, uint32type, uint64type,
+            float32type, float64type, float80type,
+            booltype,
+            ptrtype,
+            voidtype,
+            arg_type;
