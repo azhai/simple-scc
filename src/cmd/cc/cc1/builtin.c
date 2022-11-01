@@ -46,8 +46,13 @@ builtin_va_copy(Symbol *sym)
 		return constnode(zero);
 	}
 
-	np = node(OBUILTIN, voidtype, dst, src);
-	np->sym = sym;
+	if (dst->type != va_type)
+		dst = node(OPTR, dst->type->type, dst, NULL);
+	if (src->type != va_type)
+		src = node(OPTR, src->type->type, src, NULL);
+	np = node(OASSIGN, dst->type, dst, src);
+	np = node(OCAST, voidtype, np, NULL);
+
 	return np;
 }
 

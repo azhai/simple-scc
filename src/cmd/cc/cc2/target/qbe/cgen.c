@@ -705,7 +705,6 @@ rhs(Node *np)
 		case BVA_START:
 			l = rhs(l);
 			code(ASVSTAR, NULL, l, NULL);
-			return NULL;
 		case BVA_END:
 			return NULL;
 		case BVA_ARG:
@@ -713,8 +712,6 @@ rhs(Node *np)
 			tmp = tmpnode(tp);
 			code(ASVARG, tmp, l, NULL);
 			return tmp;
-		case BVA_COPY:
-			/* TODO */
 		default:
 			abort();
 		}

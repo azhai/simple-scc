@@ -87,6 +87,7 @@ Type voidtype = {
 };
 
 Type arg_type = {
+	.flags = ARRF,
 	.size = 24,
 	.align = 8
 };
