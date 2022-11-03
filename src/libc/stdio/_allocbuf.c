@@ -7,7 +7,7 @@
 int
 _allocbuf(FILE *fp)
 {
-	char *bp;
+	unsigned char *bp;
 
 	if ((bp = malloc(BUFSIZ)) == NULL) {
 		fp->flags |= _IOERR;
