@@ -2,7 +2,7 @@ int
 main(void)
 {
 	int i = 0, *q;
-	unsigned char *bp;
+	unsigned char *bp = 0;
 	void *p;
 
 	i = i ? 0 : 0l;
