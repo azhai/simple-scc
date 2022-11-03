@@ -178,6 +178,11 @@ defglobal(Symbol *sym)
 }
 
 void
+deftype(Type *tp)
+{
+}
+
+void
 defpar(Symbol *sym)
 {
 }

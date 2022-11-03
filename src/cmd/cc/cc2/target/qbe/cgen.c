@@ -468,6 +468,8 @@ function(void)
 	for (p = locals; p; p = p->next) {
 		if ((p->type.flags & PARF) == 0)
 			continue;
+		if ((p->type.flags & AGGRF) != 0)
+			continue;
 		code(ASALLOC, label2node(&aux, p), NULL, NULL);
 	}
 
@@ -484,7 +486,10 @@ function(void)
 	for (p = locals; p; p = p->next) {
 		if ((p->type.flags & PARF) == 0)
 			continue;
-		code(ASFORM, label2node(&aux, p), NULL, NULL);
+		if ((p->type.flags & AGGRF) != 0)
+			continue;
+		if ((p->type.flags & (ARRF|AGGRF)) == 0)
+			code(ASFORM, label2node(&aux, p), NULL, NULL);
 	}
 	return NULL;
 }

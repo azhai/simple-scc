@@ -176,6 +176,7 @@ composed(char *token, union tokenop u)
 	Symbol *sym;
 
 	sym = getsym(atoi(token+1));
+	sym->type.id = sym->id;
 	push(&sym->type);
 }
 
@@ -550,6 +551,7 @@ aggregate(void)
 	 */
 	sym = (Symbol *) tp;
 	sym->name = name;
+	deftype(tp);
 
 	delnode(align);
 	delnode(size);

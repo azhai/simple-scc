@@ -179,6 +179,11 @@ defglobal(Symbol *sym)
 }
 
 void
+deftype(Type *tp)
+{
+}
+
+void
 defvar(Symbol *sym)
 {
 }

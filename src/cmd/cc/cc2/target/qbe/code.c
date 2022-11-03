@@ -266,6 +266,8 @@ emittree(Node *np)
 static char *
 size2asm(Type *tp)
 {
+        static char spec[ADDR_LEN];
+
 	if (tp->flags & STRF) {
 		return "b";
 	} else if (tp->flags & INTF) {
@@ -285,6 +287,7 @@ size2asm(Type *tp)
 		else if (tp->size == 8)
 			return "d";
 	}
+
 	abort();
 }
 
@@ -334,6 +337,8 @@ data(Node *np)
 static char *
 size2stack(Type *tp)
 {
+	static char spec[ADDR_LEN];
+
 	if (tp->flags & INTF) {
 		switch (tp->size) {
 		case 1:
@@ -348,6 +353,9 @@ size2stack(Type *tp)
 			return "s";
 		else if (tp->size == 8)
 			return "d";
+	} else if (tp->flags & (ARRF|AGGRF)) {
+		sprintf(spec, ":.%u", tp->id);
+		return spec;
 	} else if (tp->size == 0) {
 		return "w";
 	}
@@ -355,11 +363,18 @@ size2stack(Type *tp)
 }
 
 void
+deftype(Type *tp)
+{
+	printf("type :.%u = align %d { %lu }\n",
+	       tp->id, tp->align, tp->size);
+}
+
+void
 writeout(void)
 {
 	Symbol *p;
 	Type *tp;
-	char *sep, *name;
+	char *sep;
 	int haslabel = 0;
 
 	if (!curfun)
@@ -373,7 +388,10 @@ writeout(void)
 	for (p = locals; p; p = p->next) {
 		if ((p->type.flags & PARF) == 0)
 			continue;
-		printf("%s%s %s.val", sep, size2stack(&p->type), symname(p));
+		printf("%s%s %s%s",
+		       sep, size2stack(&p->type),
+		       symname(p),
+		       (p->type.flags & AGGRF) ? "" : ".val");
 		sep = ",";
 	}
 	printf("%s)\n{\n", (curfun->type.flags&ELLIPS) ? ", ..." : "");

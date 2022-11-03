@@ -153,6 +153,7 @@ typedef struct inst Inst;
 struct type {
 	unsigned long size;
 	unsigned long align;
+	unsigned short id;
 	short flags;
 };
 
@@ -235,6 +236,7 @@ extern Node *constnode(Node *np, TUINT n, Type *tp);
 extern Node *tmpnode(Type *);
 extern Symbol *newlabel(void);
 extern void pprint(char *s);
+extern void deftype(Type *);
 
 /* node.c */
 #define SETCUR  1
