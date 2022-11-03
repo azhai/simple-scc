@@ -282,6 +282,8 @@ cast(Type *td, Node *np)
 
 	if (d_isint && s_isint) {
 		/* conversion from int to int */
+		if (td->size < 4)
+			td->size = 4;
 		if (td->size <= ts->size) {
 			np->type = *td;
 			return np;
