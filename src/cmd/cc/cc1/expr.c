@@ -115,14 +115,19 @@ set_p1_p2:
 static int
 null(Node *np)
 {
-	if (np->type != pvoidtype || np->op != OCAST)
+	if (np->type != pvoidtype)
 		return 0;
 
-	np = np->left;
-	if (np->type != inttype)
+	switch (np->op) {
+	case OCAST:
+		np = np->left;
+		if (np->type != inttype)
+			return 0;
+	case OSYM:
+		return cmpnode(np, 0);
+	default:
 		return 0;
-
-	return cmpnode(np, 0);
+	}
 }
 
 static Node *
