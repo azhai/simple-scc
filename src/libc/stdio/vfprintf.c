@@ -99,7 +99,7 @@ numtostr(uintmax_t val, int flags, struct conv *conv, char *buf)
 }
 
 static void
-savecnt(va_list *va, int flags, int cnt)
+savecnt(va_list *va, int flags, size_t cnt)
 {
 	if (flags & CHAR)
 		*va_arg(*va, char*) = cnt;
@@ -193,8 +193,8 @@ strout(char *s, size_t len, int width, int fill, FILE *restrict fp)
 int
 vfprintf(FILE * restrict fp, const char * restrict fmt, va_list va)
 {
-	int ch, n, flags, width, left, fill, cnt = 0;
-	size_t inc, len;
+	int ch, n, flags, width, left, fill;
+	size_t inc, len, cnt = 0;
 	char *s;
 	wchar_t *ws;
 	struct conv conv;
