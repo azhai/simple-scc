@@ -4,10 +4,11 @@
 #undef vsnprintf
 
 int
-vsnprintf(char *restrict s, size_t siz, const char *restrict fmt, va_list ap)
+vsnprintf(char *restrict buf, size_t siz, const char *restrict fmt, va_list ap)
 {
 	FILE f;
 	int r;
+	unsigned char *s = (unsigned char *) buf;
 
 	f.flags = _IORW | _IOSTRG;
 	f.len = siz;
