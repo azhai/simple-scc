@@ -5,8 +5,8 @@
 size_t
 strspn(const char *s1, const char *s2)
 {
-	const unsigned char *s = s1;
-	const unsigned char *accept = s2;
+	const unsigned char *s = (const unsigned char *) s1;
+	const unsigned char *accept = (const unsigned char *) s2;
 	size_t n;
 	unsigned ch;
 	char map[__NUMCHARS] = {0};
