@@ -140,7 +140,7 @@ chkternary(Node *yes, Node *no)
 	 * take a look to 6.5.15
 	 */
 
-	if (!eqtype(yes->type, no->type, 1)) {
+	if (!eqtype(yes->type, no->type, EQUIV)) {
 		if ((yes->type->prop & TARITH) && (no->type->prop & TARITH)) {
 			arithconv(&yes, &no);
 		} else if (yes->type->op != PTR && no->type->op != PTR) {
@@ -167,7 +167,7 @@ chkternary(Node *yes, Node *no)
 			if (null(no))
 				no = convert(no, yes->type, 0);
 
-			if (!eqtype(yes->type, no->type, 1))
+			if (!eqtype(yes->type, no->type, EQUIV))
 				goto wrong_type;
 		}
 	}
@@ -254,7 +254,7 @@ convert(Node *np, Type *newtp, int iscast)
 	Type *oldtp = np->type;
 	int op = newtp->op;
 
-	if (eqtype(newtp, oldtp, 0))
+	if (eqtype(newtp, oldtp, EQUAL))
 		return np;
 	if (iscast && op == VOID)
 		goto good_conv;
@@ -273,7 +273,7 @@ convert(Node *np, Type *newtp, int iscast)
 			if (iscast)
 				goto good_conv;
 		} else if (op == PTR) {
-			if (eqtype(newtp, oldtp, 1))
+			if (eqtype(newtp, oldtp, EQUIV))
 				goto good_conv;
 			if (iscast)
 				goto good_conv;

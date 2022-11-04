@@ -123,7 +123,7 @@ initialize(Type *tp)
 		return initlist(tp);
 
 	np = assign();
-	if (eqtype(tp, np->type, 1))
+	if (eqtype(tp, np->type, EQUIV))
 		return np;
 
 	np = convert(decay(np), tp, 0);

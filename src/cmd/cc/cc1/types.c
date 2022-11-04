@@ -342,7 +342,7 @@ mktype(Type *tp, int op, TINT nelem, Type *pars[])
 
 	tbl = &typetab[HASH(&type)];
 	for (bp = *tbl; bp; bp = bp->h_next) {
-		if (eqtype(bp, &type, 0))
+		if (eqtype(bp, &type, EQUAL))
 			return bp;
 	}
 

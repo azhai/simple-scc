@@ -8,6 +8,9 @@
 #define FAIL   1
 #define NOFAIL 0
 
+#define EQUAL  0
+#define EQUIV  1
+
 /*
  * Definition of enumerations
  */

@@ -20,7 +20,7 @@
 static int
 local_valid_va_list(Type *tp)
 {
-	return eqtype(tp, va_list_type, 1);
+	return eqtype(tp, va_list_type, EQUIV);
 }
 
 Arch *

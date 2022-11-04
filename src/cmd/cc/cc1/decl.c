@@ -187,7 +187,7 @@ redcl(Symbol *sym, Type *tp, int sclass)
 	int flags;
 	char *name = sym->name;
 
-	if (!eqtype(sym->type, tp, 1)) {
+	if (!eqtype(sym->type, tp, EQUIV)) {
 		errorp("conflicting types for '%s'", name);
 		return sym;
 	}
