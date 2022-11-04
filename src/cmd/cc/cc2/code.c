@@ -12,20 +12,20 @@ Inst *pc, *prog;
 static void
 nextpc(void)
 {
-        Inst *new;
+	Inst *new;
 
-        new = xcalloc(1, sizeof(*new)); /* TODO: create an arena */
+	new = xcalloc(1, sizeof(*new)); /* TODO: create an arena */
 
-        if (!pc) {
-                prog = new;
-        } else {
-                new->next = pc->next;
-                pc->next = new;
-        }
+	if (!pc) {
+		prog = new;
+	} else {
+		new->next = pc->next;
+		pc->next = new;
+	}
 
 	/* SNONE being 0, calloc initialized {from1,from2,to}.kind for us */
-        new->prev = pc;
-        pc = new;
+	new->prev = pc;
+	pc = new;
 }
 
 static void
