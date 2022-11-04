@@ -127,7 +127,7 @@
 0134-arith.c
 0135-unary.c
 0136-if.c
-0137-int_cast.c [TODO]
+0137-int_cast.c
 0138-namespace.c
 0139-ptr_ary.c
 0140-int_fold.c
