@@ -13,11 +13,8 @@ do
 	n=`echo $i | sed 's/\(.*\)-.*\.c/\1/'`
 	sed s/main/main_$n/ < $i > tmp_$n.c
 	echo "int main_$n();" >> tests.h
-	echo "main_$n();"
-	
+	printf "\tif (main_$n()) return -1;\n"
 done
 
-echo 'return 0;'
-echo '}'
+printf '\treturn 0;\n}\n'
 ) > tmp_test.c
-
