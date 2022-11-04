@@ -402,7 +402,7 @@ writeout(void)
 			haslabel = 1;
 			printf("%s\n", symname(pc->label));
 		}
-		if (!pc->op)
+		if (pc->op == ASLABEL)
 			continue;
 		if (pc->flags&BBENTRY && !haslabel)
 			printf("%s\n", symname(newlabel()));
