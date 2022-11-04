@@ -880,7 +880,7 @@ cast(void)
 		expect(')');
 
 		if (yytoken == '{')
-			return initlist(tp);
+			return decay(initlist(tp));
 
 		switch (tp->op) {
 		case ARY:
