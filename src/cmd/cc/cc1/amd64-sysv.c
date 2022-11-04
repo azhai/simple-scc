@@ -188,12 +188,6 @@ amd64_sysv(void)
 			.size = 24,
 			.align = 8,
 		},
-		.zero = {
-			.u.i = 0,
-		},
-		.one = {
-			.u.i = 1,
-		},
 	};
 
 	sizettype = &arch.sizettype;

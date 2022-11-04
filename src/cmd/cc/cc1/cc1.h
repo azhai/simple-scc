@@ -366,9 +366,6 @@ struct swtch {
 };
 
 struct arch {
-	Symbol zero;
-	Symbol one;
-
 	Type voidtype;
 	Type pvoidtype;
 	Type booltype;

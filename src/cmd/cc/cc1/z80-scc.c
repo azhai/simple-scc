@@ -181,12 +181,6 @@ z80_scc(void)
 			.letter = L_ELLIPSIS,
 			.prop = TDEFINED,
 		},
-		.zero = {
-			.u.i = 0,
-		},
-		.one = {
-			.u.i = 1,
-		},
 		.va_type = {
 			.op = PTR,
 			.letter = L_POINTER,

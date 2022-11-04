@@ -19,6 +19,8 @@ Symbol *one, *zero;
 char *architecture = "amd64-sysv";
 
 static Arch *arch;
+static Symbol zerodata = {.u.i = 0};
+static Symbol onedata = {.u.i = 1};
 
 static Arch *
 getarch(void)
@@ -78,8 +80,8 @@ iarch(void)
 	ellipsistype = &arch->ellipsistype;
 	va_list_type = &arch->va_list_type;
 	va_type = &arch->va_type;
-	zero = &arch->zero;
-	one = &arch->one;
+	zero = &zerodata;
+	one = &onedata;
 
 	zero->type = inttype;
 	one->type = inttype;
