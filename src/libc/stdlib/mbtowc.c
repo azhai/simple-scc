@@ -22,7 +22,7 @@ mbtowc(wchar_t *restrict pwc, const char *restrict s, size_t n)
 		goto return_code;
 
 	for (wc = (c & 0xFF) >> len; len--; wc |= c & 0x3F) {
-		if ((c = *t++) & 0xC0 != 0x80)
+		if (((c = *t++) & 0xC0) != 0x80)
 			return -1;
 		wc <<= 6;
 	}
