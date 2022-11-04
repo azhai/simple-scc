@@ -13,7 +13,8 @@ Type *voidtype, *pvoidtype, *booltype,
      *longtype, *ulongtype,
      *ullongtype, *llongtype,
      *floattype, *doubletype, *ldoubletype,
-     *ellipsistype, *va_list_type, *va_type;
+     *ellipsistype, *va_list_type, *va_type,
+     *wchartype;
 
 Symbol *one, *zero;
 char *architecture = "amd64-sysv";
@@ -80,6 +81,7 @@ iarch(void)
 	ellipsistype = &arch->ellipsistype;
 	va_list_type = &arch->va_list_type;
 	va_type = &arch->va_type;
+	wchartype = &arch->wchartype;
 	zero = &zerodata;
 	one = &onedata;
 

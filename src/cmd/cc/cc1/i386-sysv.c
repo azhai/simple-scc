@@ -195,6 +195,14 @@ i386_sysv(void)
 			.size = 4,
 			.align = 4,
 		},
+		.wchartype = {
+			.op = INT,
+			.letter = L_UINT32,
+			.prop = TDEFINED | TINTEGER | TARITH | TSIGNED,
+			.size = 4,
+			.align = 4,
+			.n.rank = RANK_INT,
+		},
 	};
 
 	arch.valid_va_list = local_valid_va_list;

@@ -388,6 +388,7 @@ struct arch {
 	Type ellipsistype;
 	Type va_type;
 	Type va_list_type;
+	Type wchartype;
 
 	int (*valid_va_list)(Type *tp);
 };
@@ -551,4 +552,5 @@ extern Type *voidtype, *pvoidtype, *booltype,
             *longtype,    *ulongtype,
             *ullongtype,  *llongtype,
             *floattype,   *doubletype,  *ldoubletype,
-            *ellipsistype, *va_list_type, *va_type;
+            *ellipsistype, *va_list_type, *va_type,
+            *wchartype;

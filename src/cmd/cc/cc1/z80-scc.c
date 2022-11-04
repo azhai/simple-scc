@@ -195,6 +195,14 @@ z80_scc(void)
 			.size = 2,
 			.align = 1,
 		},
+		.wchartype = {
+			.op = INT,
+			.letter = L_UINT16,
+			.prop = TDEFINED | TINTEGER | TARITH | TSIGNED,
+			.size = 2,
+			.align = 1,
+			.n.rank = RANK_INT,
+		},
 	};
 	arch.valid_va_list = local_valid_va_list;
 	arch.pvoidtype.type = &arch.voidtype;

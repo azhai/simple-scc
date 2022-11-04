@@ -188,6 +188,14 @@ arm64_sysv(void)
 			.size = 24,
 			.align = 8,
 		},
+		.wchartype = {
+			.op = INT,
+			.letter = L_UINT32,
+			.prop = TDEFINED | TINTEGER | TARITH | TSIGNED,
+			.size = 4,
+			.align = 4,
+			.n.rank = RANK_INT,
+		},
 	};
 
 	sizettype = &arch.sizettype;
