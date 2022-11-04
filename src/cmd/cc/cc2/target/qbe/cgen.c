@@ -271,7 +271,7 @@ cast(Type *td, Node *np)
 {
 	Type *ts;
 	Node *tmp;
-	int op, d_isint, s_isint, sidx, didx;
+	int op, d_isint, s_isint, sidx, didx, sign;
 
 	ts = &np->type;
 	d_isint = (td->flags & INTF) != 0;
@@ -280,38 +280,38 @@ cast(Type *td, Node *np)
 	sidx = bytes2idx(ts->size);
 	didx = bytes2idx(td->size);
 
+	sign = (ts->flags & SIGNF) == 0;
+
 	if (d_isint && s_isint) {
 		/* conversion from int to int */
-		if (td->size < 4)
-			td->size = 4;
-		if (td->size <= ts->size) {
+		if (didx < I4BYTES)
+			didx = bytes2idx(4);
+
+		if (didx <= sidx) {
 			np->type = *td;
 			return np;
 		}
-		assert(ts->size == 1 || ts->size == 2 || ts->size == 4);
-		assert(td->size == 4 || td->size == 8);
-		op = i2i_conv[sidx][didx] [ (ts->flags & SIGNF) == 0];
+
+		op = i2i_conv[sidx][didx][sign];
 	} else if (d_isint) {
 		/* conversion from float to int */
-		assert(ts->size == 4 || ts->size == 8);
-		assert(td->size == 4 || td->size == 8);
-		op = f2i_conv[sidx][didx] [ (ts->flags & SIGNF) == 0];
+		if (didx < I4BYTES)
+			didx = bytes2idx(4);
+
+		op = f2i_conv[sidx][didx][sign];
 	} else if (s_isint) {
 		/* conversion from int to float */
-		if (ts->size == 1 || ts->size == 2) {
+		if (sidx == I1BYTES || sidx == I2BYTES) {
 			ts = (ts->flags&SIGNF) ? &int32type : &uint32type;
 			np = cast(ts, np);
 		}
-		assert(ts->size == 4 || ts->size == 8);
-		assert(td->size == 4 || td->size == 8);
-		op = i2f_conv[sidx][didx] [ (ts->flags & SIGNF) == 0];
+		op = i2f_conv[sidx][didx][sign];
 	} else {
 		/* conversion from float to float */
-		assert(ts->size == 4 || ts->size == 8);
-		assert(td->size == 4 || td->size == 8);
-		op = (td->size == 4) ? ASEXTS : ASTRUNCD;
+		op = (didx == I4BYTES) ? ASEXTS : ASTRUNCD;
 	}
 
+	assert(op != 0);
 	tmp = tmpnode(td);
 	code(op, tmp, np, NULL);
 
