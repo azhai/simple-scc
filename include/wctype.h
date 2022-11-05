@@ -6,9 +6,8 @@
 #include <sys/cdefs.h>
 #include <arch/cdefs.h>
 
-/* TODO: This is only a placeholder */
-typedef int wctrans_t;
-typedef int wctype_t;
+typedef const int *wctrans_t;
+typedef unsigned long wctype_t;
 
 extern int iswalnum(wint_t wc);
 extern int iswalpha(wint_t wc);
