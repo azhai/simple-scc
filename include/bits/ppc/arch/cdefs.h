@@ -38,7 +38,7 @@ typedef int wchar_t;
 
 #ifdef _NEED_WINT
 #ifndef _WINT
-typedef unsigned win_t;
+typedef unsigned wint_t;
 #define _WINT
 #endif
 #undef _NEED_WINT

@@ -6,6 +6,7 @@
 #define _NEED_WCHART
 #define _NEED_WEOF
 #define _NEED_WCHARLIM
+#define _NEED_WINT
 #include <sys/cdefs.h>
 #include <arch/cdefs.h>
 
