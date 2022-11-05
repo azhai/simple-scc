@@ -8,7 +8,7 @@ mbtowc(wchar_t *restrict pwc, const char *restrict s, size_t n)
 	unsigned char *t = (unsigned char *) s;
 	unsigned long wc;
 	unsigned c;
-	size_t len;
+	size_t i, len;
 
 	if (s == NULL)
 		return 0;
@@ -21,10 +21,12 @@ mbtowc(wchar_t *restrict pwc, const char *restrict s, size_t n)
 	if (len == 0)
 		goto return_code;
 
-	for (wc = (c & 0xFF) >> len; len--; wc |= c & 0x3F) {
+	wc = (c & 0xFF) >> len;
+	for (i = 0; i < len-1; i++) {
 		if (((c = *t++) & 0xC0) != 0x80)
 			return -1;
 		wc <<= 6;
+		wc |= c & 0x3F;
 	}
 
 return_code:
