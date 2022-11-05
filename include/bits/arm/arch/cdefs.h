@@ -50,5 +50,5 @@ typedef unsigned win_t;
 #define WCHAR_MIN 0
 #define _WCHARLIM
 #endif
-#undef _WCHARLIM
+#undef _NEED_WCHARLIM
 #endif
