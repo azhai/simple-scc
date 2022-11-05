@@ -5,6 +5,7 @@
 #define _NEED_SIZET
 #define _NEED_WCHART
 #define _NEED_WEOF
+#define _NEED_WCHARLIM
 #include <sys/cdefs.h>
 #include <arch/cdefs.h>
 
@@ -15,9 +16,6 @@
 typedef int mbstate_t;
 
 struct tm;
-
-/* #define WCHAR_MAX 1 */
-/* #define WCHAR_MIN 1 */
 
 #ifdef _STDARG_H
 extern int vswscanf(const wchar_t * restrict s, const wchar_t * restrict format, va_list arg);

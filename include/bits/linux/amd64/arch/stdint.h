@@ -62,9 +62,6 @@
 
 #define SIZE_MAX UINT64_MAX
 
-#define WCHAR_MIN INT32_MIN
-#define WCHAR_MAX INT32_MAX
-
 #define INT8_C(x)  x
 #define INT16_C(x) x
 #define INT32_C(x) x

@@ -43,3 +43,12 @@ typedef unsigned win_t;
 #endif
 #undef _NEED_WINT
 #endif
+
+#ifdef _NEED_WCHARLIM
+#ifndef _WCHARLIM
+#define WCHAR_MAX 0x7FFFFFFF
+#define WCHAR_MIN 0
+#define _WCHARLIM
+#endif
+#undef _WCHARLIM
+#endif

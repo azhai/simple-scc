@@ -6,6 +6,7 @@
 
 #include <scc/arg.h>
 #include <scc/scc.h>
+
 #include "cc1.h"
 
 char *argv0;
