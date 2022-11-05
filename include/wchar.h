@@ -4,18 +4,20 @@
 #define _NEED_NULL
 #define _NEED_SIZET
 #define _NEED_WCHART
+#define _NEED_WEOF
 #include <sys/cdefs.h>
 #include <arch/cdefs.h>
 
-/* TODO: This is only a placeholder */
-typedef long mbstate_t;
-typedef long wint_t;
+/*
+ * We only support utf8 as multibyte encoding and
+ * it does not have state.
+ */
+typedef int mbstate_t;
+
 struct tm;
 
 /* #define WCHAR_MAX 1 */
 /* #define WCHAR_MIN 1 */
-/* #define WEOF -1 */
-/* #define NULL 0 */
 
 #ifdef _STDARG_H
 extern int vswscanf(const wchar_t * restrict s, const wchar_t * restrict format, va_list arg);

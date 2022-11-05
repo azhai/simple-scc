@@ -28,3 +28,18 @@ typedef int wchar_t;
 #endif
 #undef _NEED_WCHART
 #endif
+
+#ifdef _NEED_WEOF
+#ifndef WEOF
+#define WEOF 0xFFFFFFFFU
+#endif
+#undef _NEED_WEOF
+#endif
+
+#ifdef _NEED_WINT
+#ifndef _WINT
+typedef unsigned win_t;
+#define _WINT
+#endif
+#undef _NEED_WINT
+#endif

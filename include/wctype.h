@@ -1,12 +1,14 @@
 #ifndef _WCTYPE_H
 #define _WCTYPE_H
 
+#define _NEED_WEOF
+#define _NEED_WINT
+#include <sys/cdefs.h>
+#include <arch/cdefs.h>
+
 /* TODO: This is only a placeholder */
-typedef int wint_t;
 typedef int wctrans_t;
 typedef int wctype_t;
-
-#define WEOF -1
 
 extern int iswalnum(wint_t wc);
 extern int iswalpha(wint_t wc);
