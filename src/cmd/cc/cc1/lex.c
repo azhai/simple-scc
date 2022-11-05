@@ -196,10 +196,6 @@ repeat:
 		break;
 	case EOF:
 		break;
-	default:
-		if (!isprint(c) && !ispunct(c) && !isspace(c))
-			warn("invalid input character. The shame of UB is yours");
-		break;
 	}
 
 	return c;
@@ -545,25 +541,83 @@ escape(void)
 	return c;
 }
 
+static Rune
+utf8rune(void)
+{
+	Rune wc;
+	unsigned c;
+	size_t i, len;
+
+	c = *input->p;
+	for (len = 0; c & 0x80; len++)
+		c <<= 1;
+	if (len == 0)
+		return c;
+	if (len == 1 || len == 8)
+		goto invalid;
+
+	wc = (c & 0xFF) >> len;
+	for (i = 0; i < len-1; i++) {
+		c = input->p[1];
+		if ((c & 0xC0) != 0x80)
+			goto invalid;
+		input->p++;
+		wc <<= 6;
+		wc |= c & 0x3F;
+	}
+	return wc;
+
+invalid:
+	errorp("invalid multibyte sequence");
+	return 0xFFFD;
+}
+
+static Rune
+decode(int multi)
+{
+	Rune r;
+
+	if (*input->p == '\\') {
+		r = escape();
+		return r;
+	}
+
+	return multi ? utf8rune() : *input->p;
+}
+
 static int
 character(void)
 {
-	int c;
+	int i, multi = 0;
+	Rune r, d;
+	Type *tp = inttype;
 	Symbol *sym;
 
-	if ((c = *++input->p) == '\\')
-		c = escape();
-	else
-		c = *input->p;
-	++input->p;
-	if (*input->p != '\'')
-		errorp("invalid character constant");
-	else
-		++input->p;
+	if (*input->p == 'L') {
+		multi = 1;
+		tp = wchartype;
+		input->p++;
+	}
+
+	d = 0;
+	input->p++;
+	for (i = 0; *input->p != '\''; i++) {
+		r = decode(multi);
+		if (r > getlimits(tp)->max.i)
+			warn("character too large for enclosing character literal type");
+		d |= r;
+		input->p++;
+	}
+	input->p++;
+
+	if (i == 0)
+		errorp("empty character constant");
+	if (i > 1)
+		warn("multi-character character constant");
 
 	sym = newsym(NS_IDEN, NULL);
-	sym->u.i = c;
-	sym->type = inttype;
+	sym->u.i = d;
+	sym->type = tp;
 	yylval.sym = sym;
 	tok2str();
 	return CONSTANT;
@@ -634,6 +688,9 @@ iden(void)
 {
 	Symbol *sym;
 	char *p, *begin;
+
+	if (input->p[0] == 'L' && input->p[1] == '\'')
+		return character();
 
 	begin = input->p;
 	for (p = begin; isalnum(*p) || *p == '_'; ++p)

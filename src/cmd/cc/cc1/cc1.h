@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #define INPUTSIZ LINESIZ
 
 #define GLOBALCTX 0
@@ -290,6 +292,7 @@ typedef struct node Node;
 typedef struct macro Macro;
 typedef struct input Input;
 typedef struct arch Arch;
+typedef uint32_t Rune;
 
 struct limits {
 	union {

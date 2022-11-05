@@ -207,3 +207,4 @@
 0214-va_copy.c
 0215-ret_struct.c
 0216-initialize.c [TODO]
+0217-lchar.c
