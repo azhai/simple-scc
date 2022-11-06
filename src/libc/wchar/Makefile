@@ -4,6 +4,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
 OBJS =\
+	mbrtowc.$O\
 	wcwidth.$O\
 
 all: $(OBJS)
