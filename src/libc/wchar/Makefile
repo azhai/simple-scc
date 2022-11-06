@@ -6,6 +6,7 @@ include ../rules.mk
 OBJS =\
 	mbrlen.$O\
 	mbrtowc.$O\
+	wcrtomb.$O\
 	wcwidth.$O\
 
 all: $(OBJS)
