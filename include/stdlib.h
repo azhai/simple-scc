@@ -66,4 +66,6 @@ extern int wctomb(char *, wchar_t);
 extern size_t mbstowcs(wchar_t *restrict, const char *restrict, size_t);
 extern size_t wcstombs(char *restrict, const wchar_t *restrict, size_t);
 
+#define mblen(s,n) mbtowc(NULL, s, n)
+
 #endif

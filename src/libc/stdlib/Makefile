@@ -18,6 +18,7 @@ OBJS =\
 	labs.$O\
 	llabs.$O\
 	malloc.$O\
+	mblen.$O\
 	mbtowc.$O\
 	qsort.$O\
 	rand.$O\

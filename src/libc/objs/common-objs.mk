@@ -81,6 +81,7 @@ COMMON_OBJS =\
 	stdlib/ldiv.$O\
 	stdlib/lldiv.$O\
 	stdlib/malloc.$O\
+	stdlib/mblen.$O\
 	stdlib/mbtowc.$O\
 	stdlib/qsort.$O\
 	stdlib/rand.$O\
