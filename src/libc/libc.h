@@ -58,3 +58,7 @@ extern void (*_exitf[])(void);
 extern unsigned _exitn;
 extern void (*_flushall)(void);
 extern void (*_atexithdl)(void);
+
+#ifdef _WCHAR_H
+extern int _validutf8(wchar_t);
+#endif

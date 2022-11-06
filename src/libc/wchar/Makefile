@@ -8,6 +8,7 @@ OBJS =\
 	mbrtowc.$O\
 	wcrtomb.$O\
 	wcwidth.$O\
+	_validutf8.$O\
 
 all: $(OBJS)
 

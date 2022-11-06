@@ -1,4 +1,7 @@
+#include <errno.h>
 #include <wchar.h>
+
+#include "../libc.h"
 
 #undef wcrtomb
 
@@ -13,6 +16,11 @@ wcrtomb(char *restrict s, wchar_t wc, mbstate_t *restrict ps)
 
 	if (!s)
 		return 1;
+
+	if (_validutf8(wc)) {
+		errno = EILSEQ;
+		return -1;
+	}
 
 	for (n = 0; n < 5 && c >= limits[n]; ++n)
 		;

@@ -1,5 +1,7 @@
 #include <wchar.h>
 
+#include "../libc.h"
+
 #undef mbrtowc
 
 size_t
@@ -29,6 +31,9 @@ mbrtowc(wchar_t *restrict pwc, const char *restrict s, size_t n,
 		wc <<= 6;
 		wc |= c & 0x3F;
 	}
+
+	if (!_validutf8(wc))
+		return -1;
 
 return_code:
 	if (pwc)
