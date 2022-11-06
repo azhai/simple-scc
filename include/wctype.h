@@ -9,23 +9,23 @@
 typedef const int *wctrans_t;
 typedef unsigned long wctype_t;
 
-extern int iswalnum(wint_t wc);
-extern int iswalpha(wint_t wc);
-extern int iswblank(wint_t wc);
-extern int iswcntrl(wint_t wc);
-extern int iswdigit(wint_t wc);
-extern int iswgraph(wint_t wc);
-extern int iswlower(wint_t wc);
-extern int iswprint(wint_t wc);
-extern int iswpunct(wint_t wc);
-extern int iswspace(wint_t wc);
-extern int iswupper(wint_t wc);
-extern int iswxdigit(wint_t wc);
-extern int iswctype(wint_t wc, wctype_t desc);
-extern wctype_t wctype(const char *property);
-extern wint_t towlower(wint_t wc);
-extern wint_t towupper(wint_t wc);
-extern wint_t towctrans(wint_t wc, wctrans_t desc);
-extern wctrans_t wctrans(const char *property);
+extern int iswalnum(wint_t);
+extern int iswalpha(wint_t);
+extern int iswblank(wint_t);
+extern int iswcntrl(wint_t);
+extern int iswdigit(wint_t);
+extern int iswgraph(wint_t);
+extern int iswlower(wint_t);
+extern int iswprint(wint_t);
+extern int iswpunct(wint_t);
+extern int iswspace(wint_t);
+extern int iswupper(wint_t);
+extern int iswxdigit(wint_t);
+extern int iswctype(wint_t, wctype_t);
+extern wctype_t wctype(const char *);
+extern wint_t towlower(wint_t);
+extern wint_t towupper(wint_t);
+extern wint_t towctrans(wint_t, wctrans_t);
+extern wctrans_t wctrans(const char *);
 
 #endif
