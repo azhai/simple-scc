@@ -119,6 +119,7 @@ COMMON_OBJS =\
 	time/tz.$O\
 	wchar/mbrlen.$O\
 	wchar/mbrtowc.$O\
+	wchar/mbsrtowcs.$O\
 	wchar/wcrtomb.$O\
 	wchar/wcwidth.$O\
 	wchar/_validutf8.$O\
