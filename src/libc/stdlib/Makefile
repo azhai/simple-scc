@@ -15,8 +15,11 @@ OBJS =\
 	calloc.$O\
 	errno.$O\
 	exit.$O\
+	div.$O\
 	labs.$O\
+	ldiv.$O\
 	llabs.$O\
+	lldiv.$O\
 	malloc.$O\
 	mblen.$O\
 	mbtowc.$O\
