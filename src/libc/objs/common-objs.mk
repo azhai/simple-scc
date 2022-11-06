@@ -83,6 +83,7 @@ COMMON_OBJS =\
 	stdlib/malloc.$O\
 	stdlib/mblen.$O\
 	stdlib/mbtowc.$O\
+	stdlib/mbstowcs.$O\
 	stdlib/qsort.$O\
 	stdlib/rand.$O\
 	stdlib/realloc.$O\

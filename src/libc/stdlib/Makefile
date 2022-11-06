@@ -22,6 +22,7 @@ OBJS =\
 	lldiv.$O\
 	malloc.$O\
 	mblen.$O\
+	mbstowcs.$O\
 	mbtowc.$O\
 	qsort.$O\
 	rand.$O\
