@@ -79,6 +79,7 @@ COMMON_OBJS =\
 	stdlib/labs.$O\
 	stdlib/llabs.$O\
 	stdlib/ldiv.$O\
+	stdlib/lldiv.$O\
 	stdlib/malloc.$O\
 	stdlib/mbtowc.$O\
 	stdlib/qsort.$O\
