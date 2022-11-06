@@ -78,6 +78,7 @@ COMMON_OBJS =\
 	stdlib/exit.$O\
 	stdlib/labs.$O\
 	stdlib/llabs.$O\
+	stdlib/ldiv.$O\
 	stdlib/malloc.$O\
 	stdlib/mbtowc.$O\
 	stdlib/qsort.$O\
