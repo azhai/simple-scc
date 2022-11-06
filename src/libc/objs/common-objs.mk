@@ -73,6 +73,7 @@ COMMON_OBJS =\
 	stdlib/atoll.$O\
 	stdlib/bsearch.$O\
 	stdlib/calloc.$O\
+	stdlib/div.$O\
 	stdlib/errno.$O\
 	stdlib/exit.$O\
 	stdlib/labs.$O\
