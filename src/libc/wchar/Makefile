@@ -4,6 +4,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
 
 OBJS =\
+	fputwc.$O\
 	mbrlen.$O\
 	mbrtowc.$O\
 	mbsrtowcs.$O\
