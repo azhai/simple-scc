@@ -344,10 +344,6 @@ flags:
 				/* len = wcsnlen(ws, conv.prec); */
 				goto wstrout;
 			} else {
-				if (conv.prec != -1)
-					len = conv.prec;
-				else
-					len = SIZE_MAX;
 				s = va_arg(va2, char *);
 				if ((len = strlen(s)) > conv.prec)
 					len = conv.prec;
