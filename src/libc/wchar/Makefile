@@ -11,6 +11,7 @@ OBJS =\
 	wcrtomb.$O\
 	wcslen.$O\
 	wcwidth.$O\
+	putwc.$O\
 	_validutf8.$O\
 
 all: $(OBJS)
