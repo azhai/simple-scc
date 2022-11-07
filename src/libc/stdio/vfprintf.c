@@ -152,16 +152,16 @@ static size_t
 strout(char *s, size_t len, int width, int fill, FILE *restrict fp)
 {
 	int left = 0, adjust, ch, prefix;
-	size_t cnt;
+	size_t cnt = 0;
 
 	if (width < 0) {
 		left = 1;
 		width = -width;
 	}
+	if (len == (size_t) -1)
+		len = SIZE_MAX;
 
 	adjust = len < width ? width - len : 0;
-	cnt = adjust + len;
-
 	if (left)
 		adjust = -adjust;
 
@@ -174,18 +174,25 @@ strout(char *s, size_t len, int width, int fill, FILE *restrict fp)
 			prefix = 0;
 		while (prefix--) {
 			putc(*s++, fp);
+			++cnt;
 			--len;
 		}
 	}
 
-	for ( ; adjust > 0; adjust--)
+	for ( ; adjust > 0; adjust--) {
 		putc(fill, fp);
+		++cnt;
+	}
 
-	for ( ; len-- > 0 && (ch = *s) != '\0'; ++s)
+	for ( ; len-- > 0 && (ch = *s) != '\0'; ++s) {
 		putc(ch, fp);
+		++cnt;
+	}
 
-	for ( ; adjust < 0; adjust++)
+	for ( ; adjust < 0; adjust++) {
 		putc(' ', fp);
+		++cnt;
+	}
 
 	return cnt;
 }
