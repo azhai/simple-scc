@@ -6,7 +6,7 @@
 #undef fputwc
 
 wint_t
-fputwc(wchar_t wc, FILE *fp)
+_fputwc(wchar_t wc, FILE *fp, int *np)
 {
 	int n;
 	mbstate_t state;
@@ -17,9 +17,19 @@ fputwc(wchar_t wc, FILE *fp)
 		goto err;
 	if (fwrite(buf, 1, n, fp) < n)
 		goto err;
+
+	if (np)
+		*np = n;
+
 	return wc;
 
 err:
 	fp->flags |= _IOERR;
 	return WEOF;
+}
+
+wint_t
+fputwc(wchar_t wc, FILE *fp)
+{
+	return _fputwc(wc, fp, NULL);
 }

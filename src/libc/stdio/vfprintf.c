@@ -6,6 +6,8 @@
 #include <string.h>
 #include <wchar.h>
 
+#include "../libc.h"
+
 #define MAXPREC    50
 
 #undef vfprintf
@@ -120,7 +122,7 @@ savecnt(va_list *va, int flags, size_t cnt)
 static size_t
 wstrout(wchar_t *ws, size_t len, int width, int fill, FILE *restrict fp)
 {
-	int left = 0, adjust;
+	int left = 0, adjust, n;
 	size_t cnt = 0;
 	wchar_t wc;
 
@@ -134,18 +136,18 @@ wstrout(wchar_t *ws, size_t len, int width, int fill, FILE *restrict fp)
 		adjust = -adjust;
 
 	for ( ; adjust > 0; adjust--) {
-		putwc(fill, fp);
-		++cnt;
+		_fputwc(fill, fp, &n);
+		cnt += n;
 	}
 
 	for ( ; len-- > 0 && (wc = *ws) != '\0'; ++ws) {
-		putwc(wc, fp);
-		++cnt;
+		_fputwc(wc, fp, &n);
+		cnt += n;
 	}
 
 	for ( ; adjust < 0; adjust++) {
-		putwc(' ', fp);
-		++cnt;
+		_fputwc(' ', fp, &n);
+		cnt += n;
 	}
 
 	return cnt;
