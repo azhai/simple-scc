@@ -348,7 +348,8 @@ flags:
 		case 's':
 			if (flags & LONG) {
 				ws = va_arg(va2, wchar_t *);
-				/* len = wcsnlen(ws, conv.prec); */
+				if ((len = wcslen(ws)) > conv.prec)
+					len = conv.prec;
 				goto wstrout;
 			} else {
 				s = va_arg(va2, char *);
