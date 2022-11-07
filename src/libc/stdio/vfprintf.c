@@ -118,7 +118,7 @@ savecnt(va_list *va, int flags, size_t cnt)
 }
 
 static size_t
-wstrout(wchar_t *ws, size_t len, int width, int fill, FILE * restrict fp)
+wstrout(wchar_t *ws, size_t len, int width, int fill, FILE *restrict fp)
 {
 	int left = 0, adjust;
 	size_t cnt = 0;
@@ -198,7 +198,7 @@ strout(char *s, size_t len, int width, int fill, FILE *restrict fp)
 }
 
 int
-vfprintf(FILE * restrict fp, const char * restrict fmt, va_list va)
+vfprintf(FILE *restrict fp, const char *restrict fmt, va_list va)
 {
 	int ch, n, flags, width, left, fill;
 	size_t inc, len, cnt = 0;
