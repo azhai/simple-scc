@@ -10,10 +10,7 @@
 #include <arch/stdlib.h>
 
 #define _ATEXIT_MAX 32
-
-#ifndef MB_CUR_MAX
 #define MB_CUR_MAX 4
-#endif
 
 #define RAND_MAX 32767
 
