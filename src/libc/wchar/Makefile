@@ -8,6 +8,7 @@ OBJS =\
 	mbrtowc.$O\
 	mbsrtowcs.$O\
 	wcrtomb.$O\
+	wcslen.$O\
 	wcwidth.$O\
 	_validutf8.$O\
 
