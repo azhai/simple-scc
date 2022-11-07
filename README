@@ -170,3 +170,10 @@ of arguments.
 #define P(a, ...) a
 
 P(1)
+
+C99 libc
+========
+
+The C99 libc only supports the C locale using UTF-8 for multibyte
+sequences. It also assume that the wide character set includes as
+ASCII as a subset.
