@@ -123,28 +123,31 @@ wstrout(wchar_t *ws, size_t len, int width, int fill, FILE *restrict fp)
 	int left = 0, adjust;
 	size_t cnt = 0;
 	wchar_t wc;
-#if 0
 
 	if (width < 0) {
 		left = 1;
 		width = -width;
 	}
 
-	len *= sizeof(wchar_t);
-	adjust = (len < width) ? width - len : 0;
-	cnt = adjust + len;
+	adjust = len < width ? width - len : 0;
 	if (left)
 		adjust = -adjust;
 
-	for ( ; adjust > 0; adjust++)
-		putc(fill, fp);
+	for ( ; adjust > 0; adjust--) {
+		putwc(fill, fp);
+		++cnt;
+	}
 
-	while (wc = *ws++)
+	for ( ; len-- > 0 && (wc = *ws) != '\0'; ++ws) {
 		putwc(wc, fp);
+		++cnt;
+	}
 
-	for ( ; adjust < 0; adjust--)
-		putc(' ', fp);
-#endif
+	for ( ; adjust < 0; adjust++) {
+		putwc(' ', fp);
+		++cnt;
+	}
+
 	return cnt;
 }
 
