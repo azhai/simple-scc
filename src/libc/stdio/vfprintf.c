@@ -77,9 +77,6 @@ numtostr(uintmax_t val, int flags, struct conv *conv, char *buf)
 	int base = conv->base, prec = conv->prec;
 	uintmax_t oval = val;
 
-	if (prec == SIZE_MAX)
-		prec = 1;
-
 	for (*buf = '\0'; val > 0; val /= base)
 		*--buf = conv->digs[val % base];
 
@@ -203,7 +200,7 @@ strout(char *s, size_t len, int width, int fill, FILE *restrict fp)
 int
 vfprintf(FILE *restrict fp, const char *restrict fmt, va_list va)
 {
-	int ch, n, flags, width, left, fill;
+	int ch, n, flags, width, left, fill, prec;
 	size_t inc, len, cnt = 0;
 	char *s;
 	wchar_t *ws;
@@ -221,8 +218,8 @@ vfprintf(FILE *restrict fp, const char *restrict fmt, va_list va)
 		}
 
 		fill = ' ';
-		left = flags = width =  0;
-		conv.prec = SIZE_MAX;
+		prec = left = flags = width =  0;
+		conv.prec = 0;
 		conv.base = 10;
 		conv.sign = '\0';
 		conv.digs = "0123456789ABCDEFX";
@@ -247,8 +244,10 @@ flags:
 				for (n = 0; isdigit(ch = *fmt); fmt++)
 					n = n * 10 + ch - '0';
 			}
-			if (n >= 0)
+			if (n >= 0) {
 				conv.prec = n;
+				prec = 1;
+			}
 			goto flags;
 		case '*':
 			width = va_arg(va2, int);
@@ -327,11 +326,8 @@ flags:
 			conv.base = 8;
 			flags |= UNSIGNED;
 		numeric:
-			if (conv.prec != SIZE_MAX) {
-				if (conv.prec > MAXPREC)
-					conv.prec = MAXPREC;
-				fill = ' ';
-			}
+			if (conv.prec > MAXPREC)
+				conv.prec = MAXPREC;
 			s = numtostr(getnum(&va2, flags, &conv.sign),
 			             flags,
 			             &conv,
@@ -349,12 +345,17 @@ flags:
 			/* TODO */
 			break;
 		case 's':
-			len = conv.prec;
 			if (flags & LONG) {
 				ws = va_arg(va2, wchar_t *);
+				len = wcslen(ws);
+				if (prec && len > conv.prec)
+					len = conv.prec;
 				goto wstrout;
 			} else {
 				s = va_arg(va2, char *);
+				len = strlen(s);
+				if (prec && len > conv.prec)
+					len = conv.prec;
 				goto strout;
 			}
 		wstrout:
