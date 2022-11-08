@@ -9,8 +9,6 @@
 
 #undef system
 
-extern const char **_environ;
-
 int
 system(const char *cmd)
 {
