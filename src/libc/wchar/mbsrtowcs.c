@@ -9,15 +9,23 @@ mbsrtowcs(wchar_t *restrict dest, const char **restrict src, size_t len,
 {
 	wchar_t wc;
 	size_t cnt, n;
+	static mbstate_t p;
 
-	for (n = 0; !dest || n < len; n++) {
+	if (!ps)
+		ps = &p;
+
+	for (n = 0; ; n++) {
 		cnt = mbrtowc(&wc, *src, MB_LEN_MAX, ps);
 		if (cnt == (size_t) -1)
 			return -1;
+
+		if (dest) {
+			if (n == len)
+				return n;
+			*dest++ = wc;
+		}
 		*src += cnt;
 
-		if (dest)
-			*dest++ = wc;
 		if (wc == L'\0')
 			break;
 	}
