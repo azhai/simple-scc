@@ -10,6 +10,7 @@ OBJS =\
 	mbsrtowcs.$O\
 	wcrtomb.$O\
 	wcslen.$O\
+	wcsrtombs.$O\
 	wcwidth.$O\
 	putwc.$O\
 	_validutf8.$O\
