@@ -9,10 +9,6 @@ mbsrtowcs(wchar_t *restrict dest, const char **restrict src, size_t len,
 {
 	wchar_t wc;
 	size_t cnt, n;
-	static mbstate_t p;
-
-	if (!ps)
-		ps = &p;
 
 	for (n = 0; ; n++) {
 		cnt = mbrtowc(&wc, *src, MB_LEN_MAX, ps);

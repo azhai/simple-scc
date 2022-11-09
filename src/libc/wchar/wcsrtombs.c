@@ -11,10 +11,6 @@ wcsrtombs(char *restrict dest, const wchar_t **restrict src,
 	size_t cnt, n;
 	wchar_t wc;
 	char buf[MB_LEN_MAX];
-	static mbstate_t p;
-
-	if (!ps)
-		ps = &p;
 
 	for (n = 0; ; n += cnt) {
 		wc = **src;
