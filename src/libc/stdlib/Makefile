@@ -31,6 +31,7 @@ OBJS =\
 	strtoll.$O\
 	strtoul.$O\
 	strtoull.$O\
+	wcstombs.$O\
 	wctomb.$O\
 
 all: $(OBJS)

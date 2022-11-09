@@ -91,6 +91,7 @@ COMMON_OBJS =\
 	stdlib/strtoll.$O\
 	stdlib/strtoul.$O\
 	stdlib/strtoull.$O\
+	stdlib/wcstombs.$O\
 	stdlib/wctomb.$O\
 	string/strcat.$O\
 	string/strchr.$O\
