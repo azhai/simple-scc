@@ -11,7 +11,7 @@ mbrtowc(wchar_t *restrict pwc, const char *restrict s, size_t n,
 	unsigned char *t = (unsigned char *) s;
 	unsigned long wc;
 	unsigned c;
-	size_t i, len;
+	int i, len, maxlen;
 
 	if (s == NULL)
 		return 0;
@@ -32,7 +32,7 @@ mbrtowc(wchar_t *restrict pwc, const char *restrict s, size_t n,
 		wc |= c & 0x3F;
 	}
 
-	if (!_validutf8(wc))
+	if (!_validutf8(wc, &maxlen) || len != maxlen)
 		return -1;
 
 return_code:
