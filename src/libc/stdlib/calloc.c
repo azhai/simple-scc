@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #undef calloc
 
@@ -9,7 +10,7 @@ calloc(size_t nmemb, size_t size)
 	size_t nbytes;
 	void *mem;
 
-	if (!nmemb || !size || nmemb > (size_t)-1/size)
+	if (!nmemb || !size || nmemb > SIZE_MAX/size)
                 return NULL;
 
 	nbytes = nmemb * size;
