@@ -61,7 +61,7 @@ fielddesig(Type *tp, Init *ip)
 	if ((sym->flags & SDECLARED) == 0) {
 		errorp("unknown field '%s' specified in initializer",
 		      sym->name);
-		return 0;
+		return -1;
 	}
 	for (p = tp->p.fields; *p != sym; ++p)
 		;
@@ -233,7 +233,7 @@ initlist_helper(Type *tp)
 			goto desig_list;
 		case '.':
 			in.pos = fielddesig(tp, &in);
-			if (in.pos < nelem)
+			if (in.pos >= 0 && in.pos < nelem)
 				curtp = tp->p.fields[in.pos]->type;
 		desig_list:
 			if (yytoken == '[' || yytoken == '.') {
