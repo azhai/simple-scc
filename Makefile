@@ -41,7 +41,8 @@ dirs: $(SCRIPTDIR)/libc-dirs
 
 clean:
 	xargs rm -rf < $(SCRIPTDIR)/libc-dirs
-	rm -f dirs
+	find . -name '*.gcno' -o -name '*.gcda' | xargs rm -f
+	rm -rf dirs coverage
 
 distclean: clean
 	rm -f include/scc/scc/sysld.h

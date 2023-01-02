@@ -201,7 +201,6 @@ clean-dirs:
 
 clean-files:
 	rm -f *.i *.d *.o *.a *.elf $(TARGET)
-	rm -f *.gcno *.gcda
 
 dep: inc-dep
 	$(FORALL)
