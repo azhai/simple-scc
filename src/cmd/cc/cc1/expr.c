@@ -332,6 +332,7 @@ incorrect:
 static Node *
 arithmetic(int op, Node *lp, Node *rp)
 {
+	Node *np;
 	Type *ltp = lp->type, *rtp = rp->type;
 
 	if ((ltp->prop & TARITH) && (rtp->prop & TARITH)) {
@@ -345,7 +346,10 @@ arithmetic(int op, Node *lp, Node *rp)
 		case OA_SUB:
 		case OINC:
 		case ODEC:
-			return parithmetic(op, lp, rp);
+			np = parithmetic(op, lp, rp);
+			if ((lp->flags&NCONST) && (rp->flags&NCONST))
+				np->flags |= NCONST;
+			return np;
 		}
 	}
 	errorp("incorrect arithmetic operands");
