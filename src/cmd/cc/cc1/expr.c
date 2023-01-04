@@ -1108,13 +1108,10 @@ expr(void)
 	Node *lp, *rp;
 
 	lp = assign();
-	if (!accept(','))
-		return lp;
-
-	do {
+	while (accept(',')) {
 		rp = assign();
 		lp = node(OCOMMA, rp->type, lp, rp);
-	} while (accept(','));
+	}
 
 	return simplify(lp);
 }
