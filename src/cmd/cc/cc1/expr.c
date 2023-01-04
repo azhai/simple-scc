@@ -1093,7 +1093,7 @@ assign(void)
 		case AND_EQ: op = OA_AND;  fun = integerop;  break;
 		case XOR_EQ: op = OA_XOR;  fun = integerop;  break;
 		case OR_EQ:  op = OA_OR;   fun = integerop;  break;
-		default: return simplify(np);
+		default: return np;
 		}
 		chklvalue(np);
 		np->flags |= NEFFECT;
