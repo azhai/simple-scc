@@ -1113,7 +1113,7 @@ expr(void)
 		lp = node(OCOMMA, rp->type, lp, rp);
 	}
 
-	return simplify(lp);
+	return lp;
 }
 
 Node *
