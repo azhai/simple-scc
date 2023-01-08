@@ -369,16 +369,17 @@ foldcast(Node *np, Node *l)
 }
 
 static Node *
-foldunary(Node *np, Node *l)
+foldunary(Node *np)
 {
-	int op = l->op;
+	Node *l = np->left;
 	Node *aux;
+	int op = l->op;
 
 	switch (np->op) {
 	case ONEG:
 		if (l->op == ONEG)
 			break;
-		return NULL;
+		return np;
 	case OADD:
 		DBG("FOLD unary delete %d", np->op);
 		np->left = NULL;
@@ -389,18 +390,18 @@ foldunary(Node *np, Node *l)
 	case OSNEG:
 	case OCPL:
 		if (op != np->op)
-			return NULL;
+			return np;
 		break;
 	case OPTR:
 		if (op != OADDR || np->type != l->left->type)
-			return NULL;
+			return np;
 		break;
 	case OADDR:
 		if (op != OPTR)
-			return NULL;
+			return np;
 		break;
 	default:
-		return NULL;
+		return np;
 	}
 	DBG("FOLD unary cancel %d", np->op);
 	aux = l->left;
@@ -424,7 +425,7 @@ fold(Node *np)
 
 	if ((op == ODIV || op == OMOD) && cmpnode(rp, 0)) {
 		warn("division by 0");
-		return NULL;
+		return np;
 	}
 	/*
 	 * Return if any of the children is no constant,
@@ -437,12 +438,12 @@ fold(Node *np)
 		rs = NULL;
 	} else {
 		if (!(rp->flags & NCONST) || !rp->sym)
-			return NULL;
+			return np;
 		rs = rp->sym;
 	}
 
 	if ((lp->flags & NCONST) == 0 || !lp->sym)
-		return NULL;
+		return np;
 	optype = lp->type;
 	ls = lp->sym;
 
@@ -456,19 +457,20 @@ fold(Node *np)
 	case FLOAT:
 		if ((p = foldconst(type, op, tp, ls, rs)) == NULL) {
 			np->flags &= ~NCONST;
-			return NULL;
+			return np;
 		}
 		freetree(np);
 		return p;
 	default:
-		return NULL;
+		return np;
 	}
 }
 
 static void
-commutative(Node *np, Node *l, Node *r)
+commutative(Node *np)
 {
 	int op = np->op;
+	Node *l = np->left, *r = np->right;
 
 	if (r == NULL || r->flags&NCONST || !(l->flags&NCONST))
 		return;
@@ -502,7 +504,7 @@ identity(Node *np)
 	Node *lp = np->left, *rp = np->right;
 
 	if (!rp)
-		return NULL;
+		return np;
 
 	iszeror = cmpnode(rp, 0);
 	isoner = cmpnode(rp, 1),
@@ -523,7 +525,7 @@ identity(Node *np)
 			goto free_left;
 		if (isoner)
 			goto change_to_comma;
-		return NULL;
+		return np;
 	case OAND:
 		/*
 		 * 0 && i => 0    (free right)
@@ -537,7 +539,7 @@ identity(Node *np)
 			goto free_left;
 		if (iszeror)
 			goto change_to_comma;
-		return NULL;
+		return np;
 	case OSHL:
 	case OSHR:
 		/*
@@ -548,7 +550,7 @@ identity(Node *np)
 		 */
 		if (iszeror | iszerol)
 			goto free_right;
-		return NULL;
+		return np;
 	case OBXOR:
 	case OADD:
 	case OBOR:
@@ -561,7 +563,7 @@ identity(Node *np)
 		 */
 		if (iszeror)
 			goto free_right;
-		return NULL;
+		return np;
 	case OMUL:
 		/*
 		 * i * 0  => i,0
@@ -571,24 +573,24 @@ identity(Node *np)
 			goto change_to_comma;
 		if (isoner)
 			goto free_right;
-		return NULL;
+		return np;
 	case ODIV:
 		/* i / 1  => i */
 		if (isoner)
 			goto free_right;
-		return NULL;
+		return np;
 	case OBAND:
 		/* i & ~0 => i */
 		if (cmpnode(rp, -1))
 			goto free_right;
-		return NULL;
+		return np;
 	case OMOD:
 		/* i % 1  => i,1 */
 		/* TODO: i % 2^n => i & n-1 */
 		if (isoner)
 			goto change_to_comma;
 	default:
-		return NULL;
+		return np;
 	}
 
 free_right:
@@ -610,8 +612,10 @@ change_to_comma:
 }
 
 static Node *
-foldternary(Node *np, Node *cond, Node *body)
+foldternary(Node *np)
 {
+	Node *cond = np->left, *body = np->right;
+
 	if ((cond->flags & NCONST) == 0)
 		return np;
 	if (cmpnode(cond, 0)) {
@@ -630,22 +634,21 @@ foldternary(Node *np, Node *cond, Node *body)
 	return np;
 }
 
-/* TODO: fold OCOMMA */
 
-Node *
-xsimplify(Node *np)
+static Node *xsimplify(Node *);
+
+/* TODO: fold OCOMMA */
+static Node *
+xxsimplify(Node *np)
 {
 	Node *p, *l, *r;
 
-	if (!np)
-		return NULL;
-
-	l = np->left = xsimplify(np->left);
-	r = np->right = xsimplify(np->right);
+	np->left = xsimplify(np->left);
+	np->right = xsimplify(np->right);
 
 	switch (np->op) {
 	case OASK:
-		return foldternary(np, l, r);
+		return foldternary(np);
 	case OCALL:
 	case OPAR:
 	case OSYM:
@@ -669,29 +672,37 @@ xsimplify(Node *np)
 	case DEC:
 	case OCAST:
 	case ONEG:
-		assert(!r);
-		if ((p = foldunary(np, l)) != NULL)
-			np = p;
-		if ((p = fold(np)) != NULL)
-			np = p;
+		assert(!np->right);
+		np = foldunary(np);
+		np = fold(np);
 		return np;
 	default:
-		commutative(np, l, r);
-		if ((p = fold(np)) != NULL)
-			np = p;
-		if ((p = identity(np)) != NULL)
-			np = p;
+		commutative(np);
+		np = fold(np);
+		np = identity(np);
 		return np;
 	}
+}
+
+static Node *
+xsimplify(Node *np)
+{
+	if (!np)
+		return NULL;
+
+	if (enadebug)
+		prtree("simplify before", np);
+	np = xxsimplify(np);
+	if (enadebug)
+		prtree("simplify after", np);
+
+	return np;
 }
 
 Node *
 simplify(Node *np)
 {
-	if (enadebug)
-		prtree("simplify before", np);
-	np = xsimplify(np);
-	if (enadebug)
-		prtree("simplify after", np);
-	return np;
+	DBG("SIMPLIFY");
+	return xsimplify(np);
+	DBG("SIMPLIFY DONE");
 }
