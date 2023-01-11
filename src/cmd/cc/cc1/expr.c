@@ -9,6 +9,32 @@
 #define XCHG(lp, rp, np) (np = lp, lp = rp, rp = np)
 
 int
+power2node(Node *np, int *log)
+{
+	int n;
+	TUINT u;
+	Symbol *sym;
+
+	if (!np || !(np->flags & NCONST) || !np->sym)
+		return 0;
+
+	sym = np->sym;
+	if (sym->type->op != INT)
+		return 0;
+
+	n = 0;
+	for (u = sym->u.u; u; u >>= 1) {
+		if (u & 1)
+			n++;
+	}
+
+	if (log)
+		*log = n;
+
+	return n == 1;
+}
+
+int
 cmpnode(Node *np, TUINT val)
 {
 	Symbol *sym;

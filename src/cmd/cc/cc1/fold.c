@@ -586,7 +586,6 @@ identity(Node *np)
 		return np;
 	case OMOD:
 		/* i % 1  => i,1 */
-		/* TODO: i % 2^n => i & n-1 */
 		if (isoner)
 			goto change_to_comma;
 	default:
@@ -634,21 +633,45 @@ foldternary(Node *np)
 	return np;
 }
 
-
 static Node *xsimplify(Node *);
+
+static void
+reduce(Node *np)
+{
+	Node *lp = np->left, *rp = np->right;
+	Node *aux, *aux2;
+	int op = np->op;
+
+	switch (op) {
+	case OMOD:
+		/* i % 2^n => i & n-1 */
+		if (power2node(rp, NULL)) {
+			np->op = OBAND;
+			rp->sym->u.u--;
+			break;
+		}
+		return;
+	default:
+		return;
+	}
+
+	DBG("FOLD reduce %d->%d", op, np->op);
+}
 
 /* TODO: fold OCOMMA */
 static Node *
 xxsimplify(Node *np)
 {
-	Node *p, *l, *r;
+	int op;
 
 	np->left = xsimplify(np->left);
 	np->right = xsimplify(np->right);
 
-	switch (np->op) {
+repeat:
+	switch (op = np->op) {
 	case OASK:
-		return foldternary(np);
+		np = foldternary(np);
+		break;
 	case OCALL:
 	case OPAR:
 	case OSYM:
@@ -663,7 +686,7 @@ xxsimplify(Node *np)
 	case OA_AND:
 	case OA_XOR:
 	case OA_OR:
-		return np;
+		break;
 	case OSNEG:
 	case OCPL:
 	case OADDR:
@@ -675,13 +698,18 @@ xxsimplify(Node *np)
 		assert(!np->right);
 		np = foldunary(np);
 		np = fold(np);
-		return np;
+		break;
 	default:
 		commutative(np);
 		np = fold(np);
 		np = identity(np);
-		return np;
+		reduce(np);
+		break;
 	}
+
+	if (op != np->op)
+		goto repeat;
+	return np;
 }
 
 static Node *

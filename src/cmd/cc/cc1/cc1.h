@@ -497,6 +497,7 @@ extern Node *constexpr(void), *condexpr(int neg), *expr(void);
 extern int isnodecmp(int op);
 extern int negop(int op);
 extern int cmpnode(Node *np, TUINT val);
+extern int power2node(Node *, int *);
 
 /* init.c */
 extern void initializer(Symbol *sym, Type *tp);
