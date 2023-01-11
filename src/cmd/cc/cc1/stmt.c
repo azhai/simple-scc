@@ -178,7 +178,7 @@ Return(Symbol *lbreak, Symbol *lcont, Switch *lswitch)
 
 	expect(RETURN);
 	if (yytoken != ';')
-		np = decay(expr());
+		np = simplify(decay(expr()));
 	expect(';');
 
 	if (!np && tp != voidtype)
