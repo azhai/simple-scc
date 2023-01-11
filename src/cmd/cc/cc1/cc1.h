@@ -482,6 +482,7 @@ extern Node *node(int op, Type *tp, Node *left, Node *rigth);
 extern Node *varnode(Symbol *sym);
 extern Node *constnode(Symbol *sym);
 extern Node *sizeofnode(Type *tp);
+extern Node *offsetnode(Symbol *,  Type *);
 extern void freetree(Node *np);
 extern void icode(void);
 #define BTYPE(np) ((np)->type->op)

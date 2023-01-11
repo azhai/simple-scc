@@ -372,7 +372,7 @@ static Node *
 foldunary(Node *np)
 {
 	Node *l = np->left;
-	Node *aux;
+	Node *aux, *aux2;;
 	int op = l->op;
 
 	switch (np->op) {
@@ -397,6 +397,33 @@ foldunary(Node *np)
 			return np;
 		break;
 	case OADDR:
+		/* &(*s).f -> s + offsetof(typeof(*s), f) */
+		if (op == OFIELD && l->left->op == OPTR) {
+			DBG("FOLD collapse '&(*s).f' %d", np->op);
+			aux = offsetnode(l->right->sym, np->type);
+			aux = node(OADD, np->type, l->left->left, aux);
+
+			if (aux->left->flags & NCONST)
+				aux->flags |= NCONST;
+			l->left->left = NULL;
+			freetree(np);
+			return aux;
+		}
+
+		/* &s.f -> &s + offsetof(typeof(s), f) */
+		if (op == OFIELD) {
+			DBG("FOLD collapse '&s.f' %d", np->op);
+			aux = offsetnode(l->right->sym, np->type);
+			aux2 = node(OADDR, np->type, l->left, NULL);
+			aux = node(OADD, np->type, aux2, aux);
+
+			if (l->flags & NCONST)
+				aux->flags |= NCONST;
+			l->left = NULL;
+			freetree(np);
+			return aux;
+		}
+
 		if (op != OPTR)
 			return np;
 		break;
