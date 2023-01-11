@@ -576,7 +576,7 @@ sizeofnode(Type *tp)
 
 	sym = newsym(NS_IDEN, NULL);
 	sym->type = sizettype;
-	sym->u.i = tp->size;
-	DBG("EXPR sizeof %llu", sym->u.i);
+	sym->u.u = tp->size;
+	DBG("EXPR sizeof %llu", sym->u.u);
 	return constnode(sym);
 }
