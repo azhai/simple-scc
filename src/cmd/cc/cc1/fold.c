@@ -685,6 +685,31 @@ reduce(Node *np)
 	DBG("FOLD reduce %d->%d", op, np->op);
 }
 
+static void
+associative(Node *np)
+{
+	Node *l = np->left, *r = np->right;
+
+	switch (np->op) {
+	case OADD:
+	case OMUL:
+	case OBAND:
+	case OBXOR:
+	case OBOR:
+		if (np->op != l->op
+		|| l->right->op != OSYM
+		|| !(l->right->sym->flags&SCONSTANT)) {
+			return;
+		}
+
+		DBG("FOLD associative %d", np->op);
+		np->left = l->left;
+		l->left = r;
+		np->right = fold(l);
+		break;
+	}
+}
+
 /* TODO: fold OCOMMA */
 static Node *
 xxsimplify(Node *np)
@@ -728,6 +753,7 @@ repeat:
 		break;
 	default:
 		commutative(np);
+		associative(np);
 		np = fold(np);
 		np = identity(np);
 		reduce(np);
