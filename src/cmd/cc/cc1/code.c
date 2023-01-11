@@ -564,7 +564,6 @@ constnode(Symbol *sym)
 	Node *np;
 
 	np = node(OSYM, sym->type, NULL, NULL);
-	np->type = sym->type;
 	np->flags = NCONST;
 	np->sym = sym;
 	return np;
