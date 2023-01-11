@@ -566,8 +566,8 @@ identity(Node *np)
 		return np;
 	case OMUL:
 		/*
-		 * i * 0  => i,0
-		 * i * 1  => i
+		 * i * 0  => i,0 (comma)
+		 * i * 1  => i   (free right)
 		 */
 		if (iszeror)
 			goto change_to_comma;
