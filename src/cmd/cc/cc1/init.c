@@ -123,13 +123,12 @@ initialize(Type *tp)
 		return initlist(tp);
 
 	np = assign();
-	if (eqtype(tp, np->type, EQUIV))
-		return np;
-
-	np = convert(decay(np), tp, 0);
-	if (!np) {
-		errorp("incorrect initializer");
-		return constnode(zero);
+	if (!eqtype(tp, np->type, EQUIV)) {
+		np = convert(decay(np), tp, 0);
+		if (!np) {
+			errorp("incorrect initializer");
+			return constnode(zero);
+		}
 	}
 
 	return simplify(np);
