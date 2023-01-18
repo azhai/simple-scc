@@ -372,7 +372,8 @@ static Node *
 foldunary(Node *np)
 {
 	Node *l = np->left;
-	Node *aux, *aux2;;
+	Node *aux;
+	Symbol *sym;
 	int op = l->op;
 
 	switch (np->op) {
@@ -400,8 +401,10 @@ foldunary(Node *np)
 		/* &(*s).f -> s + offsetof(typeof(*s), f) */
 		if (op == OFIELD && l->left->op == OPTR) {
 			DBG("FOLD collapse '&(*s).f' %d", np->op);
-			aux = offsetnode(l->right->sym, np->type);
-			aux = node(OADD, np->type, l->left->left, aux);
+			aux = node(OADD,
+			           np->type,
+			           l->left->left,
+			           offsetnode(l->right->sym, np->type));
 
 			if (aux->left->flags & NCONST)
 				aux->flags |= NCONST;
@@ -413,11 +416,12 @@ foldunary(Node *np)
 		/* &s.f -> &s + offsetof(typeof(s), f) */
 		if (op == OFIELD) {
 			DBG("FOLD collapse '&s.f' %d", np->op);
-			aux = offsetnode(l->right->sym, np->type);
-			aux2 = node(OADDR, np->type, l->left, NULL);
-			aux = node(OADD, np->type, aux2, aux);
+			aux = node(OADD,
+			           np->type,
+			           node(OADDR, np->type, l->left, NULL),
+			           offsetnode(l->right->sym, np->type));
 
-			if (l->flags & NCONST)
+			if (np->flags & NCONST)
 				aux->flags |= NCONST;
 			l->left = NULL;
 			freetree(np);
