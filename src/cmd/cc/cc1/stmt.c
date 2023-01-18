@@ -47,7 +47,7 @@ stmtexp(Symbol *lbreak, Symbol *lcont, Switch *lswitch)
 		stmt(lbreak, lcont, lswitch);
 		return;
 	}
-	np = expr();
+	np = simplify(expr());
 	if ((np->flags & NEFFECT) == 0)
 		warn("expression without side effects");
 	emit(OEXPR, np);
@@ -115,14 +115,14 @@ For(Symbol *lbreak, Symbol *lcont, Switch *lswitch)
 		decl();
 		break;
 	default:
-		emit(OEXPR, expr());
+		emit(OEXPR, simplify(expr()));
 	case ';':
 		expect(';');
 		break;
 	}
 	econd = (yytoken != ';') ? condexpr(NONEGATE) : NULL;
 	expect(';');
-	einc = (yytoken != ')') ? expr() : NULL;
+	einc = (yytoken != ')') ? simplify(expr()) : NULL;
 	expect(')');
 
 	emit(OJUMP, cond);
@@ -178,7 +178,7 @@ Return(Symbol *lbreak, Symbol *lcont, Switch *lswitch)
 
 	expect(RETURN);
 	if (yytoken != ';')
-		np = decay(expr());
+		np = simplify(decay(expr()));
 	expect(';');
 
 	if (!np && tp != voidtype)
@@ -248,7 +248,8 @@ Swtch(Symbol *obr, Symbol *lcont, Switch *osw)
 	expect(SWITCH);
 
 	expect ('(');
-	if ((cond = convert(expr(), inttype, 0)) == NULL) {
+	cond = simplify(convert(expr(), inttype, 0));
+	if (cond == NULL) {
 		errorp("incorrect type in switch statement");
 		cond = constnode(zero);
 	}

@@ -9,7 +9,7 @@ builtin_va_arg(Symbol *sym)
 	Node *np, *ap;
 	Type *tp;
 
-	ap = assign();
+	ap = simplify(assign());
 	expect(',');
 	tp = typename();
 
@@ -37,9 +37,9 @@ builtin_va_copy(Symbol *sym)
 {
 	Node *np, *src, *dst;
 
-	dst = assign();
+	dst = simplify(assign());
 	expect(',');
-	src = assign();
+	src = simplify(assign());
 
 	if (!valid_va_list(dst->type) || !valid_va_list(src->type)) {
 		errorp("incorrect parameters for va_copy");
@@ -63,7 +63,7 @@ builtin_va_start(Symbol *sym)
 	Symbol **p;
 	Type *tp;
 
-	ap = assign();
+	ap = simplify(assign());
 	expect(',');
 	last = assign();
 	if (last->op != OSYM)
@@ -98,7 +98,7 @@ builtin_va_end(Symbol *sym)
 {
 	Node *ap, *np;
 
-	ap = assign();
+	ap = simplify(assign());
 
 	if (!valid_va_list(ap->type)) {
 		errorp("incorrect parameters for va_end");

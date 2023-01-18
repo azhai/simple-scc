@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -564,7 +565,6 @@ constnode(Symbol *sym)
 	Node *np;
 
 	np = node(OSYM, sym->type, NULL, NULL);
-	np->type = sym->type;
 	np->flags = NCONST;
 	np->sym = sym;
 	return np;
@@ -577,7 +577,21 @@ sizeofnode(Type *tp)
 
 	sym = newsym(NS_IDEN, NULL);
 	sym->type = sizettype;
-	sym->u.i = tp->size;
-	DBG("EXPR sizeof %llu", sym->u.i);
+	sym->u.u = tp->size;
+	DBG("EXPR sizeof %llu", sym->u.u);
+	return constnode(sym);
+}
+
+Node *
+offsetnode(Symbol *field, Type *tp)
+{
+	Symbol *sym;
+
+	assert(field->flags & SFIELD);
+	sym = newsym(NS_IDEN, NULL);
+	sym->type = tp;
+	sym->flags |= SCONSTANT;
+	sym->u.u = field->u.u;
+
 	return constnode(sym);
 }

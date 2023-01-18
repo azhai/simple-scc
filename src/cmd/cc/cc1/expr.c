@@ -9,6 +9,32 @@
 #define XCHG(lp, rp, np) (np = lp, lp = rp, rp = np)
 
 int
+power2node(Node *np, int *log)
+{
+	int n;
+	TUINT u;
+	Symbol *sym;
+
+	if (!np || !(np->flags & NCONST) || !np->sym)
+		return 0;
+
+	sym = np->sym;
+	if (sym->type->op != INT)
+		return 0;
+
+	n = 0;
+	for (u = sym->u.u; u; u >>= 1) {
+		if (u & 1)
+			n++;
+	}
+
+	if (log)
+		*log = n;
+
+	return n == 1;
+}
+
+int
 cmpnode(Node *np, TUINT val)
 {
 	Symbol *sym;
@@ -189,6 +215,18 @@ chklvalue(Node *np)
 		errorp("invalid use of void expression");
 }
 
+static Node *
+chkconstaddr(Node *var, Node *addr)
+{
+	if (var->sym && var->sym->flags & (SGLOBAL|SLOCAL|SPRIVATE)
+	|| var->op == OFIELD && var->left->op == OSYM
+	|| var->op == OFIELD && (var->left->flags & NCONST)) {
+		addr->flags |= NCONST;
+	}
+
+	return addr;
+}
+
 Node *
 decay(Node *np)
 {
@@ -199,26 +237,21 @@ decay(Node *np)
 	case ARY:
 		DBG("EXPR decay ary");
 		tp = tp->type;
-		if (np->op == OPTR) {
-			new = np->left;
-			free(np);
-			new->type = mktype(tp, PTR, 0, NULL);
-			return new;
-		}
-		break;
+		if (np->op != OPTR)
+			goto new_node;
+		new = np->left;
+		free(np);
+		new->type = mktype(tp, PTR, 0, NULL);
+		return chkconstaddr(new, new);
 	case FTN:
 		DBG("EXPR decay function");
-		break;
+	new_node:
+		new = node(OADDR, mktype(tp, PTR, 0, NULL), np, NULL);
+		new->flags |= NDECAY;
+		return chkconstaddr(np, new);
 	default:
 		return np;
 	}
-
-	new = node(OADDR, mktype(tp, PTR, 0, NULL), np, NULL);
-	if (np->sym && np->sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
-		new->flags |= NCONST;
-	new->flags |= NDECAY;
-
-	return new;
 }
 
 static Node *
@@ -332,6 +365,7 @@ incorrect:
 static Node *
 arithmetic(int op, Node *lp, Node *rp)
 {
+	Node *np;
 	Type *ltp = lp->type, *rtp = rp->type;
 
 	if ((ltp->prop & TARITH) && (rtp->prop & TARITH)) {
@@ -345,7 +379,10 @@ arithmetic(int op, Node *lp, Node *rp)
 		case OA_SUB:
 		case OINC:
 		case ODEC:
-			return parithmetic(op, lp, rp);
+			np = parithmetic(op, lp, rp);
+			if ((lp->flags&NCONST) && (rp->flags&NCONST))
+				np->flags |= NCONST;
+			return np;
 		}
 	}
 	errorp("incorrect arithmetic operands");
@@ -571,9 +608,8 @@ dont_check_lvalue:
 	if (sym && (sym->flags & SREGISTER))
 		errorp("address of register variable '%s' requested", yytext);
 	new = node(op, mktype(tp, PTR, 0, NULL), np, NULL);
-	if (sym && sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
-		new->flags |= NCONST;
-	return new;
+
+	return chkconstaddr(np, new);
 }
 
 static Node *
@@ -1093,7 +1129,7 @@ assign(void)
 		case AND_EQ: op = OA_AND;  fun = integerop;  break;
 		case XOR_EQ: op = OA_XOR;  fun = integerop;  break;
 		case OR_EQ:  op = OA_OR;   fun = integerop;  break;
-		default: return simplify(np);
+		default: return np;
 		}
 		chklvalue(np);
 		np->flags |= NEFFECT;
@@ -1108,15 +1144,12 @@ expr(void)
 	Node *lp, *rp;
 
 	lp = assign();
-	if (!accept(','))
-		return lp;
-
-	do {
+	while (accept(',')) {
 		rp = assign();
 		lp = node(OCOMMA, rp->type, lp, rp);
-	} while (accept(','));
+	}
 
-	return simplify(lp);
+	return lp;
 }
 
 Node *
