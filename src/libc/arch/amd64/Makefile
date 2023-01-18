@@ -4,6 +4,7 @@ PROJECTDIR = ../../../..
 DIRS =\
 	darwin\
 	dragonfly\
+	freebsd\
 	linux\
 	netbsd\
 	openbsd\

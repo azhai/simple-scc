@@ -7,6 +7,7 @@ DIRS =\
 	arm64\
 	arm\
 	i386\
+	freebsd\
 	ppc\
 	netbsd\
 	openbsd\

@@ -4,6 +4,7 @@ x86_64 amd64:
 	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-netbsd src/libc src/libcrt
 	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-dragonfly src/libc src/libcrt
 	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-darwin src/libc src/libcrt
+	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=amd64-freebsd src/libc src/libcrt
 
 install-x86_64 install-amd64: amd64
 	$(SCRIPTDIR)/install -p $(SCRIPTDIR)/proto.amd64 $(ROOT)
