@@ -215,6 +215,18 @@ chklvalue(Node *np)
 		errorp("invalid use of void expression");
 }
 
+static Node *
+chkconstaddr(Node *var, Node *addr)
+{
+	if (var->sym && var->sym->flags & (SGLOBAL|SLOCAL|SPRIVATE)
+	|| var->op == OFIELD && var->left->op == OSYM
+	|| var->op == OFIELD && (var->left->flags & NCONST)) {
+		addr->flags |= NCONST;
+	}
+
+	return addr;
+}
+
 Node *
 decay(Node *np)
 {
@@ -225,26 +237,21 @@ decay(Node *np)
 	case ARY:
 		DBG("EXPR decay ary");
 		tp = tp->type;
-		if (np->op == OPTR) {
-			new = np->left;
-			free(np);
-			new->type = mktype(tp, PTR, 0, NULL);
-			return new;
-		}
-		break;
+		if (np->op != OPTR)
+			goto new_node;
+		new = np->left;
+		free(np);
+		new->type = mktype(tp, PTR, 0, NULL);
+		return chkconstaddr(new, new);
 	case FTN:
 		DBG("EXPR decay function");
-		break;
+	new_node:
+		new = node(OADDR, mktype(tp, PTR, 0, NULL), np, NULL);
+		new->flags |= NDECAY;
+		return chkconstaddr(np, new);
 	default:
 		return np;
 	}
-
-	new = node(OADDR, mktype(tp, PTR, 0, NULL), np, NULL);
-	if (np->sym && np->sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
-		new->flags |= NCONST;
-	new->flags |= NDECAY;
-
-	return new;
 }
 
 static Node *
@@ -601,9 +608,8 @@ dont_check_lvalue:
 	if (sym && (sym->flags & SREGISTER))
 		errorp("address of register variable '%s' requested", yytext);
 	new = node(op, mktype(tp, PTR, 0, NULL), np, NULL);
-	if (sym && sym->flags & (SGLOBAL|SLOCAL|SPRIVATE))
-		new->flags |= NCONST;
-	return new;
+
+	return chkconstaddr(np, new);
 }
 
 static Node *
