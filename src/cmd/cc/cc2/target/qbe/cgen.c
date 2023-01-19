@@ -548,6 +548,38 @@ assignop(Type *tp)
 	}
 }
 
+static void
+rhs_rhs(Node **lp, Node **rp)
+{
+	Node *l = *lp, *r = *rp;
+
+	if (l->complex >= r->complex) {
+		l = rhs(l);
+		r = rhs(r);
+	} else {
+		r = rhs(r);
+		l = rhs(l);
+	}
+
+	*lp = l, *rp = r;
+}
+
+static void
+lhs_rhs(Node **lp, Node **rp)
+{
+	Node *l = *lp, *r = *rp;
+
+	if (l->complex >= r->complex) {
+		l = lhs(l);
+		r = rhs(r);
+	} else {
+		r = rhs(r);
+		l = lhs(l);
+	}
+
+	*lp = l, *rp = r;
+}
+
 static Node *
 assign(Node *np)
 {
@@ -563,7 +595,7 @@ assign(Node *np)
 	case ODEC:
 		op = OSUB;
 	post_oper:
-		l = lhs(l);
+		lhs_rhs(&l, &r);
 		ret = load(&l->type, l);
 		aux.op = op;
 		aux.left = ret;
@@ -575,13 +607,7 @@ assign(Node *np)
 		/* assign abbreviation */
 		assert(l->type.size == r->type.size);
 		if (r->type.size < 4) {
-			if (l->complex >= r->complex) {
-				l = lhs(l);
-				r = rhs(r);
-			} else {
-				r = rhs(r);
-				l = lhs(l);
-			}
+			lhs_rhs(&l, &r);
 			aux.op = np->u.subop;
 			aux.left = load(&r->type, l);
 			aux.right = r;
@@ -598,13 +624,7 @@ assign(Node *np)
 		aux.address = np->address;
 		r = sethi(&aux);
 	case 0:
-		if (l->complex >= r->complex) {
-			l = lhs(l);
-			r = rhs(r);
-		} else {
-			r = rhs(r);
-			l = lhs(l);
-		}
+		lhs_rhs(&l, &r);
 		ret = r;
 		break;
 	}
@@ -681,15 +701,7 @@ rhs(Node *np)
 		size = tp->size == 8;
 		isfloat = (tp->flags & FLOATF) != 0;
 		op = opbin[isfloat][size][np->op][sign];
-
-		if (l->complex >= r->complex) {
-			l = rhs(l);
-			r = rhs(r);
-		} else {
-			r = rhs(r);
-			l = rhs(l);
-		}
-
+		rhs_rhs(&l, &r);
 		tmp = tmpnode(tp);
 		code(op, tmp, l, r);
 		return tmp;
