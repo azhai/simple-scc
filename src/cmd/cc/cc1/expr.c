@@ -259,7 +259,22 @@ integerop(int op, Node *lp, Node *rp)
 {
 	if (!(lp->type->prop & TINTEGER) || !(rp->type->prop & TINTEGER))
 		error("operator requires integer operands");
-	arithconv(&lp, &rp);
+
+
+	switch (op) {
+	case OA_MOD:
+	case OA_SHL:
+	case OA_SHR:
+	case OA_AND:
+	case OA_XOR:
+	case OA_OR:
+		rp = convert(rp, lp->type, 0);
+		break;
+	default:
+		arithconv(&lp, &rp);
+		break;
+	}
+
 	return node(op, lp->type, lp, rp);
 }
 
@@ -369,7 +384,17 @@ arithmetic(int op, Node *lp, Node *rp)
 	Type *ltp = lp->type, *rtp = rp->type;
 
 	if ((ltp->prop & TARITH) && (rtp->prop & TARITH)) {
-		arithconv(&lp, &rp);
+		switch (op) {
+		case OA_ADD:
+		case OA_SUB:
+		case OA_MUL:
+		case OA_DIV:
+			rp = convert(rp, lp->type, 0);
+			break;
+		default:
+			arithconv(&lp, &rp);
+			break;
+		}
 		return node(op, lp->type, lp, rp);
 	} else if ((ltp->op == PTR || rtp->op == PTR)) {
 		switch (op) {

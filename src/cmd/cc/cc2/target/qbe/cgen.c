@@ -176,16 +176,7 @@ sethi(Node *np)
 		np->address = 11;
 		break;
 	case OASSIG:
-		if (lp->op == OCAST) {
-			Node *tmp = node(OCAST);
-			tmp->type = lp->left->type;
-			tmp->left = rp;
-			tmp->right = NULL;
-			rp = tmp;
-			tmp = lp;
-			lp = lp->left;
-			delnode(tmp);
-		}
+		assert(lp->op != OCAST);
 		goto binary;
 	case OCPL:
 		assert(np->type.flags & INTF);
@@ -582,6 +573,24 @@ assign(Node *np)
 		break;
 	default:
 		/* assign abbreviation */
+		assert(l->type.size == r->type.size);
+		if (r->type.size < 4) {
+			if (l->complex >= r->complex) {
+				l = lhs(l);
+				r = rhs(r);
+			} else {
+				r = rhs(r);
+				l = lhs(l);
+			}
+			aux.op = np->u.subop;
+			aux.left = load(&r->type, l);
+			aux.right = r;
+			aux.type = int32type;
+			aux.address = np->address;
+			ret = r = sethi(rhs(&aux));
+			break;
+		}
+
 		aux.op = np->u.subop;
 		aux.left = l;
 		aux.right = r;
