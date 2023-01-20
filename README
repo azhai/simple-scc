@@ -64,10 +64,14 @@ The main targets of the Makefile are:
 
 	- toolchain
 	  Compile the toolchain with the default configuration
-	  specified in CONF.
+	  specified in CONF. Beware that this target is executed without
+	  the automatic detection of the host parameters. It makes
+	  easier to cross compile.
 
 	- libc:
-	  Compile the libc for the target specified in CONF.
+	  Compile the libc for the target specified in CONF. Beware
+	  that this target is executed without the automatic detection
+	  of the host parameters. It makes easier to cross compile.
 
 	- install:
 	  Installs scc in PREFIX.
