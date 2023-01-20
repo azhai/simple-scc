@@ -1,5 +1,5 @@
 arm:
-	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=arm-linux src/libc src/libcrt
+	+@$(MAKE) `$(SCRIPTDIR)/config` CONF=arm-linux libc libcrt
 
 install-arm: arm
 	$(SCRIPTDIR)/install -p $(SCRIPTDIR)/proto.arm $(ROOT)

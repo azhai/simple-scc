@@ -13,7 +13,9 @@ include scripts/rules.mk
 ROOT = $(DESTDIR)$(PREFIX)
 NODEP = 1
 
-all: toolchain libc
+all: config
+	+@$(MAKE) `$(SCRIPTDIR)/config -c` toolchain
+	+@$(MAKE) `$(SCRIPTDIR)/config` `uname -m`
 
 config:
 	cd include/scc/scc && $(MAKE) $@
@@ -26,14 +28,12 @@ uninstall:
 	$(SCRIPTDIR)/uninstall $(ROOT)
 	+@$(MAKE) uninstall-`uname -m`
 
-toolchain: config dirs include/scc/scc
-	+@$(MAKE) `$(SCRIPTDIR)/config -c` src
-
-libc: config dirs
-	+@$(MAKE) `$(SCRIPTDIR)/config -c` `uname -m`
-
-libcrt: config dirs
-	+@$(MAKE) `$(SCRIPTDIR)/config -c` src/libcrt
+toolchain: src
+libc: src/libc
+libcrt: src/libcrt
+src: dirs include/scc/scc
+src/libc: dirs
+src/libcrt: dirs
 
 dirs: $(SCRIPTDIR)/libc-dirs
 	xargs mkdir -p < $(SCRIPTDIR)/libc-dirs
