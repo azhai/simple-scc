@@ -15,7 +15,7 @@ Darwin)
 	echo HOST=bsd RANLIB_FLAGS="${RANLIB_FLAGS:--c}"
 	;;
 Minix)
-	echo RANLIB="${RANLIB:-ar -t}
+	echo RANLIB="${RANLIB:-ar -t}"
 	;;
 *BSD)
 	echo HOST=bsd
