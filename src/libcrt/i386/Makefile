@@ -4,7 +4,6 @@ PROJECTDIR=../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
 OBJS =\
-	dummy.o\
 	umoddi3.o\
 	udivdi3.o\
 
