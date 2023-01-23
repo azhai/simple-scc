@@ -11,6 +11,9 @@ NetBSD)
 FreeBSD)
 	echo TOOL=${TOOL:-clang} HOST=bsd
 	;;
+Darwin)
+	echo HOST=bsd RANLIB_FLAGS="${RANLIB_FLAGS:--c}"
+	;;
 *BSD)
 	echo HOST=bsd
 	;;
