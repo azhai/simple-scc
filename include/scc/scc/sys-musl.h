@@ -1,5 +1,10 @@
-/* configure below your system linker command line */
+/* configure below your standard sys include paths */
+char *sysincludes[] = {
+	"%p/include/",
+	NULL
+};
 
+/* configure below your system linker command line */
 #define GCCLIBPATH "/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2/"
 
 char *ldcmd[] = {

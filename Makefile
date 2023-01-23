@@ -45,8 +45,7 @@ clean:
 	rm -rf dirs coverage
 
 distclean: clean
-	rm -f include/scc/scc/sysld.h
-	rm -f include/scc/scc/sysincludes.h
+	rm -f include/scc/scc/sys.h
 
 include scripts/amd64.mk
 include scripts/arm.mk

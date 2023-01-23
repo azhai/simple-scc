@@ -15,18 +15,15 @@ all: cstd.h
 cstd.h: cstd-$(STD).h
 	cp cstd-$(STD).h $@
 
-config: sysld.h sysincludes.h
+config: sys.h
 
-sysld.h:
+sys.h: sys-$(LIBPROFILE).h
 	set -e;\
 	rm -f $@;\
 	trap "rm -f $$$$.tmp" INT QUIT TERM HUP;\
 	sed -e 's/%NOPIE%/"$(NOPIE_LDFLAGS)",/' \
-	    -e 's/"",//' sysld.$(LIBPROFILE).h > $$$$.tmp && \
+	    -e 's/"",//' sys-$(LIBPROFILE).h > $$$$.tmp && \
 	mv $$$$.tmp $@
-
-sysincludes.h:
-	cp sysincludes.$(LIBPROFILE).h $@
 
 clean:
 	rm -f cstd.h

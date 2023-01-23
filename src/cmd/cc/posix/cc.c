@@ -26,8 +26,7 @@
 #include "config.h"
 #include <scc/arg.h>
 #include <scc/scc.h>
-#include <scc/sysincludes.h>
-#include <scc/sysld.h>
+#include <scc/sys.h>
 
 enum {
 	CC1,
