@@ -633,8 +633,7 @@ operand:
 		return failure;
 
 	if (link && !failure) {
-		inittool(LD);
-		spawn(settool(LD, NULL, LAST_TOOL));
+		spawn(settool(inittool(LD), NULL, LAST_TOOL));
 		validatetools();
 	}
 
