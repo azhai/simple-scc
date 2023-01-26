@@ -3,7 +3,7 @@
 PROJECTDIR = ../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-MORE_CFLAGS = -I$(INCDIR)/$(STD)
+MORE_CPPFLAGS = -I$(INCDIR)/$(STD) -I$(CMDDIR) -I.
 
 OBJS =\
 	main.o\

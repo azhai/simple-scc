@@ -22,6 +22,8 @@ BUILDDIR  = $(PROJECTDIR)/scripts/build
 CRTDIR    = $(PROJECTDIR)/lib/scc
 LIBCDIR   = $(CRTDIR)/$(ARCH)-$(SYS)
 MKDEP     = $(SCRIPTDIR)/mkdep
+SRCDIR    = $(PROJECTDIR)/src
+CMDDIR    = $(SRCDIR)/cmd
 
 # library dependences helpers
 LIBMACH = $(LIBDIR)/scc/libmach.a
@@ -33,7 +35,7 @@ include $(BUILDDIR)/tool/$(TOOL).mk
 include $(BUILDDIR)/host/$(HOST).mk
 
 # Locations for -I or -L in compiler, assembler or linker
-CINCLUDES = -I$(INCDIR)/scc
+CPPINCLUDES = -I$(INCDIR)/scc
 ASINCLUDES= -I$(INCDIR)/scc
 LDINCLUDES= -L$(LIBDIR)/scc
 
@@ -41,12 +43,16 @@ LDINCLUDES= -L$(LIBDIR)/scc
 STD = c99
 
 # Definition of command line for cc, as, ld and emu
+PROJ_CPPFLAGS =\
+	$(CPPINCLUDES)\
+	$(HOST_CPPFLAGS)\
+	$(MORE_CPPFLAGS)
+
 PROJ_CFLAGS =\
 	$(MORE_CFLAGS)\
 	$(HOST_CFLAGS)\
 	$(SYS_CFLAGS)\
 	$(TOOL_CFLAGS)\
-	$(CINCLUDES)\
 	$(CFLAGS)
 
 PROJ_LDFLAGS =\
@@ -123,13 +129,13 @@ $(DIRS): FORCE
 	$(AS) $(PROJ_ASFLAGS) $< -o $@
 
 .c.o:
-	$(CC) $(PROJ_CFLAGS) -o $@ -c $<
+	$(CC) $(PROJ_CPPFLAGS) $(PROJ_CFLAGS) -o $@ -c $<
 
 .c.s:
-	$(CC) $(PROJ_CFLAGS) -S -o $@ $<
+	$(CC) $(PROJ_CPPFLAGS) $(PROJ_CFLAGS) -S -o $@ $<
 
 .c.i:
-	$(CPP) $(PROJ_CFLAGS) -o $@ $<
+	$(CPP) $(PROJ_CPPFLAGS) -o $@ $<
 
 .elf.bin:
 	$(OC) -O binary $< $@
