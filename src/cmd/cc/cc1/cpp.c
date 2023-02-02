@@ -729,6 +729,7 @@ usererr(void)
 	if (cppoff)
 		return;
 	cpperror("#error %s", input->p);
+	exit(EXIT_FAILURE);
 	next();
 }
 
