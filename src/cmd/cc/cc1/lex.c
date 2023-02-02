@@ -902,7 +902,7 @@ next(void)
 
 	if (yytoken == EOFTOK) {
 		strcpy(yytext, "<EOF>");
-		if (cppctx)
+		if (cppctx && !input)
 			errorp("#endif expected");
 	}
 
