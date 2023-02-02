@@ -202,13 +202,13 @@ symname(Symbol *sym)
 		case SLOCAL:
 		case SPRIV:
 		case SAUTO:
-			sprintf(buff, "%c%s.%u", c, sym->name, sym->id);
+			sprintf(buff, "%c%s.L%u", c, sym->name, sym->id);
 			return buff;
 		default:
 			abort();
 		}
 	}
-	sprintf(buff, "%c.%u", c, sym->numid);
+	sprintf(buff, "%c.L%u", c, sym->numid);
 
 	return buff;
 }
