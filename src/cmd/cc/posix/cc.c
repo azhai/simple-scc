@@ -51,11 +51,11 @@ static struct tool {
 	pid_t  pid;
 } tools[] = {
 	[CC1]    = {.cmd = "cc1"},
-	[TEEIR]  = {.bin = "tee",   .cmd = "tee"},
+	[TEEIR]  = {.cmd = "tee"},
 	[CC2]    = {.cmd = "cc2"},
-	[TEEQBE] = {.bin = "tee",   .cmd = "tee"},
+	[TEEQBE] = {.cmd = "tee"},
 	[QBE]    = {.bin = "qbe"},
-	[TEEAS]  = {.bin = "tee",   .cmd = "tee"},
+	[TEEAS]  = {.cmd = "tee"},
 	[AS]     = {.bin = "as",    .cmd = "as"},
 	[LD]     = {.bin = "ld",    .cmd = "ld"},
 };
@@ -292,6 +292,42 @@ settool(int tool, char *infile, int nexttool)
 	return tool;
 }
 
+/*
+ * We cannot call exit() because it would call the atexit()
+ * handlers. If it finishes correctly we already called
+ * fflush() in the output buffers so it is not a problem
+ * not following the normal exit path.
+ */
+static void
+tee(char *fname)
+{
+	FILE *fp;
+	int ch;
+
+	if ((fp = fopen(fname, "w")) == NULL)
+		goto err;
+
+	while ((ch = getchar()) != EOF) {
+		putc(ch, stdout);
+		putc(ch, fp);
+	}
+
+	fflush(stdout);
+	fflush(fp);
+
+	if (ferror(stdin) || ferror(stdout) || ferror(fp))
+		goto err;
+	_exit(0);
+
+err:
+	fprintf(stderr,
+		"tee: teeing %s: %s\n",
+		fname,
+		strerror(errno));
+
+	_exit(1);
+}
+
 static void
 spawn(int tool)
 {
@@ -315,6 +351,8 @@ spawn(int tool)
 				fprintf(stderr, " %s", *ap);
 			putc('\n', stderr);
 		}
+		if (strcmp(t->cmd, "tee") == 0)
+			tee(t->outfile);
 		execvp(t->cmd, t->args.s);
 		if (dflag) {
 			fprintf(stderr,
