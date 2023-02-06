@@ -66,9 +66,13 @@ static char *objfile, *outfile;
 static char *prefix, *libprefix;
 static char *tmpdir;
 static size_t tmpdirln;
-static struct items objtmp, objout, linkargs;
+static struct items objtmp, objout;
+static struct items linkargs, cc1args;
+
 static int Mflag, Eflag, Sflag, Wflag,
-           cflag, dflag, kflag, sflag, Qflag = 1; /* TODO: Remove Qflag */
+           cflag, dflag, kflag, sflag, Qflag = 1, /* TODO: Remove Qflag */
+           gflag;
+
 static int devnullfd = -1;
 
 extern int failure;
@@ -98,9 +102,6 @@ addarg(int tool, char *arg)
 	char *p, buff[FILENAME_MAX];
 	size_t len, cnt;
 	int n;
-
-	if (t->args.n < 1)
-		t->args.n = 1;
 
 	if (!arg) {
 		newitem(&t->args, NULL);
@@ -218,8 +219,14 @@ settool(int tool, char *infile, int nexttool)
 
 	switch (tool) {
 	case CC1:
+		if (Eflag)
+			addarg(tool, "-E");
+		if (Mflag)
+			addarg(tool, "-M");
 		if (Wflag)
 			addarg(tool, "-w");
+		for (n = 0; n < cc1args.n; ++n)
+			addarg(tool, cc1args.s[n]);
 		for (n = 0; sysincludes[n]; ++n) {
 			addarg(tool, "-I");
 			addarg(tool, sysincludes[n]);
@@ -237,6 +244,8 @@ settool(int tool, char *infile, int nexttool)
 		break;
 	case LD:
 		t->outfile = outfile;
+		if (gflag)
+			addarg(tool, "-g");
 		if (sflag)
 			addarg(tool, "-s");
 		for (n = 0; ldcmd[n]; n++)
@@ -262,6 +271,8 @@ settool(int tool, char *infile, int nexttool)
 			objfile = outfname(objfile, "o");
 		}
 		t->outfile = objfile;
+		if (gflag)
+			addarg(tool, "-g");
 		addarg(tool, "-o");
 		addarg(tool, t->outfile);
 		break;
@@ -549,24 +560,22 @@ main(int argc, char *argv[])
 
 	ARGBEGIN {
 	case 'D':
-		addarg(CC1, "-D");
-		addarg(CC1, EARGF(usage()));
+		newitem(&cc1args, "-D");
+		newitem(&cc1args, EARGF(usage()));
 		break;
 	case 'M':
 		Mflag = 1;
-		addarg(CC1, "-M");
 		break;
 	case 'E':
 		Eflag = 1;
-		addarg(CC1, "-E");
 		break;
 	case 'I':
-		addarg(CC1, "-I");
-		addarg(CC1, EARGF(usage()));
+		newitem(&cc1args, "-I");
+		newitem(&cc1args, EARGF(usage()));
 		break;
 	case 'L':
-		addarg(LD, "-L");
-		addarg(LD, EARGF(usage()));
+		newitem(&linkargs, "-L");
+		newitem(&linkargs, EARGF(usage()));
 		break;
 	case 'O':
 		EARGF(usage());
@@ -575,8 +584,8 @@ main(int argc, char *argv[])
 		Sflag = 1;
 		break;
 	case 'U':
-		addarg(CC1, "-U");
-		addarg(CC1, EARGF(usage()));
+		newitem(&cc1args, "-U");
+		newitem(&cc1args, EARGF(usage()));
 		break;
 	case 'c':
 		cflag = 1;
@@ -585,8 +594,7 @@ main(int argc, char *argv[])
 		dflag = 1;
 		break;
 	case 'g':
-		addarg(AS, "-g");
-		addarg(LD, "-g");
+		gflag = 1;
 		break;
 	case 'k':
 		kflag = 1;
