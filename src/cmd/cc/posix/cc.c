@@ -8,8 +8,9 @@
  * sent to NetBSD, but this temporary fix is added here until the
  * patch  arrives to the stable release.
  */
-#define _POSIX_C_SOURCE 200809L
+#undef _POSIX_C_SOURCE
 #undef _ANSI_SOURCE
+#define _POSIX_C_SOURCE 200809L
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -45,8 +46,7 @@ static struct tool {
 	char   bin[32];
 	char  *outfile;
 	struct items args;
-	unsigned nparams;
-	int    in, out, init;
+	int    in, out;
 	pid_t  pid;
 } tools[] = {
 	[CC1]    = {.cmd = "cc1"},
@@ -167,56 +167,6 @@ cc12fmt(int tool)
 	return "%s-%s-%s";
 }
 
-static int
-inittool(int tool)
-{
-	struct tool *t = &tools[tool];
-	char *crt, *fmt;
-	int n;
-
-	if (t->init)
-		return tool;
-
-	switch (tool) {
-	case CC1:
-		if (Wflag)
-			addarg(tool, "-w");
-		for (n = 0; sysincludes[n]; ++n) {
-			addarg(tool, "-I");
-			addarg(tool, sysincludes[n]);
-		}
-	case CC2:
-		fmt = cc12fmt(tool);
-		n = snprintf(t->bin, sizeof(t->bin), fmt, t->cmd, arch, abi);
-		if (n < 0 || n >= sizeof(t->bin))
-			die("cc: target tool name is too long");
-	case QBE:
-		n = snprintf(t->cmd, sizeof(t->cmd),
-		             "%s/libexec/scc/%s", prefix, t->bin);
-		if (n < 0 || n >= sizeof(t->cmd))
-			die("cc: target tool path is too long");
-		break;
-	case LD:
-		t->outfile = outfile;
-		if (sflag)
-			addarg(tool, "-s");
-		for (n = 0; ldcmd[n]; n++)
-			addarg(tool, ldcmd[n]);
-		break;
-	case AS:
-		addarg(tool, "-o");
-		break;
-	default:
-		break;
-	}
-
-	setargv0(tool, t->bin);
-	t->nparams = t->args.n;
-	t->init = 1;
-
-	return tool;
-}
-
 static char *
 outfname(char *path, char *type)
 {
@@ -257,11 +207,38 @@ static int
 settool(int tool, char *infile, int nexttool)
 {
 	struct tool *t = &tools[tool];
-	unsigned i;
-	int fds[2];
+	char *fmt;
+	int n, fds[2];
 	static int fdin = -1;
 
+	setargv0(tool, t->bin);
+
 	switch (tool) {
+	case CC1:
+		if (Wflag)
+			addarg(tool, "-w");
+		for (n = 0; sysincludes[n]; ++n) {
+			addarg(tool, "-I");
+			addarg(tool, sysincludes[n]);
+		}
+	case CC2:
+		fmt = cc12fmt(tool);
+		n = snprintf(t->bin, sizeof(t->bin), fmt, t->cmd, arch, abi);
+		if (n < 0 || n >= sizeof(t->bin))
+			die("cc: target tool name is too long");
+	case QBE:
+		n = snprintf(t->cmd, sizeof(t->cmd),
+			     "%s/libexec/scc/%s", prefix, t->bin);
+		if (n < 0 || n >= sizeof(t->cmd))
+			die("cc: target tool path is too long");
+		break;
+	case LD:
+		t->outfile = outfile;
+		if (sflag)
+			addarg(tool, "-s");
+		for (n = 0; ldcmd[n]; n++)
+			addarg(tool, ldcmd[n]);
+                break;
 	case TEEIR:
 		t->outfile = outfname(infile, "ir");
 		addarg(tool, t->outfile);
@@ -282,6 +259,7 @@ settool(int tool, char *infile, int nexttool)
 			objfile = outfname(objfile, "o");
 		}
 		t->outfile = objfile;
+		addarg(tool, "-o");
 		addarg(tool, t->outfile);
 		break;
 	default:
@@ -413,7 +391,7 @@ validatetools(void)
 			failed = tool;
 		if (tool >= failed && t->outfile)
 			unlink(t->outfile);
-		t->args.n = t->nparams;
+		t->args.n = 0;
 		t->pid = 0;
 	}
 	if (failed < LAST_TOOL) {
@@ -463,7 +441,7 @@ buildfile(char *file, int tool)
 			continue;
 		}
 
-		spawn(settool(inittool(tool), file, nexttool));
+		spawn(settool(tool, file, nexttool));
 	}
 
 	return validatetools();
@@ -633,7 +611,7 @@ operand:
 		return failure;
 
 	if (link && !failure) {
-		spawn(settool(inittool(LD), NULL, LAST_TOOL));
+		spawn(settool(LD, NULL, LAST_TOOL));
 		validatetools();
 	}
 
