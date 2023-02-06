@@ -85,6 +85,13 @@ terminate(void)
 }
 
 static void
+sighandler(int sig)
+{
+	terminate();
+	_exit(1);
+}
+
+static void
 addarg(int tool, char *arg)
 {
 	struct tool *t = &tools[tool];
@@ -485,6 +492,9 @@ main(int argc, char *argv[])
 	int link, n;
 
 	atexit(terminate);
+	signal(SIGHUP, sighandler);
+	signal(SIGINT, sighandler);
+	signal(SIGTERM, sighandler);
 
 	if (!(arch = getenv("ARCH")))
 		arch = ARCH;
