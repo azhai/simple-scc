@@ -17,6 +17,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <assert.h>
 #include <errno.h>
 #include <limits.h>
 #include <signal.h>
@@ -94,14 +95,19 @@ addarg(int tool, char *arg)
 	if (t->args.n < 1)
 		t->args.n = 1;
 
-	if (!arg || arg[0] == '-') {
-		newitem(&t->args, arg);
+	if (!arg) {
+		newitem(&t->args, NULL);
+		return;
+	}
+
+	if (arg[0] == '-') {
+		newitem(&t->args, xstrdup(arg));
 		return;
 	}
 
 	if (!strcmp(arg, "%c")) {
 		for (n = 0; n < linkargs.n; ++n)
-			newitem(&t->args, linkargs.s[n]);
+			newitem(&t->args, xstrdup(linkargs.s[n]));
 		return;
 	}
 
@@ -144,17 +150,6 @@ addarg(int tool, char *arg)
 
 	buff[cnt] = '\0';
 	newitem(&t->args, xstrdup(buff));
-}
-
-static void
-setargv0(int tool, char *arg)
-{
-	struct tool *t = &tools[tool];
-
-	if (t->args.n > 0)
-		t->args.s[0] = arg;
-	else
-		newitem(&t->args, arg);
 }
 
 static char *
@@ -211,7 +206,8 @@ settool(int tool, char *infile, int nexttool)
 	int n, fds[2];
 	static int fdin = -1;
 
-	setargv0(tool, t->bin);
+	assert(t->args.n == 0);
+	newitem(&t->args, xstrdup(t->bin));
 
 	switch (tool) {
 	case CC1:
@@ -292,6 +288,7 @@ settool(int tool, char *infile, int nexttool)
 static void
 spawn(int tool)
 {
+	int i;
 	char **ap;
 	struct tool *t = &tools[tool];
 
@@ -324,6 +321,11 @@ spawn(int tool)
 			close(t->in);
 		if (t->out > -1)
 			close(t->out);
+
+		for (i = 0; i < t->args.n; i++)
+			free(t->args.s[i]);
+		t->args.n = 0;
+
 		break;
 	}
 }
@@ -391,7 +393,6 @@ validatetools(void)
 			failed = tool;
 		if (tool >= failed && t->outfile)
 			unlink(t->outfile);
-		t->args.n = 0;
 		t->pid = 0;
 	}
 	if (failed < LAST_TOOL) {
