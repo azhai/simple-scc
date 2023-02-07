@@ -1,2 +1,2 @@
-_exit.c
+_exit.s
 _sys_errlist.c
