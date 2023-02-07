@@ -37,6 +37,18 @@ struct member {
 	long long date;
 };
 
+/*
+ * Best effort to try avoid calling remove from a signal
+ * handler is to detect that we are in an UNIX
+ * system and redirect with the preprocessor remove
+ * to unlink that is defined as signal safe.
+ */
+#if defined(__unix) || defined(__unix__)
+#include <unistd.h>
+#undef remove
+#define remove unlink
+#endif
+
 static void
 cleanup(void)
 {
@@ -47,6 +59,8 @@ cleanup(void)
 			remove(tmps[i].name);
 	}
 }
+
+#undef remove
 
 static char *
 errstr(void)
