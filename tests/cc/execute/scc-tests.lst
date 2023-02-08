@@ -104,7 +104,7 @@
 0111-doubledef.c
 0112-cond.c
 0113-externredecl.c
-0114-shortassig.c [TODO]
+0114-shortassig.c
 0115-null_comparision.c
 0116-floatcmp.c [TODO]
 0117-pointarith.c
