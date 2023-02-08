@@ -788,6 +788,7 @@ ifclause(int negate, int isifdef)
 			cpperror("parameter of #if is not an integer constant expression");
 			return;
 		}
+		DBG("CPP if expr=%d", expr->sym->u.i);
 		status = expr->sym->u.i != 0;
 		freetree(expr);
 	}
@@ -796,6 +797,7 @@ ifclause(int negate, int isifdef)
 		status = !status;
 	if (status == 0)
 		++cppoff;
+	DBG("CPP if result=%d", status);
 	ifstate[n].enabled = status;
 	ifstate[n].iselse = 0;
 }
