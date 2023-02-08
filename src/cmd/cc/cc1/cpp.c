@@ -766,8 +766,13 @@ ifclause(int negate, int isifdef)
 
 	if (cppctx == NR_COND-1)
 		error("too many nesting levels of conditional inclusion");
-
 	n = cppctx++;
+
+	if (cppoff) {
+		status = 0;
+		goto disabled;
+	}
+
 	namespace = NS_CPP;
 	next();
 
@@ -795,6 +800,8 @@ ifclause(int negate, int isifdef)
 
 	if (negate)
 		status = !status;
+
+disabled:
 	if (status == 0)
 		++cppoff;
 	DBG("CPP if result=%d", status);
