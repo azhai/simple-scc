@@ -432,6 +432,7 @@ convert:
 	sym->type = tp;
 	sym->flags |= SCONSTANT;
 	yylval.sym = readint(s, base, sign, sym);
+	tok2str();
 	return CONSTANT;
 }
 
@@ -459,7 +460,6 @@ digits(int base)
 	}
 end:
 	input->p = p;
-	tok2str();
 	return yytext;
 }
 
