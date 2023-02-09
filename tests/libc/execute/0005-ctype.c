@@ -1,4 +1,3 @@
-#define __USE_MACROS
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
