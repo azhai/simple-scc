@@ -427,12 +427,12 @@ integer(char *s, int base)
 	}
 
 convert:
+	tok2str();
 	tp = ctype(INT, sign, size);
 	sym = newsym(NS_IDEN, NULL);
 	sym->type = tp;
 	sym->flags |= SCONSTANT;
 	yylval.sym = readint(s, base, sign, sym);
-	tok2str();
 	return CONSTANT;
 }
 
