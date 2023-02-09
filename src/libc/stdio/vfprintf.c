@@ -77,8 +77,11 @@ numtostr(uintmax_t val, int flags, struct conv *conv, char *buf)
 	int base = conv->base, prec = conv->prec;
 	uintmax_t oval = val;
 
-	for (*buf = '\0'; val > 0; val /= base)
+	*buf = '\0';
+	do {
 		*--buf = conv->digs[val % base];
+		val /= base;
+	} while (val > 0);
 
 	while (buf0 - buf < prec)
 		*--buf = '0';
