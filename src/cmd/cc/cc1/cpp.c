@@ -251,6 +251,7 @@ copymacro(Macro *mp)
 			break;
 		case CONCAT:
 			/* token concatenation operator */
+			DBG("MACRO concat");
 			while (bp[-1] == ' ')
 				--bp, ++bufsiz;
 			while (s[1] == ' ')
@@ -258,6 +259,7 @@ copymacro(Macro *mp)
 			break;
 		case STRINGIZE:
 			/* stringfier operator */
+			DBG("MACRO stringize");
 			arg = mp->arglist[atoi(s += 2)];
 			s += 2;
 
