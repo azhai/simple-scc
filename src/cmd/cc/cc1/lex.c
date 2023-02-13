@@ -942,9 +942,6 @@ discard(void)
 	extern jmp_buf recover;
 	int c;
 
-	if (!input)
-		return;
-
 	for (c = yytoken; ; c = *input->p++) {
 		switch (safe) {
 		case END_COMP:
@@ -964,8 +961,8 @@ discard(void)
 				goto jump;
 			break;
 		}
-		if (c == '\0' && !moreinput())
-			exit(1);
+		if ((c == '\0' || c == EOFTOK) && !moreinput())
+			exit(EXIT_FAILURE);
 	}
 jump:
 	input->begin = input->p;
