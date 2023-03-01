@@ -114,11 +114,11 @@ i386_sysv(void)
 		},
 		.ulongtype = {
 			.op = INT,
-			.letter = L_UINT64,
+			.letter = L_UINT32,
 			.prop = TDEFINED | TINTEGER | TARITH,
-			.size = 8,
+			.size = 4,
 			.align = 4,
-			.n.rank = RANK_ULLONG,
+			.n.rank = RANK_ULONG,
 		},
 		.ullongtype = {
 			.op = INT,
