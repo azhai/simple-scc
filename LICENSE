@@ -1,4 +1,5 @@
-All the files in this project are covered by the ISC license
-except the next files:
+Caldera license contained in file doc/caldera.txt applies to:
+	- scripts/lorder
 
-scripts/lorder	Caldera
+ISC license contained in file doc/isc.txt applies to:
+	- All the remaining files
