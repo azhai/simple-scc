@@ -185,25 +185,54 @@ parsepars(Macro *mp)
 }
 
 static int
-expandarg(char *arg, char *buf, int bufsiz)
+concatoper(char *def, char *cur)
+{
+	char *s;
+
+	for (s = cur + 3; isspace(*s); ++s)
+		;
+	if (*s == CONCAT)
+		return 1;
+
+	for (s = cur; s > def && isspace(s[-1]); --s)
+		;
+	if (s > def && s[-1] == CONCAT)
+		return 1;
+
+	return 0;
+}
+
+static int
+expandarg(char *arg, char *def, char *curdef, char *buf, int bufsiz)
 {
 	int siz;
 	char *s = buf;
 
-	addinput(IPARAM, arg, FAIL);
-	for (siz = 0; next() != EOFTOK; siz += yylen+1) {
-		if (yylen > bufsiz-2) {
+	/* gives priority to concatenation operators */
+	if (concatoper(def, curdef)) {
+		siz = strlen(arg);
+		if (siz >= bufsiz) {
 			siz = -1;
-			break;
+		} else {
+			memcpy(buf, arg, siz);
+			buf += siz;
 		}
-		memcpy(buf, yytext, yylen);
-		bufsiz -= yylen + 1;
-		buf += yylen;
-		*buf++ = ' ';
+	} else {
+		addinput(IPARAM, arg, FAIL);
+		for (siz = 0; next() != EOFTOK; siz += yylen+1) {
+			if (yylen > bufsiz-2) {
+				siz = -1;
+				break;
+			}
+			memcpy(buf, yytext, yylen);
+			bufsiz -= yylen + 1;
+			buf += yylen;
+			*buf++ = ' ';
+		}
+
+		delinput();
 	}
 	*buf = '\0';
-
-	delinput();
 
 	DBG("MACRO parameter '%s' expanded to '%s'", arg, s);
 
@@ -287,7 +316,7 @@ copymacro(Macro *mp)
 		case MACROPAR:
 			/* parameter substitution */
 			arg = mp->arglist[atoi(++s)];
-			size = expandarg(arg, bp, bufsiz);
+			size = expandarg(arg, mp->def, s, bp, bufsiz);
 			if (size < 0)
 				goto expansion_too_long;
 			bp += size;
