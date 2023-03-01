@@ -501,10 +501,8 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *bp, size_t bufsiz)
 	size_t len;
 	int prevc = 0, ispar;
 
-	if (yytoken == CONCAT) {
-		cpperror("'##' cannot appear at either ends of a macro expansion");
-		return 0;
-	}
+	if (yytoken == CONCAT)
+		goto wrong_concat;
 
 	for (;;) {
 		ispar = 0;
@@ -545,8 +543,16 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *bp, size_t bufsiz)
 		}
 		next();
 	}
+
+	if (prevc == CONCAT)
+		goto wrong_concat;
+
 	*bp = '\0';
 	return 1;
+
+wrong_concat:
+	cpperror("'##' cannot appear at either ends of a macro expansion");
+	return 0;
 }
 
 static void
