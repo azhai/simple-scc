@@ -7,4 +7,4 @@ int
 main()
 {
 	int *p;
-	p = 3;
+	p = 0;
