@@ -189,7 +189,7 @@ concatoper(char *def, char *cur)
 {
 	char *s;
 
-	for (s = cur + 3; isspace(*s); ++s)
+	for (s = cur + 4; isspace(*s); ++s)
 		;
 	if (*s == CONCAT)
 		return 1;
@@ -315,13 +315,13 @@ copymacro(Macro *mp)
 			break;
 		case MACROPAR:
 			/* parameter substitution */
-			arg = mp->arglist[atoi(++s)];
+			arg = mp->arglist[atoi(s+1)];
 			size = expandarg(arg, mp->def, s, bp, bufsiz);
 			if (size < 0)
 				goto expansion_too_long;
 			bp += size;
 			bufsiz -= size;
-			s += 2;
+			s += 3;
 			break;
 		default:
 			if (bufsiz-- == 0)
