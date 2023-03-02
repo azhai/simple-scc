@@ -81,7 +81,7 @@ promote(Node *np)
 		tp = doubletype;
 		break;
 	default:
-		abort();
+		FATAL("default abort: tp->op = %s\n", tokstr(tp->op));
 	}
 	if ((new = convert(np, tp, 1)) != NULL)
 		return new;
@@ -466,7 +466,7 @@ negop(int op)
 	case OGE:  return OLT;
 	case OLE:  return OGT;
 	case OGT:  return OLE;
-	default:   abort();
+	default:   FATAL("default abort: op = %s\n", opstr(op));
 	}
 	return op;
 }

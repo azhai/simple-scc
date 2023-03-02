@@ -6,6 +6,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 OBJS =\
 	debug.o\
 	die.o\
+	fatal.o\
 	newitem.o\
 	xcalloc.o\
 	xmalloc.o\

@@ -230,7 +230,7 @@ emitconst(Node *np)
 		        (long long) u & ones(tp->size));
 		break;
 	default:
-		abort();
+		FATAL("default abort: tp->op = %s\n", tokstr(tp->op));
 	}
 }
 
@@ -306,7 +306,7 @@ emittype(int op, void *arg)
 	case ENUM:
 		return;
 	default:
-		abort();
+		FATAL("default abort: tp->op = %s\n", tokstr(tp->op));
 	}
 }
 
@@ -404,7 +404,7 @@ emitdesig(Node *np, Type *tp, SIZET *addr)
 		emitpadding(tp, addr);
 		break;
 	default:
-		abort();
+		FATAL("default abort: tp->op = %s\n", tokstr(tp->op));
 	}
 
 	if (sym) {

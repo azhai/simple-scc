@@ -98,7 +98,7 @@ getlimits(Type *tp)
 		}
 		break;
 	default:
-		abort();
+		FATAL("default abort: tp->op = %s\n", tokstr(tp->op));
 	}
 
 	return &limits[ntable][ntype];
@@ -240,7 +240,7 @@ typesize(Type *tp)
 	case FTN:
 		return;
 	default:
-		abort();
+		FATAL("default abort: tp->op = %s\n", tokstr(tp->op));
 	}
 }
 
@@ -337,7 +337,7 @@ mktype(Type *tp, int op, TINT nelem, Type *pars[])
 	create_type:
 		return newtype(&type);
 	default:
-		abort();
+		FATAL("default abort: op = %s\n", tokstr(op));
 	}
 
 	tbl = &typetab[HASH(&type)];
@@ -467,7 +467,7 @@ eqtype(Type *tp1, Type *tp2, int equiv)
 	case FLOAT:
 		return tp1->letter == tp2->letter;
 	default:
-		abort();
+		FATAL("default abort: tp1->op = %s\n", tokstr(tp1->op));
 	}
 }
 

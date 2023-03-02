@@ -129,7 +129,7 @@ enum {
 	CPPMODE
 };
 
-/* input tokens */
+/* input tokens (see error.c for strings) */
 enum tokens {
 	CONST      = 1 << 0,      /* type qualifier tokens are used as flags */
 	RESTRICT   = 1 << 1,
@@ -216,7 +216,7 @@ enum tokens {
 	EOFTOK
 };
 
-/* operations */
+/* operations (see error.c for strings) */
 enum op {
 	OADD,
 	OMUL,
@@ -433,6 +433,7 @@ extern void unexpected(void);
 extern void errorp(char *fmt, ...);
 extern void cpperror(char *fmt, ...);
 extern Type *deftype(Type *tp);
+extern char *opstr(int), *tokstr(int);
 
 /* types.c */
 extern int eqtype(Type *tp1, Type *tp2, int eqflag);

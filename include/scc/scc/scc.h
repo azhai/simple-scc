@@ -5,9 +5,11 @@ extern int enadebug;
 #ifndef NDEBUG
 #define DBG(...) dbg(__VA_ARGS__)
 #define DBGON() (enadebug = 1)
+#define FATAL(...) fatal(__FILE__, __LINE__, __VA_ARGS__)
 #else
 #define DBG(...)
 #define DBGON()
+#define FATAL(...) abort()
 #endif
 
 #define TINT        long long
@@ -16,6 +18,8 @@ extern int enadebug;
 #define TINT_MAX    LLONG_MAX
 #define TFLOAT      double
 #define SIZET       size_t
+
+#define NELEM(x) (sizeof(x)/sizeof((x)[0]))
 
 struct items {
 	char **s;
@@ -26,6 +30,7 @@ typedef struct alloc Alloc;
 
 extern void die(const char *fmt, ...);
 extern void dbg(const char *fmt, ...);
+extern void fatal(char *, int, char *, ...);
 extern void newitem(struct items *items, char *item);
 extern void *xmalloc(size_t size);
 extern void *xcalloc(size_t nmemb, size_t size);

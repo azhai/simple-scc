@@ -40,7 +40,7 @@ dumpstab(Symbol **tbl, char *msg)
 	else if (tbl == htablbl)
 		size = NR_LBL_HASH;
 	else
-		abort();
+		FATAL("default abort; tbl = %d\n", tbl);
 
 	for (bp = tbl; bp < &tbl[size]; ++bp) {
 		if (*bp == NULL)
