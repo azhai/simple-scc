@@ -93,12 +93,35 @@ icpp(void)
 static void
 nextcpp(Macro *mp)
 {
+	int len, siz;
+	char *arg;
+
 	next();
-	if (yytoken == EOFTOK)
+	if (yytoken == EOFTOK) {
 		error("unterminated argument list invoking macro \"%s\"",
 		      mp->sym->name);
+	}
+
 	if (yytoken == IDEN)
 		yylval.sym->flags |= SUSED;
+
+	len = strlen(yytext);
+	siz = mp->argsiz;
+	if (len+1 > INT_MAX - siz) {
+		error("too long argument invoking macro \"%s\"",
+		      mp->sym->name);
+	}
+
+	arg = xrealloc(mp->arg, siz + len + 1);
+	if (siz > 0) {
+		arg[siz-1] = ' ';
+		memcpy(arg + siz, yytext, len+1);
+	} else {
+		memcpy(arg, yytext, len+1);
+	}
+
+	mp->arg = arg;
+	mp->argsiz = siz + len + 1;
 }
 
 static void
@@ -123,14 +146,17 @@ parameter(Macro *mp)
 	char *s, *begin, *end;
 	Input *ip = input;
 
-	begin = input->begin;
+	mp->arg = NULL;
+	mp->argsiz = 0;
 	for (;;) {
 		nextcpp(mp);
 		switch (yytoken) {
 		case ')':
 		case ',':
 			/* remove ","  or ")"*/
-			end = input->begin - 1;
+			begin = mp->arg;
+			end = mp->arg + mp->argsiz - 2;
+
 			while (end > begin && isspace(end[-1]))
 				--end;
 			while (begin < end && isspace(begin[0]))
@@ -139,6 +165,8 @@ parameter(Macro *mp)
 			siz = end - begin;
 			s = memcpy(xmalloc(siz+1), begin, siz);
 			s[siz] = '\0';
+			free(mp->arg);
+
 			return s;
 		case '(':
 			paren(mp);
@@ -167,6 +195,7 @@ parsepars(Macro *mp)
 		do {
 			mp->arglist = xrealloc(mp->arglist, (n+1)*sizeof(char *));
 			mp->arglist[n] = parameter(mp);
+			DBG("MACRO fetched arg '%s'", mp->arglist[n]);
 		} while (++n < NR_MACROARG && yytoken == ',');
 	}
 

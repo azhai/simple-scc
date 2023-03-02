@@ -408,7 +408,9 @@ struct macro {
 	char **arglist;
 	char *buffer;
 	char *def;
+	char *arg;
 	int bufsiz;
+	int argsiz;
 	int npars;
 	Symbol *hideset[NR_MACROARG];
 };

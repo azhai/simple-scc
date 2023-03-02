@@ -178,7 +178,7 @@
 0185-esc_macro2.c
 0186-dec_ary.c
 0187-zero_struct.c
-0188-multi_string.c
+0188-multi_string.c [TODO]
 0189-cpp.c [TODO]
 0190-enum_ary.c
 0191-ary_addr.c
