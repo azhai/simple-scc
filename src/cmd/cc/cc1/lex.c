@@ -107,7 +107,7 @@ addinput(int type, void *arg, int fail)
 		DBG("INPUT: file input 'stdin'");
 		break;
 	default:
-		FATAL("default abort: type = %d\n", type);
+		abort();
 	}
 
 	if (!buffer) {
@@ -153,7 +153,7 @@ delinput(void)
 		DBG("INPUT: stdin finished");
 		break;
 	default:
-		FATAL("default abort: type = %d\n", ip->flags & ITYPE);
+		abort();
 	}
 
 	input = ip->next;

@@ -343,10 +343,8 @@ repeat:
 		goto repeat;
 	case ARY:
 	case STRUCT:
-		if (!(np->flags & NCONST)) {
-			/* TODO */
-			FATAL("default abort: tp->op = %s\n", tokstr(tp->op));
-		}
+		if (!(np->flags & NCONST))
+			abort(); /* TODO */
 		hidden = newsym(NS_IDEN, NULL);
 		hidden->id = newid();
 		hidden->type = sym->type;

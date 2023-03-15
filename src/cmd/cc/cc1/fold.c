@@ -305,7 +305,7 @@ foldconst(int type, int op, Type *tp, Symbol *ls, Symbol *rs)
 			return NULL;
 		break;
 	default:
-		FATAL("default abort: type = %s\n", tokstr(type));
+		abort();
 	}
 	sym = newsym(NS_IDEN, NULL);
 	sym->flags |= SCONSTANT;
