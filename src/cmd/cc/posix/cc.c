@@ -255,7 +255,10 @@ settool(int tool, char *infile, int nexttool)
 			addarg(tool, ldcmd[n]);
                 break;
 	case TEEIR:
-		t->outfile = outfname(infile, "ir");
+		if (Eflag && outfile)
+			t->outfile = xstrdup(outfile);
+		else
+			t->outfile = outfname(infile, "ir");
 		addarg(tool, t->outfile);
 		break;
 	case TEEQBE:
@@ -476,13 +479,15 @@ buildfile(char *file, int tool)
 	for (; tool < LAST_TOOL; tool = nexttool) {
 		switch (tool) {
 		case CC1:
-			if (Eflag || Mflag)
+			if (Eflag && outfile)
+				nexttool = TEEIR;
+			else if (Eflag || Mflag)
 				nexttool = LAST_TOOL;
 			else
 				nexttool = kflag ? TEEIR : CC2;
 			break;
 		case TEEIR:
-			nexttool = CC2;
+			nexttool = (Eflag) ? LAST_TOOL : CC2;
 			break;
 		case CC2:
 			if (Qflag)
