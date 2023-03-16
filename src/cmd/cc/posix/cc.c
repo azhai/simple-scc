@@ -148,7 +148,7 @@ addarg(int tool, char *arg)
 
 		len = strlen(p);
 		if (len + cnt >= FILENAME_MAX)
-			die("cc: pathname too long");
+			die("scc-cc: pathname too long");
 		memcpy(buff+cnt, p, len);
 		cnt += len;
 	}
@@ -193,10 +193,10 @@ outfname(char *path, char *type)
 	new = xmalloc(newsz);
 	n = snprintf(new, newsz, "%.*s%c%s", (int)pathln, path, sep, type);
 	if (n < 0 || n >= newsz)
-		die("cc: wrong output filename");
+		die("scc-cc: wrong output filename");
 	if (sep == '/') {
 		if ((tmpfd = mkstemp(new)) < 0)
-			die("cc: could not create output file '%s': %s",
+			die("scc-cc: could not create output file '%s': %s",
 			    new, strerror(errno));
 		close(tmpfd);
 	}
@@ -241,7 +241,7 @@ settool(int tool, char *infile, int nexttool)
 		n = snprintf(t->cmd, sizeof(t->cmd),
 		             fmt, prefix, t->bin, arch, abi);
 		if (n < 0 || n >= sizeof(t->cmd))
-			die("cc: target tool path is too long");
+			die("scc-cc: target tool path is too long");
 		break;
 	case LD:
 		t->outfile = xstrdup(outfile);
@@ -292,7 +292,7 @@ settool(int tool, char *infile, int nexttool)
 
 	if (nexttool < LAST_TOOL) {
 		if (pipe(fds))
-			die("cc: pipe: %s", strerror(errno));
+			die("scc-cc: pipe: %s", strerror(errno));
 		t->out = fds[1];
 		fdin = fds[0];
 	} else {
@@ -349,7 +349,7 @@ spawn(int tool)
 
 	switch (t->pid = fork()) {
 	case -1:
-		die("cc: %s: %s", t->bin, strerror(errno));
+		die("scc-cc: %s: %s", t->bin, strerror(errno));
 	case 0:
 		if (t->out > -1)
 			dup2(t->out, 1);
@@ -368,7 +368,7 @@ spawn(int tool)
 		execvp(t->cmd, t->args.s);
 		if (dflag) {
 			fprintf(stderr,
-			        "cc: execvp %s: %s\n",
+			        "scc-cc: execvp %s: %s\n",
 				t->cmd,
 			        strerror(errno));
 		}
@@ -412,7 +412,7 @@ toolfor(char *file)
 		return CC1;
 	}
 
-	die("cc: unrecognized filetype of %s", file);
+	die("scc-cc: unrecognized filetype of %s", file);
 }
 
 static int
@@ -429,7 +429,7 @@ valid(int tool, struct tool *t)
 
 internal:
 	if (!failure)
-		fprintf(stderr, "cc:%s: internal error\n", t->bin);
+		fprintf(stderr, "scc-cc:%s: internal error\n", t->bin);
 fail:
 	failure = 1;
 	return 0;
@@ -631,7 +631,7 @@ main(int argc, char *argv[])
 		break;
 	case '-':
 		fprintf(stderr,
-		        "cc: ignored parameter --%s\n", EARGF(usage()));
+		        "scc-cc: ignored parameter --%s\n", EARGF(usage()));
 		break;
 	default:
 		usage();
@@ -654,7 +654,7 @@ operand:
 
 	if (!dflag) {
 		if ((devnullfd = open("/dev/null", O_WRONLY)) < 0)
-			fputs("cc: could not open /dev/null\n", stderr);
+			fputs("scc-cc: could not open /dev/null\n", stderr);
 	}
 
 	if (!outfile)
