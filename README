@@ -37,9 +37,13 @@ can be passed to the command line:
 		- amd64-openbsd
 		- arm64-linux
 		- amd64-dragonfly
+		- amd64-freebsd
 		- amd64-netbsd
 		- arm32-linux
 		- i386-linux
+
+	  Not all the configurations have the same level of support in
+	  the libc and in some cases the support is minimal.
 
 	- TOOL: Specify the toolchain type to be used.  Possible
 	  supported values are:
@@ -83,20 +87,63 @@ The main targets of the Makefile are:
 	- distclean
 	  Remove all the generated files.
 
+Toolchain configuration
+=======================
+At this moment scc is still using some external tools to generate
+the final binaries. The toolchain execution is configured in the
+file `include/scc/scc/sys.h` and it included basically 5 elements:
+
+	- LDBIN: macro with the name of the linker binary.
+
+	- ASBIN: macro with the name of the assembler binary.
+
+	- sysincludes: It is a list of diretories used to locate
+	  the system headers
+
+	- ldcmd: It describes how the linker command line is built.
+
+	- ascmd: It describes how the assembler command line is built.
+
+The definition of sysincludes, ldcmd and ascmd can include wildcards
+represented by % followed by a single letter:
+
+	- %c: It expands to the full list of input object files of the linker
+	- %a: It expands to the architecture name
+	- %s: It expands to the system name
+	- %p: It expands to the library prefix
+	- %b: It expands too the ABI name
+	- %o: It expands to the output file of the current tool
+
+Scc includes 3 configuration templates that can be used as base for the
+configuration of the toolchain:
+
+	- scc: It uses GNU assembler and linker with the scc libc.
+	- scc_clang: It uses clang assembler and linler with the scc libc.
+	- musl: It uses GNU assembler and linker with the musl libc.
+
+The file `include/scc/scc/sys.h` is automatically created from the scc
+toolchain configuration with the default make target. The target config
+can be used to only create the file based in the value of the variable
+`LIBPROFILE` allowing the user to customize that file as needed. It is
+important to highlight that the file is not removed by `make clean`
+because it can contain local user modifications. You should use
+`make distclean` to remove it.
+
+
 Musl libc support
 =================
-The Scc libc is a C99 library and cannot used to compile POSIX compliant
+The scc libc is a C99 library and cannot used to compile POSIX compliant
 programs. Scc includes a template that can be used to use a musl libc
 compiled by gcc:
 
 	$ make LIBPROFILE=musl config
 
-It will generate the files sysld.h and sysincludes.h configured to be used
-with a musl libc. Beware that it is likely that those files have to be
-customized to fit your system because the macro GCCLIBPATH depends heavily
-of the toolchain used to compile musl. As the musl libc is likely
-installed in a different prefix the scc compilation must be modified
-to:
+It will generate the files sys.h configured to be used with a musl
+libc. Beware that it is likely that those files have to be customized to
+fit your system because the macro GCCLIBPATH used by the musl template
+depends heavily of the toolchain used to compile musl. As the musl libc
+is likely installed in a different prefix the scc compilation must be
+modified to:
 
 	$ make LIBPREFIX=/usr/local/musl # point to the prefix used by your musl
 
