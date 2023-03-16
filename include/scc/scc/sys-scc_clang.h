@@ -1,4 +1,4 @@
-#define LDBIN "ld"
+#define LDBIN "ld.lld"
 #define ASBIN "clang"
 
 /* configure below your standard sys include paths */
