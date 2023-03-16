@@ -358,8 +358,12 @@ spawn(int tool)
 			dup2(t->out, 1);
 		if (t->in > -1)
 			dup2(t->in, 0);
+
+		if (tool == TEEAS && Sflag)
+			dup2(devnullfd, 1);
 		if (!dflag && tool != CC1 && tool != LD)
 			dup2(devnullfd, 2);
+
 		if (dflag) {
 			fprintf(stderr, "%s", t->cmd);
 			for (ap = t->args.s+1; *ap; ap++)
