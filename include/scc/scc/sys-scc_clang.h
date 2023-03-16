@@ -1,5 +1,5 @@
 #define LDBIN "ld"
-#define ASBIN "as"
+#define ASBIN "clang"
 
 /* configure below your standard sys include paths */
 char *sysincludes[] = {
@@ -26,6 +26,9 @@ char *ldcmd[] = {
 
 /* configure below your system assembler command line */
 char *ascmd[] = {
-	"-o", "%o",
+	"-x","assembler",
+	"-c",
+	"-o","%o",
+	"-",
 	NULL
 };

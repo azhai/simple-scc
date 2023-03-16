@@ -56,8 +56,8 @@ static struct tool {
 	[TEEQBE] = {.bin = "tee"},
 	[QBE]    = {.bin = "qbe"},
 	[TEEAS]  = {.bin = "tee"},
-	[AS]     = {.bin = "as"},
-	[LD]     = {.bin = "ld"},
+	[AS]     = {.bin = ASBIN},
+	[LD]     = {.bin = LDBIN},
 };
 
 char *argv0;
@@ -139,7 +139,7 @@ addarg(int tool, char *arg)
 			p = abi;
 			break;
 		case 'o':
-			p = outfile;
+			p = t->outfile;
 			break;
 		default:
 			buff[cnt++] = *arg;
@@ -244,6 +244,8 @@ settool(int tool, char *infile, int nexttool)
 			die("scc-cc: target tool path is too long");
 		break;
 	case LD:
+		if (!outfile)
+			outfile = "a.out";
 		t->outfile = xstrdup(outfile);
 		if (gflag)
 			addarg(tool, "-g");
@@ -274,8 +276,9 @@ settool(int tool, char *infile, int nexttool)
 		t->outfile = xstrdup(objfile);
 		if (gflag)
 			addarg(tool, "-g");
-		addarg(tool, "-o");
-		addarg(tool, t->outfile);
+		for (n = 0; ascmd[n]; n++)
+			addarg(tool, ascmd[n]);
+                break;
 		break;
 	default:
 		break;
@@ -656,9 +659,6 @@ operand:
 		if ((devnullfd = open("/dev/null", O_WRONLY)) < 0)
 			fputs("scc-cc: could not open /dev/null\n", stderr);
 	}
-
-	if (!outfile)
-		outfile = "a.out";
 
 	if (!(tmpdir = getenv("TMPDIR")) || !tmpdir[0])
 		tmpdir = ".";

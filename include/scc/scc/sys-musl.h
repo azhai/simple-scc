@@ -1,3 +1,6 @@
+#define LDBIN "ld"
+#define ASBIN "as"
+
 /* configure below your standard sys include paths */
 char *sysincludes[] = {
 	"%p/include/",
@@ -24,4 +27,10 @@ char *ldcmd[] = {
 	"-lgcc",
 	"-lgcc_eh",
 	NULL
+};
+
+/* configure below your system assembler command line */
+char *ascmd[] = {
+        "-o", "%o"
+        NULL
 };
