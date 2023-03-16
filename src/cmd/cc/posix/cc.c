@@ -50,14 +50,14 @@ static struct tool {
 	int    in, out;
 	pid_t  pid;
 } tools[] = {
-	[CC1]    = {.cmd = "cc1"},
-	[TEEIR]  = {.cmd = "tee"},
-	[CC2]    = {.cmd = "cc2"},
-	[TEEQBE] = {.cmd = "tee"},
+	[CC1]    = {.bin = "cc1"},
+	[TEEIR]  = {.bin = "tee"},
+	[CC2]    = {.bin = "cc2"},
+	[TEEQBE] = {.bin = "tee"},
 	[QBE]    = {.bin = "qbe"},
-	[TEEAS]  = {.cmd = "tee"},
-	[AS]     = {.bin = "as",    .cmd = "as"},
-	[LD]     = {.bin = "ld",    .cmd = "ld"},
+	[TEEAS]  = {.bin = "tee"},
+	[AS]     = {.bin = "as"},
+	[LD]     = {.bin = "ld"},
 };
 
 char *argv0;
@@ -161,13 +161,11 @@ addarg(int tool, char *arg)
 }
 
 static char *
-cc12fmt(int tool)
+cc2fmt(int tool)
 {
-	if (tool == CC1)
-		return "%s";
 	if (Qflag && !strcmp(arch, "amd64") && !strcmp(abi, "sysv"))
-		return "%s-qbe_%s-%s";
-	return "%s-%s-%s";
+		return "%s/libexec/scc/%s-qbe_%s-%s";
+	return "%s/libexec/scc/%s-%s-%s";
 }
 
 static char *
@@ -214,6 +212,7 @@ settool(int tool, char *infile, int nexttool)
 	int n, fds[2];
 	static int fdin = -1;
 
+	strcpy(t->cmd, t->bin);
 	assert(t->args.n == 0);
 	newitem(&t->args, xstrdup(t->bin));
 
@@ -231,19 +230,21 @@ settool(int tool, char *infile, int nexttool)
 			addarg(tool, "-I");
 			addarg(tool, sysincludes[n]);
 		}
+		fmt = "%s/libexec/scc/%s";
+		goto local_tool;
 	case CC2:
-		fmt = cc12fmt(tool);
-		n = snprintf(t->bin, sizeof(t->bin), fmt, t->cmd, arch, abi);
-		if (n < 0 || n >= sizeof(t->bin))
-			die("cc: target tool name is too long");
+		fmt = cc2fmt(tool);
+		goto local_tool;
 	case QBE:
+		fmt = "%s/libexec/scc/%s";
+	local_tool:
 		n = snprintf(t->cmd, sizeof(t->cmd),
-			     "%s/libexec/scc/%s", prefix, t->bin);
+		             fmt, prefix, t->bin, arch, abi);
 		if (n < 0 || n >= sizeof(t->cmd))
 			die("cc: target tool path is too long");
 		break;
 	case LD:
-		t->outfile = outfile;
+		t->outfile = xstrdup(outfile);
 		if (gflag)
 			addarg(tool, "-g");
 		if (sflag)
@@ -265,12 +266,12 @@ settool(int tool, char *infile, int nexttool)
 		break;
 	case AS:
 		if (cflag && outfile) {
-			objfile = outfile;
+			objfile = xstrdup(outfile);
 		} else {
 			objfile = (cflag || kflag) ? infile : NULL;
 			objfile = outfname(objfile, "o");
 		}
-		t->outfile = objfile;
+		t->outfile = xstrdup(objfile);
 		if (gflag)
 			addarg(tool, "-g");
 		addarg(tool, "-o");
@@ -449,6 +450,7 @@ validatetools(void)
 			failed = tool;
 		if (tool >= failed && t->outfile)
 			unlink(t->outfile);
+		free(t->outfile);
 		t->pid = 0;
 	}
 	if (failed < LAST_TOOL) {
