@@ -272,6 +272,9 @@ identifier(struct decl *dcl)
 		}
 	}
 
+	if (strcmp(name, "__func__") == 0)
+		errorp("__func__ is a reserved variable name");
+
 	if (sym->flags & SDECLARED) {
 		sym = redcl(dcl->sym, tp, sclass);
 	} else {
@@ -363,6 +366,8 @@ parameter(struct decl *dcl)
 			       sym->name);
 			return NULL;
 		}
+		if (strcmp(name, "__func__") == 0)
+			errorp("__func__ is a reserved variable name");
 		sym->flags |= SDECLARED;
 	}
 

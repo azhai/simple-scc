@@ -674,6 +674,23 @@ adjstrings(Symbol *sym)
 	return sym;
 }
 
+static Node *
+funcsym(Symbol *sym)
+{
+	char *s;
+	Node *np;
+
+	sym = install(sym->ns, sym);
+	s = curfun->name;
+	np = constnode(newstring(s, strlen(s)+1));
+	sym->type = np->type;
+	sym->flags |= SHASINIT | SLOCAL | SUSED;
+	emit(ODECL, sym);
+	emit(OINIT, np);
+
+	return varnode(sym);
+}
+
 /*************************************************************
  * grammar functions                                         *
  *************************************************************/
@@ -721,10 +738,12 @@ primary(void)
 			np = varnode(sym);
 		} else if (namespace == NS_CPP) {
 			np = constnode(zero);
+		} else if (!strcmp(yytext, "__func__") && curctx > PARAMCTX) {
+			np = funcsym(sym);
 		} else {
 			errorp("'%s' undeclared", yytext);
 			sym->type = inttype;
-			sym = install(sym->ns, yylval.sym);
+			sym = install(sym->ns, sym);
 			sym->flags |= SUSED;
 			np = varnode(sym);
 		}
