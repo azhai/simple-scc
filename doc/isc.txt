@@ -22,7 +22,7 @@ ISC License
 (c) 2015-2021 Quentin Rameau <quinq@fifth.space>
 (c) 2015-2017 Quentin Carbonneaux <quentin@c9x.me>
 (c) 2016 Raymond Nicholson <rain1@openmailbox.org>
-(c) 2023 Author: Tim Kelly <gtkelly@dialectronics.com>
+(c) 2023 Tim Kelly <gtkelly@dialectronics.com>
 (c) 2016 Pekka Jylhä-Ollila <pekka.jylha.ollila@gmail.com>
 (c) 2015 Sören Tempel <soeren+git@soeren-tempel.net>
 (c) 2022 Xavier Del Campo Romero <xavi.dcr@tutanota.com>
