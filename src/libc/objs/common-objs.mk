@@ -18,6 +18,10 @@ COMMON_OBJS =\
 	ctype/toascii.$O\
 	ctype/tolower.$O\
 	ctype/toupper.$O\
+	inttypes/imaxabs.$O\
+	inttypes/imaxdiv.$O\
+	inttypes/strtoimax.$O\
+	inttypes/strtoumax.$O\
 	locale/localeconv.$O\
 	locale/setlocale.$O\
 	stdio/__getc.$O\
