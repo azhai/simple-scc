@@ -4,6 +4,7 @@ PROJECTDIR = ../..
 DIRS =\
 	assert\
 	ctype\
+	inttypes\
 	locale\
 	stdio\
 	stdlib\
