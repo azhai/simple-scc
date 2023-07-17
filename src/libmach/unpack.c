@@ -128,13 +128,13 @@ int
 unpack(int order, unsigned char *src, char *fmt, ...)
 {
 	int r;
-        int (*fn)(unsigned char *dst, char *fmt, va_list va);
-        va_list va;
+	int (*fn)(unsigned char *dst, char *fmt, va_list va);
+	va_list va;
 
-        va_start(va, fmt);
-        fn = (order == LITTLE_ENDIAN) ? lunpack : bunpack;
-        r = (*fn)(src, fmt, va);
-        va_end(va);
+	va_start(va, fmt);
+	fn = (order == LITTLE_ENDIAN) ? lunpack : bunpack;
+	r = (*fn)(src, fmt, va);
+	va_end(va);
 
-        return r;
+	return r;
 }
