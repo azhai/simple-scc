@@ -454,7 +454,7 @@ blit(void)
 
 	strcpy(to, addr2txt(&pc->to));
 	strcpy(from, addr2txt(&pc->from1));
-	printf("\t\tblit\t(%s,%s,%lu,%lu)\n", to, from, tp->size, tp->align);
+	printf("\t\tblit\t%s,%s,%lu\n", from, to, tp->size);
 }
 
 static void
