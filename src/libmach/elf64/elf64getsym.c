@@ -34,7 +34,7 @@ typeof(Elf64 *elf, Elf_Sym *ent, char *name)
 
 		if (flags & SHF_ALLOC) {
 			if (type == SHT_NOBITS)
-                        	c = 'b';
+				c = 'b';
 			else if (flags & SHF_WRITE)
 				c = 'd';
 			else if (flags & SHF_EXECINSTR)
