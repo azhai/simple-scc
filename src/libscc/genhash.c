@@ -1,10 +1,10 @@
 unsigned
 genhash(char *name)
 {
-	unsigned h;
-	char c;
+	int c;
+	unsigned h = 5381;
 
-	for (h = 0; c = *name; ++name)
+	while (c = *name++)
 		h = h*33 ^ c;
 
 	return h;
