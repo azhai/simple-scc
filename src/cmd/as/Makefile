@@ -25,7 +25,16 @@ all: $(TARGET)
 $(TARGET): $(LIBSCC)
 
 clean:
-	rm -f target/*/*.o target/*/*tbl.c
+	rm -f target/*/*.o target/*/*tbl.c lexh
+
+genhash.o: ../../libscc/genhash.c
+	$(HOSTCC) -c ../../libscc/genhash.c
+
+lexh.o: lexh.c
+	$(HOSTCC) -c lexh.c
+
+lexh: lexh.o genhash.o
+	$(HOSTCC) -o $@ lexh.o genhash.o
 
 include target/powerpc/powerpc64.mk
 include target/powerpc/powerpc.mk

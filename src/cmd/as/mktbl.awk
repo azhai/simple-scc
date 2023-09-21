@@ -36,17 +36,19 @@ END		{
 		for (i in formats)
 			printf "Format %s;\n", i
 
-		printf "int nr_ins = %d;\n\n", nop
 		print "struct ins instab[] = {"
 		for (i = 0; i < nop; i++) {
 			n = opnames[i]
 			start = opstart[n]
 			end = start + opcount[n]
 			printf "\t{.str = \"%s\", .begin = %d, .end = %d},\n",
-			       n, start, end | "sort"
+			       n, start, end
 		}
-		close("sort")
 		printf "};\n\n"
+
+		for (i = 0; i < nop; i++)
+			print opnames[i] | "./lexh"
+		close("./lexh")
 
 		print "struct op optab[] = {"
 		for (i = 0; i < nvar; i++) {

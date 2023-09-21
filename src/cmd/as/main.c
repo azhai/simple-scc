@@ -59,19 +59,38 @@ cmp(const void *f1, const void *f2)
 	return strcmp(s, ins->str);
 }
 
-static void
-translate(char *text, char *xargs)
+static Ins *
+decode(char *s)
 {
 	int c;
 	char *p;
+	unsigned h, id;
+	Ins *ins;
+
+	for (p = s; c = *p; ++p)
+		*p = toupper(c);
+
+	h = (unsigned short) genhash(s);
+	h = (h*K >> S) & M;
+	id = hashmap[h];
+	if (id == 0)
+		return NULL;
+
+	ins = &instab[id-1];
+	if (strcmp(ins->str, s) != 0)
+		return NULL;
+
+	return ins;
+}
+
+static void
+translate(char *text, char *xargs)
+{
 	Ins *ins;
 	Op *op, *lim;
 	Node **args;
 
-	for (p = text; c = *p; ++p)
-		*p = toupper(c);
-
-	ins = bsearch(text, instab, nr_ins, sizeof(Ins), cmp);
+	ins = decode(text);
 	if (!ins) {
 		error("invalid instruction '%s'", text);
 		return;

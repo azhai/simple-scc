@@ -201,8 +201,9 @@ extern char *tobytes(TUINT v, int n, int inc);
 /*
  * Definition of global variables
  */
+extern unsigned long M, S, K;
+extern short hashmap[];
 extern Section *cursec, *seclist;
-extern int nr_ins;
 extern Ins instab[];
 extern Op optab[];
 extern int pass;

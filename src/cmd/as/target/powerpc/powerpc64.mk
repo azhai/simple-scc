@@ -5,7 +5,7 @@ POWERPC64_OBJ =\
 	$(POWERPC)/powerpc64.o\
 	$(POWERPC)/ins.o\
 
-$(POWERPC)/powerpc64tbl.c: $(POWERPC)/ops.dat $(POWERPC)/opers.dat
+$(POWERPC)/powerpc64tbl.c: $(POWERPC)/ops.dat $(POWERPC)/opers.dat lexh
 	./mktbl -f powerpc -c powerpc64
 
 $(LIBEXEC)/scc/as-powerpc64: $(POWERPC64_OBJ)
