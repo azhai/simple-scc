@@ -176,7 +176,7 @@ readshdr(Obj *obj, FILE *fp)
 	if (hdr->e_shnum != SHN_UNDEF) {
 		nsec = hdr->e_shnum;
 	} else {
-	        Elf_Shdr sec0;
+		Elf_Shdr sec0;
 		fpos_t pos;
 
 		fgetpos(fp, &pos);
