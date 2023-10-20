@@ -3,6 +3,7 @@
 
 #define _NEED_NULL
 #define _NEED_SIZET
+#define _NEED_VA_LIST
 #include <sys/stdio.h>
 #include <arch/cdefs.h>
 
@@ -90,15 +91,13 @@ extern int snprintf(char *restrict, size_t, const char *restrict, ...);
 extern int sprintf(char *restrict, const char *restrict, ...);
 extern int sscanf(const char *restrict, const char *restrict, ...);
 
-#ifdef _STDARG_H
-extern int vfprintf(FILE *restrict, const char *restrict, va_list);
-extern int vfscanf(FILE *restrict, const char *restrict, va_list);
-extern int vprintf(const char *restrict, va_list);
-extern int vscanf(const char *restrict, va_list);
-extern int vsnprintf(char *restrict, size_t, const char *restrict, va_list);
-extern int vsprintf(char *restrict, const char *restrict, va_list);
-extern int vsscanf(const char *restrict, const char *restrict, va_list);
-#endif
+extern int vfprintf(FILE *restrict, const char *restrict, __va_list);
+extern int vfscanf(FILE *restrict, const char *restrict, __va_list);
+extern int vprintf(const char *restrict, __va_list);
+extern int vscanf(const char *restrict, __va_list);
+extern int vsnprintf(char *restrict, size_t, const char *restrict, __va_list);
+extern int vsprintf(char *restrict, const char *restrict, __va_list);
+extern int vsscanf(const char *restrict, const char *restrict, __va_list);
 
 extern int fgetc(FILE *);
 extern char *fgets(char *restrict, int, FILE *restrict);

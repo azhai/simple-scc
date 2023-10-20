@@ -7,6 +7,7 @@
 #define _NEED_WEOF
 #define _NEED_WCHARLIM
 #define _NEED_WINT
+#define _NEED_VA_LIST
 #include <sys/cdefs.h>
 #include <arch/cdefs.h>
 
@@ -18,21 +19,17 @@ typedef int mbstate_t;
 
 struct tm;
 
-#ifdef _STDARG_H
-extern int vswscanf(const wchar_t *restrict, const wchar_t *restrict, va_list);
-extern int vwprintf(const wchar_t *restrict, va_list);
-extern int vwscanf(const wchar_t *restrict format, va_list);
-#endif
+extern int vswscanf(const wchar_t *restrict, const wchar_t *restrict, __va_list);
+extern int vwprintf(const wchar_t *restrict, __va_list);
+extern int vwscanf(const wchar_t *restrict format, __va_list);
 
 #ifdef _STDIO_H
 extern int fwprintf(FILE *restrict, const wchar_t *restrict, ...);
 extern int fwscanf(FILE *restrict, const wchar_t *restrict, ...);
 
-#ifdef _STDARG_H
-extern int vfwprintf(FILE *restrict, const wchar_t *restrict, va_list);
-extern int vfwscanf(FILE *restrict, const wchar_t *restrict, va_list);
-extern int vswprintf(wchar_t *restrict, size_t, const wchar_t *restrict, va_list);
-#endif
+extern int vfwprintf(FILE *restrict, const wchar_t *restrict, __va_list);
+extern int vfwscanf(FILE *restrict, const wchar_t *restrict, __va_list);
+extern int vswprintf(wchar_t *restrict, size_t, const wchar_t *restrict, __va_list);
 
 extern wint_t fgetwc(FILE *);
 extern wint_t fputwc(wchar_t c, FILE *);

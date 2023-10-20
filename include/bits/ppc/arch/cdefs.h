@@ -1,3 +1,11 @@
+#ifdef _NEED_VA_LIST
+#ifndef _VA_LIST
+typedef __builtin_va_list __va_list;
+#define _VA_LIST
+#endif
+#undef _NEED_VA_LIST
+#endif
+
 #ifdef _NEED_SIZET
 #ifndef _SIZET
 typedef unsigned size_t;
