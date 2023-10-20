@@ -55,7 +55,7 @@ enum _file_flags {
  * @flags: file open mode
  * @unbuf: tiny buffer for unbuffered i/o
  */
-typedef struct {
+typedef struct _FILE {
 	int fd;
 	unsigned char *buf;
 	unsigned char *rp;

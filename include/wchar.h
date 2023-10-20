@@ -18,28 +18,27 @@
 typedef int mbstate_t;
 
 struct tm;
+struct _FILE;
 
 extern int vswscanf(const wchar_t *restrict, const wchar_t *restrict, __va_list);
 extern int vwprintf(const wchar_t *restrict, __va_list);
 extern int vwscanf(const wchar_t *restrict format, __va_list);
 
-#ifdef _STDIO_H
-extern int fwprintf(FILE *restrict, const wchar_t *restrict, ...);
-extern int fwscanf(FILE *restrict, const wchar_t *restrict, ...);
+extern int fwprintf(struct _FILE *restrict, const wchar_t *restrict, ...);
+extern int fwscanf(struct _FILE *restrict, const wchar_t *restrict, ...);
 
-extern int vfwprintf(FILE *restrict, const wchar_t *restrict, __va_list);
-extern int vfwscanf(FILE *restrict, const wchar_t *restrict, __va_list);
+extern int vfwprintf(struct _FILE *restrict, const wchar_t *restrict, __va_list);
+extern int vfwscanf(struct _FILE *restrict, const wchar_t *restrict, __va_list);
 extern int vswprintf(wchar_t *restrict, size_t, const wchar_t *restrict, __va_list);
 
-extern wint_t fgetwc(FILE *);
-extern wint_t fputwc(wchar_t c, FILE *);
-extern wint_t getwc(FILE *);
-extern wint_t putwc(wchar_t, FILE *);
-extern int fwide(FILE *, int);
-extern wint_t ungetwc(wint_t, FILE *);
-extern wchar_t *fgetws(wchar_t *restrict, int, FILE *restrict);
-extern int fputws(const wchar_t *restrict, FILE *restrict);
-#endif
+extern wint_t fgetwc(struct _FILE *);
+extern wint_t fputwc(wchar_t c, struct _FILE *);
+extern wint_t getwc(struct _FILE *);
+extern wint_t putwc(wchar_t, struct _FILE *);
+extern int fwide(struct _FILE *, int);
+extern wint_t ungetwc(wint_t, struct _FILE *);
+extern wchar_t *fgetws(wchar_t *restrict, int, struct _FILE *restrict);
+extern int fputws(const wchar_t *restrict, struct _FILE *restrict);
 
 extern int swprintf(wchar_t *restrict, size_t, const wchar_t *restrict, ...);
 extern int swscanf(const wchar_t *restrict, const wchar_t *restrict, ...);
