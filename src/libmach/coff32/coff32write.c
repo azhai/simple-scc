@@ -159,7 +159,7 @@ static int
 writeents(Obj *obj, FILE *fp)
 {
 	long i, len, strsiz;
-	char *strtbl, *s;
+	char *strtbl, *s, *name;
 	FILHDR *hdr;
 	struct coff32 *coff;
 	unsigned char buf[SYMESZ];
@@ -176,15 +176,18 @@ writeents(Obj *obj, FILE *fp)
 	for (i = 0; i < hdr->f_nsyms; i++) {
 		SYMENT *ent = &coff->ents[i];
 
-		len = strlen(ent->n_name) + 1;
-		if (len > strsiz - LONG_MAX)
-			goto err;
-		s = realloc(strtbl, strsiz + len);
-		if (!s)
-			goto err;
-		memcpy(s + strsiz, ent->n_name, len);
-		strtbl = s;
-		strsiz += len;
+		if (ent->n_zeroes == 0) {
+			name = &coff->strtbl[ent->n_offset];
+			len = strlen(name) + 1;
+			if (len > strsiz - LONG_MAX)
+				goto err;
+			s = realloc(strtbl, strsiz + len);
+			if (!s)
+				goto err;
+			memcpy(s + strsiz, name, len);
+			strtbl = s;
+			strsiz += len;
+		}
 
 		pack_ent(ORDER(obj->type), buf, ent);
 		if (fwrite(buf, SYMESZ, 1, fp) != 1)
