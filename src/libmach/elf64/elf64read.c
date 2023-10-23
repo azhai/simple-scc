@@ -158,7 +158,7 @@ readphdr(Obj *obj, FILE *fp)
 static int
 readshdr(Obj *obj, FILE *fp)
 {
-	long long i, nsec;
+	unsigned long long i, nsec;
 	Elf_Ehdr *hdr;
 	Elf_Shdr *shdr;
 	Elf64 *elf;
