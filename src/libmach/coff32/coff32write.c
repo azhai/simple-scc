@@ -216,7 +216,7 @@ writestr(Obj *obj, FILE *fp)
 	fwrite(buf, 4, 1, fp);
 	fwrite(coff->strtbl, coff->strsiz, 1, fp);
 
-	return ferror(fp) == 0;
+	return 1;
 }
 
 static int
@@ -317,9 +317,12 @@ writedata(Obj *obj, Map *map, FILE *fp)
 
 		for (n = sec->end - sec->begin; n > 0; n--)
 			putc(getc(sec->fp), fp);
+
+		if (ferror(sec->fp))
+			return 0;
 	}
 
-	return !ferror(fp);
+	return 1;
 }
 
 int
@@ -369,6 +372,8 @@ coff32write(Obj *obj, Map *map, FILE *fp)
 	if (!writeents(obj, fp))
 		return -1;
 	if (!writestr(obj, fp))
+		return -1;
+	if (ferror(fp))
 		return -1;
 
 	return 0;
