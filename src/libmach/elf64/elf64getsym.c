@@ -95,7 +95,6 @@ elf64getsym(Obj *obj, int *idx, Symbol *sym)
 	ent = &elf->syms[n];
 
 	if (ELF_ST_TYPE(ent->st_info) == STT_SECTION) {
-		/* TODO: Implement XINDEX */
 		Elf_Shdr *shdr = &elf->shdr[ent->st_shndx];
 		sym->name = elf64str(obj, SEC_STRTBL, shdr->sh_name);
 	} else {
