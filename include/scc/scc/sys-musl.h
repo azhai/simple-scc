@@ -31,6 +31,6 @@ char *ldcmd[] = {
 
 /* configure below your system assembler command line */
 char *ascmd[] = {
-        "-o", "%o"
+        "-o", "%o",
         NULL
 };
