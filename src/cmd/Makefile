@@ -5,6 +5,7 @@ DIRS   =\
 	ld\
 	as\
 	cc\
+	make\
 
 PROJECTDIR = ../..
 include $(PROJECTDIR)/scripts/rules.mk
