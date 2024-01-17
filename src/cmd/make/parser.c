@@ -801,6 +801,7 @@ parse(char *fname)
 		return 0;
 	}
 
+	debug("parsing %s", fname);
 	push(FTFILE, fname, fp);
 	parseinput();
 

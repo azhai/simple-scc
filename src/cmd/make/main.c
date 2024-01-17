@@ -120,7 +120,7 @@ getarg(char **args, char ***argv)
 
 	if ((*args)[1]) {
 		s = (*args) + 1;
-		*args += strlen(s) - 1;
+		*args += strlen(*args) - 1;
 		return s;
 	}
 
@@ -253,10 +253,10 @@ parsemakeflags(void)
 	size_t len1, len2, n;
 	char *s, *t, **oargv, **argv, *flags;
 
-	setmacro("MAKEFLAGS", "", EXPORT);
-
 	if ((flags = getenv("MAKEFLAGS")) == NULL)
 		return;
+
+	setmacro("MAKEFLAGS", "", EXPORT);
 
 	while (*flags == ' ' || *flags == '\t')
 		flags++;

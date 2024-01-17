@@ -15,3 +15,4 @@ hello:
 	@echo Hello World!
 
 clean:
+	rm -f test.log
