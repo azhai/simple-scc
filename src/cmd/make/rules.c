@@ -202,7 +202,7 @@ out_loop:
 		fflush(stdout);
 	}
 
-	if (nflag && !plus)
+	if ((nflag || qflag) && !plus)
 		return 0;
 
 	if (minus || iflag || ignore)
@@ -476,11 +476,15 @@ rebuild(Target *tp, int *buildp)
 		}
 	}
 
+	if (tp->stamp == -1)
+		need = 1;
+
 	if (err) {
 		warning("target %s not remade because of errors", tp->name);
 		return 1;
-	} else if (tp->stamp == -1 || need) {
+	} else if (need) {
 		*buildp = 1;
+
 		r = update(tp);
 		if (r == 0)
 			return 0;
@@ -493,12 +497,14 @@ rebuild(Target *tp, int *buildp)
 			warning("target %s: error %d", tp->name, r);
 		return r;
 	}
+
+	return 0;
 }
 
 int
 build(char *name)
 {
-	int build;
+	int build, r;;
 
 	if (!name) {
 		if (!deftarget) {
@@ -509,5 +515,11 @@ build(char *name)
 	}
 
 	debug("checking target %s'", name);
-	return rebuild(lookup(name), &build);
+
+	build = 0;
+	r = rebuild(lookup(name), &build);
+	if (qflag && build)
+		exitstatus = 1;
+
+	return  r;
 }

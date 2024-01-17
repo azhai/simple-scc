@@ -24,7 +24,7 @@
 #endif
 
 int kflag, dflag, nflag, iflag, sflag;
-int eflag, pflag, tflag;
+int eflag, pflag, tflag, qflag;
 int exitstatus;
 sig_atomic_t  stop;
 
@@ -182,6 +182,10 @@ parseflag(int flag, char **args, char ***argv)
 		break;
 	case 'p':
 		pflag = 1;
+		break;
+	case 'q':
+		qflag = 1;
+		appendmakeflags("-q");
 		break;
 	case 'r':
 		addtarget(".SUFFIXES", 0);

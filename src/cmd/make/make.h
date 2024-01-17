@@ -53,7 +53,7 @@ extern int putenv(char *);
 
 /* main.c */
 extern int kflag, dflag, nflag, iflag, sflag;
-extern int eflag, pflag, tflag;
+extern int eflag, pflag, tflag, qflag;
 extern int exitstatus;
 
 #ifdef SIGABRT
