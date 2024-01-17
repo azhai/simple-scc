@@ -15,7 +15,7 @@ no-valid-program
 EOF
 
 (set -e
- scc-make -kf test.mk print-makeflags follow
- echo fail) > $tmp1 2>&1
+ MAKEFLAGS=-k scc-make  -f test.mk print-makeflags follow
+ echo fail) >> $tmp1 2>&1
 
 diff $tmp1 $tmp2
