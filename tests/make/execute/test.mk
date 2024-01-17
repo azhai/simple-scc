@@ -1,6 +1,11 @@
 
 .IGNORE: ignored-error
 
+follow: error hello
+
+hello:
+	@echo Hello World!
+
 error:
 	no-valid-program
 
