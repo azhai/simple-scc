@@ -17,9 +17,9 @@ error:
 EOF
 
 cat <<EOF > $tmp2
+no-valid-program
 sh: 1: no-valid-program: not found
 make: error: don't know how to make hello
-no-valid-program
 EOF
 
 scc-make -f $tmp3 error hello > $tmp1 2>&1

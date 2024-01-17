@@ -7,11 +7,11 @@ tmp2=tmp2.$$
 
 cat <<EOF > $tmp2
 -k
+no-valid-program
 sh: 1: no-valid-program: not found
 make: warning: target error: error 32512
 Hello World!
 make: warning: target follow not remade because of errors
-no-valid-program
 EOF
 
 (set -e

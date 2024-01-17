@@ -197,8 +197,10 @@ out_loop:
 		at = 1;
 	if (nflag)
 		at = 0;
-	if (!at)
+	if (!at) {
 		puts(s);
+		fflush(stdout);
+	}
 
 	if (nflag && !plus)
 		return 0;

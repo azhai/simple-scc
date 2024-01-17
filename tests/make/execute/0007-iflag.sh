@@ -6,11 +6,11 @@ tmp1=tmp1.$$
 tmp2=tmp2.$$
 
 cat <<EOF > $tmp2
+no-valid-program
 sh: 1: no-valid-program: not found
 -i
-no-valid-program
 EOF
 
 MAKEFLAGS=-i scc-make -f test.mk error print-makeflags > $tmp1 2>&1
 
-diff -u $tmp1 $tmp2
+diff $tmp1 $tmp2
