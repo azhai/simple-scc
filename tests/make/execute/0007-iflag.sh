@@ -11,6 +11,6 @@ sh: 1: no-valid-program: not found
 no-valid-program
 EOF
 
-scc-make -if test.mk error print-makeflags > $tmp1 2>&1
+MAKEFLAGS=-i scc-make -f test.mk error print-makeflags > $tmp1 2>&1
 
-diff $tmp1 $tmp2
+diff -u $tmp1 $tmp2
