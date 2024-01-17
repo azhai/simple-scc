@@ -208,13 +208,13 @@ out_loop:
 
 	r = launch(s, ignore);
 	if (ignore)
-		return 1;
+		return 0;
 
 	return r;
 }
 
 static int
-touch(char *name, int silence, int ignore)
+touch(char *name, int ignore, int silence)
 {
 	char *cmd;
 	int r, n;
@@ -236,7 +236,7 @@ touch(char *name, int silence, int ignore)
 }
 
 static int
-touchdeps(Target *tp, int silent, int ignore)
+touchdeps(Target *tp, int ignore, int silent)
 {
 	int r;
 	Target **p;
@@ -266,27 +266,31 @@ run(Target *tp)
 	silent = 0;
 	p = lookup(".SILENT");
 	for (q = p->deps; q && *q; ++q) {
-		if (strcmp((*q)->name, tp->name) == 0)
+		if (strcmp((*q)->name, tp->name) == 0) {
+			debug("target %s error silent by .SILENT", tp->name);
 			silent = 1;
+		}
 	}
 
 	ignore = 0;
 	p = lookup(".IGNORE");
 	for (q = p->deps; q && *q; ++q) {
-		if (strcmp((*q)->name, tp->name) == 0)
+		if (strcmp((*q)->name, tp->name) == 0) {
+			debug("target %s error ignored by .IGNORE", tp->name);
 			ignore = 1;
+		}
 	}
 
 	err = 0;
 	if (tflag) {
-		r = touchdeps(tp, silent, ignore);
+		r = touchdeps(tp, ignore, silent);
 		if (r)
 			return r;
 	}
 
 	for (i = 0; i < tp->nactions; i++) {
 		s = expandstring(tp->actions[i], tp);
-		r = execline(tp, s, silent, ignore);
+		r = execline(tp, s, ignore, silent);
 		free(s);
 
 		if (r)
@@ -294,7 +298,7 @@ run(Target *tp)
 	}
 
 	if (tflag) {
-		r = touch(tp->name, silent, ignore);
+		r = touch(tp->name, ignore, silent);
 		if (r)
 			return r;
 	}

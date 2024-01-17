@@ -35,7 +35,9 @@ launch(char *cmd, int ignore)
 
 		if (!ignore)
 			args[1] = "-c";
-		if ((name = strrchr(shell, '/')) == NULL)
+		if ((name = strrchr(shell, '/')) != NULL)
+			++name;
+		else
 			name = shell;
 		args[0] = name;
 		execve(shell, args, environ);
