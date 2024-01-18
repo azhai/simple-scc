@@ -264,7 +264,7 @@ touchdeps(Target *tp, int ignore, int silent)
 static int
 run(Target *tp)
 {
-	int err, r, i, ignore, silent;
+	int r, i, ignore, silent;
 	char *s;
 	Target *p, **q;
 
@@ -286,7 +286,6 @@ run(Target *tp)
 		}
 	}
 
-	err = 0;
 	if (tflag) {
 		r = touchdeps(tp, ignore, silent);
 		if (r)
