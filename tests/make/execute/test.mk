@@ -34,6 +34,8 @@ print-hidden-hello:
 file1:
 	echo > file1
 
+file2:
+
 file.o:
 
 test.mk:
