@@ -20,3 +20,6 @@ print-makeflags:
 
 print-hidden-hello:
 	+@echo Hello World!
+
+test.mk:
+	touch $@
