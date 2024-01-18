@@ -22,6 +22,9 @@ ignored-error:
 print-cc:
 	@echo $(CC)
 
+print-env-cc:
+	@echo $$CC
+
 print-makeflags:
 	@echo $(MAKEFLAGS)
 
