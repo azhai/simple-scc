@@ -267,34 +267,44 @@ end:
 	free(fil);
 }
 
+static void
+comment(FILE *fp)
+{
+	int c;
+
+	while ((c = getc(fp)) != EOF && c != '\n') {
+		if (c == '\\' && getc(fp) == EOF)
+			break;
+	}
+}
+
 static char *
 nextline(void)
 {
 	char *s, *lim;
-	int c, comment;
+	int c;
 	FILE *fp = input->fp;
 
 	assert(input->type == FTFILE);
 
 repeat:
-	comment = 0;
 	if (feof(fp))
 		return NULL;
 
 	lim = &input->buf[input->siz];
-	for (s = input->buf; s < lim; ) {
+	for (s = input->buf; s < lim; *s++ = c) {
 		c = getc(fp);
 		if (c == '\n' || c == EOF) {
 			input->loc.lineno++;
 			*s++ = c;
 			break;
 		}
-		if (c == '#')
-			comment = 1;
+		if (c == '#') {
+			comment(fp);
+			break;
+		}
 		if (c > UCHAR_MAX || c < 0)
 			error("invalid character '%c' (%d)", c, c);
-		if (!comment)
-			*s++ = c;
 	}
 
 
