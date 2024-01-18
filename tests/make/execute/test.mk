@@ -31,6 +31,9 @@ print-makeflags-always:
 print-hidden-hello:
 	+@echo Hello World!
 
+file1:
+	echo > file1
+
 file.o:
 
 test.mk:
