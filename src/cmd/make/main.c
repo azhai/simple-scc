@@ -230,6 +230,7 @@ assign(char *s, int export)
 
 	setmacro(t, t+pos+1, export);
 	free(t);
+	return 1;
 }
 
 static void
