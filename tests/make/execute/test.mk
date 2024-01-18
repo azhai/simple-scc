@@ -1,10 +1,14 @@
 
 .IGNORE: ignored-error
+.SILENT: silent-echo-hello
 
 follow: error hello
 
 hello:
 	@echo Hello World!
+
+silent-echo-hello:
+	echo Hello World!
 
 echo-hello:
 	echo Hello World!
