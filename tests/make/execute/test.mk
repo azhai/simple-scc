@@ -42,6 +42,9 @@ file1:
 
 file2:
 
+file3: file2
+	touch $@
+
 file.o:
 
 test.mk:
