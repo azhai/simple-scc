@@ -307,6 +307,7 @@ main(int argc, char *argv[])
 
 	inject(defaults);
 	parsemakeflags();
+	setmacro("MAKE", argv[0], NOEXPORT);
 
 	++argv;
 	parseargv(&argv, EXPORT);

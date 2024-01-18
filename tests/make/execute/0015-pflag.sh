@@ -9,6 +9,7 @@ cat > $tmp2 <<'EOF'
 
 FC = fort77
 YFLAGS = 
+MAKE = scc-make
 ARFLAGS = -rv
 LDFLAGS = 
 LEX = lex
