@@ -640,7 +640,7 @@ repeat:
 }
 
 static char *
-getln(void)
+readmacrodef(void)
 {
 	int n, c;
 	char *line;
@@ -671,7 +671,7 @@ getln(void)
 }
 
 static char *
-getcmd(void)
+readcmd(void)
 {
 	int n, c;
 	char *line;
@@ -719,13 +719,13 @@ rule(char *targets[], int ntargets)
 	if (tok == ';') {
 		nactions++;
 		actions = erealloc(actions, nactions * sizeof(char *));
-		actions[nactions-1] = getcmd();
+		actions[nactions-1] = readcmd();
 	}
 
 	while ((c = nextc()) == '\t') {
 		nactions++;
 		actions = erealloc(actions, nactions * sizeof(char *));
-		actions[nactions-1] = getcmd();
+		actions[nactions-1] = readcmd();
 	}
 	back(c);
 
@@ -756,7 +756,7 @@ assign(char *macros[], int n)
 		error("invalid macro definition");
 
 	skipspaces();
-	defs = getln();
+	defs = readmacrodef();
 	setmacro(*macros, defs, NOEXPORT);
 	free(defs);
 }
