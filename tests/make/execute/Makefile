@@ -15,4 +15,4 @@ hello:
 	@echo Hello World!
 
 clean:
-	rm -f test.log
+	rm -f test.log tmp?.* file? file.c file.o
