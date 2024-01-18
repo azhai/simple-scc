@@ -303,7 +303,7 @@ run(Target *tp)
 	}
 
 	if (tflag) {
-		r = touch(tp->name, ignore, silent);
+		r = touch(tp->target, ignore, silent);
 		if (r)
 			return r;
 	}
