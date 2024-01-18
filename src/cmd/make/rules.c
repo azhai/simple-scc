@@ -202,8 +202,11 @@ out_loop:
 		fflush(stdout);
 	}
 
-	if ((nflag || qflag) && !plus)
+	if ((nflag || qflag) && !plus) {
+		if (qflag)
+			exitstatus = 1;
 		return 0;
+	}
 
 	if (minus || iflag || ignore)
 		ignore = 1;
@@ -517,9 +520,5 @@ build(char *name)
 	debug("checking target %s'", name);
 
 	build = 0;
-	r = rebuild(lookup(name), &build);
-	if (qflag && build)
-		exitstatus = 1;
-
-	return  r;
+	return  rebuild(lookup(name), &build);
 }
