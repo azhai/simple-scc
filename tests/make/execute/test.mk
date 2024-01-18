@@ -6,6 +6,9 @@ follow: error hello
 hello:
 	@echo Hello World!
 
+echo-hello:
+	echo Hello World!
+
 error:
 	no-valid-program
 
