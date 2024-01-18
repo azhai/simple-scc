@@ -18,6 +18,9 @@ print-cc:
 print-makeflags:
 	@echo $(MAKEFLAGS)
 
+print-makeflags-always:
+	+@echo $(MAKEFLAGS)
+
 print-hidden-hello:
 	+@echo Hello World!
 
