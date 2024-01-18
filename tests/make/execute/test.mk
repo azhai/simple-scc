@@ -24,5 +24,7 @@ print-makeflags-always:
 print-hidden-hello:
 	+@echo Hello World!
 
+file.o:
+
 test.mk:
 	touch $@
