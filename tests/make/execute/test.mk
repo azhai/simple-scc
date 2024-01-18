@@ -19,6 +19,9 @@ error:
 ignored-error:
 	no-valid-program
 
+print-make:
+	@echo $(MAKE)
+
 print-cc:
 	@echo $(CC)
 
