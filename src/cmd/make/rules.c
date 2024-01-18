@@ -193,7 +193,7 @@ out_loop:
 	if (tflag && !plus)
 		return 0;
 
-	if (sflag || silence)
+	if (sflag || silence || (qflag && !plus))
 		at = 1;
 	if (nflag)
 		at = 0;
