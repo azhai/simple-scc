@@ -502,7 +502,7 @@ expandsimple(Target *tp)
 	default:
 		token[0] = c;
 		token[1] = '\0';
-		expandmacro(token, NULL, NULL);
+		expandmacro(token, "", "");
 		break;
 	}
 }
