@@ -112,7 +112,7 @@ FORALL = +@set -e ;\
 		cd -; \
 	done
 
-$(DIRS): FORCE
+$(DIRS) DUMMY : FORCE
 	+@cd $@ && $(MAKE)
 
 # Generic rules
