@@ -149,7 +149,7 @@ addrule(char *target, char **actions, int n)
 	debug("adding actions for target %s", target);
 
 	if (tp->actions) {
-		debug("overring actions or target %s", target);
+		debug("overring actions of target %s", target);
 		for (i = 0; i < tp->nactions; i++)
 			free(tp->actions[i]);
 		free(tp->actions);
@@ -516,7 +516,7 @@ build(char *name)
 		name = deftarget->name;
 	}
 
-	debug("checking target %s'", name);
+	debug("checking target %s", name);
 
 	build = 0;
 	return  rebuild(lookup(name), &build);
