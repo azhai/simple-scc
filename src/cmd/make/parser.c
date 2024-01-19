@@ -296,7 +296,8 @@ repeat:
 		c = getc(fp);
 		if (c == '\n' || c == EOF) {
 			input->loc.lineno++;
-			*s++ = c;
+			if (c == '\n')
+				*s++ = c;
 			break;
 		}
 		if (c == '#') {
@@ -370,6 +371,7 @@ back(int c)
 {
 	if (c == EOF)
 		return c;
+	assert(input->pos > 0);
 	input->buf[--input->pos] = c;
 }
 
@@ -608,17 +610,38 @@ expandstring(char *line, Target *tp)
 }
 
 static int
+readchar(void)
+{
+	int c;
+
+	while ((c = nextc()) != EOF) {
+		if (c == ' ' || c == '\t')
+			continue;
+		if (c == '\\') {
+			if ((c = nextc()) == '\n')
+				continue;
+			back(c);
+			c = '\\';
+		}
+		break;
+	}
+
+	return c;
+}
+
+static int
 next(void)
 {
 	int c;
 
 repeat:
-	skipspaces();
+	c = readchar();
 
-	switch (c = nextc()) {
+	switch (c) {
 	case EOF:
 		strcpy(token, "<EOF>");
-		return tok = EOF;
+		tok = EOF;
+		break;
 	case '$':
 		if ((c = nextc()) == '$')
 			goto single;
@@ -632,11 +655,17 @@ repeat:
 	single:
 		token[0] = c;
 		token[1] = '\0';
-		return tok = c;
+		tok = c;
+		break;
 	default:
+		if (!validchar(c))
+			error("unexpected character '%c'", c);
 		back(c);
-		return tok = item();
+		tok = item();
+		break;
 	}
+
+	return tok;
 }
 
 static char *
@@ -772,7 +801,7 @@ parseinput(void)
 		targets = NULL;
 
 		next();
-		if (tok == '\n' || tok == EOF)
+		if (tok == '\n')
 			continue;
 
 		while (tok == ITEM) {
