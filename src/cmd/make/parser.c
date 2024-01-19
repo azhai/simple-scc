@@ -706,6 +706,8 @@ readcmd(void)
 	int n, c;
 	char *line;
 
+	skipspaces();
+
 	n = 0;
 	line = NULL;
 	while ((c = nextc()) != EOF) {
