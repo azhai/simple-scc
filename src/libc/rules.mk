@@ -31,4 +31,4 @@ clean-libc: FORCE
 	$(CC) $(PROJ_CPPFLAGS) $(PROJ_CFLAGS) -o $@ -c $<
 
 .s.$O:
-	$(AS) $(PROJ_CPPFLAGS) $(PROJ_ASFLAGS) $< -o $@
+	$(AS) $(PROJ_ASFLAGS) $< -o $@
