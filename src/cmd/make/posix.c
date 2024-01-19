@@ -33,7 +33,7 @@ launch(char *cmd, int ignore)
 	case 0:
 		shell = getmacro("SHELL");
 
-		if (!ignore)
+		if (ignore)
 			args[1] = "-c";
 		if ((name = strrchr(shell, '/')) != NULL)
 			++name;
