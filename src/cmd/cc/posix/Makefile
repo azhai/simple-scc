@@ -25,7 +25,7 @@ $(BINDIR)/scc: scc.sh
 config.h:
 	set -e;\
 	rm -f $@;\
-	trap "rm -f $$$$.h" EXIT QUIT HUP TERM;\
+	trap "rm -f $$$$.h" EXIT INT QUIT HUP TERM;\
 	(echo '#define PREFIX "$(PREFIX)"';\
 	 echo '#define ARCH "$(ARCH)"';\
 	 echo '#define SYS  "$(SYS)"';\
