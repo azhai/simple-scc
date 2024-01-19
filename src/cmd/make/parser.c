@@ -297,12 +297,12 @@ repeat:
 		c = getc(fp);
 		if (c == '\n' || c == EOF) {
 			input->loc.lineno++;
-			if (c == '\n')
-				*s++ = c;
+			*s++ = '\n';
 			break;
 		}
 		if (c == '#') {
 			comment(fp);
+			*s++ = '\n';
 			break;
 		}
 		if (c > UCHAR_MAX || c < 0)
