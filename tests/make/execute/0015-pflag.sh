@@ -5,6 +5,8 @@ trap 'rm -f $tmp1 $tmp2' EXIT INT QUIT HUP TERM
 tmp1=tmp1.$$
 tmp2=tmp2.$$
 
+unset MAKEFLAGS
+
 cat > $tmp2 <<'EOF'
 
 FC = fort77
@@ -13,7 +15,6 @@ MAKE = scc-make
 ARFLAGS = -rv
 LDFLAGS = 
 LEX = lex
-MAKEFLAGS = 
 CFLAGS = -O
 YACC = yacc
 CC = c99
