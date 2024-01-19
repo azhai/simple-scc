@@ -491,12 +491,16 @@ expandsimple(Target *tp)
 		if (!tp)
 			return;
 
-		if (tp->req && stamp(tp->req) > tp->stamp)
+		if (tp->req && stamp(tp->req) > tp->stamp) {
+			push(FTEXPAN, " ");
 			push(FTEXPAN, tp->req);
+		}
 
 		for (p = tp->deps; p && *p; ++p) {
-			if (stamp((*p)->name) > tp->stamp)
+			if (stamp((*p)->name) > tp->stamp) {
+				push(FTEXPAN, " ");
 				push(FTEXPAN, (*p)->name);
+			}
 		}
 		break;
 	default:
