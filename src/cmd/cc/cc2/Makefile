@@ -27,7 +27,7 @@ $(TARGET): error.h
 
 error.h: cc2.h
 	rm -f $@;\
-	trap 'r=$?;rm -f $$$$.h;exit $r' EXIT INT QUIT ;\
+	trap 'rm -f $$$$.h' EXIT INT QUIT TERM HUP;\
 	awk -f generror.awk cc2.h > $$$$.h && mv $$$$.h $@
 
 clean:
