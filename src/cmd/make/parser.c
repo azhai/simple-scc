@@ -281,13 +281,14 @@ comment(FILE *fp)
 static char *
 nextline(void)
 {
-	char *s, *lim;
 	int c;
-	FILE *fp = input->fp;
+	FILE *fp;
+	char *s, *lim;
 
 	assert(input->type == FTFILE);
 
 repeat:
+	fp = input->fp;
 	if (feof(fp))
 		return NULL;
 
