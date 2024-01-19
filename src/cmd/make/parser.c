@@ -713,8 +713,11 @@ readcmd(void)
 		if (c == '\n')
 			break;
 		if (c == '\\') {
-			if ((c = nextc()) == '\n')
+			if ((c = nextc()) == '\n') {
+				if ((c = nextc()) != '\t')
+					back(c);
 				continue;
+			}
 			back(c);
 			c = '\\';
 		}
