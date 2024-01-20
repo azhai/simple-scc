@@ -58,7 +58,7 @@ dumpmacros(void)
 
 	for (pp = htab; pp < &htab[TABSIZ]; ++pp) {
 		for (p = *pp; p; p = p->next)
-			printf("%s = %s\n", p->name, p->value);
+			printf("%s = %s\n", p->name, getmacro(p->value));
 	}
 }
 
