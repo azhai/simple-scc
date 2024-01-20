@@ -26,7 +26,7 @@
 int kflag, dflag, nflag, iflag, sflag;
 int eflag, pflag, tflag, qflag;
 int exitstatus;
-sig_atomic_t  stop;
+volatile sig_atomic_t  stop;
 
 void
 debug(char *fmt, ...)

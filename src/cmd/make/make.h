@@ -57,7 +57,7 @@ extern int eflag, pflag, tflag, qflag;
 extern int exitstatus;
 
 #ifdef SIGABRT
-extern sig_atomic_t stop;
+extern volatile sig_atomic_t stop;
 #endif
 
 /* defaults.c */
