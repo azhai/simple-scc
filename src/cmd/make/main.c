@@ -28,8 +28,6 @@ int eflag, pflag, tflag, qflag;
 int exitstatus;
 sig_atomic_t  stop;
 
-static int hasmake;
-
 void
 debug(char *fmt, ...)
 {
@@ -96,15 +94,6 @@ sighandler(int signo)
 }
 
 static void
-parsedefault(void)
-{
-	if (parse("makefile"))
-		return;
-	if (parse("Makefile"))
-		return;
-}
-
-static void
 usage(void)
 {
 	fputs("usage: make [-eiknprSstd] [-f file] [-j jobs] "
@@ -156,13 +145,9 @@ parseflag(int flag, char **args, char ***argv)
 	char *arg;
 
 	switch (flag) {
+	case 'j':
 	case 'f':
-		arg = getarg(args, argv);
-		if (strcmp(arg, "-") == 0)
-			arg = NULL;
-		if (!parse(arg))
-			error("%s: %s", arg, strerror(errno));
-		hasmake = 1;
+		getarg(args, argv);
 		break;
 	case 'e':
 		eflag = 1;
@@ -207,7 +192,6 @@ parseflag(int flag, char **args, char ***argv)
 		dflag = 1;
 		appendmakeflags("-d");
 		break;
-	case 'j':
 	default:
 		usage();
 	}
@@ -234,29 +218,30 @@ assign(char *s, int export)
 }
 
 static void
-parseargv(char ***argv, int export)
+parseargv(char **argv, char ***targets, int export)
 {
 	char *s;
 
-	for ( ; **argv; ++*argv) {
-		s = **argv;
+	for ( ; *argv; ++argv) {
+		s = *argv;
 		if (s[0] != '-') {
 			if (!assign(s, export))
 				break;
 			continue;
 		}
 		while (*++s)
-			parseflag(*s, &s, argv);
+			parseflag(*s, &s, &argv);
 	}
+
+	if (targets)
+		*targets = argv;
 }
-
-
 
 static void
 parsemakeflags(void)
 {
-	size_t len1, len2, n;
-	char *s, *t, **oargv, **argv, *flags;
+	int c, n;
+	char *s, *flags, **arr;
 
 	if ((flags = getenv("MAKEFLAGS")) == NULL)
 		return;
@@ -272,49 +257,68 @@ parsemakeflags(void)
 			flags++;
 		}
 	} else {
-		argv = emalloc(sizeof(char *) * 2);
-		argv[0] = flags;
-		argv[1] = NULL;
-
-		s = flags;
-		for (n = 2; ; ++s) {
-			len1 = strcspn(s, " \t");
-			if (s[len1] == '\0')
-				break;
-			len2 = strspn(s+len1, " \t");
-			s[len1] = '\0';
-			s += len1 + len2;
-
-			argv = erealloc(argv, sizeof(char *) * (n+1));
-			argv[n-1]  = s;
-			argv[n] = NULL;
+		n = 0;
+		arr = NULL;
+		for (s = strtok(flags, " \t"); s; s = strtok(NULL, " \t")) {
+			n++;
+			arr = erealloc(arr, sizeof(char *) * (n+1));
+			arr[n-1] = s;
+			arr[n] = NULL;
 		}
 
-		oargv = argv;
-		parseargv(&argv, NOEXPORT);
-		if (*argv != NULL)
-			error("invalid MAKEFLAGS variable");
-		free(oargv);
+		parseargv(arr, NULL, NOEXPORT);
+		free(arr);
 	}
+}
+
+static void
+parsemakefiles(char **argv)
+{
+	char *s, *arg;
+	int c, hasmake;
+
+	hasmake = 0;
+	for ( ; *argv && **argv == '-'; ++argv) {
+		for (s = *argv; c = *s; ++s) {
+			if (c == 'f' || c == 'j')
+				arg = getarg(&s, &argv);
+
+			if (c == 'f') {
+				if (strcmp(arg, "-") == 0)
+					arg = NULL;
+				parse(arg);
+				hasmake = 1;
+			}
+		}
+	}
+
+	if (hasmake)
+		return;
+
+	if (parse("makefile"))
+		return;
+	if (parse("Makefile"))
+		return;
 }
 
 int
 main(int argc, char *argv[])
 {
+	char *arg0;
+
 	signal(SIGINT, sighandler);
 	signal(SIGHUP, sighandler);
 	signal(SIGTERM, sighandler);
 	signal(SIGQUIT, sighandler);
 
+	arg0 = *argv++;
+
 	inject(defaults);
+	parsemakefiles(argv);
 	parsemakeflags();
-	setmacro("MAKE", argv[0], NOEXPORT);
+	parseargv(argv, &argv, EXPORT);
 
-	++argv;
-	parseargv(&argv, EXPORT);
-
-	if (!hasmake)
-		parsedefault();
+	setmacro("MAKE", arg0, NOEXPORT);
 
 	if (pflag) {
 		dumpmacros();
