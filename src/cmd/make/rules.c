@@ -46,7 +46,6 @@ lookup(char *name)
 	tp->name = estrdup(name);
 	tp->target = tp->name;
 	tp->req = NULL;
-	tp->stamp = stamp(name);
 	tp->ndeps = 0;
 	tp->deps = NULL;
 	tp->actions = NULL;
@@ -452,6 +451,8 @@ rebuild(Target *tp, int *buildp)
 	int r, need, build, err;
 
 	debug("checking rebuild of %s", tp->name);
+
+	tp->stamp = stamp(tp->name);
 
 	err = need = 0;
 	for (p = tp->deps; p && *p; ++p) {
