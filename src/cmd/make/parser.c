@@ -267,17 +267,6 @@ end:
 	free(fil);
 }
 
-static void
-comment(FILE *fp)
-{
-	int c;
-
-	while ((c = getc(fp)) != EOF && c != '\n') {
-		if (c == '\\' && getc(fp) == EOF)
-			break;
-	}
-}
-
 static char *
 nextline(void)
 {
@@ -297,11 +286,6 @@ repeat:
 		c = getc(fp);
 		if (c == '\n' || c == EOF) {
 			input->loc.lineno++;
-			*s++ = '\n';
-			break;
-		}
-		if (c == '#') {
-			comment(fp);
 			*s++ = '\n';
 			break;
 		}
@@ -374,6 +358,17 @@ back(int c)
 		return c;
 	assert(input->pos > 0);
 	input->buf[--input->pos] = c;
+}
+
+static void
+comment(void)
+{
+	int c;
+
+	while ((c = nextc()) != EOF && c != '\n') {
+		if (c == '\\' && nextc() == EOF)
+			break;
+	}
 }
 
 static void
@@ -653,6 +648,9 @@ repeat:
 		back(c);
 		expansion(NULL);
 		goto repeat;
+	case '#':
+		comment();
+		c = '\n';
 	case ';':
 	case ':':
 	case '=':
@@ -685,6 +683,10 @@ readmacrodef(void)
 		line = erealloc(line, n+1);
 		if (c == '\n')
 			break;
+		if (c == '#') {
+			comment();
+			break;
+		}
 		if (c == '\\') {
 			if ((c = nextc()) != '\n') {
 				back(c);
@@ -761,7 +763,13 @@ rule(char *targets[], int ntargets)
 		actions[nactions-1] = readcmd();
 	}
 
-	while ((c = nextc()) == '\t') {
+	for (;;) {
+		if ((c = nextc()) == '#') {
+			comment();
+			continue;
+		}
+		if (c != '\t')
+			break;
 		nactions++;
 		actions = erealloc(actions, nactions * sizeof(char *));
 		actions[nactions-1] = readcmd();
