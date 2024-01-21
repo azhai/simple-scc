@@ -492,6 +492,9 @@ rebuild(Target *tp, int *buildp)
 		if (r == 0)
 			return 0;
 
+		if (stop)
+			cleanup(tp);
+
 		exitstatus = 1;
 
 		if (!kflag)
