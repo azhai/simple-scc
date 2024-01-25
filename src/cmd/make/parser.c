@@ -357,7 +357,7 @@ back(int c)
 	if (c == EOF)
 		return c;
 	assert(input->pos > 0);
-	input->buf[--input->pos] = c;
+	return input->buf[--input->pos] = c;
 }
 
 static void
