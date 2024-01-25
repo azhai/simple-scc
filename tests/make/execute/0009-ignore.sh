@@ -7,11 +7,12 @@ tmp2=tmp2.$$
 
 cat <<EOF > $tmp2
 no-valid-program
-sh: 1: no-valid-program: not found
+sh: no-valid-program: not found
 make: error: don't know how to make hello
 EOF
 
-scc-make -f - error hello > $tmp1 2>&1 <<EOF
+(scc-make -f - error hello 2>&1 |
+sed 's/sh:.*: *no-/sh: no-/' > $tmp1) <<EOF
 .IGNORE:
 
 error:

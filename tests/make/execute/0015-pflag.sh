@@ -7,8 +7,7 @@ tmp2=tmp2.$$
 
 unset MAKEFLAGS
 
-cat > $tmp2 <<'EOF'
-
+(cat > $tmp2) <<'EOF'
 FC = fort77
 YFLAGS = 
 MAKE = scc-make
@@ -67,7 +66,6 @@ FFLAGS = -O 1
 .SUFFIXES: .o .c .y .l .a .sh .f
 
 all:
-	@echo $(MAKEFLAGS)
 
 .sh:
 	cp $< $@
@@ -75,9 +73,8 @@ all:
 
 EOF
 
-scc-make -pf - > $tmp1 2>&1 <<'EOF'
+(scc-make -pf - > $tmp1 2>&1) <<'EOF'
 all:
-	@echo $(MAKEFLAGS)
 EOF
 
-diff $tmp1 $tmp2
+diff -u $tmp1 $tmp2
