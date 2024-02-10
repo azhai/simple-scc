@@ -93,6 +93,7 @@ number(void)
 	int c, base = 10;
 	char *p;
 	TUINT n;
+	static char digits[] = "0123456789ABCDEF";
 
 	if (*endp == '0') {
 		base = 8;
@@ -103,10 +104,13 @@ number(void)
 		}
 	}
 	for (n = 0; (c = *endp) && isxdigit(c); n += c) {
-		n *= base;
-		c -= '0';
-		if (n >= TUINT_MAX - c*base)
+		p = strchr(digits, toupper(c));
+		c = p - digits;
+		if (c > base)
+			error("invalid digit in number");
+		if (n >= TUINT_MAX/base - c)
 			error("overflow in number");
+		n *= base;
 		endp++;
 	}
 	tok2str();
