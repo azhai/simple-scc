@@ -167,6 +167,17 @@ operator(void)
 }
 
 int
+ahead(void)
+{
+	while (isspace(*textp))
+		++textp;
+
+	if (*textp != '\0')
+		return *textp;
+	return EOS;
+}
+
+int
 next(void)
 {
 	int c;

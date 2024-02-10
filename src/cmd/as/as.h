@@ -184,6 +184,7 @@ extern Node *getreg(void);
 extern Node *operand(char **s);
 extern void addinput(char *fname);
 extern int delinput(void);
+extern int ahead(void);
 
 /* expr.c */
 extern Node *expr(void);
