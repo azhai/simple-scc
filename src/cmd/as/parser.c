@@ -31,7 +31,6 @@ union yylval yylval;
 
 static char *textp, *endp;
 static int regmode;
-static unsigned lineno;
 static struct input inputs[NR_INPUTS], *isp = inputs;
 
 static int
