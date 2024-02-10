@@ -71,7 +71,6 @@ iden(void)
 		switch (c) {
 		case '\'':
 		case '_':
-		case '-':
 		case '.':
 		case '$':
 			continue;
@@ -353,7 +352,6 @@ validlabel(char *name)
 			continue;
 		switch (c) {
 		case '_':
-		case '-':
 		case '.':
 		case '$':
 			continue;
