@@ -97,7 +97,7 @@ match(Op *op, Node **args)
 				error("overflow in immediate operand");
 			break;
 		case ASYM:
-			if (np->addr != AIMM || np->op != IDEN)
+			if (np->op != IDEN)
 				return 0;
 			break;
 		case ADIRECT:

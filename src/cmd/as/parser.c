@@ -273,7 +273,7 @@ regctx(int mode)
 Node *
 operand(char **strp)
 {
-	int imm = 0;
+	int c, imm = 0;
 	Node *np;
 
 	textp = *strp;
@@ -291,10 +291,20 @@ operand(char **strp)
 		np->addr = ASTR;
 		next();
 		break;
+	case IDEN:
+		c = ahead();
+		if (c != EOS && c != ',')
+			goto expression;
+		np = node(IDEN, NULL, NULL);
+		np->sym = yylval.sym;
+		np->addr = ANUMBER;
+		next();
+		break;
 	case '$':
 		next();
 		imm = 1;
 	default:
+	expression:
 		if (!imm) {
 			np = moperand();
 		} else {
