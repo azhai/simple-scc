@@ -36,11 +36,24 @@ deltree(Node *np)
 	delete(arena, np);
 }
 
+static int
+constant(Node *np)
+{
+	if (np->op == NUMBER)
+		return 1;
+	if (np->op == IDEN && np->sym->flags & FDEF)
+		return 1;
+	return 0;
+}
+
 static Node *
 fold(int op, Node *l, Node *r)
 {
 	Node *np;
 	TUINT val, lv, rv;
+
+	if (!constant(l) || !constant(r))
+		return NULL;
 
 	lv = l->sym->value;
 	rv = r->sym->value;
@@ -115,10 +128,10 @@ binary(int op, Node *l, Node *r)
 	int addr;
 	Node *np;
 
-	if (l->op == NUMBER && r->op == NUMBER)
-		return fold(op, l, r);
-	else
-		abort();
+	if ((np = fold(op, l, r)) != NULL)
+		return np;
+	abort();
+
 	np = node(op, l, r);
 	np->addr = addr;
 
