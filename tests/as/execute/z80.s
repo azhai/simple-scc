@@ -4,12 +4,14 @@
 
 	LD	A,$SYM1	# 3E 09
 INIT:	LD	A,$SYM2	# 3E 0F
-	LD	A,$SYM3	# 3E 0A
+.1	LD	A,$SYM3	# 3E 0A
 	LD	A,$SYM1+1	# 3E 0A
 	LD	A,$SYM1-1	# 3E 08
 	LD	A,$SYM4	# 3E 0B
 	LD	A,$SYM5	# 3E 0C
 	LD	HL,$INIT	# 21 02 00
+	LD	HL,$.1	# 21 04 00
+	LD	HL,$INIT.1	# 21 04 00
 
 ###################################################
 # we are going to test zilog syntax in z80
