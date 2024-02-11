@@ -106,7 +106,6 @@ deflabel(char *name)
 		error("redefinition of label '%s'", name);
 	if (cursec->flags & SABS)
 		sym->flags |= FABS;
-	sym->flags |= FDEF;
 	sym->value = cursec->curpc;
 	sym->section = cursec;
 

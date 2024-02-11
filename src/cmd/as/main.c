@@ -131,6 +131,9 @@ dopass(char *fname)
 			translate(line.op, line.args);
 		else if (line.args)
 			error("arguments without an opcode");
+
+		if (linesym)
+			linesym->flags |= FDEF;
 	}
 
 	return nerrors == 0;
