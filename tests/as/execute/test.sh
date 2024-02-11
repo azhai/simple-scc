@@ -5,11 +5,11 @@ cpu=${1?}
 exec >>test.log
 exec 2>&1
 
-tmp1=`mktemp`
-tmp2=`mktemp`
+tmp1=tmp1.$$
+tmp2=tmp2.$$
 file=$cpu.s
 
-trap "rm -f a.out $tmp1 $tmp2; exit" 0 2 3
+trap "rm -f a.out $tmp1 $tmp2" 0 2 3
 
 as-$cpu $file
 

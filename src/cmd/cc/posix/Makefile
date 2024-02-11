@@ -23,7 +23,6 @@ $(BINDIR)/scc: scc.sh
 	chmod +x $@
 
 config.h:
-	set -e;\
 	rm -f $@;\
 	trap "rm -f $$$$.h" EXIT INT QUIT HUP TERM;\
 	(echo '#define PREFIX "$(PREFIX)"';\
