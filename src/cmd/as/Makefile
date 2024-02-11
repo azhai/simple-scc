@@ -13,6 +13,7 @@ OBJS = \
 	expr.o\
 
 TARGET =\
+	$(BINDIR)/scc-as\
 	$(LIBEXEC)/scc/as-powerpc64\
 	$(LIBEXEC)/scc/as-powerpc\
 	$(LIBEXEC)/scc/as-amd64\
@@ -24,8 +25,8 @@ all: $(TARGET)
 
 $(TARGET): $(LIBSCC)
 
-clean:
-	rm -f target/*/*.o target/*/*tbl.c lexh
+$(BINDIR)/scc-as: as
+	cp as $@
 
 genhash.o: ../../libscc/genhash.c
 	$(HOSTCC) -c ../../libscc/genhash.c
@@ -35,6 +36,10 @@ lexh.o: lexh.c
 
 lexh: lexh.o genhash.o
 	$(HOSTCC) -o $@ lexh.o genhash.o
+
+clean:
+	rm -f target/*/*.o target/*/*tbl.c lexh
+	rm -f as
 
 include target/powerpc/powerpc64.mk
 include target/powerpc/powerpc.mk

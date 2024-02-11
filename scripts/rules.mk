@@ -122,6 +122,9 @@ $(DIRS) DUMMY : FORCE
 	   .pdf .ps .eps .puml\
 	   .ms .1 .2 .3 .4 .5 .6 .7\
 
+.c:
+	$(CC) $(PROJ_CPPFLAGS) $(PROJ_CFLAGS) -o $@ $<
+
 .s.o:
 	$(AS) $(PROJ_ASFLAGS) $< -o $@
 

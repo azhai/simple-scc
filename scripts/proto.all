@@ -3,6 +3,7 @@ f 755 bin/gcc-scc
 f 755 bin/scc
 f 755 bin/scc-addr2line
 f 755 bin/scc-ar
+f 755 bin/scc-as
 f 755 bin/scc-cc
 f 755 bin/scc-cpp
 f 755 bin/scc-ld
