@@ -46,6 +46,7 @@ clean:
 
 distclean: clean
 	rm -f include/scc/scc/sys.h
+	rm -f include/scc/scc/config.h
 
 include scripts/amd64.mk
 include scripts/arm.mk

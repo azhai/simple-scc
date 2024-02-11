@@ -25,8 +25,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "config.h"
 #include <scc/arg.h>
+#include <scc/config.h>
 #include <scc/scc.h>
 #include <scc/sys.h>
 
