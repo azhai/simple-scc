@@ -1,41 +1,6 @@
 ###################################################
 # tests for pseudo instructions
-	.EQU	SYM1,$9
-	.EQU	SYM2,$017
-	.EQU	SYM3,$0xA
-SYM4:	.EQU	$0xB
-SYM5	=	$0xC
-
-# TODO: check side effect
-#	.SECTION	SYM6
-#	.SECTION	SYM7,""
-#	.DB
-#	.DEFB
-#	.BYTE
-#	.DW
-#	.DEFW
-#	.SHORT
-#	.DD
-#	.DEFD
-#	.LONG
-#	.INT
-#	.DQ
-#	.DEFQ
-#	.SIZE	SYM8,19
-#	.COMM	SYM9,21
-#	.TYPE	SYM10,0
-#	.PUBLIC	SYM11
-#	.GLOBL	SYM12
-#	.GLOBAL
-#	.DATA
-#	.BSS
-#	.TEXT
-#	.EXTRN
-#	.EXTERN
-#	.STRING
-#	.ASCII
-#	.ALIGN
-#	.INCLUDE
+	.INCLUDE	"pseudo.inc"
 
 	LD	A,$SYM1	# 3E 09
 INIT:	LD	A,$SYM2	# 3E 0F
