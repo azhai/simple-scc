@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <scc/cstd.h>
 #include <scc/scc.h>
 #include "as.h"
 
@@ -15,9 +16,8 @@ Section *sabs, *sbss, *sdata, *stext;
 Symbol *linesym, *symlist;
 int pass;
 
-static Symbol *hashtbl[HASHSIZ], *symlast;
+static Symbol *hashtbl[HASHSIZ], *symlast, *cursym;
 static Alloc *tmpalloc;
-
 
 #ifndef NDEBUG
 void
@@ -45,8 +45,19 @@ lookup(char *name)
 {
 	unsigned h;
 	Symbol *sym, **list;
-	int c, symtype;
+	int r, c, symtype;
 	char *t;
+	char buf[INTIDENTSIZ+1];
+
+	if (*name == '.' && cursym) {
+		if (!cursym)
+			error("local label '%s' without global label", name);
+		t = cursym->name.buf;
+		r = snprintf(buf, sizeof(buf), "%s%s", t, name);
+		if (r < 0 || r >= sizeof(buf))
+			error("too long local label '%s%s'", t, name);
+		name = buf;
+	}
 
 	h = genhash(name) & HASHSIZ-1;
 
@@ -79,13 +90,14 @@ lookup(char *name)
 Symbol *
 deflabel(char *name)
 {
-	static Symbol *cursym;
+	int local = 0;
 	Symbol *sym;
 	char label[MAXSYM+1];
 
 	if (*name == '.') {
 		int r;
 
+		local = 1;
 		if (!cursym) {
 			error("local label '%s' without global label", name);
 			return NULL;
@@ -109,7 +121,7 @@ deflabel(char *name)
 	sym->value = cursec->curpc;
 	sym->section = cursec;
 
-	if (*name != '.')
+	if (!local)
 		cursym = sym;
 	return sym;
 }
