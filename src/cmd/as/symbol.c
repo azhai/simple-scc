@@ -33,7 +33,7 @@ dumpstab(char *msg)
 		fprintf(stderr, "[%d]", (int) (bp - hashtbl));
 		for (sym = *bp; sym; sym = sym->hash) {
 			fprintf(stderr, " -> %s:%0X:%0X",
-			       sym->name.buf, sym->flags, sym->value);
+			       sym->name, sym->flags, sym->value);
 		}
 		putc('\n', stderr);
 	}
@@ -52,7 +52,7 @@ lookup(char *name)
 	if (*name == '.' && cursym) {
 		if (!cursym)
 			error("local label '%s' without global label", name);
-		t = cursym->name.buf;
+		t = cursym->name;
 		r = snprintf(buf, sizeof(buf), "%s%s", t, name);
 		if (r < 0 || r >= sizeof(buf))
 			error("too long local label '%s%s'", t, name);
@@ -64,13 +64,13 @@ lookup(char *name)
 	c = toupper(*name);
 	list = &hashtbl[h];
 	for (sym = *list; sym; sym = sym->hash) {
-		t = sym->name.buf;
+		t = sym->name;
 		if (c == toupper(*t) && !casecmp(t, name))
 			return sym;
 	}
 
 	sym = xmalloc(sizeof(*sym));
-	sym->name = newstring(name);
+	sym->name = xstrdup(name);
 	sym->flags = 0;
 	sym->size = sym->value = 0;
 	sym->section = cursec;
@@ -104,10 +104,10 @@ deflabel(char *name)
 		}
 		r = snprintf(label, sizeof(label),
 		             "%s%s",
-		             cursym->name.buf, name);
+		             cursym->name, name);
 		if (r == sizeof(label)) {
 			error("local label '%s' in '%s' produces too long symbol",
-			      name, cursym->name.buf);
+			      name, cursym->name);
 			return NULL;
 		}
 		name = label;
@@ -301,16 +301,4 @@ killtmp(void)
 		return;
 	dealloc(tmpalloc);
 	tmpalloc = NULL;
-}
-
-String
-newstring(char *s)
-{
-	size_t len = strlen(s) + 1;
-	String str;
-
-	str.offset = 0;
-	str.buf = xmalloc(len);
-	memcpy(str.buf, s, len);
-	return str;
 }

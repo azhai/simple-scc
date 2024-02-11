@@ -145,7 +145,7 @@ string(void)
 	l = yylen-2;
 	s = memcpy(xmalloc(l+1), yytext+1, l);
 	s[l] = '\0';
-	sym->name.buf = s;
+	sym->name = s;
 
 	return STRING;
 }

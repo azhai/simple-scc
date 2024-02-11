@@ -55,7 +55,7 @@ xstring(int which, Node **args)
 	size_t len;
 
 	while (np = *args++) {
-		s = np->sym->name.buf;
+		s = np->sym->name;
 		len = strlen(s);
 		len += which == XSTRING;
 		emit(s, len);
@@ -139,7 +139,7 @@ symexp(int which, Op *op, Node **args)
 	switch (which) {
 	case EQU:
 		if (pass == 1 && (sym->flags & FDEF))
-			error("redefinition of symbol '%s'", sym->name.buf);
+			error("redefinition of symbol '%s'", sym->name);
 		sym->value = exp->value;
 		sym->flags |= FDEF;
 		break;
@@ -149,7 +149,7 @@ symexp(int which, Op *op, Node **args)
 		sym->size = exp->value;
 		break;
 	case TYPE:
-		sym->type.buf = xstrdup(exp->name.buf);
+		sym->type = xstrdup(exp->name);
 		break;
 	}
 }
@@ -185,9 +185,9 @@ section(Op *op, Node **args)
 	char *attr = NULL;
 
 	if (args[1])
-		attr = args[1]->sym->name.buf;
+		attr = args[1]->sym->name;
 
-	setsec(sym->name.buf, attr);
+	setsec(sym->name, attr);
 }
 
 void
@@ -252,5 +252,5 @@ end(Op *op, Node **args)
 void
 include(Op *op, Node **args)
 {
-	addinput(args[0]->sym->name.buf);
+	addinput(args[0]->sym->name);
 }
