@@ -1,3 +1,53 @@
+###################################################
+# tests for pseudo instructions
+	.EQU	SYM1,$9
+	.EQU	SYM2,$017
+	.EQU	SYM3,$0xA
+SYM4:	.EQU	$0xB
+SYM5	=	$0xC
+
+# TODO: check side effect
+#	.SECTION	SYM6
+#	.SECTION	SYM7,""
+#	.DB
+#	.DEFB
+#	.BYTE
+#	.DW
+#	.DEFW
+#	.SHORT
+#	.DD
+#	.DEFD
+#	.LONG
+#	.INT
+#	.DQ
+#	.DEFQ
+#	.SIZE	SYM8,19
+#	.COMM	SYM9,21
+#	.TYPE	SYM10,0
+#	.PUBLIC	SYM11
+#	.GLOBL	SYM12
+#	.GLOBAL
+#	.DATA
+#	.BSS
+#	.TEXT
+#	.EXTRN
+#	.EXTERN
+#	.STRING
+#	.ASCII
+#	.ALIGN
+#	.INCLUDE
+
+	LD	A,$SYM1	# 3E 09
+INIT:	LD	A,$SYM2	# 3E 0F
+	LD	A,$SYM3	# 3E 0A
+	LD	A,$SYM1+1	# 3E 0A
+	LD	A,$SYM1-1	# 3E 08
+	LD	A,$SYM4	# 3E 0B
+	LD	A,$SYM5	# 3E 0C
+	LD	HL,$INIT	# 21 02 00
+
+###################################################
+# we are going to test zilog syntax in z80
 	NOP		# 00
 	LD	BC,$64	# 01 40 00
 	LD	(BC),A	# 02
@@ -1135,6 +1185,7 @@ L6:	JR	C,$L6	# 38 02
 	CP	A,$32	# FE 20
 	RST	$56	# FF
 
+###################################################
 # and now, we are going to test at&t syntax in z80
 	INC	32(IX)	# DD 34 20
 	DEC	16(IX)	# DD 35 10
@@ -1586,3 +1637,5 @@ L6:	JR	C,$L6	# 38 02
 	SET	$7,32(IY),L	# FD CB 20 FD
 	SET	$7,48(IY)	# FD CB 30 FE
 	SET	$7,64(IY),A	# FD CB 40 FF
+
+	.END
