@@ -53,7 +53,6 @@ struct objops {
 	int (*getidx)(long *nsyms, char ***names, long **offset, FILE *fp);
 };
 
-
 struct map {
 	int n;
 	struct mapsec {

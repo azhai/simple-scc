@@ -149,7 +149,7 @@ symexp(int which, Op *op, Node **args)
 		sym->size = exp->value;
 		break;
 	case TYPE:
-		sym->type = xstrdup(exp->name);
+		sym->dtype = exp->value;
 		break;
 	}
 }

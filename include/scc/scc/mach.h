@@ -60,12 +60,21 @@ struct section {
 	char *name;
 	unsigned long long base;
 	unsigned long long size;
+	unsigned long long curpc;
+	unsigned long long pc;
+
 	unsigned flags;
 	int index;
 	int align;
+	int fill;
 	char type;
 };
 
+/**
+ * @stype: Used internally by libmach
+ * @dtype: Coff debug type
+ * @flags: Used only by the assembler
+ */
 struct symbol {
 	char *name;
 	unsigned long long size;
@@ -74,6 +83,8 @@ struct symbol {
 	int section;
 	char type;
 	int stype;
+	int dtype;
+	unsigned flags;
 };
 
 extern int archive(FILE *fp);

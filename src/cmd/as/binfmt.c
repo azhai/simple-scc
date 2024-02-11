@@ -7,23 +7,33 @@
 
 #include "as.h"
 
+static int
+dumpsec(Section *sec, void *arg)
+{
+	FILE *fp = arg;
+
+	if (!sec->mem)
+		return 0;
+
+	fwrite(sec->mem, sec->size, 1, fp);
+	return 0;
+}
+
 void
 writeout(char *fname)
 {
-	Section *sp;
 	FILE *fp;
 
 	if ((fp = fopen(fname, "wb")) == NULL)
 		goto error;
 
-	for (sp = seclist; sp; sp = sp->next) {
-		if (!sp->mem)
-			continue;
-		fwrite(sp->mem, sp->max - sp->base, 1, fp);
-	}
+	forallsecs(dumpsec, fp);
+	fflush(fp);
 
-	if (fclose(fp))
+	if (ferror(fp))
 		goto error;
+
+	fclose(fp);
 	outfile = NULL;
 
 	return;

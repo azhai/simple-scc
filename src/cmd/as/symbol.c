@@ -11,19 +11,33 @@
 #define HASHSIZ 64
 #define NALLOC  10
 
-Section *cursec, *seclist;
+struct lsymbol {
+	Symbol sym;
+	struct lsymbol *next;
+	struct lsymbol *hash;
+};
+
+struct lsection {
+	Section s;
+	struct lsection *next;
+};
+
+Section *cursec;
 Section *sabs, *sbss, *sdata, *stext;
-Symbol *linesym, *symlist;
+Symbol *linesym;
 int pass;
 
-static Symbol *hashtbl[HASHSIZ], *symlast, *cursym;
+static struct lsection *seclist;
+static struct lsymbol *hashtbl[HASHSIZ], *symlast, *symlist;
+
+static Symbol *cursym;
 static Alloc *tmpalloc;
 
 #ifndef NDEBUG
 void
 dumpstab(char *msg)
 {
-	Symbol **bp, *sym;
+	struct lsymbol **bp, *lp;
 
 	fprintf(stderr, "%s\n", msg);
 	for (bp = hashtbl; bp < &hashtbl[HASHSIZ]; ++bp) {
@@ -31,9 +45,11 @@ dumpstab(char *msg)
 			continue;
 
 		fprintf(stderr, "[%d]", (int) (bp - hashtbl));
-		for (sym = *bp; sym; sym = sym->hash) {
+		for (lp = *bp; lp; lp = lp->hash) {
 			fprintf(stderr, " -> %s:%0X:%0X",
-			       sym->name, sym->flags, sym->value);
+			       lp->sym.name,
+			       lp->sym.flags,
+			       lp->sym.value);
 		}
 		putc('\n', stderr);
 	}
@@ -44,10 +60,10 @@ Symbol *
 lookup(char *name)
 {
 	unsigned h;
-	Symbol *sym, **list;
+	Symbol *sym;
 	int r, c, symtype;
-	char *t;
-	char buf[INTIDENTSIZ+1];
+	struct lsymbol *lp, **list;
+	char *t, buf[INTIDENTSIZ+1];
 
 	if (*name == '.' && cursym) {
 		if (!cursym)
@@ -63,26 +79,30 @@ lookup(char *name)
 
 	c = toupper(*name);
 	list = &hashtbl[h];
-	for (sym = *list; sym; sym = sym->hash) {
-		t = sym->name;
+	for (lp = *list; lp; lp = lp->hash) {
+		sym = &lp->sym;
+		t = lp->sym.name;
 		if (c == toupper(*t) && !casecmp(t, name))
 			return sym;
 	}
 
-	sym = xmalloc(sizeof(*sym));
+	lp = xmalloc(sizeof(*lp));
+	lp->next = NULL;
+	lp->hash = *list;
+	*list = lp;
+
+	if (symlast)
+		symlast->next = lp;
+	symlast = lp;
+
+	if (!symlist)
+		symlist = lp;
+
+	sym = &lp->sym;
 	sym->name = xstrdup(name);
 	sym->flags = 0;
 	sym->size = sym->value = 0;
-	sym->section = cursec;
-	sym->hash = *list;
-	sym->next = NULL;
-
-	*list = sym;
-	if (symlast)
-		symlast->next = sym;
-	symlast = sym;
-	if (!symlist)
-		symlist = sym;
+	sym->section = cursec ? cursec->index : -1;
 
 	return sym;
 }
@@ -119,7 +139,7 @@ deflabel(char *name)
 	if (cursec->flags & SABS)
 		sym->flags |= FABS;
 	sym->value = cursec->curpc;
-	sym->section = cursec;
+	sym->section = cursec->index;
 
 	if (!local)
 		cursym = sym;
@@ -152,21 +172,23 @@ toobig(Node *np, int type)
 }
 
 static void
-incpc(int siz)
+incpc(int nbytes)
 {
+	unsigned long long siz;
 	TUINT pc, curpc;
 
 	pc = cursec->pc;
 	curpc = cursec->curpc;
 
-	cursec->curpc += siz;
-	cursec->pc += siz;
+	cursec->curpc += nbytes;
+	cursec->pc += nbytes;
 
 	if (pass == 2)
 		return;
 
-	if (cursec->pc > cursec->max)
-		cursec->max = cursec->pc;
+	siz =cursec->pc - cursec->base;
+	if (siz > cursec->size)
+		cursec->size = siz;
 
 	if (pc > cursec->pc ||
 	    curpc > cursec->curpc ||
@@ -211,6 +233,40 @@ secflags(char *attr)
 }
 
 Section *
+secindex(int n)
+{
+	struct lsection *lp;
+
+	for (lp = seclist; lp && lp->s.index != n; lp = lp->next)
+		;
+
+	return (lp) ? &lp->s : NULL;
+}
+
+static Section *
+newsect(Symbol *sym)
+{
+	Section *sec;
+	struct lsection *lp;
+	static int index;
+
+	lp = xmalloc(sizeof(*lp));
+	lp->next = seclist;
+	seclist = lp;
+
+	sec = &lp->s;
+	sec->mem = NULL;
+	sec->name = xstrdup(sym->name);
+	sec->base = sec->size = sec->pc = sec->curpc = 0;
+	sec->flags = 0;
+	sec->fill = 0;
+	sec->align = 0;
+	sec->index = index++;
+
+	return sec;
+}
+
+Section *
 setsec(char *name, char *attr)
 {
 	Section *sec;
@@ -221,19 +277,10 @@ setsec(char *name, char *attr)
 	if (sym->flags & ~FSECT)
 		error("invalid section name '%s'", name);
 
-	if ((sec = sym->section) == NULL) {
-		sec = xmalloc(sizeof(*sec));
-		sec->mem = NULL;
-		sec->sym = sym;
-		sec->base = sec->max = sec->pc = sec->curpc = 0;
-		sec->next = seclist;
-		sec->flags = 0;
-		sec->fill = 0;
-		sec->aligment = 0;
-		sec->next = seclist;
-		seclist = sec;
-
-		sym->section = sec;
+	sec = secindex(sym->section);
+	if (sec == NULL) {
+		sec = newsect(sym);
+		sym->section = sec->index;
 		sym->flags = FSECT;
 	}
 	sec->flags |= secflags(attr);
@@ -254,17 +301,17 @@ void
 cleansecs(void)
 {
 	Section *sec;
-	TUINT siz;
+	struct lsection *lp;
 
-	for (sec = seclist; sec; sec = sec->next) {
+	for (lp = seclist; lp; lp = lp->next) {
+		sec = &lp->s;
 		sec->curpc = sec->pc = sec->base;
 		if (pass == 1 || sec->flags & SFILE)
 			continue;
 
-		siz = sec->max - sec->base;
-		if (siz > SIZE_MAX)
+		if (sec->size > SIZE_MAX)
 			die("as: out of memory");
-		sec->mem = xmalloc(sec->max - sec->base);
+		sec->mem = xmalloc(sec->size);
 	}
 	cursec = stext;
 }
@@ -288,7 +335,7 @@ tmpsym(TUINT val)
 		tmpalloc = alloc(sizeof(*sym), NALLOC);
 	sym = new(tmpalloc);
 	sym->value = val;
-	sym->section = NULL;
+	sym->section = -1;
 	sym->flags = FABS;
 
 	return sym;
@@ -301,4 +348,17 @@ killtmp(void)
 		return;
 	dealloc(tmpalloc);
 	tmpalloc = NULL;
+}
+
+int
+forallsecs(int (*fn)(Section *, void *), void *arg)
+{
+	struct lsection *lp;
+
+	for (lp = seclist; lp; lp = lp->next) {
+		if ((*fn)(&lp->s, arg) < 0)
+			return -1;
+	}
+
+	return 0;
 }

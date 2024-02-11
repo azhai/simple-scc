@@ -108,29 +108,31 @@ struct op {
 };
 
 struct section {
-	Symbol *sym;
+	char *name;
+	unsigned long long base;
+	unsigned long long size;
+	unsigned long long curpc;
+	unsigned long long  pc;
+
+	unsigned flags;
+	int index;
+	int align;
+	int fill;
+	char type;
+
 	char *mem;
-	unsigned char flags;
-	unsigned char fill;
-	unsigned char aligment;
-	unsigned id;
-	TUINT base;
-	TUINT max;
-	TUINT curpc;
-	TUINT pc;
-	struct section *next;
 };
 
 struct symbol {
 	char *name;
-	char *type;
-	unsigned char flags;
-	unsigned char pass;
-	TUINT value;
-	TUINT size;
-	Section *section;
-	struct symbol *next;
-	struct symbol *hash;
+	unsigned long long size;
+	unsigned long long value;
+	int index;
+	int section;
+	char type;
+	int stype;
+	int dtype;
+	unsigned flags;
 };
 
 struct node {
@@ -146,7 +148,6 @@ union yylval {
 	Symbol *sym;
 };
 
-
 /* symbol.c */
 extern void cleansecs(void);
 extern void isecs(void);
@@ -156,8 +157,8 @@ extern Symbol *tmpsym(TUINT);
 extern void killtmp(void);
 extern int toobig(Node *, int);
 extern void dumpstab(char *);
-
-/* main.c */
+extern Section *secindex(int);
+int forallsecs(int (*)(Section *, void *), void *);
 extern Symbol *lookup(char *);
 extern Symbol *deflabel(char *);
 
@@ -200,13 +201,13 @@ extern void writeout(char *);
  */
 extern unsigned long M, S, K;
 extern short hashmap[];
-extern Section *cursec, *seclist;
+extern Section *cursec;
 extern Ins instab[];
 extern Op optab[];
 extern int pass;
 extern TUINT maxaddr;
 extern int endian;
-extern Symbol *linesym, *symlist;
+extern Symbol *linesym;
 extern char *infile, *outfile;
 extern int endpass;
 extern int yytoken;
