@@ -7,19 +7,19 @@ MORE_CFLAGS = -I$(INCDIR)/$(STD)
 
 OBJS = \
 	binfmt.o\
-	main.o\
-	symbol.o\
-	ins.o\
-	parser.o\
 	expr.o\
+	ins.o\
+	main.o\
+	parser.o\
+	symbol.o\
 
 TARGET =\
 	$(BINDIR)/scc-as\
-	$(LIBEXEC)/scc/as-powerpc64\
-	$(LIBEXEC)/scc/as-powerpc\
 	$(LIBEXEC)/scc/as-amd64\
-	$(LIBEXEC)/scc/as-i386\
 	$(LIBEXEC)/scc/as-i286\
+	$(LIBEXEC)/scc/as-i386\
+	$(LIBEXEC)/scc/as-powerpc\
+	$(LIBEXEC)/scc/as-powerpc64\
 	$(LIBEXEC)/scc/as-z80 \
 
 all: $(TARGET)
