@@ -6,6 +6,7 @@ include $(PROJECTDIR)/scripts/rules.mk
 MORE_CFLAGS = -I$(INCDIR)/$(STD)
 
 OBJS = \
+	binfmt.o\
 	main.o\
 	symbol.o\
 	ins.o\

@@ -199,6 +199,9 @@ extern Node *moperand(void);
 /* ins.c */
 extern char *tobytes(TUINT v, int n, int inc);
 
+/* binfmt.c */
+extern void writeout(char *fname);
+
 /*
  * Definition of global variables
  */
@@ -211,7 +214,7 @@ extern int pass;
 extern TUINT maxaddr;
 extern int endian;
 extern Symbol *linesym, *symlist;
-extern char *infile;
+extern char *infile, *outfile;
 extern int endpass;
 extern int yytoken;
 extern size_t yylen;

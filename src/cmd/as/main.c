@@ -14,32 +14,6 @@ char *outfile = "a.out", *infile;
 int endpass;
 
 static void
-writeout(char *fname)
-{
-	Section *sp;
-	FILE *fp;
-
-	if ((fp = fopen(fname, "wb")) == NULL)
-		goto error;
-
-	for (sp = seclist; sp; sp = sp->next) {
-		if (!sp->mem)
-			continue;
-		fwrite(sp->mem, sp->max - sp->base, 1, fp);
-	}
-
-	if (fclose(fp))
-		goto error;
-	outfile = NULL;
-
-	return;
-
-error:
-	fprintf(stderr, "as: %s: %s\n", fname, strerror(errno));
-	exit(EXIT_FAILURE);
-}
-
-static void
 cleanup(void)
 {
 	if (outfile)
