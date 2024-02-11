@@ -201,6 +201,7 @@ next(void)
 	case '%':
 		c = (regmode ? iden : operator)();
 		break;
+	case '.':
 	case '_':
 		c = iden();
 		break;
