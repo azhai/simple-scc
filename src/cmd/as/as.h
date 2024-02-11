@@ -156,51 +156,51 @@ union yylval {
 /* symbol.c */
 extern void cleansecs(void);
 extern void isecs(void);
-extern void emit(char *bytes, int nbytes);
-extern Section *setsec(char *name, char *attr);
-extern Symbol *tmpsym(TUINT val);
+extern void emit(char *, int);
+extern Section *setsec(char *, char *);
+extern Symbol *tmpsym(TUINT);
 extern void killtmp(void);
-extern int toobig(Node *np, int type);
-extern void dumpstab(char *msg);
-extern String newstring(char *s);
+extern int toobig(Node *, int);
+extern void dumpstab(char *);
+extern String newstring(char *);
 
 /* main.c */
-extern Symbol *lookup(char *name);
-extern Symbol *deflabel(char *name);
+extern Symbol *lookup(char *);
+extern Symbol *deflabel(char *);
 
 /* parser.c */
-extern Node **getargs(char *s);
-extern void error(char *msg, ...);
+extern Node **getargs(char *);
+extern void error(char *, ...);
 /* Avoid errors in files where stdio is not included */
 #ifdef stdin
-extern int nextline(struct line *linep);
+extern int nextline(struct line *);
 #endif
 extern void unexpected(void);
-extern void expect(int token);
+extern void expect(int);
 int next(void);
 #define accept(t) (yytoken == (t) ? next() : 0)
 extern void regctx(int mode);
 extern Node *getreg(void);
-extern Node *operand(char **s);
-extern void addinput(char *fname);
+extern Node *operand(char **);
+extern void addinput(char *);
 extern int delinput(void);
 extern int ahead(void);
 
 /* expr.c */
 extern Node *expr(void);
-extern void deltree(Node *np);
-extern Node *node(int op, Node *l, Node *r);
+extern void deltree(Node *);
+extern Node *node(int, Node *, Node *);
 
 /* proc.c */
 extern void iarch(void);
-extern int match(Op *op, Node **args);
+extern int match(Op *, Node **);
 extern Node *moperand(void);
 
 /* ins.c */
-extern char *tobytes(TUINT v, int n, int inc);
+extern char *tobytes(TUINT, int, int);
 
 /* binfmt.c */
-extern void writeout(char *fname);
+extern void writeout(char *);
 
 /*
  * Definition of global variables
