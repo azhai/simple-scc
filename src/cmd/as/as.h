@@ -13,15 +13,6 @@ enum symflags {
 	FABS    = 1 << 7,
 };
 
-enum secflags {
-	SREAD  = 1 << 0,
-	SWRITE = 1 << 1,
-	SEXEC  = 1 << 2,
-	SLOAD  = 1 << 3,
-	SFILE  = 1 << 4,
-	SABS   = 1 << 5,
-};
-
 /*
  * some systems polute the namespace defining BIG_ENDIAN and
  * LITTLE_ENDIAN
@@ -74,8 +65,6 @@ enum tokens {
 typedef struct reloc Reloc;
 typedef struct ins Ins;
 typedef struct op Op;
-typedef struct section Section;
-typedef struct symbol Symbol;
 typedef struct node Node;
 typedef void Format(Op *, Node **);
 
@@ -105,34 +94,6 @@ struct op {
 	void (*format)(Op *, Node **);
 	unsigned char *bytes;
 	unsigned char *args;
-};
-
-struct section {
-	char *name;
-	unsigned long long base;
-	unsigned long long size;
-	unsigned long long curpc;
-	unsigned long long  pc;
-
-	unsigned flags;
-	int index;
-	int align;
-	int fill;
-	char type;
-
-	char *mem;
-};
-
-struct symbol {
-	char *name;
-	unsigned long long size;
-	unsigned long long value;
-	int index;
-	int section;
-	char type;
-	int stype;
-	int dtype;
-	unsigned flags;
 };
 
 struct node {

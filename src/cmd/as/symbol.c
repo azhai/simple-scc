@@ -5,7 +5,9 @@
 #include <string.h>
 
 #include <scc/cstd.h>
+#include <scc/mach.h>
 #include <scc/scc.h>
+
 #include "as.h"
 
 #define HASHSIZ 64
@@ -217,8 +219,8 @@ secflags(char *attr)
 		case 'x':
 			flags |= SEXEC;
 			break;
-		case 'f':
-			flags |= SFILE;
+		case 'c':
+			flags |= SALLOC;
 			break;
 		case 'l':
 			flags |= SLOAD;
@@ -291,10 +293,10 @@ setsec(char *name, char *attr)
 void
 isecs(void)
 {
-	sabs = setsec(".abs", "rwx");
-	sbss = setsec(".bss", "rwf");
-	sdata = setsec(".data", "rw");
-	stext = setsec(".text", "rx");
+	sabs = setsec(".abs", "rwxa");
+	sbss = setsec(".bss", "rw");
+	sdata = setsec(".data", "rwc");
+	stext = setsec(".text", "rxc");
 }
 
 void
@@ -306,7 +308,7 @@ cleansecs(void)
 	for (lp = seclist; lp; lp = lp->next) {
 		sec = &lp->s;
 		sec->curpc = sec->pc = sec->base;
-		if (pass == 1 || sec->flags & SFILE)
+		if (pass == 1 || (sec->flags & SALLOC) == 0)
 			continue;
 
 		if (sec->size > SIZE_MAX)

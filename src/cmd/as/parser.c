@@ -9,7 +9,9 @@
 #include <string.h>
 
 #include <scc/cstd.h>
+#include <scc/mach.h>
 #include <scc/scc.h>
+
 #include "as.h"
 
 #define NARGS 20

@@ -1,7 +1,8 @@
 
 BEGIN		{
 		nvar=0
-		printf "#include <scc/scc.h>\n"\
+		printf "#include <scc/mach.h>\n"\
+		       "#include <scc/scc.h>\n"\
 		       "#include \"../../as.h\"\n"\
 		       "#include \"../" family "/proc.h\"\n"
 

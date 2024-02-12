@@ -1,6 +1,8 @@
 #include <string.h>
 
+#include <scc/mach.h>
 #include <scc/scc.h>
+
 #include "as.h"
 
 extern Section *sabs, *sbss, *sdata, *stext;

@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <scc/mach.h>
 #include <scc/scc.h>
+
 #include "as.h"
 
 #define NNODES   10

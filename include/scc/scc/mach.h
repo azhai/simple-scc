@@ -68,6 +68,9 @@ struct section {
 	int align;
 	int fill;
 	char type;
+
+	/* TODO: Remove it once as if fixed */
+	char *mem;
 };
 
 /**
@@ -87,32 +90,38 @@ struct symbol {
 	unsigned flags;
 };
 
-extern int archive(FILE *fp);
-extern long armember(FILE *fp, char *member);
+#ifdef stdin
+extern int archive(FILE *);
+extern long armember(FILE *, char *);
 
-extern int objtype(FILE *fp, char **name);
-extern Obj *newobj(int type);
-extern void delobj(Obj *obj);
+extern int objtype(FILE *, char **);
 
-extern int readobj(Obj *obj, FILE *fp);
-extern int writeobj(Obj *obj, Map *map, FILE *fp);
+extern int readobj(Obj *, FILE *);
+extern int writeobj(Obj *, Map *, FILE *);
 
-extern int strip(Obj *obj);
-extern int pc2line(Obj *obj, unsigned long long pc, char *fname, int *ln);
-extern int rebase(Obj *obj, int index, unsigned long long offset);
+extern Map *loadmap(Obj *, FILE *);
+extern Map *newmap(int , FILE *);
 
-extern Map *loadmap(Obj *obj, FILE *fp);
-extern Map *newmap(int n, FILE *fp);
-extern int findsec(Map *map, char *name);
-extern int setmap(Map *map,
-                  char *name,
-                  FILE *fp,
-                  unsigned long long begin,
-                  unsigned long long end,
-                  long off);
-
-extern Symbol *getsym(Obj *obj, int *index, Symbol *sym);
-extern Section *getsec(Obj *obj, int *index, Section *sec);
+extern int setmap(Map *,
+                  char *,
+                  FILE *,
+                  unsigned long long,
+                  unsigned long long,
+                  long);
 
 extern int setindex(int, long, char **, long *, FILE *);
 extern int getindex(int, long *, char ***, long **, FILE *);
+
+#endif
+
+extern Obj *newobj(int);
+extern void delobj(Obj *);
+
+extern int strip(Obj *);
+extern int pc2line(Obj *, unsigned long long, char *, int *);
+extern int rebase(Obj *, int, unsigned long long);
+
+extern int findsec(Map *, char *);
+
+extern Symbol *getsym(Obj *, int *, Symbol *);
+extern Section *getsec(Obj *, int *, Section *);

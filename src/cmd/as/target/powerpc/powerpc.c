@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include <scc/mach.h>
 #include <scc/scc.h>
 
 #include "../../as.h"
