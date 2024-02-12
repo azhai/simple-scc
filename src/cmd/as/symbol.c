@@ -61,37 +61,32 @@ dumpstab(char *msg)
 Symbol *
 lookup(char *name)
 {
+	int r;
 	unsigned h;
 	Symbol *sym;
-	int r, c, symtype;
-	struct lsymbol *lp, **list;
-	char *t, buf[INTIDENTSIZ+1];
+	struct lsymbol *lp;
+	char *curname, buf[INTIDENTSIZ+1];
 
 	if (*name == '.' && cursym) {
 		if (!cursym)
 			error("local label '%s' without global label", name);
-		t = cursym->name;
-		r = snprintf(buf, sizeof(buf), "%s%s", t, name);
+		curname = cursym->name;
+		r = snprintf(buf, sizeof(buf), "%s%s", curname, name);
 		if (r < 0 || r >= sizeof(buf))
-			error("too long local label '%s%s'", t, name);
+			error("too long local label '%s%s'", curname, name);
 		name = buf;
 	}
 
 	h = genhash(name) & HASHSIZ-1;
-
-	c = toupper(*name);
-	list = &hashtbl[h];
-	for (lp = *list; lp; lp = lp->hash) {
-		sym = &lp->sym;
-		t = lp->sym.name;
-		if (c == toupper(*t) && !casecmp(t, name))
-			return sym;
+	for (lp = hashtbl[h]; lp; lp = lp->hash) {
+		if (!casecmp(lp->sym.name, name))
+			return &lp->sym;
 	}
 
 	lp = xmalloc(sizeof(*lp));
 	lp->next = NULL;
-	lp->hash = *list;
-	*list = lp;
+	lp->hash = hashtbl[h];
+	hashtbl[h] = lp;
 
 	if (symlast)
 		symlast->next = lp;
