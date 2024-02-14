@@ -9,7 +9,7 @@
 #include "libmach.h"
 
 Map *
-newmap(int n, FILE *fp)
+newmap(int n)
 {
 	size_t vsiz;
 	struct mapsec *p;
@@ -28,8 +28,6 @@ newmap(int n, FILE *fp)
 	map->n = n;
 	memset(map->sec, 0, vsiz);
 
-	for (p = map->sec; n--; ++p)
-		p->fp = fp;
 	return map;
 
 out_range:

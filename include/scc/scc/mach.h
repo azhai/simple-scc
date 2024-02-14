@@ -100,7 +100,6 @@ extern int readobj(Obj *, FILE *);
 extern int writeobj(Obj *, Map *, FILE *);
 
 extern Map *loadmap(Obj *, FILE *);
-extern Map *newmap(int , FILE *);
 
 extern int setmap(Map *,
                   char *,
@@ -113,6 +112,8 @@ extern int setindex(int, long, char **, long *, FILE *);
 extern int getindex(int, long *, char ***, long **, FILE *);
 
 #endif
+
+extern Map *newmap(int);
 
 extern Obj *newobj(int);
 extern void delobj(Obj *);

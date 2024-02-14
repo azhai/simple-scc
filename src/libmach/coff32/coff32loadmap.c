@@ -16,7 +16,7 @@ coff32loadmap(Obj *obj, FILE *fp)
 	FILHDR *hdr = &coff->hdr;
 
 	nsec = hdr->f_nscns;
-	if ((map = newmap(nsec, fp)) == NULL)
+	if ((map = newmap(nsec)) == NULL)
 		return NULL;
 
 	for (scn = coff->scns; nsec--; ++scn) {
