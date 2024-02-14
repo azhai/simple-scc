@@ -113,7 +113,8 @@ extern int getindex(int, long *, char ***, long **, FILE *);
 
 #endif
 
-extern Map *newmap(int);
+extern Map *newmap(Map *, int);
+extern Map *remap(Map *, int);
 
 extern Obj *newobj(int);
 extern void delobj(Obj *);

@@ -9,11 +9,9 @@
 #include "libmach.h"
 
 Map *
-newmap(int n)
+remap(Map *map, int n)
 {
 	size_t vsiz;
-	struct mapsec *p;
-	Map *map;
 
 	if (n > SIZE_MAX/sizeof(struct mapsec))
 		goto out_range;
@@ -22,15 +20,25 @@ newmap(int n)
 		goto out_range;
 	vsiz += sizeof(*map);
 
-	if ((map = malloc(vsiz)) == NULL)
+	if ((map = realloc(map, vsiz)) == NULL)
 		return NULL;
 
 	map->n = n;
-	memset(map->sec, 0, vsiz);
+	return map;
 
 	return map;
 
 out_range:
 	errno = ERANGE;
 	return NULL;
+}
+
+Map *
+newmap(Map *map, int n)
+{
+	if ((map = remap(map, n)) == NULL)
+		return NULL;
+	memset(map->sec, 0, n * sizeof(struct mapsec));
+
+	return map;
 }

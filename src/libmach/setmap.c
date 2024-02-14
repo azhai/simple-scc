@@ -18,15 +18,19 @@ setmap(Map *map,
 
 	n = map->n;
 	for (sec = map->sec; n--; sec++) {
-		if (!sec->name) {
-			sec->name = name;
-			sec->fp = fp,
-			sec->begin = begin;
-			sec->end = end;
-			sec->offset = off;
-			return 0;
-		}
+		if (!sec->name || !strcmp(sec->name, name))
+			goto found;
 	}
 
-	return -1;
+	if ((map = remap(map, map->n+1 )) == NULL)
+		return -1;
+	sec = &map->sec[map->n-1];
+
+found:
+	sec->name = name;
+	sec->fp = fp,
+	sec->begin = begin;
+	sec->end = end;
+	sec->offset = off;
+	return 0;
 }
