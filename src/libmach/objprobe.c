@@ -7,7 +7,7 @@
 int
 objprobe(FILE *fp, char **name)
 {
-	int n, i;
+	int n, t;
 	fpos_t pos;
 	Objops **opsp, *ops;
 	unsigned char buf[NBYTES];
@@ -20,9 +20,10 @@ objprobe(FILE *fp, char **name)
 		return -1;
 
 	for (opsp = objops; ops = *opsp; ++opsp) {
-		if ((*ops->probe)(buf, name) < 0)
+		t = (*ops->probe)(buf, name);
+		if (t < 0)
 			continue;
-		return opsp - objops;
+		return t;
 	}
 
 	return -1;

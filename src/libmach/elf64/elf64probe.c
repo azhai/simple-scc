@@ -53,7 +53,7 @@ elf64probe(unsigned char *buf, char **name)
 		if (ap->mach == hdr.e_machine &&  ap->endian == endian) {
 			if (name)
 				*name = ap->name;
-			return 0;
+			return ap->type;
 		}
 	}
 
