@@ -6,6 +6,7 @@
 #include "elf64.h"
 
 struct objops elf64 = {
+	.type = elf64type,
 	.probe = elf64probe,
 	.new = elf64new,
 	.read = elf64read,

@@ -1,7 +1,9 @@
 COFF32_OBJS =\
 	coff32/coff32.o \
+	coff32/coff32archs.o\
 	coff32/coff32del.o \
 	coff32/coff32new.o \
+	coff32/coff32type.o \
 	coff32/coff32probe.o \
 	coff32/coff32read.o \
 	coff32/coff32strip.o \

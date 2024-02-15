@@ -6,6 +6,7 @@
 #include "coff32.h"
 
 struct objops coff32 = {
+	.type = coff32type,
 	.probe = coff32probe,
 	.new = coff32new,
 	.read = coff32read,

@@ -35,6 +35,13 @@ struct elf64 {
 	size_t nsym;
 };
 
+struct arch {
+	char *name;
+	int mach;
+	int endian;
+	int type;
+};
+
 extern int elf64new(Obj *);
 extern int elf64read(Obj *, FILE *);
 extern int elf64setidx(long, char **, long *, FILE *);
@@ -44,6 +51,7 @@ extern int elf64strip(Obj *);
 extern void elf64del(Obj *);
 extern int elf64write(Obj *, Map *, FILE *);
 extern int elf64probe(unsigned char *, char **);
+extern int elf64type(char *);
 
 extern int elf64xsetidx(int long , char *[], long [], FILE *);
 extern int elf64xgetidx(int, long *, char ***, long **, FILE *);
@@ -53,3 +61,6 @@ extern Section *elf64getsec(Obj *, int *, Section *);
 extern Map *elf64loadmap(Obj *, FILE *);
 
 extern char *elf64str(Obj *, int n, long);
+
+/* globals */
+extern struct arch elf64archs[];

@@ -24,6 +24,7 @@ OBJS =\
 	newobj.o\
 	objpos.o\
 	objprobe.o\
+	objtype.o\
 	pack.o\
 	pc2line.o\
 	readobj.o\

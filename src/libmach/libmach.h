@@ -33,24 +33,25 @@ enum order {
 };
 
 struct objops {
-	int (*probe)(unsigned char *buf, char **name);
+	int (*type)(char *);
+	int (*probe)(unsigned char *, char **);
 
-	int (*new)(Obj *obj);
-	void (*del)(Obj *obj);
+	int (*new)(Obj *);
+	void (*del)(Obj *);
 
-	int (*read)(Obj *obj, FILE *fp);
-	int (*write)(Obj *obj, Map *map, FILE *fp);
+	int (*read)(Obj *, FILE *);
+	int (*write)(Obj *, Map *, FILE *);
 
-	int (*strip)(Obj *obj);
+	int (*strip)(Obj *);
 	int (*pc2line)(Obj *, unsigned long long , char *, int *);
 
-	Map *(*loadmap)(Obj *obj, FILE *fp);
+	Map *(*loadmap)(Obj *, FILE *);
 
-	Symbol *(*getsym)(Obj *obj, int *index, Symbol *sym);
-	Section *(*getsec)(Obj *obj, int *index, Section *sec);
+	Symbol *(*getsym)(Obj *, int *, Symbol *);
+	Section *(*getsec)(Obj *, int *, Section *);
 
-	int (*setidx)(long nsyms, char *names[], long offset[], FILE *fp);
-	int (*getidx)(long *nsyms, char ***names, long **offset, FILE *fp);
+	int (*setidx)(long, char *[], long[], FILE *);
+	int (*getidx)(long *, char ***, long **, FILE *);
 };
 
 struct map {
