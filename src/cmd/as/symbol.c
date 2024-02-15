@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -364,15 +365,49 @@ killtmp(void)
 	tmpalloc = NULL;
 }
 
-int
-forallsecs(int (*fn)(Section *, void *), void *arg)
+static int
+dumpsec(FILE *src, FILE *dst)
 {
-	struct lsection *lp;
+	int c;
 
-	for (lp = seclist; lp; lp = lp->next) {
-		if ((*fn)(&lp->sec, arg) < 0)
-			return -1;
-	}
+	if (!src)
+		return 0;
+
+	rewind(src);
+	while ((c = getc(src)) != EOF)
+		putc(c, dst);
+
+	if (ferror(src))
+		return -1;
 
 	return 0;
+}
+
+void
+writeout(char *fname)
+{
+	FILE *fp;
+	struct lsection *lp;
+
+	if ((fp = fopen(fname, "wb")) == NULL)
+		goto error;
+
+
+	for (lp = seclist; lp; lp = lp->next) {
+		if (dumpsec(lp->fp, fp) < 0)
+			goto error;
+	}
+	fflush(fp);
+
+	if (ferror(fp))
+		goto error;
+
+	fclose(fp);
+	outfile = NULL;
+
+	return;
+
+error:
+	fprintf(stderr, "as: %s: %s\n", fname, strerror(errno));
+	exit(EXIT_FAILURE);
 }

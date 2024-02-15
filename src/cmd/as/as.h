@@ -118,7 +118,6 @@ extern Symbol *tmpsym(TUINT);
 extern void killtmp(void);
 extern int toobig(Node *, int);
 extern void dumpstab(char *);
-int forallsecs(int (*)(Section *, void *), void *);
 extern Symbol *lookup(char *);
 extern Symbol *deflabel(char *);
 
