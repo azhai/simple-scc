@@ -23,7 +23,7 @@ OBJS =\
 	newobj.o \
 	newobj.o\
 	objpos.o\
-	objtype.o\
+	objprobe.o\
 	pack.o\
 	pc2line.o\
 	readobj.o\

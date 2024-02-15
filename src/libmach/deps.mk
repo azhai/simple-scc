@@ -89,8 +89,8 @@ newobj.o: $(INCDIR)/scc/scc/mach.h
 newobj.o: libmach.h
 objpos.o: $(INCDIR)/scc/scc/mach.h
 objpos.o: libmach.h
-objtype.o: $(INCDIR)/scc/scc/mach.h
-objtype.o: libmach.h
+objprobe.o: $(INCDIR)/scc/scc/mach.h
+objprobe.o: libmach.h
 pack.o: $(INCDIR)/scc/scc/mach.h
 pack.o: libmach.h
 pc2line.o: $(INCDIR)/scc/scc/mach.h

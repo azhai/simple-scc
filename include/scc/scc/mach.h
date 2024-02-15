@@ -89,7 +89,7 @@ struct symbol {
 extern int archive(FILE *);
 extern long armember(FILE *, char *);
 
-extern int objtype(FILE *, char **);
+extern int objprobe(FILE *, char **);
 
 extern int readobj(Obj *, FILE *);
 extern int writeobj(Obj *, Map *, FILE *);

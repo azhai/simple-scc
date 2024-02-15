@@ -148,7 +148,7 @@ newmember(FILE *fp)
 		return 0;
 	}
 
-	t = objtype(fp, NULL);
+	t = objprobe(fp, NULL);
 	if (t == -1 || artype != -1 && artype != t) {
 		nolib = 1;
 		return 0;
@@ -211,7 +211,7 @@ readsyms(FILE *fp)
 			return (nolib || nsymbols == 0) ? -1 : 0;
 		default:
 			membname = memb;
-			if (objtype(fp, NULL) != -1)
+			if (objprobe(fp, NULL) != -1)
 				newmember(fp);
 			membname = NULL;
 			fseek(fp, cur, SEEK_SET);

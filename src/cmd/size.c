@@ -116,7 +116,7 @@ sizelib(FILE *fp)
 			return;
 		default:
 			membname = memb;
-			if ((t = objtype(fp, NULL)) != -1)
+			if ((t = objprobe(fp, NULL)) != -1)
 				sizeobj(fp, t);
 			membname = NULL;
 			fseek(fp, cur, SEEK_SET);
@@ -138,7 +138,7 @@ size(char *fname)
 		return;
 	}
 
-	if ((t = objtype(fp, NULL)) != -1)
+	if ((t = objprobe(fp, NULL)) != -1)
 		sizeobj(fp, t);
 	else if (archive(fp))
 		sizelib(fp);

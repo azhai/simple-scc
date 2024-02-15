@@ -88,7 +88,7 @@ load(FILE *fp, int inlib)
 	Symbol sym;
 	static Obj *last;
 
-	if ((t = objtype(fp, NULL)) < 0) {
+	if ((t = objprobe(fp, NULL)) < 0) {
 		error("bad format");
 		return;
 	}
@@ -198,7 +198,7 @@ scanlib(FILE *fp)
 			return;
 		default:
 			membname = memb;
-			if (objtype(fp, NULL) != -1)
+			if (objprobe(fp, NULL) != -1)
 				load(fp, INLIB);
 			membname = NULL;
 			fseek(fp, cur, SEEK_SET);

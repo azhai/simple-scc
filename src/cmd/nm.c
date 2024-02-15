@@ -204,7 +204,7 @@ nmlib(FILE *fp)
 			return;
 		default:
 			membname = memb;
-			if ((t = objtype(fp, NULL)) != -1)
+			if ((t = objprobe(fp, NULL)) != -1)
 				nmobj(fp, t);
 			membname = NULL;
 			fseek(fp, cur, SEEK_SET);
@@ -228,7 +228,7 @@ nm(char *fname)
 		return;
 	}
 
-	if ((t = objtype(fp, NULL)) != -1)
+	if ((t = objprobe(fp, NULL)) != -1)
 		nmobj(fp, t);
 	else if (archive(fp))
 		nmlib(fp);

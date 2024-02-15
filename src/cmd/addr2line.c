@@ -83,7 +83,7 @@ loadexe(char *fname)
 		return NULL;
 	}
 
-	if ((t = objtype(fp, NULL)) < 0) {
+	if ((t = objprobe(fp, NULL)) < 0) {
 		error("file format not recognized");
 		return NULL;
 	}

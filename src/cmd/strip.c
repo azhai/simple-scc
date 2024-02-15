@@ -46,7 +46,7 @@ doit(char *fname)
 		error("opening src file");
 		return;
 	}
-	if ((type = objtype(src, NULL)) < 0) {
+	if ((type = objprobe(src, NULL)) < 0) {
 		error("getting object type");
 		goto err1;
 	}

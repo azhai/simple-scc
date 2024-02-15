@@ -5,7 +5,7 @@
 #include "libmach.h"
 
 int
-objtype(FILE *fp, char **name)
+objprobe(FILE *fp, char **name)
 {
 	int n, i;
 	fpos_t pos;
