@@ -8,15 +8,33 @@
 
 #include "as.h"
 
-static int
-dumpsec(Section *sec, void *arg)
-{
-	FILE *fp = arg;
+/*
+ * FIXME: Horrible hack, just the data structure copied here
+ * To be able to continue working and not breaking the tests
+ * but it should be removed from here as soon as posible.
+ */
+struct lsection {
+	Section sec;
+	FILE *fp;
+};
 
-	if (!sec->mem)
+static int
+dumpsec(Section *sec, void *dst)
+{
+	int c;
+	struct lsection *lsec = (struct lsection *)  sec;
+	FILE *src = lsec->fp;
+
+	if (!src)
 		return 0;
 
-	fwrite(sec->mem, sec->size, 1, fp);
+	rewind(src);
+	while ((c = getc(src)) != EOF)
+		putc(c, dst);
+
+	if (ferror(src))
+		return -1;
+
 	return 0;
 }
 
@@ -28,7 +46,8 @@ writeout(char *fname)
 	if ((fp = fopen(fname, "wb")) == NULL)
 		goto error;
 
-	forallsecs(dumpsec, fp);
+	if (forallsecs(dumpsec, fp) < 0)
+		goto error;
 	fflush(fp);
 
 	if (ferror(fp))
@@ -43,4 +62,3 @@ error:
 	fprintf(stderr, "as: %s: %s\n", fname, strerror(errno));
 	exit(EXIT_FAILURE);
 }
-

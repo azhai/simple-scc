@@ -68,9 +68,6 @@ struct section {
 	int align;
 	int fill;
 	char type;
-
-	/* TODO: Remove it once as if fixed */
-	char *mem;
 };
 
 /**

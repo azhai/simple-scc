@@ -13,17 +13,30 @@
 #define HASHSIZ 64
 #define NALLOC  10
 
+/*
+ * sym must be the first field because we generate
+ * a pointer to lsymbol from the symbol
+ */
 struct lsymbol {
 	Symbol sym;
+	Section *sec;
 	struct lsymbol *next;
 	struct lsymbol *hash;
 };
 
+/*
+ * sec must be the first field because we generate
+ * a pointer to lsection from the section
+ */
 struct lsection {
-	Section s;
+	Section sec;
+	FILE *fp;
+	unsigned long long curpc;
+	unsigned long long pc;
 	struct lsection *next;
 };
 
+Map *map;
 Section *cursec;
 Section *sabs, *sbss, *sdata, *stext;
 Symbol *linesym;
@@ -86,6 +99,7 @@ lookup(char *name)
 	lp = xmalloc(sizeof(*lp));
 	lp->next = NULL;
 	lp->hash = hashtbl[h];
+	lp->sec = NULL;
 	hashtbl[h] = lp;
 
 	if (symlast)
@@ -229,36 +243,30 @@ secflags(char *attr)
 	return flags;
 }
 
-Section *
-secindex(int n)
-{
-	struct lsection *lp;
-
-	for (lp = seclist; lp && lp->s.index != n; lp = lp->next)
-		;
-
-	return (lp) ? &lp->s : NULL;
-}
-
 static Section *
 newsect(Symbol *sym)
 {
 	Section *sec;
-	struct lsection *lp;
+	struct lsection *lsec;
+	struct lsymbol *lsym;
 	static int index;
 
-	lp = xmalloc(sizeof(*lp));
-	lp->next = seclist;
-	seclist = lp;
+	lsec = xmalloc(sizeof(*lsec));
+	lsec->next = seclist;
+	lsec->fp = NULL;
+	seclist = lsec;
 
-	sec = &lp->s;
-	sec->mem = NULL;
-	sec->name = xstrdup(sym->name);
+	sec = &lsec->sec;
+	sec->name = sym->name;
 	sec->base = sec->size = sec->pc = sec->curpc = 0;
 	sec->flags = 0;
 	sec->fill = 0;
 	sec->align = 0;
 	sec->index = index++;
+	setmap(map, sym->name, NULL, 0, 0, 0);
+
+	lsym = (struct lsymbol *) sym;
+	lsym->sec = sec;
 
 	return sec;
 }
@@ -266,6 +274,7 @@ newsect(Symbol *sym)
 Section *
 setsec(char *name, char *attr)
 {
+	struct lsymbol *lsym;
 	Section *sec;
 	Symbol *sym;
 
@@ -274,9 +283,11 @@ setsec(char *name, char *attr)
 	if (sym->flags & ~FSECT)
 		error("invalid section name '%s'", name);
 
-	sec = secindex(sym->section);
+	lsym = (struct lsymbol *) sym;
+	sec = lsym->sec;
 	if (sec == NULL) {
 		sec = newsect(sym);
+		lsym->sec = sec;
 		sym->section = sec->index;
 		sym->flags = FSECT;
 	}
@@ -288,6 +299,11 @@ setsec(char *name, char *attr)
 void
 isecs(void)
 {
+	if ((map = newmap(NULL, 4)) == NULL) {
+		perror("as");
+		exit(EXIT_FAILURE);
+	}
+
 	sabs = setsec(".abs", "rwxa");
 	sbss = setsec(".bss", "rw");
 	sdata = setsec(".data", "rwc");
@@ -298,17 +314,18 @@ void
 cleansecs(void)
 {
 	Section *sec;
-	struct lsection *lp;
+	struct lsection *lsec;
 
-	for (lp = seclist; lp; lp = lp->next) {
-		sec = &lp->s;
+	for (lsec = seclist; lsec; lsec = lsec->next) {
+		sec = &lsec->sec;
 		sec->curpc = sec->pc = sec->base;
 		if (pass == 1 || (sec->flags & SALLOC) == 0)
 			continue;
 
-		if (sec->size > SIZE_MAX)
-			die("as: out of memory");
-		sec->mem = xmalloc(sec->size);
+		if ((lsec->fp = tmpfile()) == NULL) {
+			perror("as");
+			exit(EXIT_FAILURE);
+		}
 	}
 	cursec = stext;
 }
@@ -316,10 +333,10 @@ cleansecs(void)
 void
 emit(char *bytes, int n)
 {
-	if (cursec->mem) {
-		size_t len = cursec->pc - cursec->base;
-		memcpy(&cursec->mem[len], bytes, n);
-	}
+	struct lsection *lsec = (struct lsection *) cursec;
+
+	if (lsec->fp)
+		fwrite(bytes, n, 1, lsec->fp);
 	incpc(n);
 }
 
@@ -353,7 +370,7 @@ forallsecs(int (*fn)(Section *, void *), void *arg)
 	struct lsection *lp;
 
 	for (lp = seclist; lp; lp = lp->next) {
-		if ((*fn)(&lp->s, arg) < 0)
+		if ((*fn)(&lp->sec, arg) < 0)
 			return -1;
 	}
 
