@@ -22,9 +22,11 @@ TARGET =\
 	$(LIBEXEC)/scc/as-powerpc64\
 	$(LIBEXEC)/scc/as-z80 \
 
+MORE_LDLIBS =  -lscc -lmach
+
 all: $(TARGET)
 
-$(TARGET): $(LIBSCC)
+$(TARGET): $(LIBSCC) $(LIBMACH)
 
 $(BINDIR)/scc-as: as
 	cp as $@

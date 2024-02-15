@@ -9,4 +9,4 @@ $(POWERPC)/powerpc64tbl.c: $(POWERPC)/ops.dat $(POWERPC)/opers.dat lexh
 	./mktbl -f powerpc -c powerpc64
 
 $(LIBEXEC)/scc/as-powerpc64: $(POWERPC64_OBJ)
-	$(CC) $(PROJ_LDFLAGS) $(POWERPC64_OBJ) -lscc $(PROJ_LDLIBS) -o $@
+	$(CC) $(PROJ_LDFLAGS) $(POWERPC64_OBJ) $(PROJ_LDLIBS) -o $@
