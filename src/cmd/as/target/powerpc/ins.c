@@ -156,7 +156,7 @@ i_form(Op *op, Node **args)
 	if (dst & 0x3)
 		error("unaligned branch");
 	if (aa)
-		dst -= cursec->curpc - 4;
+		dst -= getpc() - 4;
 	if (dst < min || dst > max)
 		error("out of range branch");
 
@@ -185,7 +185,7 @@ b_form(Op *op, Node **args)
 	if (dst & 0x3)
 		error("unaligned branch");
 	if (aa)
-		dst -= cursec->curpc - 4;
+		dst -= getpc() - 4;
 
 	if (dst < min || dst > max)
 		error("out of range branch");

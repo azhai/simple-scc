@@ -568,7 +568,7 @@ branch(int relative, Op *op, Node **args)
 		if (!relative)
 			buf[--i] = val >> 8;
 		else
-			val -= cursec->curpc - 2;
+			val -= getpc() - 2;
 		buf[--i] = val;
 
 	}

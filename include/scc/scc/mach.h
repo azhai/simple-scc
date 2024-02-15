@@ -60,8 +60,6 @@ struct section {
 	char *name;
 	unsigned long long base;
 	unsigned long long size;
-	unsigned long long curpc;
-	unsigned long long pc;
 
 	unsigned flags;
 	int index;

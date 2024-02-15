@@ -230,7 +230,7 @@ void
 align(Op *op, Node **args)
 {
 	Symbol *sym = args[0]->sym;
-	TUINT curpc, pc, al;
+	TUINT pcal, pc, al;
 
 	if ((sym->flags & FABS) == 0)
 		error("align expression is not an absolute expression");
@@ -238,10 +238,10 @@ align(Op *op, Node **args)
 		return;
 
 	al--;
-	curpc = cursec->curpc;
-	pc = curpc+al & ~al;
+	pc = getpc();
+	pcal = pc+al & ~al;
 
-	for (al = pc - curpc; al > 0; --al)
+	for (al = pcal - pc; al > 0; --al)
 		emit((char []) {0}, 1);
 }
 

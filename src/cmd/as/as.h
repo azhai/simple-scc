@@ -120,6 +120,7 @@ extern int toobig(Node *, int);
 extern void dumpstab(char *);
 extern Symbol *lookup(char *);
 extern Symbol *deflabel(char *);
+extern unsigned long long getpc(void);
 
 /* parser.c */
 extern Node **getargs(char *);

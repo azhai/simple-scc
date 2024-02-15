@@ -124,6 +124,7 @@ deflabel(char *name)
 {
 	int local = 0;
 	Symbol *sym;
+	struct lsection *lsec;
 	char label[MAXSYM+1];
 
 	if (*name == '.') {
@@ -150,7 +151,9 @@ deflabel(char *name)
 		error("redefinition of label '%s'", name);
 	if (cursec->flags & SABS)
 		sym->flags |= FABS;
-	sym->value = cursec->curpc;
+
+	lsec = (struct lsection *) cursec;
+	sym->value = lsec->curpc;
 	sym->section = cursec->index;
 
 	if (!local)
@@ -183,29 +186,41 @@ toobig(Node *np, int type)
 	}
 }
 
+unsigned long long
+getpc(void)
+{
+	struct lsection *lsec;
+
+	lsec = (struct lsection *) cursec;
+	return lsec->curpc;
+}
+
 static void
 incpc(int nbytes)
 {
+	struct lsection *lsec;
 	unsigned long long siz;
 	TUINT pc, curpc;
 
-	pc = cursec->pc;
-	curpc = cursec->curpc;
+	lsec = (struct lsection *) cursec;
 
-	cursec->curpc += nbytes;
-	cursec->pc += nbytes;
+	pc = lsec->pc;
+	curpc = lsec->curpc;
+
+	lsec->curpc += nbytes;
+	lsec->pc += nbytes;
 
 	if (pass == 2)
 		return;
 
-	siz =cursec->pc - cursec->base;
+	siz = lsec->pc - cursec->base;
 	if (siz > cursec->size)
 		cursec->size = siz;
 
-	if (pc > cursec->pc ||
-	    curpc > cursec->curpc ||
-	    cursec->curpc > maxaddr ||
-	    cursec->pc > maxaddr) {
+	if (pc > lsec->pc ||
+	    curpc > lsec->curpc ||
+	    lsec->curpc > maxaddr ||
+	    lsec->pc > maxaddr) {
 		die("as: address overflow in section '%s'");
 	}
 }
@@ -252,14 +267,20 @@ newsect(Symbol *sym)
 	struct lsymbol *lsym;
 	static int index;
 
+	if (setmap(map, sym->name, NULL, 0, 0, 0) < 0) {
+		perror("as");
+		exit(EXIT_FAILURE);
+	}
+
 	lsec = xmalloc(sizeof(*lsec));
+	lsec->pc = lsec->curpc = 0;
 	lsec->next = seclist;
 	lsec->fp = NULL;
 	seclist = lsec;
 
 	sec = &lsec->sec;
 	sec->name = sym->name;
-	sec->base = sec->size = sec->pc = sec->curpc = 0;
+	sec->base = sec->size = 0;
 	sec->flags = 0;
 	sec->fill = 0;
 	sec->align = 0;
@@ -314,17 +335,25 @@ isecs(void)
 void
 cleansecs(void)
 {
+	int r;
 	Section *sec;
 	struct lsection *lsec;
 
 	for (lsec = seclist; lsec; lsec = lsec->next) {
 		sec = &lsec->sec;
-		sec->curpc = sec->pc = sec->base;
+		lsec->curpc = lsec->pc = sec->base;
 		if (pass == 1 || (sec->flags & SALLOC) == 0)
 			continue;
 
-		if ((lsec->fp = tmpfile()) == NULL) {
-			perror("as");
+		lsec->fp = tmpfile();
+		r = setmap(map,
+		           sec->name,
+		           lsec->fp,
+		           sec->base,
+		           sec->size, 0);
+
+		if (!lsec->fp || r < 0) {
+			perror("as: creating section mapping");
 			exit(EXIT_FAILURE);
 		}
 	}
