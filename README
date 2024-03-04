@@ -226,5 +226,5 @@ C99 libc
 ========
 
 The C99 libc only supports the C locale using UTF-8 for multibyte
-sequences. It also assume that the wide character set includes as
+sequences. It also assumes that the wide character set includes
 ASCII as a subset.
