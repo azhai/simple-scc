@@ -140,7 +140,7 @@ main(int argc, char *argv[])
 
 	atexit(cleanup);
 	iarch();
-	isecs();
+	ibinfmt();
 	asm(argv);
 	writeout(outfile);
 

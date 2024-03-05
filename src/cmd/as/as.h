@@ -111,7 +111,7 @@ union yylval {
 
 /* symbol.c */
 extern void cleansecs(void);
-extern void isecs(void);
+extern void ibinfmt(void);
 extern void emit(char *, int);
 extern Section *defsec(char *, char *);
 extern Symbol *tmpsym(TUINT);

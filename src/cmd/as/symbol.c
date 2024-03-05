@@ -37,12 +37,13 @@ struct lsection {
 	struct lsection *next;
 };
 
-Map *map;
 Section *cursec;
 Section *sabs, *sbss, *sdata, *stext;
 Symbol *linesym;
 int pass;
 
+static Obj *obj;
+static Map *map;
 static struct lsection *seclist;
 static struct lsymbol *hashtbl[HASHSIZ], *symlast, *symlist;
 
@@ -259,18 +260,25 @@ secflags(char *attr)
 	return flags;
 }
 
+static int
+sectype(int flags)
+{
+	if (flags & SEXEC)
+		return 'T';
+	if ((flags & (SALLOC|SLOAD)) == SALLOC|SLOAD)
+		return 'D';
+	if ((flags  & (SALLOC|SLOAD)) == SLOAD)
+		return 'B';
+	return '?';
+}
+
 static Section *
 newsec(Symbol *sym)
 {
+	int idx;
 	Section *sec;
 	struct lsection *lsec;
 	struct lsymbol *lsym;
-	static int index;
-
-	if (setmap(map, sym->name, NULL, 0, 0, 0) < 0) {
-		perror("as");
-		exit(EXIT_FAILURE);
-	}
 
 	lsec = xmalloc(sizeof(*lsec));
 	lsec->pc = lsec->curpc = 0;
@@ -284,11 +292,24 @@ newsec(Symbol *sym)
 	sec->flags = 0;
 	sec->fill = 0;
 	sec->align = 0;
-	sec->index = index++;
 	setmap(map, sym->name, NULL, 0, 0, 0);
 
 	lsym = (struct lsymbol *) sym;
 	lsym->sec = sec;
+
+	if (setmap(map, sym->name, NULL, 0, 0, 0) < 0) {
+		fprintf(stderr,
+		       "as: error allocating section mapping '%s'\n",
+		        sym->name);
+		exit(EXIT_FAILURE);
+	}
+
+	if (setsec(obj, &sec->index, sec) < 0) {
+		fprintf(stderr,
+		        "as: error adding section '%s' to output\n",
+		        sym->name);
+		exit(EXIT_FAILURE);
+	}
 
 	return sec;
 }
@@ -314,13 +335,27 @@ defsec(char *name, char *attr)
 		sym->flags = FSECT;
 	}
 	sec->flags |= secflags(attr);
+	sec->type = sectype(sec->flags);
 
 	return cursec = sec;
 }
 
 void
-isecs(void)
+ibinfmt(void)
 {
+	int t;
+
+	if ((t = objtype("coff32-z80")) < 0) {
+		fprintf(stderr,
+		        "as: invalid binary format %s\n", "coff32-z80");
+		exit(EXIT_FAILURE);
+	}
+
+	if ((obj = newobj(t)) < 0) {
+		fputs("as: error allocating output\n", stderr);
+		exit(EXIT_FAILURE);
+	}
+
 	if ((map = newmap(NULL, 4)) == NULL) {
 		perror("as");
 		exit(EXIT_FAILURE);
