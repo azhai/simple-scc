@@ -56,7 +56,7 @@ coff32getsec(Obj *obj, int *idx, Section *sec)
 	case STYP_LIT:
 	case STYP_RDATA:
 		type = 'D';
-		sflags = SALLOC | SRELOC | SLOAD | SWRITE | SREAD;
+		sflags = SALLOC | SRELOC | SLOAD | SREAD;
 		break;
 	case STYP_LIB:
 	case STYP_INFO:
