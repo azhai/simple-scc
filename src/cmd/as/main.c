@@ -22,19 +22,6 @@ cleanup(void)
 		remove(outfile);
 }
 
-static int
-cmp(const void *f1, const void *f2)
-{
-	const Ins *ins = f2;
-	const char *s = f1;
-	int d;
-
-	if ((d = *s - *ins->str) != 0)
-		return d;
-
-	return strcmp(s, ins->str);
-}
-
 static Ins *
 decode(char *s)
 {
