@@ -17,4 +17,5 @@ COFF32_OBJS =\
 	coff32/coff32pc2line.o \
 	coff32/coff32getsym.o \
 	coff32/coff32getsec.o \
+	coff32/coff32setsec.o \
 	coff32/coff32loadmap.o\

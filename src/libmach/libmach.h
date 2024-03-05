@@ -49,6 +49,7 @@ struct objops {
 
 	Symbol *(*getsym)(Obj *, int *, Symbol *);
 	Section *(*getsec)(Obj *, int *, Section *);
+	Section *(*setsec)(Obj *, int *, Section *);
 
 	int (*setidx)(long, char *[], long[], FILE *);
 	int (*getidx)(long *, char ***, long **, FILE *);

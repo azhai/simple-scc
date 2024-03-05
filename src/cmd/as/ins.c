@@ -189,7 +189,7 @@ section(Op *op, Node **args)
 	if (args[1])
 		attr = args[1]->sym->name;
 
-	setsec(sym->name, attr);
+	defsec(sym->name, attr);
 }
 
 void

@@ -40,6 +40,7 @@ extern int coff32xgetidx(int, long *, char ***, long **, FILE *);
 
 extern Symbol *coff32getsym(Obj *, int *, Symbol *);
 extern Section *coff32getsec(Obj *, int *, Section *);
+extern Section *coff32setsec(Obj *, int *, Section *);
 extern Map *coff32loadmap(Obj *, FILE *);
 
 

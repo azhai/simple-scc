@@ -31,6 +31,7 @@ OBJS =\
 	rebase.o\
 	setindex.o\
 	setmap.o\
+	setsec.o\
 	strip.o\
 	unpack.o\
 	writeobj.o\

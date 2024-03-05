@@ -113,7 +113,7 @@ union yylval {
 extern void cleansecs(void);
 extern void isecs(void);
 extern void emit(char *, int);
-extern Section *setsec(char *, char *);
+extern Section *defsec(char *, char *);
 extern Symbol *tmpsym(TUINT);
 extern void killtmp(void);
 extern int toobig(Node *, int);

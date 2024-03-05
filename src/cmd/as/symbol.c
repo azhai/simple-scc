@@ -260,7 +260,7 @@ secflags(char *attr)
 }
 
 static Section *
-newsect(Symbol *sym)
+newsec(Symbol *sym)
 {
 	Section *sec;
 	struct lsection *lsec;
@@ -294,7 +294,7 @@ newsect(Symbol *sym)
 }
 
 Section *
-setsec(char *name, char *attr)
+defsec(char *name, char *attr)
 {
 	struct lsymbol *lsym;
 	Section *sec;
@@ -308,7 +308,7 @@ setsec(char *name, char *attr)
 	lsym = (struct lsymbol *) sym;
 	sec = lsym->sec;
 	if (sec == NULL) {
-		sec = newsect(sym);
+		sec = newsec(sym);
 		lsym->sec = sec;
 		sym->section = sec->index;
 		sym->flags = FSECT;
@@ -326,10 +326,10 @@ isecs(void)
 		exit(EXIT_FAILURE);
 	}
 
-	sabs = setsec(".abs", "rwxa");
-	sbss = setsec(".bss", "rw");
-	sdata = setsec(".data", "rwc");
-	stext = setsec(".text", "rxc");
+	sabs = defsec(".abs", "rwxa");
+	sbss = defsec(".bss", "rw");
+	sdata = defsec(".data", "rwc");
+	stext = defsec(".text", "rxc");
 }
 
 void
