@@ -37,8 +37,11 @@ do
 		mach=`uname -m`
 
 		case $mach in
-		amd64|x86_64)
+		x86_64)
 			mach=amd64
+			;;
+		aarch64)
+			mach=arm64
 			;;
 		esac
 
