@@ -14,6 +14,11 @@ OBJS =\
 	alloc.o\
 	casecmp.o\
 	genhash.o\
+	fromepoch-$(DRIVER).o\
+	totime-$(DRIVER).o\
+	canonical-$(DRIVER).o\
+	getstat-$(DRIVER).o\
+	setstat-$(DRIVER).o\
 
 TARGET = $(LIBDIR)/scc/libscc.a
 

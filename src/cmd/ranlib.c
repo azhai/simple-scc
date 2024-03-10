@@ -12,8 +12,6 @@
 #include <scc/mach.h>
 #include <scc/scc.h>
 
-#include "sys.h"
-
 #define NR_SYMDEF 32
 
 typedef struct symdef Symdef;
@@ -230,7 +228,6 @@ static void
 merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 {
 	int c;
-	char mtime[13];
 	struct ar_hdr first;
 
 	rewind(lib);
@@ -247,11 +244,10 @@ merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 
 	fwrite(ARMAG, SARMAG, 1, to);
 
-        strftime(mtime, sizeof(mtime), "%s", gmtime(&prop->time));
         fprintf(to,
-                "%-16.16s%-12s%-6u%-6u%-8lo%-10ld`\n",
+                "%-16.16s%-12lld%-6u%-6u%-8lo%-10ld`\n",
                 namidx,
-                mtime,
+                fromepoch(prop->time),
                 prop->uid,
                 prop->gid,
                 prop->mode,

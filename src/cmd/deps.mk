@@ -3,7 +3,6 @@ addr2line.o: $(INCDIR)/scc/scc/arg.h
 addr2line.o: $(INCDIR)/scc/scc/mach.h
 ar.o: $(INCDIR)/scc/scc/ar.h
 ar.o: $(INCDIR)/scc/scc/arg.h
-ar.o: sys.h
 as/expr.o: $(INCDIR)/scc/scc/scc.h
 as/expr.o: as/as.h
 as/ins.o: $(INCDIR)/scc/scc/scc.h
@@ -199,7 +198,6 @@ nm.o: $(INCDIR)/scc/scc/arg.h
 nm.o: $(INCDIR)/scc/scc/mach.h
 objdump.o: $(INCDIR)/scc/scc/arg.h
 objdump.o: $(INCDIR)/scc/scc/mach.h
-posix.o: sys.h
 qbe/alias.o: qbe/all.h
 qbe/amd64/emit.o: qbe/amd64/all.h
 qbe/amd64/isel.o: qbe/amd64/all.h
@@ -228,7 +226,6 @@ ranlib.o: $(INCDIR)/scc/scc/ar.h
 ranlib.o: $(INCDIR)/scc/scc/arg.h
 ranlib.o: $(INCDIR)/scc/scc/mach.h
 ranlib.o: $(INCDIR)/scc/scc/scc.h
-ranlib.o: sys.h
 size.o: $(INCDIR)/scc/scc/ar.h
 size.o: $(INCDIR)/scc/scc/arg.h
 size.o: $(INCDIR)/scc/scc/mach.h

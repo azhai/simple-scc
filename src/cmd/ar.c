@@ -6,9 +6,8 @@
 #include <string.h>
 #include <time.h>
 
-#include "sys.h"
-
 #include <scc/ar.h>
+#include <scc/scc.h>
 #include <scc/arg.h>
 
 enum {
@@ -26,6 +25,7 @@ char *argv0;
 
 static int bflag, vflag, cflag, lflag, uflag, aflag;
 static char *arfile, *posname;
+static char invalidchars[] = " ";
 
 struct member {
 	FILE *src;
@@ -123,7 +123,7 @@ archive(char *pname, FILE *to, char letter)
 {
 	int c;
 	FILE *from;
-	char mtime[13], *fname;
+	char *fname;
 	struct fprop prop;
 
 	fname = canonical(pname);
@@ -135,11 +135,10 @@ archive(char *pname, FILE *to, char letter)
 	if (getstat(pname, &prop) < 0)
 		error("error getting '%s' attributes", pname);
 
-	strftime(mtime, sizeof(mtime), "%s", gmtime(&prop.time));
 	fprintf(to,
-	        "%-16.16s%-12s%-6u%-6u%-8lo%-10ld`\n",
+	        "%-16.16s%-12lld%-6u%-6u%-8lo%-10ld`\n",
 	        fname,
-	        mtime,
+	        fromepoch(prop.time),
 	        prop.uid,
 	        prop.gid,
 	        prop.mode,

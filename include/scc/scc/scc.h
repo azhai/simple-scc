@@ -22,6 +22,16 @@ struct items {
 	unsigned n;
 };
 
+#ifdef CLOCKS_PER_SEC
+struct fprop {
+	unsigned uid;
+	unsigned gid;
+	unsigned long mode;
+	long size;
+	time_t time;
+};
+#endif
+
 typedef struct alloc Alloc;
 
 extern void die(const char *fmt, ...);
@@ -37,3 +47,11 @@ extern void *new(Alloc *allocp);
 extern void delete(Alloc *allocp, void *p);
 extern int casecmp(const char *s1, const char *s2);
 extern unsigned genhash(char *name);
+extern char *canonical(char *);
+
+#ifdef CLOCKS_PER_SEC
+extern long long fromepoch(time_t);
+extern time_t totime(long long);
+extern int getstat(char *, struct fprop *);
+extern int setstat(char *, struct fprop *);
+#endif

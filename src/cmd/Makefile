@@ -21,10 +21,6 @@ TARGET =\
 	$(BINDIR)/scc-addr2line\
 	$(LIBEXEC)/scc/qbe\
 
-RANLIBOBJS = ranlib.o $(DRIVER).o
-AROBJS = ar.o $(DRIVER).o
-
-
 all: $(TARGET) $(DIRS)
 
 qbe/.git:
@@ -47,8 +43,8 @@ $(BINDIR)/scc-strip: strip.o $(LIBMACH) $(LIBSCC)
 $(BINDIR)/scc-size: size.o $(LIBMACH) $(LIBSCC)
 	$(CC) $(PROJ_LDFLAGS) size.o -lmach -lscc $(PROJ_LDLIBS) -o $@
 
-$(BINDIR)/scc-ranlib: $(RANLIBOBJS) $(LIBMACH) $(LIBSCC)
-	$(CC) $(PROJ_LDFLAGS) $(RANLIBOBJS) -lmach -lscc $(PROJ_LDLIBS) -o $@
+$(BINDIR)/scc-ranlib: ranlib.o $(LIBMACH) $(LIBSCC)
+	$(CC) $(PROJ_LDFLAGS) ranlib.o -lmach -lscc $(PROJ_LDLIBS) -o $@
 
 $(BINDIR)/scc-objdump: objdump.o $(LIBMACH)
 	$(CC) $(PROJ_LDFLAGS) objdump.o -lmach $(PROJ_LDLIBS) -o $@
@@ -59,7 +55,7 @@ $(BINDIR)/scc-objcopy: objcopy.o $(LIBMACH)
 $(BINDIR)/scc-addr2line: addr2line.o $(LIBMACH) $(LIBSCC)
 	$(CC) $(PROJ_LDFLAGS) addr2line.o -lmach -lscc $(PROJ_LDLIBS) -o $@
 
-$(BINDIR)/scc-ar: $(AROBJS)
-	$(CC) $(PROJ_LDFLAGS) $(AROBJS) $(PROJ_LDLIBS) -o $@
+$(BINDIR)/scc-ar: ar.o $(LIBSCC)
+	$(CC) $(PROJ_LDFLAGS) ar.o $(PROJ_LDLIBS) -lscc -o $@
 
 include deps.mk
