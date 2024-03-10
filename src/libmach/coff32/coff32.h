@@ -22,9 +22,10 @@ struct arch {
 	char *name;
 	unsigned char magic[2];
 	int type;
+	int flags;
 };
 
-extern int coff32new(Obj *);
+extern int coff32new(Obj *, int);
 extern int coff32read(Obj *, FILE *);
 extern int coff32setidx(long, char **, long *, FILE *);
 extern int coff32getidx(long *, char ***, long **, FILE *);

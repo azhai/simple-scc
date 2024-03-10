@@ -36,7 +36,7 @@ struct objops {
 	int (*type)(char *);
 	int (*probe)(unsigned char *, char **);
 
-	int (*new)(Obj *);
+	int (*new)(Obj *, int);
 	void (*del)(Obj *);
 
 	int (*read)(Obj *, FILE *);

@@ -7,7 +7,7 @@
 #include "elf64.h"
 
 int
-elf64new(Obj *obj)
+elf64new(Obj *obj, int type)
 {
 	struct elf64 *elf;
 

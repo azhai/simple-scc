@@ -42,7 +42,7 @@ struct arch {
 	int type;
 };
 
-extern int elf64new(Obj *);
+extern int elf64new(Obj *, int);
 extern int elf64read(Obj *, FILE *);
 extern int elf64setidx(long, char **, long *, FILE *);
 extern int elf64getidx(long *, char ***, long **, FILE *);
