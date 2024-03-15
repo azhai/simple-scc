@@ -14,7 +14,7 @@ GENOBJS =\
 	_lseek.$O\
 	_openat.$O\
 	_read.$O\
-	_sigaction.$O\
+	__sigaction.$O\
 	_sys_brk.$O\
 	_write.$O\
 	_wait4.$O\
