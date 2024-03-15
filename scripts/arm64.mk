@@ -4,5 +4,5 @@ aarch64 arm64:
 install-arm64 install-aarch64: arm64
 	$(SCRIPTDIR)/install -p $(SCRIPTDIR)/proto.arm64 $(ROOT)
 
-uninstall-arm64 uninstall-arm64:
+uninstall-arm64 uninstall-aarch64:
 	$(SCRIPTDIR)/uninstall -p $(SCRIPTDIR)/proto.arm64 $(ROOT)
