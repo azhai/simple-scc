@@ -11,7 +11,7 @@ coff32type(char *name)
 {
 	struct arch *ap;
 
-	for (ap = coff32archs; ap ->name; ap++) {
+	for (ap = coff32archs; ap->name; ap++) {
 		if (strcmp(ap->name, name) == 0)
 			return ap->type;
 	}
