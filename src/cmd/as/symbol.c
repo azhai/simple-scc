@@ -304,7 +304,7 @@ newsec(Symbol *sym)
 		exit(EXIT_FAILURE);
 	}
 
-	if (setsec(obj, &sec->index, sec) < 0) {
+	if (!setsec(obj, &sec->index, sec)) {
 		fprintf(stderr,
 		        "as: error adding section '%s' to output\n",
 		        sym->name);
