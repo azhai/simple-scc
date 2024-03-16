@@ -1,5 +1,6 @@
 #include <ctype.h>
 #include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -38,7 +39,7 @@ struct lsection {
 };
 
 Section *cursec;
-Section *sabs, *sbss, *sdata, *stext;
+Section *sbss, *sdata, *stext;
 Symbol *linesym;
 int pass;
 
@@ -265,20 +266,26 @@ sectype(int flags)
 {
 	if (flags & SEXEC)
 		return 'T';
-	if ((flags & (SALLOC|SLOAD)) == SALLOC|SLOAD)
+	if ((flags & (SALLOC|SLOAD)) == (SALLOC|SLOAD))
 		return 'D';
-	if ((flags  & (SALLOC|SLOAD)) == SLOAD)
+	if ((flags  & (SALLOC|SLOAD)) == SALLOC)
 		return 'B';
 	return '?';
 }
 
 static Section *
-newsec(Symbol *sym)
+newsec(Symbol *sym, char *attr)
 {
 	int idx;
 	Section *sec;
 	struct lsection *lsec;
 	struct lsymbol *lsym;
+	static unsigned index;
+
+	if (index == UINT_MAX) {
+		fputs("as: too many sections\n", stderr);
+		exit(EXIT_FAILURE);
+	}
 
 	lsec = xmalloc(sizeof(*lsec));
 	lsec->pc = lsec->curpc = 0;
@@ -292,7 +299,9 @@ newsec(Symbol *sym)
 	sec->flags = 0;
 	sec->fill = 0;
 	sec->align = 0;
-	setmap(map, sym->name, NULL, 0, 0, 0);
+	sec->index = index++;
+	sec->flags |= secflags(attr);
+	sec->type = sectype(sec->flags);
 
 	lsym = (struct lsymbol *) sym;
 	lsym->sec = sec;
@@ -329,13 +338,11 @@ defsec(char *name, char *attr)
 	lsym = (struct lsymbol *) sym;
 	sec = lsym->sec;
 	if (sec == NULL) {
-		sec = newsec(sym);
+		sec = newsec(sym, attr);
 		lsym->sec = sec;
 		sym->section = sec->index;
 		sym->flags = FSECT;
 	}
-	sec->flags |= secflags(attr);
-	sec->type = sectype(sec->flags);
 
 	return cursec = sec;
 }
@@ -361,10 +368,9 @@ ibinfmt(void)
 		exit(EXIT_FAILURE);
 	}
 
-	sabs = defsec(".abs", "rwxa");
-	sbss = defsec(".bss", "rw");
-	sdata = defsec(".data", "rwc");
-	stext = defsec(".text", "rxc");
+	sbss = defsec(".bss", "rwc");
+	sdata = defsec(".data", "rwcl");
+	stext = defsec(".text", "rxcl");
 }
 
 void
