@@ -8,7 +8,7 @@
 #include "coff32.h"
 
 static int
-typeof(Coff32 *coff, SYMENT *ent, char *name)
+typeof(Coff32 *coff, SYMENT *ent)
 {
 	int c;
 	SCNHDR *scn;
@@ -76,7 +76,7 @@ coff32getsym(Obj *obj, int *idx, Symbol *sym)
 
 	ent = &coff->ents[n];
 	sym->name = symname(coff, ent);
-	sym->type = typeof(coff, ent, sym->name);
+	sym->type = typeof(coff, ent);
 	sym->stype = SYMOBJECT;
 	sym->value = ent->n_value;
 	sym->size = (sym->type == 'C') ? ent->n_value : 0;
