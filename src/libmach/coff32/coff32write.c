@@ -338,13 +338,20 @@ coff32write(Obj *obj, Map *map, FILE *fp)
 
 	ptr = ftell(fp);
 	obj->pos = ptr;
-	ptr += FILHSZ + AOUTSZ + n*hdr->f_nscns;
 
 	n = hdr->f_nscns;
+	ptr += FILHSZ + hdr->f_opthdr + n*SCNHSZ;
 	for (scn = coff->scns; n--; scn++) {
-		scn->s_scnptr = ptr;
-		ptr += scn->s_size;
+		/* TODO: Check if the section is allocated */
+		if (scn->s_flags & STYP_BSS) {
+			scn->s_scnptr = 0;
+			continue;
+		} else {
+			scn->s_scnptr = ptr;
+			ptr += scn->s_size;
+		}
 	}
+	hdr->f_symptr = (hdr->f_nsyms > 0) ? ptr : 0;
 
 	n = hdr->f_nscns;
 	for (scn = coff->scns; n--; scn++) {
