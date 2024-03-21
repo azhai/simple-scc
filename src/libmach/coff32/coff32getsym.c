@@ -71,7 +71,7 @@ coff32getsym(Obj *obj, int *idx, Symbol *sym)
 	Coff32 *coff = obj->data;
 	FILHDR *hdr = &coff->hdr;
 
-	if ((hdr->f_flags & F_SYMS) != 0 || n >= coff->hdr.f_nsyms)
+	if ((hdr->f_flags & F_LSYMS) != 0 || n >= coff->hdr.f_nsyms)
 		return NULL;
 
 	ent = &coff->ents[n];

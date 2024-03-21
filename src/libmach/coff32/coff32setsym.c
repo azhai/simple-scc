@@ -82,7 +82,7 @@ coff32setsym(Obj *obj, int *idx, Symbol *sym)
 	Coff32 *coff = obj->data;
 	FILHDR *hdr = &coff->hdr;
 
-	hdr->f_flags |= F_SYMS;
+	hdr->f_flags &= ~F_LSYMS;
 	if (n >= coff->hdr.f_nsyms) {
 		if (n > LONG_MAX-1)
 			return NULL;

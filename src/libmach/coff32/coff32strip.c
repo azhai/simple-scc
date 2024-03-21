@@ -24,7 +24,7 @@ coff32strip(Obj *obj)
 
 	hdr->f_nsyms = 0;
 	hdr->f_symptr = 0;
-	hdr->f_flags |= F_RELFLG | F_LMNO | F_SYMS;
+	hdr->f_flags |= F_RELFLG | F_LMNO | F_LSYMS;
 
 	free(coff->ents);
 	free(coff->rels);

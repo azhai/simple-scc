@@ -16,7 +16,7 @@ struct filehdr {
 #define F_RELFLG          0000001
 #define F_EXEC            0000002
 #define F_LMNO            0000004
-#define F_SYMS            0000010
+#define F_LSYMS           0000010
 #define F_MINMAL          0000020
 #define F_UPDATE          0000040
 #define F_SWADB           0000100
