@@ -122,5 +122,6 @@ extern int rebase(Obj *, int, unsigned long long);
 extern int findsec(Map *, char *);
 
 extern Symbol *getsym(Obj *, int *, Symbol *);
+extern Symbol *setsym(Obj *, int *, Symbol *);
 extern Section *getsec(Obj *, int *, Section *);
 extern Section *setsec(Obj *, int *, Section *);

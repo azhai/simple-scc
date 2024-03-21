@@ -32,6 +32,7 @@ OBJS =\
 	setindex.o\
 	setmap.o\
 	setsec.o\
+	setsym.o\
 	strip.o\
 	unpack.o\
 	writeobj.o\

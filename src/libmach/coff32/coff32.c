@@ -17,6 +17,7 @@ struct objops coff32 = {
 	.del = coff32del,
 	.write = coff32write,
 	.getsym = coff32getsym,
+	.setsym = coff32setsym,
 	.getsec = coff32getsec,
 	.setsec = coff32setsec,
 	.loadmap = coff32loadmap,

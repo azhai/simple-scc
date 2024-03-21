@@ -48,6 +48,7 @@ struct objops {
 	Map *(*loadmap)(Obj *, FILE *);
 
 	Symbol *(*getsym)(Obj *, int *, Symbol *);
+	Symbol *(*setsym)(Obj *, int *, Symbol *);
 	Section *(*getsec)(Obj *, int *, Section *);
 	Section *(*setsec)(Obj *, int *, Section *);
 
