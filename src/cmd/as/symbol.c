@@ -50,6 +50,7 @@ static struct lsymbol *hashtbl[HASHSIZ], *symlast, *symlist;
 
 static Symbol *cursym;
 static Alloc *tmpalloc;
+static int secindex, symindex;
 
 #ifndef NDEBUG
 void
@@ -280,9 +281,8 @@ newsec(Symbol *sym, char *attr)
 	Section *sec;
 	struct lsection *lsec;
 	struct lsymbol *lsym;
-	static unsigned index;
 
-	if (index == UINT_MAX) {
+	if (secindex == INT_MAX) {
 		fputs("as: too many sections\n", stderr);
 		exit(EXIT_FAILURE);
 	}
@@ -299,10 +299,12 @@ newsec(Symbol *sym, char *attr)
 	sec->flags = 0;
 	sec->fill = 0;
 	sec->align = 0;
-	sec->index = index++;
+	sec->index = secindex;
 	sec->flags |= secflags(attr);
 	sec->type = sectype(sec->flags);
 
+	sym->type = sec->type;
+	sym->index = symindex;
 	lsym = (struct lsymbol *) sym;
 	lsym->sec = sec;
 
@@ -313,12 +315,22 @@ newsec(Symbol *sym, char *attr)
 		exit(EXIT_FAILURE);
 	}
 
-	if (!setsec(obj, &sec->index, sec)) {
+	if (!setsec(obj, &secindex, sec)) {
 		fprintf(stderr,
 		        "as: error adding section '%s' to output\n",
 		        sym->name);
 		exit(EXIT_FAILURE);
 	}
+
+	if (!setsym(obj, &symindex, sym)) {
+		fprintf(stderr,
+		        "as: error adding section symbol '%s' to output\n",
+		        sym->name);
+		exit(EXIT_FAILURE);
+	}
+
+	secindex++;
+	symindex++;
 
 	return sec;
 }
