@@ -266,9 +266,9 @@ sectype(int flags)
 {
 	if (flags & SEXEC)
 		return 'T';
-	if ((flags & (SALLOC|SLOAD)) == (SALLOC|SLOAD))
+	if ((flags & (SALLOC|SLOAD|SREAD)) == (SALLOC|SLOAD|SREAD))
 		return 'D';
-	if ((flags  & (SALLOC|SLOAD)) == SALLOC)
+	if ((flags  & (SALLOC|SLOAD|SREAD)) == (SALLOC|SREAD))
 		return 'B';
 	return '?';
 }
