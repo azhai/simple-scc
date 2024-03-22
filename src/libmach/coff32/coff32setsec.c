@@ -18,7 +18,25 @@ coff32setsec(Obj *obj, int *idx, Section *sec)
 
 	switch (sec->type) {
 	case 'D':
-		flags = (sec->flags & SWRITE) ? STYP_DATA : STYP_RDATA;
+		switch (sec->flags) {
+		case SALLOC | SRELOC | SLOAD | SWRITE | SREAD:
+			if (strcmp(sec->name ,".data") == 0)
+				flags = STYP_DATA;
+			else
+				flags = STYP_REG;
+			break;
+		case SALLOC | SREAD | SWRITE:
+			flags = STYP_NOLOAD;
+			break;
+		case SALLOC | SRELOC | SLOAD | SREAD:
+			flags = STYP_RDATA;
+			break;
+		case SEXEC | SALLOC | SRELOC | SLOAD | SREAD:
+			flags = STYP_TEXT | STYP_DATA;
+			break;
+		default:
+			goto invalid;
+		}
 		break;
 	case 'T':
 		flags = STYP_TEXT;
@@ -29,6 +47,8 @@ coff32setsec(Obj *obj, int *idx, Section *sec)
 	case 'N':
 	case '?':
 	default:
+	invalid:
+		/* TODO */
 		return NULL;
 	}
 

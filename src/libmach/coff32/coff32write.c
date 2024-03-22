@@ -313,15 +313,11 @@ writedata(Obj *obj, Map *map, FILE *fp)
 
 	nsec = hdr->f_nscns;
 	for (scn = coff->scns; nsec--; scn++) {
-		/* TODO: check if the section is allocated */
-		if (scn->s_flags & STYP_BSS)
-			continue;
-
 		if ((id = findsec(map, scn->s_name)) < 0)
-			return 0;
+			continue;
 		sec = &map->sec[id];
 		if (!sec->fp)
-			return 0;
+			continue;
 
 		fseek(sec->fp, sec->offset, SEEK_SET);
 
@@ -338,8 +334,10 @@ writedata(Obj *obj, Map *map, FILE *fp)
 int
 coff32write(Obj *obj, Map *map, FILE *fp)
 {
+	int id;
 	long ptr, n;
 	SCNHDR *scn;
+	Mapsec *sec;
 	struct coff32 *coff = obj->data;
 	FILHDR *hdr = &coff->hdr;
 
@@ -349,14 +347,15 @@ coff32write(Obj *obj, Map *map, FILE *fp)
 	n = hdr->f_nscns;
 	ptr += FILHSZ + hdr->f_opthdr + n*SCNHSZ;
 	for (scn = coff->scns; n--; scn++) {
-		/* TODO: Check if the section is allocated */
-		if (scn->s_flags & STYP_BSS) {
-			scn->s_scnptr = 0;
+		scn->s_scnptr = 0;
+		if ((id = findsec(map, scn->s_name)) < 0)
 			continue;
-		} else {
-			scn->s_scnptr = ptr;
-			ptr += scn->s_size;
-		}
+		sec = &map->sec[id];
+		if (!sec->fp)
+			continue;
+
+		scn->s_scnptr = ptr;
+		ptr += scn->s_size;
 	}
 	hdr->f_symptr = (hdr->f_nsyms > 0) ? ptr : 0;
 
