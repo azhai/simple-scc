@@ -380,9 +380,9 @@ ibinfmt(void)
 		exit(EXIT_FAILURE);
 	}
 
-	sbss = defsec(".bss", "rwc");
-	sdata = defsec(".data", "rwcl");
 	stext = defsec(".text", "rxcl");
+	sdata = defsec(".data", "rwcl");
+	sbss = defsec(".bss", "rwc");
 }
 
 void
