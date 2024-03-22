@@ -101,11 +101,8 @@ coff32setsym(Obj *obj, int *idx, Symbol *sym)
 
 	/*
 	 * TODO: 
-	 * 	sym->type
 	 *      sym->stype
 	 */
-	ent->n_type = 0;  /* TODO: debug information */
-	ent->n_sclass = 0; /* TODO: debug information */
 	ent->n_numaux = 0; /* TODO: debug information */
 
 	*idx += ent->n_numaux;

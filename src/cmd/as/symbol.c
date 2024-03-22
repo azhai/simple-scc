@@ -303,7 +303,9 @@ newsec(Symbol *sym, char *attr)
 	sec->flags |= secflags(attr);
 	sec->type = sectype(sec->flags);
 
-	sym->type = sec->type;
+	/* sym->flags = ? */
+	sym->section = sec->index;
+	sym->type = tolower(sec->type);
 	sym->index = symindex;
 	lsym = (struct lsymbol *) sym;
 	lsym->sec = sec;
