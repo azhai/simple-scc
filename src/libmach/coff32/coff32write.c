@@ -313,9 +313,16 @@ writedata(Obj *obj, Map *map, FILE *fp)
 
 	nsec = hdr->f_nscns;
 	for (scn = coff->scns; nsec--; scn++) {
+		/* TODO: check if the section is allocated */
+		if (scn->s_flags & STYP_BSS)
+			continue;
+
 		if ((id = findsec(map, scn->s_name)) < 0)
 			return 0;
 		sec = &map->sec[id];
+		if (!sec->fp)
+			return 0;
+
 		fseek(sec->fp, sec->offset, SEEK_SET);
 
 		for (n = sec->end - sec->begin; n > 0; n--)
