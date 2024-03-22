@@ -468,6 +468,31 @@ dumpsec(FILE *src, FILE *dst)
 }
 
 void
+writecoff(char *fname)
+{
+	FILE *fp;
+
+	if ((fp = fopen(fname, "wb")) == NULL)
+		goto error;
+
+	if (writeobj(obj, map, fp) < 0) {
+		fputs("as: corrupted object type\n", stderr);
+		goto error;
+	}
+
+	if (fclose(fp) == EOF)
+		goto error;
+	outfile = NULL;
+	return;
+
+error:
+	fprintf(stderr, "as: %s: error writing output file\n", fname);
+	if (errno)
+		perror("as");
+	exit(EXIT_FAILURE);
+}
+
+void
 writeout(char *fname)
 {
 	FILE *fp;
