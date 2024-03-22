@@ -97,7 +97,7 @@ Toolchain configuration
 =======================
 At this moment scc is still using some external tools to generate
 the final binaries. The toolchain execution is configured in the
-file `include/scc/scc/sys.h` and it included basically 5 elements:
+file `include/bits/scc/sys.h` and it included basically 5 elements:
 
 	- LDBIN: macro with the name of the linker binary.
 
@@ -127,7 +127,7 @@ configuration of the toolchain:
 	- scc_clang: It uses clang assembler and linker with the scc libc.
 	- musl: It uses GNU assembler and linker with the musl libc.
 
-The file `include/scc/scc/sys.h` is automatically created from the scc
+The file `include/bits/scc/sys.h` is automatically created from the scc
 toolchain configuration with the default make target. The target config
 can be used to only create the file based on the value of the variable
 `LIBPROFILE` allowing the user to customize that file as needed. It is

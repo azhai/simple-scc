@@ -4,7 +4,7 @@ DIRS  =\
 	src\
 	src/libc\
 	src/libcrt\
-	include/scc/scc\
+	include/bits/scc\
 	tests\
 
 PROJECTDIR = .
@@ -18,7 +18,7 @@ all: config
 	+@$(MAKE) `$(SCRIPTDIR)/config` `uname -m`
 
 config:
-	cd include/scc/scc && $(MAKE) $@
+	cd include/bits/scc && $(MAKE) $@
 
 install: all
 	$(SCRIPTDIR)/install $(ROOT)
@@ -31,7 +31,7 @@ uninstall:
 toolchain: src
 libc: src/libc
 libcrt: src/libcrt
-src: dirs include/scc/scc
+src: dirs include/bits/scc
 src/libc: dirs
 src/libcrt: dirs
 
@@ -45,8 +45,8 @@ clean:
 	rm -rf dirs coverage
 
 distclean: clean
-	rm -f include/scc/scc/sys.h
-	rm -f include/scc/scc/config.h
+	rm -f include/bits/scc/sys.h
+	rm -f include/bits/scc/config.h
 
 include scripts/amd64.mk
 include scripts/arm.mk

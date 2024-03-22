@@ -1,5 +1,5 @@
 #deps
-cc.o: $(INCDIR)/scc/scc/arg.h
-cc.o: $(INCDIR)/scc/scc/config.h
-cc.o: $(INCDIR)/scc/scc/scc.h
-cc.o: $(INCDIR)/scc/scc/sys.h
+cc.o: $(INCDIR)/bits/scc/arg.h
+cc.o: $(INCDIR)/bits/scc/config.h
+cc.o: $(INCDIR)/bits/scc/scc.h
+cc.o: $(INCDIR)/bits/scc/sys.h

@@ -1,10 +1,15 @@
 #deps
-alloc.o: $(INCDIR)/scc/scc/scc.h
-casecmp.o: $(INCDIR)/scc/scc/scc.h
-debug.o: $(INCDIR)/scc/scc/scc.h
-die.o: $(INCDIR)/scc/scc/scc.h
-newitem.o: $(INCDIR)/scc/scc/scc.h
-xcalloc.o: $(INCDIR)/scc/scc/scc.h
-xmalloc.o: $(INCDIR)/scc/scc/scc.h
-xrealloc.o: $(INCDIR)/scc/scc/scc.h
-xstrdup.o: $(INCDIR)/scc/scc/scc.h
+alloc.o: $(INCDIR)/bits/scc/scc.h
+canonical-posix.o: $(INCDIR)/bits/scc/scc.h
+casecmp.o: $(INCDIR)/bits/scc/scc.h
+debug.o: $(INCDIR)/bits/scc/scc.h
+die.o: $(INCDIR)/bits/scc/scc.h
+fromepoch-posix.o: $(INCDIR)/bits/scc/scc.h
+getstat-posix.o: $(INCDIR)/bits/scc/scc.h
+newitem.o: $(INCDIR)/bits/scc/scc.h
+setstat-posix.o: $(INCDIR)/bits/scc/scc.h
+totime-posix.o: $(INCDIR)/bits/scc/scc.h
+xcalloc.o: $(INCDIR)/bits/scc/scc.h
+xmalloc.o: $(INCDIR)/bits/scc/scc.h
+xrealloc.o: $(INCDIR)/bits/scc/scc.h
+xstrdup.o: $(INCDIR)/bits/scc/scc.h

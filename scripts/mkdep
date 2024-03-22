@@ -2,13 +2,10 @@
 
 set -e
 
-touch deps.mk
+echo '#deps' > deps.mk
 
 cat <<EOF | ed -s deps.mk
-1s/$//
-g/^#deps/ s///
-.;\$c
-#deps
+a
 $(for i in `find . -name '*.c'`
 do
 	file=`basename $i | sed 's/\.c$/.o/'`
@@ -17,12 +14,12 @@ do
 	sed -n "/^#include / {
 		s///
 		s@\"\(.*\)\"@$dir/$file: $dir/\1@p
-		s@<\(scc/.*\)>@$dir/$file: \$(INCDIR)/scc/\1@p
+		s@<\(scc/.*\)>@$dir/$file: \$(INCDIR)/bits/\1@p
 	}" $i
 done | LC_ALL=C sort -s)
 .
 g@^\./@ s///
 g@ \./@ s// /
-/^#deps/;$ g/^$/d
+g/^$/d
 w
 EOF

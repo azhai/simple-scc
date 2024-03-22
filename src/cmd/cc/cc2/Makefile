@@ -23,7 +23,7 @@ TARGET  =\
 
 all: $(TARGET)
 
-$(TARGET): error.h
+main.o: error.h
 
 error.h: cc2.h
 	rm -f $@;\

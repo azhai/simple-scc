@@ -35,9 +35,9 @@ include $(BUILDDIR)/tool/$(TOOL).mk
 include $(BUILDDIR)/host/$(HOST).mk
 
 # Locations for -I or -L in compiler, assembler or linker
-CPPINCLUDES = -I$(INCDIR)/scc
-ASINCLUDES= -I$(INCDIR)/scc
-LDINCLUDES= -L$(LIBDIR)/scc
+CPPINCLUDES = -I$(INCDIR)/bits
+ASINCLUDES  = -I$(INCDIR)bits
+LDINCLUDES  = -L$(LIBDIR)/scc
 
 # C standard for the target compiler
 STD = c99
@@ -102,15 +102,6 @@ RL = $(CROSS_COMPILE)$(RANLIB)
 AR = $(CROSS_COMPILE)$(ARCHIVE)
 CPP = $(CROSS_COMPILE)$(PRECOMP)
 GS = gs
-
-# helper macro to run over all the directories
-FORALL = +@set -e ;\
-	for i in $(DIRS); \
-	do \
-		cd $$i; \
-		$(MAKE) $@; \
-		cd -; \
-	done
 
 $(DIRS) DUMMY : FORCE
 	+@cd $@ && $(MAKE)
@@ -212,7 +203,15 @@ clean-files:
 	rm -f *.i *.d *.o *.a *.elf $(TARGET)
 
 dep: inc-dep
-	$(FORALL)
+	@set -e; \
+	for i in $(DIRS); \
+	do \
+		test $$i = qbe && continue;\
+		test $$i = tests && continue;\
+		cd $$i; \
+		$(MAKE) $@; \
+		cd -; \
+	done
 
 inc-dep: FORCE
 	test -n "$(NODEP)" || $(MKDEP)
