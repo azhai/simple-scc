@@ -9,10 +9,8 @@ struct S {
 	.d = {[0] = 4, [1] = 6}
 };
 
-char m[] = {};
-
 int
 main(void)
 {
-	return sizeof(m) == s.d[2];
+	return 0 == s.d[2];
 }
