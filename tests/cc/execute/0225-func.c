@@ -1,7 +1,7 @@
 int
 main(void)
 {
-	char *p = __func__;
+	const char *p = __func__;
 	int i;
 
 	for (i = 0; i < sizeof(__func__); i++) {
