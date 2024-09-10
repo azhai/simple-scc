@@ -1,3 +1,4 @@
 [submodule "src/cmd/qbe"]
 	path = src/cmd/qbe
-	url = git://git.simple-cc.org/qbe
+	url = https://github.com/azhai/qbe-for-scc.git
+	branch = simple-cc
